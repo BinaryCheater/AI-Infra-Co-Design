@@ -6,7 +6,7 @@
 
 The manuscript develops a joint design-space formulation spanning algorithmic organization, tensor programs, software–hardware interfaces, and hardware resources. Agents expand the representation and exploit optimization structure; a common design assignment drives paired software and hardware lowering. Three Ventus case studies examine cross-layer preference reversals, controlled design strategies, and performance-model error.
 
-The paper is written in English and contains five original vector figures. Its organization follows the companion verification manuscript, while the technical content concerns design-space construction and optimization. The framework and analytical examples are distinguished from the measured case studies.
+The paper is written in English and contains five original vector figures. The argument centers on constructing the design space, encoding coupled choices, and using execution feedback to guide optimization. The framework and analytical examples are distinguished from the measured case studies.
 
 ## Build
 

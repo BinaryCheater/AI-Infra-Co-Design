@@ -1,6 +1,6 @@
 \section{Experimental Evaluation}\label{sec:evaluation}
 \subsection{Questions, workloads, and evaluation scope}
-The case studies address three questions: (1) do software choices change value when hardware changes; (2) what does joint selection gain over fixed or sequential design; and (3) when does the optimization model fail to predict realized behavior? They use a Ventus-derived architecture model with compiled instruction streams, software variants, and parameterized compute, memory, and service resources~\cite{ventus-controlled,ventus-tiling,ventus-model}. The evaluation is organized by these questions rather than by the individual exploration runs.
+The case studies address three questions: (1) do software choices change value when hardware changes; (2) what does joint selection gain over fixed or sequential design; and (3) when does the optimization model fail to predict realized behavior? They use a Ventus-derived architecture model with compiled instruction streams, software variants, and parameterized compute, memory, and service resources~\cite{ventus-controlled,ventus-tiling,ventus-model}. Software and hardware alternatives are compared within each study under its stated workload and resource constraints.
 
 P128 and P512 denote prefill with 128 and 512 tokens. D128 and D512 denote the mean cycle count over 16 decoding steps starting at the corresponding context length. For each scenario $w$, $r_w=L_w/L_w^{\mathrm{ref}}$ compares a candidate with the same study's fixed baseline. Prefill, decode, and combined objectives take the maximum ratio over their respective scenario sets, as in Equation~\eqref{eq:objective}. A lower ratio is better; a cycle reduction of $1-r$ differs from a speedup of $1/r$.
 
@@ -17,8 +17,10 @@ This is a direct test of contextual dominance. A rule that permanently removes t
 
 \input{figures/controlled}
 
-\subsection{Joint selection and the strength of the baseline}\label{sec:joint-results}
+\subsection{Software and hardware gains reinforce each other}\label{sec:joint-results}
 The same study compares baseline, software-only, hardware-only, one-pass software-first, joint, and iterative alternating optimization. The final common menu contains seven hardware configurations; software options include projection fusion, tiling, input packing, attention organization, and row-block dispatch. Each method accesses the same completed menu subject to its own fixed-choice restrictions. Alternating optimization repeatedly computes the best software response to the current hardware and the best hardware response to that software.
+
+Optimizing either side alone improves the baseline. Software-only optimization reaches normalized objectives of 0.995747 for prefill and 0.816048 for decode; hardware-only optimization reaches 0.908609 and 0.949019. Their different strengths reflect different bottlenecks: a software transformation changes reuse and execution organization, while a hardware reallocation changes the resources available to serve that work. Allowing both to vary produces the best objectives in this controlled menu.
 
 For prefill, joint selection reaches $r=0.891559$, a 10.84\% reduction from baseline. For decode, it reaches $r=0.779915$, a 22.01\% reduction. The one-pass software-first objectives are 0.895792 and 0.813232, respectively. Joint selection therefore adds 0.473\% prefill and 4.097\% decode improvement over that sequential procedure. Figure~\ref{fig:controlled}b shows all six strategies. The combined objective selects the same design as prefill~\cite{ventus-controlled}.
 
@@ -37,7 +39,7 @@ A second reversal appears within the expanded family. Packed QK, previously unfa
 
 \input{figures/trajectory}
 
-The progression illustrates two operations in the proposed method. Introducing a larger-tile kernel expands the represented program family. Reopening register, tensor, and cache choices creates a coupled neighborhood in which that kernel becomes valuable. It would be misleading to describe this simply as choosing a larger tile or simply as adding registers. The useful object is the new software--hardware combination.
+The progression illustrates two operations in the proposed method. Introducing a larger-tile kernel expands the represented program family. Reopening register, tensor, and cache choices creates a coupled neighborhood in which that kernel becomes valuable. The gain belongs to the new software--hardware combination: the program exposes reuse that the revised register and memory organization can support.
 
 These results are an observed exploration trajectory. They do not isolate the effect of an automated retention policy, since the retained and discarded branches were not compared under a matched policy experiment. They do identify a concrete failure mode that such a policy must handle: a local rejection can become obsolete after a hardware change.
 
@@ -50,7 +52,7 @@ Transfer further exposes the scope of the learned design. Fixing the selected Qw
 
 For the proposed control loop, this pattern calls for mechanism and cost revision. Spending more time solving the same approximate MIP cannot correct its ranking. A useful next formulation would expose the mapping-dependent traffic and concurrency responsible for the discrepancy, preserve stronger evaluated designs, and restrict the applicability of any knowledge transferred from the original workload.
 
-\subsection{What the studies establish}
+\subsection{Implications for the design process}
 Together, the cases establish three properties of the design problem. Software transformations have hardware-dependent value; a one-pass design process can leave useful combinations unexplored; and model fidelity determines whether mathematical optimization improves the realized design. They also show that sophisticated joint search does not automatically improve on a strong alternating method.
 
 The results support the mechanism-level motivation for progressive co-design. Measuring the full agent policy requires a separate comparison in which candidate access, evaluator, and total exploration budget are controlled. Its outcomes should include design quality, number of costly evaluations, solver effort, and representation changes. The method's benefit would then be attributable to how it constructs and navigates the space, rather than to a larger unreported candidate library.
