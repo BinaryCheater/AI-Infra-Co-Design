@@ -4,7 +4,7 @@
 
 [Read the PDF](paper.pdf) · [LaTeX source](paper.tex) · [Detailed outline](OUTLINE.md)
 
-The manuscript develops a joint design-space formulation spanning algorithmic organization, tensor programs, software–hardware interfaces, and hardware resources. Agents expand the representation and exploit optimization structure; a common design assignment drives paired software and hardware lowering. Three Ventus case studies examine cross-layer preference reversals, controlled design strategies, and performance-model error.
+The manuscript develops a joint design-space formulation spanning algorithmic organization, tensor programs, software–hardware interfaces, and hardware resources. Agents expand the representation and exploit optimization structure; a common design assignment drives paired software and hardware lowering. Preliminary results combine a verified five-workload architecture benchmark with Ventus studies of performance, software–hardware interactions, formulation revision and constrained KV storage.
 
 The paper is written in English and contains five original vector figures. The argument centers on constructing the design space, encoding coupled choices, and using execution feedback to guide optimization. The framework and analytical examples are distinguished from the measured case studies.
 
@@ -30,8 +30,8 @@ This creates page previews in the ignored `build/previews/` directory. Python va
 - `paper.tex`: article setup, abstract, and section order.
 - `sections/`: full text, formulation, method, evaluation, and appendices.
 - `figures/`: editable vector diagrams and data-driven plots.
-- `references.tex`: bibliography, including CoSA, Axon, and LLM4MIP.
+- `references.tex`: research-paper bibliography, including CoSA and Axon. LLM4MIP is discussed as a released research workflow.
 - `evidence/`: frozen public report snapshots and plotted CSV data.
 - `validate.py`: source and numerical consistency checks.
 
-The evidence package reproduces the paper's figures and source transcriptions. It does not re-run the underlying accelerator experiments. Links to the experiment reports and their available reproduction material are retained in the bibliography and evidence directory.
+The evidence package reproduces the paper's figures and source transcriptions. It does not re-run the underlying accelerator experiments. Experiment provenance and reproduction links are retained in the evidence directory; the bibliography contains research papers.

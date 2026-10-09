@@ -13,7 +13,7 @@ Research on progressive hardware–software co-design for AI infrastructure, wit
 
 [LaTeX source](design-optimization/papers/agentic_progressive_codesign/paper.tex) · [Outline and build instructions](design-optimization/papers/agentic_progressive_codesign/README.md)
 
-The manuscript develops the design-space formulation, hierarchical MIP construction, and agent-guided search method. Five vector figures and frozen empirical source records accompany the paper. The experiments analyze bounded Ventus co-design studies; the proposed framework is distinguished from the measured scope.
+The manuscript develops the design-space formulation, hierarchical MIP construction, and agent-guided search method. Five vector figures and frozen empirical source records accompany the paper. The preliminary results analyze a programmable architecture benchmark and bounded Ventus co-design studies; the proposed framework is distinguished from the measured scope.
 
 ### Design verification
 

@@ -2,6 +2,7 @@
 
 import csv
 import json
+import math
 import re
 from pathlib import Path
 
@@ -60,10 +61,26 @@ def main():
         assert (ROOT / f"{name}.tex").is_file(), name
     assert not re.search(r"[\u4e00-\u9fff]", text), "Non-English manuscript text"
     assert not re.search(r"\b(?:TODO|TBD|FIXME)\b", text), "Unresolved placeholder"
-    assert "evidence/controlled.csv" in text
-    assert "evidence/fusion.csv" in text
+    phase2 = json.loads((ROOT / "evidence/update-20261010/phase2-verified.json").read_text())
+    assert phase2["status"] == "verified"
+    weighted_log = 0
+    for row in rows("phase2.csv"):
+        cycles = int(row["candidate_cycles"])
+        assert cycles == phase2["cases"][row["case"]]["cycles"]
+        speedup = int(row["baseline_cycles"]) / cycles
+        assert math.isclose(speedup, float(row["speedup"]), rel_tol=1e-10)
+        weighted_log += float(row["weight"]) * math.log(speedup)
+    assert math.isclose(math.exp(weighted_log), phase2["score"] / 1000, rel_tol=1e-10)
+    controls_source = (ROOT / "evidence/update-20261010/iteration-2.md").read_text()
+    for row in rows("ventus-controls-05b.csv"):
+        for key in ("prefill", "decode"):
+            assert row[key] in controls_source, (row, key)
+    assert "evidence/phase2.csv" in text
+    assert "evidence/ventus-controls-05b.csv" in text
     assert "evidence/trajectory.csv" in text
-    print(f"Validated {len(citations)} citations, {len(labels)} labels, three data tables.")
+    assert not any(key.startswith("ventus-") for key in bibitems)
+    print(f"Phase 2 aggregate speedup: {math.exp(weighted_log):.6f}")
+    print(f"Validated {len(citations)} citations, {len(labels)} labels, five data tables.")
 
 
 if __name__ == "__main__":

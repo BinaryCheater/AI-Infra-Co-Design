@@ -1,0 +1,29 @@
+{
+  "status": "verified",
+  "score": 7017.319212825204,
+  "model": "phase-two-compact-v2",
+  "source_sha256": "e636eb550dfb9f326f252010f9667778e7bb5c00ce9060ea2fbf3a28b9cf4d19",
+  "cases": {
+    "a-p": {
+      "cycles": 28836408,
+      "program_sha256": "cfd26668aa0dc2e966457a4c6ca97e7f7df8d00900e08663b9c7419e797feffc"
+    },
+    "w-d1": {
+      "cycles": 6732470,
+      "program_sha256": "9486fc2c9b51eb907d54a028c3d73d6b555a557ea9811fdfc4f30d1fcf7b3365"
+    },
+    "w-d16": {
+      "cycles": 8109251,
+      "program_sha256": "5f749dcb751d4f3f4c9d3fb395b78064b13863bf3f5bf472892ed8397991a021"
+    },
+    "w-d4l": {
+      "cycles": 14069101,
+      "program_sha256": "01eb14b7f3c3ac040760cef60574979de18711753e43567c2a110cf1e8631eec"
+    },
+    "w-p": {
+      "cycles": 22415366,
+      "program_sha256": "8ae500ac6d8ec56bd7722e02e9f17b59bf2f4d728fa91c520fc6f4e307cf78a6"
+    }
+  },
+  "message": "Private-seed verification passed"
+}

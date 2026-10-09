@@ -68,20 +68,24 @@ Hardware and boundary mode are shared, while programs differ across scenarios. T
 This finite model is an exact optimizer of its supplied table. Its purpose is to make the boundary decision and accounting explicit. Scaling to a large family replaces parts of the table with factorized resource and event constraints, and generates additional variants as needed. Doing so changes the computational representation while retaining the shared implementation identities. A boundary experiment would populate these coefficients from generated software and hardware; the empirical studies in Section~\ref{sec:evaluation} retain their existing instruction interface.
 
 \section{Empirical Definitions and Source Records}\label{app:evidence}
-The accompanying artifact stores the public source reports and comments as retrieved on October 9, 2026, alongside machine-readable data used in the figures. These are frozen report snapshots, not a substitute for executable experiment packages. The source reports identify the underlying branches and available reproduction material. No new accelerator simulation is required to reproduce the manuscript figures.
+The accompanying artifact retains versioned reports, iteration notes, complete-run summaries, and the programmable benchmark's verified result. New evidence records supplement the earlier snapshots without replacing them. Numerical tables reproduce the plotted values without rerunning accelerator search. The evidence directory records source locations and the scope of each evaluator.
 
-\textbf{Controlled study.}
-The objectives in Figure~\ref{fig:controlled}b are the maximum normalized cycles across two prefill or two decode scenarios. In the order baseline, software-only, hardware-only, software-first, joint, and alternating, the prefill values are
-$1$, $0.995747$, $0.908609$, $0.895792$, $0.891559$, and $0.891559$.
-The decode values are
-$1$, $0.816048$, $0.949019$, $0.813232$, $0.779915$, and $0.779915$.
-The relative gain over software-first is $(r_{\mathrm{seq}}-r_{\mathrm{joint}})/r_{\mathrm{seq}}$.
-The source is the controlled study~\cite{ventus-controlled}, with the snapshot retaining its update timestamp.
+\textbf{Programmable benchmark.}
+The five scenarios are W-P, A-P, W-D1, W-D16, and W-D4L. W uses two layers, width 1536, 12 heads, and FFN width 6144; A uses two layers, width 512, eight heads, and FFN width 2048. Prefill lengths are 256 and 2048. The decode cases use batch/context pairs $(1,4096)$, $(16,256)$, and $(4,4096)$ for four steps. The shared hardware satisfies a 100-unit area limit and modeled power limits of 34\,W over 100 cycles and 26\,W over 10,000 cycles.
 
-The study's acquisition domain contains 735 hardware profiles; seven configurations form the final evaluated selection menu. The report records 584 newly completed native evaluations and approximately 149.7 minutes of campaign wall time. Cache reuse and historical receipts increase the final data index to 1568 entries; that count is not the number of new simulations. The final menu's zero MIP gap describes its selection model. Representative-program aggregation, sampled decode steps, and ideal resource replication define the whole-network estimate.
+Frozen baseline cycles are 187689274, 374856358, 27068433, 42358913, and 70439292. The verified candidate cycles are 22415366, 28836408, 6732470, 8109251, and 14069101. With weights $1/4$, $1/4$, $1/6$, $1/6$, and $1/6$, the aggregate is
+\[
+ \exp\!\left(\sum_w \omega_w\log\frac{L_w^{\mathrm{ref}}}{L_w}\right)=7.017319.
+\]
+The frozen result uses model \texttt{phase-two-compact-v2} and passes private-seed verification. The reported cycles describe the simulated target, independently of host evaluation time.
 
-\textbf{Tiling trajectory.}
-Figure~\ref{fig:trajectory} uses the earlier accepted prefill objective 0.367 from the issue body, N3's rounded objective 0.342 from comment 6077807611, and N4's 0.3417 from comment 6077879211~\cite{ventus-tiling}. These are successive accepted designs, not equal-budget policy trials. The N4 ratios are $0.3417$, $0.3308$, $0.2953$, and $0.2719$; its estimated area is 1.0812\,mm$^2$. The figure preserves the precision available in each source entry.
+\textbf{Ventus controls and complete runs.}
+Figure~\ref{fig:controlled}b uses second-iteration slice estimates in the accompanying control table. The baseline estimates are 1.0019 and 1.0037; their small deviations from one reflect the slice evaluator. Software-first and joint selection tie at 0.3656/0.2789. Complete runs of the selected designs give 0.3669/0.2791 before the third iteration improves prefill to 0.3417. Decode slices warm up the prior step's tail to represent continuous cache state.
 
-\textbf{Model fidelity and transfer.}
-The model study~\cite{ventus-model} uses complete Qwen instruction-timing runs and fixed-hardware transfer tests. Its software-only option remains the baseline software. The final configurations reported for transfer are the best designs among each task's specified controls, not necessarily the design labeled joint. GPT-2 small and Pythia-160M use FP16 software paths, whereas Qwen uses BF16. Their cycle ratios are normalized to the corresponding workload's own baseline, and are not pooled with the 14B calibrated study.
+The headline speedups are $1/0.3417=2.9265$ and $1/0.2791=3.5829$. Every selected scenario executes all layers and decode steps. The frozen 128-token baseline is reproduced directly; the historical 512-token baseline is extrapolated. The 128-token cases determine both headline task objectives. Full instruction timing does not imply full-network numerical inference: local replay and address/workload checks provide separate functional evidence.
+
+\textbf{Tiling trajectory and formulation changes.}
+Figure~\ref{fig:trajectory} preserves accepted complete-simulation prefill values 0.367, 0.342, and 0.3417. The last design has ratios 0.3417, 0.3308, 0.2953, and 0.2719 and estimated area 1.0812\,mm$^2$. The separate decode design has ratios 0.2791 and 0.2578 and estimated area 1.0848\,mm$^2$. Slice-based mechanism comparisons are identified separately from this complete-run trajectory. The three iteration records retain hardware reversions, software comparisons, the pairwise surrogate revision, and targeted exploration of the larger-tile family.
+
+\textbf{Storage and model fidelity.}
+The KV study covers one layer's append and 14 attention heads. Its 2,240 completed grid points evaluate ten hardware candidates and 56 software variants across the study's settings. Local quantization-error filtering uses separate calibration, selection, and final-check seeds; its thresholds do not measure whole-model quality. The model-fidelity study retains a separate evaluator and fixed-hardware GPT-2/Pythia transfer tests. Its ratios are normalized to each workload's own baseline. The two studies are interpreted independently of the headline timing experiments.

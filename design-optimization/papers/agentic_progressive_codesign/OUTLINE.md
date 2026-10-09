@@ -8,7 +8,7 @@ AI infrastructure design is a joint choice of algorithmic organization, executab
 
 1. A design-space formulation that distinguishes representation expansion, equivalent reformulation, and search restriction, and makes the software–hardware boundary a decision.
 2. A hierarchical construction and search method connecting algorithmic paradigms, tensor dependencies, implementation capabilities, MIP decisions, and paired lowering.
-3. Mechanism-centered Ventus case studies: conditional value of software transformations, gains over a one-pass design process, and the consequences of cost-model error.
+3. Preliminary benchmark and Ventus results: joint-design gains, conditional software value, formulation revision, constrained storage and execution feedback.
 
 The method is presented as a framework. The measured studies exercise bounded software/hardware choices and MIP-guided selection; they do not measure an autonomous end-to-end formulation agent or a newly synthesized ISA. Those distinctions belong in one evaluation-scope paragraph and a focused discussion, not repeated disclaimers.
 
@@ -19,7 +19,7 @@ The method is presented as a framework. The measured studies exercise bounded so
 3. Co-Design as Progressive Design-Space Construction: workload and design domain; realizable sets; model transformations; conditional dominance; movable boundaries.
 4. Constructing Coupled MIP Formulations: representation hierarchy; online-attention worked example; resource and timing encoding; joint boundary choices; paired software/hardware generation.
 5. Agent-Guided Reformulation and Search: typed actions; structural neighborhoods; decomposition; candidate retention; diagnosis and feedback; algorithm.
-6. Experimental Evaluation: setup and evidence levels; fusion preference reversal and controlled comparisons; tiling/register/cache coupling; model fidelity and transfer; synthesis of findings.
+6. Preliminary Results: experimental setting; benchmark and Ventus speedups; coupled choices and formulation revision; storage under latency constraints; execution feedback.
 7. Discussion and Limitations: coverage of modern algorithms; evaluation needed for frontier comparisons; hardware boundary experiments; amortization and portability.
 8. Conclusion.
 
@@ -30,9 +30,13 @@ Appendices: notation and linearization, a complete finite boundary-choice exampl
 1. Joint design and feedback: representation levels, formulation agent, candidate archive, solver, paired decoding, implementation evaluation.
 2. Attention: materialized matrices versus streaming state; connection from algorithm to storage/ports/engines.
 3. Movable boundary: software sequence, programmable instruction mechanism, and specialized data path.
-4. Empirical mechanism: fusion preference reversal and six controlled optimization strategies in the same study.
+4. Preliminary gains: five programmable-benchmark workloads and second-iteration Ventus 0.5B controls.
 5. Hierarchical expansion: the full-instruction-simulation trajectory and its software/hardware changes.
 
 ## Editorial constraints
 
-Write original English prose. Reuse the verification article's article-class format and argumentative order only. Do not import proof certificates, refinement-map theorems, or proof-cache experiments. Keep project administration, assignment instructions, researcher identities, and drafting history outside the article. Cite public experiment reports through stable source identifiers and include a data/provenance file. No performance result is invented, extrapolated across studies, or labeled as a physical measurement.
+Write original English prose. Reuse the verification article's article-class format and argumentative order only. Do not import proof certificates, refinement-map theorems, or proof-cache experiments. Keep project administration, assignment instructions, researcher identities, and drafting history outside the article. Keep experiment provenance in the evidence directory and appendix; reserve the bibliography for research papers. No performance result is invented, extrapolated across studies, or labeled as a physical measurement.
+
+## Results update October 10 2026
+
+Section 6 is Preliminary Results. Its sequence is experimental setting; 7.02× programmable-benchmark and 2.93×/3.58× Ventus gains; coupled software/hardware choices and formulation revision; constrained KV storage; execution feedback and model fidelity. The benchmark and controlled 0.5B comparisons replace the 14B-focused main figure. Appendix C defines denominators, evaluator scope and source records. Verification performance remains in the companion work.
