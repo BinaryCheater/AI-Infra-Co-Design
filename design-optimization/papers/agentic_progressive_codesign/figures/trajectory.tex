@@ -1,0 +1,9 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[width=.89\linewidth,height=5.6cm,ymin=0,ymax=.45,ytick={0,.1,.2,.3,.4},ylabel={Prefill worst normalized cycles},symbolic x coords={Earlier,N3,N4},xtick=data,xticklabels={Earlier accepted design,New tile + hardware,L2 variant},enlarge x limits=.2,ybar,bar width=35pt,nodes near coords,point meta=y,nodes near coords style={font=\footnotesize},every node near coord/.append style={/pgf/number format/fixed,/pgf/number format/precision=4},tick label style={font=\footnotesize},label style={font=\footnotesize},ymajorgrids,grid style={gray!15}]
+\addplot[fill=blueedge!65,draw=blueedge] table[x=design,y=prefill,col sep=comma] {figures/data/trajectory.csv};
+\end{axis}
+\end{tikzpicture}
+\caption{Accepted-design trajectory from complete instruction simulations. Introducing the larger-tile kernel and a matching register/tensor/cache configuration expands the available combination; an L2 variation then changes the selected hardware. The values are rounded as reported. This trajectory illustrates design evolution, rather than a controlled ablation of individual changes.}\label{fig:trajectory}
+\end{figure}

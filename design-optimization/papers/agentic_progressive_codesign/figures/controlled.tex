@@ -1,0 +1,14 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[width=6.7cm,height=5.7cm,ybar,bar width=14pt,ymin=0,ymax=15,ytick={0,5,10,15},ylabel={Speedup over baseline},symbolic x coords={W-P,A-P,W-D1,W-D16,W-D4L},xtick=data,x tick label style={rotate=25,anchor=east},enlarge x limits=.15,title={(a) Programmable architecture benchmark},title style={font=\small},tick label style={font=\scriptsize},label style={font=\footnotesize},nodes near coords,nodes near coords style={font=\scriptsize},every node near coord/.append style={/pgf/number format/fixed,/pgf/number format/precision=2},ymajorgrids,grid style={gray!15}]
+\addplot[fill=blueedge!70,draw=blueedge] table[x=label,y=speedup,col sep=comma] {figures/data/phase2.csv};
+\end{axis}
+\begin{axis}[at={(8.4cm,0)},anchor=south west,width=7.1cm,height=5.7cm,xbar,bar width=7pt,xmin=0,xmax=1.06,xtick={0,.25,.5,.75,1},xlabel={Worst normalized cycles},symbolic y coords={Joint,SW then HW,HW only,SW only,Baseline},ytick=data,enlarge y limits=.15,title={(b) Ventus Qwen2.5-0.5B controls},title style={font=\small},tick label style={font=\scriptsize},label style={font=\footnotesize},legend style={font=\scriptsize,at={(.5,-.32)},anchor=north,legend columns=2,draw=none},xmajorgrids,grid style={gray!15}]
+\addplot[fill=blueedge!70,draw=blueedge] table[x=prefill,y=method,col sep=comma] {figures/data/ventus-controls-05b.csv};
+\addplot[fill=greenedge!65,draw=greenedge] table[x=decode,y=method,col sep=comma] {figures/data/ventus-controls-05b.csv};
+\legend{Prefill,Decode}
+\end{axis}
+\end{tikzpicture}
+\caption{Preliminary co-design results. (a) One hardware configuration serves five complete Transformer scenarios and attains a $7.02\times$ weighted geometric-mean speedup. Higher is better. (b) Second-iteration Ventus controls use the same slice evaluator and area budget; varying both software and hardware improves over changing either alone. Lower is better. Complete runs confirm the selected task results; the third iteration further improves prefill to $2.93\times$.}\label{fig:controlled}
+\end{figure}

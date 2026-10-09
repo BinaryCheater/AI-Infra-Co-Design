@@ -1,0 +1,52 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.88in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs,array,longtable}
+\usepackage{graphicx,tikz,pgfplots}
+\usetikzlibrary{arrows.meta,positioning,calc,fit}
+\pgfplotsset{compat=1.18}
+\usepackage{xcolor,microtype,enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,citecolor=blue!45!black,urlcolor=blue!45!black,pdftitle={Agentic Progressive Optimization for Hardware-Software Co-Design of AI Infrastructure}}
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{2em}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\textfraction}{0.10}
+\renewcommand{\floatpagefraction}{0.80}
+\setlist[itemize]{topsep=3pt,itemsep=2pt,leftmargin=1.5em}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,leftmargin=1.8em}
+\newtheorem{proposition}{Proposition}
+\newcommand{\cD}{\mathcal D}
+\newcommand{\cW}{\mathcal W}
+\newcommand{\cF}{\mathcal F}
+\newcommand{\cR}{\mathcal R}
+\newcommand{\ind}{\mathbf 1}
+\definecolor{ink}{HTML}{26364B}
+\definecolor{softblue}{HTML}{EDF3FA}
+\definecolor{softpurple}{HTML}{F2EFF7}
+\definecolor{softgreen}{HTML}{EDF5F0}
+\definecolor{blueedge}{HTML}{527FB1}
+\definecolor{purpleedge}{HTML}{776292}
+\definecolor{greenedge}{HTML}{42846A}
+\tikzset{block/.style={draw=blueedge,fill=softblue,rounded corners=2pt,line width=.65pt,align=center,font=\footnotesize,inner sep=5pt},agent/.style={block,draw=purpleedge,fill=softpurple},eval/.style={block,draw=greenedge,fill=softgreen},flow/.style={-{Stealth[length=2mm]},draw=ink,line width=.7pt},feedback/.style={flow,dashed,draw=greenedge},labeltext/.style={font=\scriptsize,align=center,fill=white,inner sep=2pt}}
+\title{Agentic Progressive Optimization for Hardware--Software Co-Design of AI Infrastructure}
+\author{Research manuscript}
+\date{October 10, 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+A software optimization can become worthwhile only after the hardware changes. Larger tiles need sufficient registers, fusion changes storage lifetimes, and reuse depends on the memory system's ability to serve concurrent work. Designing AI infrastructure therefore requires choosing algorithms, programs, interfaces, and hardware together. It also requires a representation that makes useful combinations available to the optimizer. We develop Agentic Progressive Co-Design around an evolving mixed-integer program (MIP). Agents enrich coarse computation graphs with tensor dependencies and implementation alternatives, introduce software--hardware boundary choices, and restructure the resulting formulation to make coupled search tractable. One assignment specifies both a program and its matching hardware configuration; execution feedback guides which alternatives to retain and which model assumptions to revise. Streaming attention and programmable transfer mechanisms illustrate how the formulation connects algorithmic choices to hardware cost and capability. Preliminary experiments achieve a $7.02\times$ aggregate speedup on a programmable architecture benchmark and $2.93\times$ prefill and $3.58\times$ decode speedups on the open-source Ventus GPU architecture. Controlled comparisons show gains from optimizing either software or hardware, with larger gains when both can change. Hardware changes make previously unfavorable tiling and attention mappings useful, while model revisions expose additional beneficial combinations. These results motivate a design process that revisits earlier choices as its representation becomes more expressive, while allocating search effort to the interactions that determine implementation quality.
+\end{abstract}
+\input{sections/01-introduction}
+\input{sections/02-related}
+\input{sections/03-design-space}
+\input{sections/04-formulation}
+\input{sections/05-search}
+\input{sections/06-evaluation}
+\input{sections/07-discussion}
+\input{references}
+\appendix
+\input{sections/08-appendix}
+\end{document}

@@ -1,0 +1,21 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,block/.append style={font=\sffamily\scriptsize},eval/.append style={font=\sffamily\scriptsize}]
+\node[font=\small\bfseries,anchor=west] at (0,3.75) {(a) Materialized attention};
+\node[block,text width=1.65cm,minimum height=.8cm] (qk) at (1,2.8) {$QK^\top$};
+\node[block,text width=2.05cm,minimum height=.8cm] (s) at (3.6,2.8) {Score matrix\\$N_q\times N_k$};
+\node[block,text width=1.65cm,minimum height=.8cm] (soft) at (6.3,2.8) {Softmax};
+\node[block,text width=2.05cm,minimum height=.8cm] (p) at (9,2.8) {Probability matrix\\$N_q\times N_k$};
+\node[block,text width=1.65cm,minimum height=.8cm] (pv) at (11.7,2.8) {$PV$};
+\foreach \s/\d in {qk/s,s/soft,soft/p,p/pv}{\draw[flow] (\s.east)--(\d.west);}
+\node[font=\small\bfseries,anchor=west] at (0,1.75) {(b) Streaming family};
+\node[block,text width=2.1cm,minimum height=.95cm] (load) at (1.3,.8) {Load $Q_I,K_J,V_J$\\Choose tiles and buffers};
+\node[block,text width=2.1cm,minimum height=.95cm] (score) at (4.2,.8) {Compute score tile\\$B_q\times B_k$};
+\node[eval,text width=3cm,minimum height=.95cm] (state) at (7.6,.8) {Update $m,\ell,Z$\\Rescale old state;\\accumulate current block};
+\node[block,text width=2.1cm,minimum height=.95cm] (out) at (11.2,.8) {Normalize $Z$\\Write $O_I$};
+\foreach \s/\d in {load/score,score/state,state/out}{\draw[flow] (\s.east)--(\d.west);}
+\draw[flow] (state.south)--(7.6,-.22)--node[labeltext,below]{next key block; preserve running state}(1.3,-.22)--(load.south);
+\node[font=\footnotesize,align=center,text width=13cm] at (6.4,-1.08) {Algorithm choice changes live storage and transfers. Hardware capacity, ports, and execution resources determine which tile and overlap choices are feasible.};
+\end{tikzpicture}
+\caption{Exposing an algorithmic alternative requires new state and dependencies. The streaming recurrence avoids full intermediate matrices, while tile sizes, input reuse, buffering, and hardware support remain joint decisions.}\label{fig:attention}
+\end{figure}

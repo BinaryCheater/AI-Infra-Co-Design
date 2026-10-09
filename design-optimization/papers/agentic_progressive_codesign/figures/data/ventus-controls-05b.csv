@@ -1,0 +1,6 @@
+method,prefill,decode
+Baseline,1.0019,1.0037
+SW only,0.8581,0.9015
+HW only,0.4409,0.4325
+SW then HW,0.3656,0.2789
+Joint,0.3656,0.2789

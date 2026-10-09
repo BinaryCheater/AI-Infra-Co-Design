@@ -1,0 +1,33 @@
+\begin{figure}[!t]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm,every node/.append style={font=\sffamily\scriptsize}]
+\node[block,font=\sffamily\scriptsize,text width=3.1cm,minimum height=1.1cm] (w) at (1.65,8.2) {\textbf{Workload semantics}\\Outputs, shapes, precision};
+\node[block,font=\sffamily\scriptsize,text width=3.1cm,minimum height=1.1cm] (a) at (1.65,6.5) {\textbf{Algorithmic choices}\\Materialize, stream, recompute};
+\node[block,font=\sffamily\scriptsize,text width=3.1cm,minimum height=1.1cm] (t) at (1.65,4.8) {\textbf{Tensor execution}\\Tiles, layouts, live state};
+\node[block,font=\sffamily\scriptsize,text width=3.1cm,minimum height=1.1cm] (b) at (1.65,3.1) {\textbf{Instruction interface}\\Primitives and completion};
+\node[block,font=\sffamily\scriptsize,text width=3.1cm,minimum height=1.1cm] (h) at (1.65,1.4) {\textbf{Hardware structure}\\Engines, storage, ports};
+\foreach \s/\d in {w/a,a/t,t/b,b/h}{\draw[flow] (\s.south)--(\d.north);}
+\node[agent,font=\sffamily\scriptsize,text width=6cm,minimum height=1.25cm] (agent) at (7.35,8.2) {\textbf{Formulation agent}\\Expand representations; expose dependencies\\Reformulate, decompose, revisit};
+\node[agent,font=\sffamily\scriptsize,text width=3.4cm,minimum height=1.25cm] (archive) at (12.6,8.2) {\textbf{Design archive}\\Alternatives and incumbents\\Conditional knowledge};
+\draw[flow,<->] (agent.east)--(archive.west);
+\node[agent,font=\sffamily\scriptsize,text width=6cm,minimum height=1.25cm] (mip) at (7.35,5.9) {\textbf{Active MIP}\\Algorithm + program + boundary + hardware\\Coupled resources, timing, and costs};
+\draw[flow] (agent.south)--node[labeltext,right]{construct / revise}(mip.north);
+\draw[flow] (t.east)--(3.95,4.8)--(3.95,5.9)--(mip.west);
+\node[labeltext,anchor=east] at (4.05,5.45) {expose\\structure};
+\node[block,font=\sffamily\scriptsize,text width=3.4cm,minimum height=1.25cm] (solver) at (12.6,5.9) {\textbf{Optimization solver}\\Assignments and bounds\\Search diagnostics};
+\draw[flow,<->] (mip.east)--(solver.west);
+\draw[feedback] (solver.north)--(archive.south);
+\node[block,font=\sffamily\scriptsize,text width=6cm,minimum height=.8cm] (decode) at (7.35,4) {\textbf{One assignment, two lowering paths}};
+\draw[flow] (mip.south)--(decode.north);
+\node[block,font=\sffamily\scriptsize,text width=2.65cm,minimum height=1.05cm] (sw) at (5.7,2.6) {\textbf{Software}\\Program, buffers,\\synchronization};
+\node[block,font=\sffamily\scriptsize,text width=2.65cm,minimum height=1.05cm] (hw) at (9,2.6) {\textbf{Hardware}\\Components, connections,\\interface};
+\draw[flow] (decode.south)--++(0,-.22)-|(sw.north);
+\draw[flow] (decode.south)--++(0,-.22)-|(hw.north);
+\node[eval,font=\sffamily\scriptsize,text width=9.5cm,minimum height=.9cm] (eval) at (9,.7) {\textbf{Implementation evaluation}\\Functional eligibility; execution and traffic; synthesis cost};
+\draw[flow] (sw.south)--++(0,-.35)-|(eval.north);
+\draw[flow] (hw.south)--(eval.north);
+\draw[feedback] (eval.east)--(14.7,.7)--(14.7,9.6)--(7.35,9.6)--(agent.north);
+\node[labeltext] at (10.95,9.6) {model mismatch and design evidence};
+\end{tikzpicture}
+\caption{The proposed co-design loop. Representation levels on the left expose selected implementation choices; they do not prescribe an irreversible lowering order. Agents expand design capability and concentrate search. The same assignment determines software and hardware, and implementation evidence returns to the formulation policy.}\label{fig:framework}
+\end{figure}

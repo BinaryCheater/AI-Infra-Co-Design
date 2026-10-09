@@ -1,0 +1,105 @@
+\section{Constructing Coupled MIP Formulations}\label{sec:construction}
+\subsection{From computation graphs to implementation families}
+Figure~\ref{fig:framework} shows the proposed organization. A representation hierarchy connects workload semantics to algorithmic organizations, tensor programs, instruction interfaces, and hardware structure. The hierarchy supports local detail: a region whose performance is well characterized can remain a compact implementation family while a contentious region exposes its transfers, buffers, and individual resource demands.
+
+\input{figures/framework}
+
+A \emph{family} is a parameterized implementation recipe. It specifies the computation it covers, external inputs and outputs, internal index and reduction structure, required capabilities, resource demand, and software and hardware lowering hooks. Parameters can include tile shape, buffering depth, layout, execution order, and instruction mechanism. Families can come from an established algorithmic library, compiler transformations, semantics-driven synthesis, or agent proposals admitted by the functional acceptance interface.
+
+The agent's task includes identifying when the current families omit a relevant optimization paradigm. A model with only independent matrix multiplications cannot discover cross-operator streaming by adjusting their durations. A family must first expose the state and ordering that realize streaming. Hardware generation follows the same principle: choosing a specialized epilogue requires a component description and a corresponding program interface. A name attached to a binary decision variable does not supply its implementation.
+
+Representation refinement therefore has two outputs. It adds executable structures, and it adds the relationships needed to price and constrain their combinations. Moving from graph-level edges to tensor slices reveals which values can be consumed early, which must remain live, and which can be recomputed. Moving from aggregate bandwidth to ports and queues reveals whether the proposed overlap is achievable. These relationships are the inputs to MIP construction.
+
+\subsection{Worked example: exposing streaming attention}\label{sec:attention}
+Consider one attention head with query length $N_q$, key length $N_k$, and feature dimension $d$:
+\begin{equation}
+ O=\operatorname{softmax}\!\left(QK^\top/\sqrt d+M\right)V,\label{eq:attention}
+\end{equation}
+where $M$ is a mask and every output row has at least one unmasked key. A graph-level implementation may materialize both scores and probabilities. A streaming family partitions queries into row blocks $I$ and keys/values into blocks $J$. Its state contains a running row maximum $m$, normalization denominator $\ell$, and unnormalized output accumulator $Z$. For a score block $S=Q_IK_J^\top/\sqrt d+M_{IJ}$, the update is
+\begin{align}
+ m' &= \max(m,\operatorname{rowmax}(S)), &
+ \alpha &= \exp(m-m'), \nonumber\\
+ P &= \exp(S-m'), &
+ \ell' &= \alpha\odot\ell+\operatorname{rowsum}(P),\label{eq:online}\\
+ Z' &= \operatorname{diag}(\alpha)Z+PV_J.\nonumber
+\end{align}
+After the final key block, $O_I=\operatorname{diag}(\ell)^{-1}Z$. For each row, its first block containing an unmasked key initializes the state; blocks with no valid contribution leave that row's state unchanged. This is the established online-attention organization underlying IO-aware attention~\cite{flashattention}; it is an example of a family to introduce, not a new attention identity.
+
+The representation now exposes dependencies hidden inside the softmax node. Updating $Z$ requires both the previous accumulator and the new rescaling factor. A score tile can be released after its contribution to normalization and output is complete. The output accumulator remains live across key blocks. Loading the next $K,V$ block can overlap computation only when storage, transfer slots, and completion semantics support it. Work partitioning can further trade occupancy against shared-memory traffic, as illustrated by FlashAttention-2~\cite{flashattention2}.
+
+\input{figures/attention}
+
+For a tile with $B_q$ query rows and $B_k$ key rows, a conservative local working-set estimate is
+\begin{equation}
+ B_{\mathrm{local}}=
+ s_QB_qd+\nu(s_K+s_V)B_kd+s_SB_qB_k+s_ZB_qd
+ +2s_rB_q,\label{eq:attention-storage}
+\end{equation}
+where $s_*$ are byte widths, $\nu$ is the number of buffered $K,V$ blocks, and $s_r$ is the running-statistic width. This expression assumes one score/probability buffer reused in place and excludes backend-specific scratch, alignment, and register spills, which the implementation family adds. Alternative reuse schedules produce different signatures. Byte counts should be distributed across the actual memory levels rather than charged to a single capacity if the lowering separates registers and shared memory.
+
+For a fixed-query-block loop order, the $K,V$ stream is traversed once per query block unless another level captures reuse. Hence reducing intermediate materialization does not imply that all input traffic is read once. Query grouping, cache behavior, and buffer capacity remain optimization decisions. At fixed tile and hardware modes, the storage and traffic expressions become coefficients; their joint selection remains in the MIP.
+
+This example defines a progression from a coarse operator graph to an algorithmic family and then a resource-constrained execution structure. It also gives a concrete expressiveness test: the representation should generate both materialized and streaming variants and allow the optimizer to select between them under different resource budgets.
+
+\subsection{A finite linear encoding of coupled choices}\label{sec:encoding}
+We give a compact encoding for a bounded design domain. Let $u$ index required semantic units, $r$ candidate regions, $c\in C_r$ their implementations, $i$ hardware slots, and $p\in P_i$ configurations for each slot. A slot may denote an engine, a memory component, or a parameterized subsystem. Local nonlinear expressions are evaluated for finite parameter combinations or represented with explicit linearization. They are not inserted into the MILP as unresolved products of design variables.
+
+\textbf{Coverage and selection.}
+Let $q_{rc}\in\{0,1\}$ select an implementation. For candidate regions covering a common semantic decomposition,
+\begin{equation}
+ \sum_{r,c:\,u\in\operatorname{cover}(r,c)}q_{rc}=1,
+ \qquad \sum_{c\in C_r}q_{rc}\le1.\label{eq:cover}
+\end{equation}
+These constraints select a nonoverlapping cover. Algebraically different organizations need a preceding family selection: each selected family activates its own internal decomposition. A materialized softmax graph and an online-state recurrence must not be forced to share artificial one-to-one internal nodes. Their common interface is the attention result, while their internal constraints are conditional on the selected family.
+
+\textbf{Hardware supply and implementation compatibility.}
+Let $y_{ip}\in\{0,1\}$ select at most one configuration per slot, with $\sum_{p\in P_i}y_{ip}\le1$; an explicit absent mode can instead complete a one-hot selection. Resource supply and area can be written
+\begin{equation}
+ \operatorname{Cap}_h(y)=\sum_{i,p}K_{iph}y_{ip},\qquad
+ A(y,b)=A_0+\sum_{i,p}A_{ip}y_{ip}+\sum_{j,\mu}A^{B}_{j\mu}b_{j\mu}.
+ \label{eq:supply}
+\end{equation}
+The component partition assigns each physical cost once; boundary-specific controller area is excluded from $A_{ip}$ if it appears in $A^B$. Shared components are selected globally. For a required capability $g$, a selected implementation satisfies
+\begin{equation}
+ q_{rc}\le\sum_{i,p:\,g\in\operatorname{cap}(i,p)}y_{ip}.\label{eq:capability}
+\end{equation}
+This establishes presence. Binding and cumulative demand constraints determine whether that capability has enough instances and service capacity. If placement or topology matters, bindings identify the instance that executes each operation, and transfers must connect its producer and consumer memories.
+
+\textbf{Timing and shared resources.}
+For a time-indexed formulation, $x_{rct}=1$ starts implementation $(r,c)$ at tick $t$, with $\sum_t x_{rct}=q_{rc}$. Its duration $d_{rc}$ and resource profile $U_{rch}(\delta)$ are fixed for that implementation mode. Then
+\begin{equation}
+ \sum_{r,c,t}U_{rch}(\tau-t)x_{rct}
+ \le \operatorname{Cap}_h(y) \quad\text{for every }h,\tau.\label{eq:resource}
+\end{equation}
+The profile can include overlapping compute, transfer, and epilogue stages. A hardware choice that changes latency must select a corresponding performance mode; it cannot silently change a coefficient after optimization. When contention changes operation order, the formulation introduces event ordering or a scheduling subproblem instead of assuming a fixed isolated duration captures that interaction.
+
+Let $s_r=\sum_{c,t}t x_{rct}$ and $f_r=\sum_{c,t}(t+d_{rc})x_{rct}$. If selected producer $r$ and consumer $r'$ exchange a value, their activation variable $g_{rr'}$ enables
+\begin{equation}
+ s_{r'}\ge f_r+\delta_{rr'}-H(1-g_{rr'}),\label{eq:precedence}
+\end{equation}
+where $\delta_{rr'}$ is an explicitly charged transfer or visibility delay and $H$ is a valid bound for deactivation. The activation is linked to both selected endpoints and the chosen data path. Fusion can remove an external transfer while retaining its internal dependency. Streaming permits tile-level consumers to start before the whole region completes, using tile events instead of this coarse edge.
+
+\textbf{Storage, ports, and overlap.}
+A value-residency variable $\ell_{v\tau}$ is linked to the production and last consumption of value $v$. For fixed-size value objects,
+\begin{equation}
+ \sum_v B_v\ell_{v\tau}+\sum_{r,c,t}S_{rc}(\tau-t)x_{rct}
+ \le\operatorname{Cap}_{\mathrm{mem}}(y),\label{eq:storage}
+\end{equation}
+where $S_{rc}$ accounts for internal scratch not already counted as external values. The compiler determines which operands occupy registers, shared memory, or external storage, and analogous inequalities apply separately to each level. Port demand and outstanding transfers consume separate resources. Two buffers create room for overlap; they do not establish that the ports or queues can sustain it.
+
+\textbf{Objectives and multiple scenarios.}
+For each scenario, $L_w$ bounds the completion of its required outputs, including final visibility. With the objective in Equation~\eqref{eq:objective}, a linear epigraph uses $T\ge L_w/L_w^{\mathrm{ref}}$ and minimizes $T$. Each scenario has its own program variables and shares $y,b$. Area and configuration limits constrain the common machine. Dynamic energy requires per-action or activity-aware coefficients; variable power multiplied by variable runtime requires another linearization or external evaluation. Clock frequency must likewise be fixed or tied to an evaluated hardware mode when comparing time rather than cycles.
+
+\subsection{Encoding movable boundaries}\label{sec:boundary-example}
+Figure~\ref{fig:boundary} illustrates a transfer mechanism. Software-controlled blocking loads, a programmable asynchronous interface, and a specialized streaming controller can implement the same data-flow requirement. They expose different choices to the program and consume different hardware resources.
+
+\input{figures/boundary}
+
+An asynchronous implementation family requires the corresponding boundary mode, a compatible transfer engine, enough in-flight slots, and a buffer lifetime spanning completion. A specialized controller may reduce repeated instruction issue but accept only particular traversal patterns. The model links these choices with implications such as $q_{rc}\le\sum_{\mu\in M_{rc}}b_{j\mu}$ and resource constraints for every active transfer. Choosing a mode also selects its lowering recipe. For instance, a programmable mode emits completion events and waits; a controller mode emits configuration and invocation commands.
+
+The same construction applies to reductions, layout conversion, or fused epilogues. Hardware specialization pays a shared area cost, whereas software retains freedom at a recurring instruction and scheduling cost. The optimization compares these costs across all required scenarios. Appendix~\ref{app:boundary} gives a complete finite encoding of this choice, including configuration-dependent execution costs.
+
+\subsection{Decoding one assignment into paired implementations}
+The decoder creates a software execution plan and a hardware configuration from the same selected objects. The execution plan specifies loop structure, addresses, buffer ownership, transfers, resource bindings, and synchronization. The hardware description specifies component instances, capacities, connections, and enabled interface mechanisms. A common identifier binds each emitted instruction capability to the implementing component.
+
+For a parameterized existing architecture, the hardware output is a configuration of that generator. For a new boundary mechanism, the implementation library must also provide its controller or data path. The software backend cannot assume a mechanism that the hardware generator does not instantiate. Compilation then provides actual register and scratch requirements, which may differ from estimates used in the first model. Execution and synthesis return timing and implementation costs for the same paired design. These results close the loop by updating the family coefficients or exposing a missing constraint.

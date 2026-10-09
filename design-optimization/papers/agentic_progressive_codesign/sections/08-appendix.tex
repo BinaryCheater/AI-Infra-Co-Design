@@ -1,0 +1,91 @@
+\section{Notation and Linearization}\label{app:encoding}
+Table~\ref{tab:notation} summarizes the objects used in the formulation. All finite ranges, time horizons, and coefficient versions are part of a model instance.
+
+\begin{table}[htbp]
+\centering\small
+\begin{tabular}{p{.20\linewidth}p{.72\linewidth}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$\cW,\cD_W$ & Required deployment scenarios and feasible bounded implementation domain \\
+$R_k,\cF_k,\cR_k$ & Active representation, feasible assignments, and decoded realizable designs \\
+$a,p,m,\sigma$ & Algorithmic organization, program, mapping, and execution organization \\
+$h,b$ & Shared hardware structure and software-visible boundary choices \\
+$q_{rc},x_{rct}$ & Implementation selection and time-indexed start decisions \\
+$y_{ip},b_{j\mu}$ & Hardware-slot configuration and boundary-mode selection \\
+$U_{rch},S_{rc}$ & Local resource-demand and internal-scratch profiles \\
+$\ell_{v\tau},B_v$ & Value residency and fixed byte footprint \\
+$L_w,\widehat J,J$ & Scenario latency, modeled objective, and target evaluator objective \\
+\bottomrule
+\end{tabular}
+\caption{Main notation. A symbol denoting a program $p$ is distinct from the configuration index $p\in P_i$ in hardware-slot sums.}\label{tab:notation}
+\end{table}
+
+\textbf{Logical conjunction.}
+For binary selections $q,y$, an auxiliary $z=q\land y$ is encoded by
+\begin{equation}
+ z\le q,\quad z\le y,\quad z\ge q+y-1,\quad z\ge0.
+\end{equation}
+This is useful for configuration-dependent duration or energy coefficients. It enumerates local interactions without requiring an opaque candidate for every whole-system combination.
+
+\textbf{Binary--continuous products.}
+For $z=qv$ with $q\in\{0,1\}$ and known bounds $L\le v\le U$, the exact linearization is
+\begin{equation}
+ Lq\le z\le Uq,\qquad v-U(1-q)\le z\le v-L(1-q).
+\end{equation}
+Tight bounds matter for relaxation strength. A generic large constant can make a valid model unnecessarily difficult to solve.
+
+\textbf{Residency.}
+Residency variables cannot be free capacity switches. For a selected implementation, they are constrained to remain active from production or preallocation until every required consumer completes. One finite encoding enumerates allowed start/last-use pairs and derives the active interval; another uses production and release events with cumulative conservation. Aliasing and buffer reuse require nonoverlapping live ranges or explicit ordering. Internal scratch and exported values must not be counted twice.
+
+\textbf{Configuration-dependent timing.}
+A single duration coefficient is valid only for the hardware conditions under which it was defined. A finite $(\text{implementation},\text{hardware mode})$ table can use conjunction variables. A factorized model instead represents the relevant service capacities explicitly and derives event times. The former is compact when interactions are local; the latter is needed when relative order and interference change with the configuration.
+
+\textbf{Conditional families.}
+Suppose an attention region has family selectors $g_{\mathrm{mat}},g_{\mathrm{stream}}$ summing to one. Each internal operation $u$ belonging to family $a$ satisfies $\sum_{r,c:\,u\in\operatorname{cover}_a(r,c)}q_{rc}=g_a$. The selected family exports the same region-level inputs and output. Transfers and lifetimes are internal to that family except for shared external values. This avoids treating an online recurrence as a cover of intermediate tensors that it intentionally does not materialize.
+
+\section{A Complete Finite Boundary-Choice Model}\label{app:boundary}
+Consider a region that must transfer and consume $N$ tiles in each workload scenario. Let $\mathcal H$ be a finite set of machine configurations and $\mathcal M=\{\mathrm{sw},\mathrm{async},\mathrm{ctrl}\}$ the permitted transfer-control modes. Each hardware/mode pair has a generator and compiler interface. Let $\mathcal C_w$ contain software variants with fixed tile sizes, traversal order, and buffering depth for scenario $w$.
+
+The coefficients are: shared area $A_h$, incremental mode area $A^B_{h\mu}$, compatibility $K_{wh\mu c}\in\{0,1\}$, and evaluated or modeled latency $t_{wh\mu c}$. The mode-area coefficient includes only components not already counted in $A_h$. Compatibility includes numerical eligibility, supported traversal, live storage, resource demand, and interface support. Thus a specialized controller may support fewer variants than the programmable mode.
+
+Choose binary hardware $y_h$, mode $b_\mu$, and software $q_{wc}$ variables with
+\begin{equation}
+ \sum_h y_h=1,\qquad \sum_\mu b_\mu=1,\qquad
+ \sum_{c\in\mathcal C_w}q_{wc}=1\quad\forall w.
+\end{equation}
+Let $v_{h\mu}=y_h\land b_\mu$ and $z_{wh\mu c}=v_{h\mu}\land q_{wc}$ using the conjunction encoding above. The complete selection model is
+\begin{align}
+ \min\quad &T,\nonumber\\
+ \text{subject to}\quad
+ &z_{wh\mu c}\le K_{wh\mu c} &&\forall w,h,\mu,c,\nonumber\\
+ &\sum_h A_hy_h+\sum_{h,\mu}A^B_{h\mu}v_{h\mu}\le A_{\max},\label{eq:finite-boundary}\\
+ &L_w=\sum_{h,\mu,c}t_{wh\mu c}z_{wh\mu c} &&\forall w,\nonumber\\
+ &T\ge L_w/L_w^{\mathrm{ref}} &&\forall w.\nonumber
+\end{align}
+Hardware and boundary mode are shared, while programs differ across scenarios. The area of an asynchronous engine is paid once even when several scenario programs use it. Its per-scenario effect is represented in $t$ and $K$. Latency entries must include startup, queue occupancy, synchronization, and the attainable overlap for the selected variant.
+
+This finite model is an exact optimizer of its supplied table. Its purpose is to make the boundary decision and accounting explicit. Scaling to a large family replaces parts of the table with factorized resource and event constraints, and generates additional variants as needed. Doing so changes the computational representation while retaining the shared implementation identities. A boundary experiment would populate these coefficients from generated software and hardware; the empirical studies in Section~\ref{sec:evaluation} retain their existing instruction interface.
+
+\section{Empirical Definitions and Source Records}\label{app:evidence}
+This appendix specifies the workloads, baselines, normalization, and evaluator scope behind the preliminary results. The accompanying figure data reproduce the plotted values.
+
+\textbf{Programmable benchmark.}
+The five scenarios are W-P, A-P, W-D1, W-D16, and W-D4L. W uses two layers, width 1536, 12 heads, and FFN width 6144; A uses two layers, width 512, eight heads, and FFN width 2048. Prefill lengths are 256 and 2048. The decode cases use batch/context pairs $(1,4096)$, $(16,256)$, and $(4,4096)$ for four steps. The shared hardware satisfies a 100-unit area limit and modeled power limits of 34\,W over 100 cycles and 26\,W over 10,000 cycles.
+
+Frozen baseline cycles are 187689274, 374856358, 27068433, 42358913, and 70439292. The verified candidate cycles are 22415366, 28836408, 6732470, 8109251, and 14069101. With weights $1/4$, $1/4$, $1/6$, $1/6$, and $1/6$, the aggregate is
+\[
+ \exp\!\left(\sum_w \omega_w\log\frac{L_w^{\mathrm{ref}}}{L_w}\right)=7.017319.
+\]
+The frozen result uses model \texttt{phase-two-compact-v2} and passes private-seed verification. The reported cycles describe the simulated target, independently of host evaluation time.
+
+\textbf{Ventus controls and complete runs.}
+Figure~\ref{fig:controlled}b uses second-iteration slice estimates in the accompanying control table. The baseline estimates are 1.0019 and 1.0037; their small deviations from one reflect the slice evaluator. Software-first and joint selection tie at 0.3656/0.2789. Complete runs of the selected designs give 0.3669/0.2791 before the third iteration improves prefill to 0.3417. Decode slices warm up the prior step's tail to represent continuous cache state.
+
+The headline speedups are $1/0.3417=2.9265$ and $1/0.2791=3.5829$. Every selected scenario executes all layers and decode steps. The frozen 128-token baseline is reproduced directly; the historical 512-token baseline is extrapolated. The 128-token cases determine both headline task objectives. Full instruction timing does not imply full-network numerical inference: local replay and address/workload checks provide separate functional evidence.
+
+\textbf{Tiling trajectory and formulation changes.}
+Figure~\ref{fig:trajectory} preserves accepted complete-simulation prefill values 0.367, 0.342, and 0.3417. The last design has ratios 0.3417, 0.3308, 0.2953, and 0.2719 and estimated area 1.0812\,mm$^2$. The separate decode design has ratios 0.2791 and 0.2578 and estimated area 1.0848\,mm$^2$. Slice-based mechanism comparisons are identified separately from this complete-run trajectory. The three design iterations include hardware reversions, software comparisons, the pairwise surrogate revision, and targeted exploration of the larger-tile family.
+
+\textbf{Storage and model fidelity.}
+The KV study covers one layer's append and 14 attention heads. Its 2,240 completed grid points evaluate ten hardware candidates and 56 software variants across the study's settings. Local quantization-error filtering uses separate calibration, selection, and final-check seeds; its thresholds do not measure whole-model quality. The model-fidelity study retains a separate evaluator and fixed-hardware GPT-2/Pythia transfer tests. Its ratios are normalized to each workload's own baseline. The two studies are interpreted independently of the headline timing experiments.

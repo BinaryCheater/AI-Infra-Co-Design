@@ -1,0 +1,91 @@
+\section{Co-Design as Progressive Design-Space Construction}\label{sec:space}
+\subsection{Workloads, implementations, and a shared machine}
+Let $\cW$ be a finite set of deployment scenarios. A scenario specifies the required computation, tensor dimensions, data types, permitted numerical error, and persistent state. Prefill and a bounded sequence of decoding steps are separate scenarios, even when they use the same model weights. The workload fixes the required outputs; it leaves implementation choices open.
+
+A design is
+\begin{equation}
+ d=\bigl(h,b,\{a_w,p_w,m_w,\sigma_w\}_{w\in\cW}\bigr),\label{eq:design}
+\end{equation}
+where $h$ is the hardware structure, $b$ its software-visible boundary, $a_w$ an algorithmic organization, $p_w$ a program, $m_w$ its mapping, and $\sigma_w$ its execution organization. Hardware and interface choices are shared across scenarios. Programs and schedules can differ. This separates specialization to one shape from building a machine that must support several shapes or execution modes.
+
+The implementation domain $\cD$ is bounded by a declared vocabulary: permitted arithmetic primitives, transformation families, storage structures, interface mechanisms, parameter ranges, and program-size limits. A design belongs to $\cD_W\subseteq\cD$ when its programs meet the workload contract and its hardware and execution satisfy the deployment constraints. A representative objective is
+\begin{equation}
+ \min_{d\in\cD_W} J(d),\qquad
+ J(d)=\max_{w\in\cW}\frac{L_w(d)}{L_w^{\mathrm{ref}}},\quad
+ A(h,b)\le A_{\max},\label{eq:objective}
+\end{equation}
+with fixed positive reference latencies. Energy, throughput, or weighted latency can replace this objective. Retaining programmability can be expressed through required scenario coverage or supported capabilities. For a single fixed workload, specialization is a legitimate outcome unless flexibility has an explicit value or constraint.
+
+The joint domain can be viewed as one large mixed-integer design problem once the structural vocabulary and numerical approximations are fixed. This view does not require materializing that formulation in full. The computational task is to expose and solve useful portions while retaining the links needed to combine their decisions.
+
+\subsection{Representations determine the reachable designs}
+An active formulation is
+\begin{equation}
+ F_k=(R_k,X_k,C_k,\widehat J_k,D_k),\qquad
+ \cF_k=\{x\in X_k:C_k(x)\},\label{eq:formulation}
+\end{equation}
+where $R_k$ is the representation, $X_k$ the variable domain, $C_k$ the constraints, $\widehat J_k$ the modeled objective, and $D_k$ a decoder into implementations. Its realizable set is $\cR_k=D_k(\cF_k)$. A decoder retains the identities of the selected software and hardware objects; a feasible assignment must be lowerable under the corresponding implementation contracts.
+
+A coarse representation can describe a broad mathematical computation while providing a narrow set of executable lowerings. For example, an attention node denotes many possible implementations, but a backend that always materializes its score matrix cannot generate a streaming implementation. Refinement exposes state and dependencies that make another lowering expressible. It need not change the required computation.
+
+There are four distinct modifications of an active model:
+\begin{itemize}
+\item \emph{Representation expansion} introduces additional realizable designs, such as an online reduction or a programmable transfer mechanism.
+\item \emph{Equivalent reformulation} changes the encoding while preserving the decoded feasible designs and their objective values.
+\item \emph{Restriction} removes a subset of designs through a justified dominance rule or a temporary search decision.
+\item \emph{Cost or mechanism revision} changes the predicted behavior, constraints, or resource interactions associated with designs.
+\end{itemize}
+These operations need not produce nested feasible sets. Adding a new implementation family expands the design domain; modeling a previously omitted port conflict can remove assignments; changing coefficients can alter the ranking without changing feasibility. The system records these effects separately.
+
+\begin{proposition}[Expansion under a fixed evaluator]\label{prop:expansion}
+Suppose $\cR_k\subseteq\cR_{k+1}\subseteq\cD_W$, both sets are nonempty, and the same objective $J$ is used. Then
+$\min_{d\in\cR_{k+1}}J(d)\le\min_{d\in\cR_k}J(d)$.
+\end{proposition}
+\begin{proof}
+Every design admitted before expansion remains a candidate afterward, including any minimizer of the original finite design set.
+\end{proof}
+The proposition describes representational opportunity, not the quality achieved by a time-limited search. A richer representation can have a better optimum and still be harder to search. This distinction motivates retaining accepted incumbents and controlling where detail is introduced.
+
+A useful decomposition separates the losses caused by representation, search, and prediction. Let $J^*=\min_{d\in\cD_W}J(d)$ and $J_k^*=\min_{d\in\cR_k}J(d)$. The representation loss is $J_k^*-J^*$. It is unaffected by additional solver effort within an unchanged $\cR_k$.
+
+\begin{proposition}[Three sources of design loss]\label{prop:loss}
+Let $\cR_k\subseteq\cD_W$ be finite and nonempty. Suppose $|\widehat J_k(d)-J(d)|\le\epsilon_k$ for every $d\in\cR_k$, and the selected design $\widehat d_k$ satisfies
+$\widehat J_k(\widehat d_k)\le\min_{d\in\cR_k}\widehat J_k(d)+\delta_k$.
+Then
+\begin{equation}
+ J(\widehat d_k)-J^*
+ \le \underbrace{J_k^*-J^*}_{\text{representation loss}}
+ +\underbrace{\delta_k}_{\text{optimization error}}
+ +\underbrace{2\epsilon_k}_{\text{prediction error}}.\label{eq:loss}
+\end{equation}
+\end{proposition}
+\begin{proof}
+For a true minimizer $d_k^*$ over $\cR_k$,
+$J(\widehat d_k)\le\widehat J_k(\widehat d_k)+\epsilon_k
+\le\widehat J_k(d_k^*)+\delta_k+\epsilon_k
+\le J_k^*+\delta_k+2\epsilon_k$.
+Subtracting $J^*$ gives the result.
+\end{proof}
+
+This standard perturbation argument clarifies the agent's different responsibilities. Introducing a missing algorithm can reduce representation loss; stronger formulations or better search can reduce optimization error; implementation feedback can improve prediction. The quantities need not be known globally to guide experiments. A formal use of the bound, however, requires a uniform error guarantee; residuals on a sampled set alone do not provide one. The Ventus model-error case illustrates why a small $\delta_k$ can coexist with a poor realized design.
+
+\subsection{Conditional dominance and alternative retention}
+Dominance is a property of a design in context. Let $p$ and $q$ be two program fragments with the same functional interface, and let $\Gamma$ be a set of hardware configurations and surrounding programs. Removing $p$ is safe only when every feasible completion using $p$ in $\Gamma$ has a feasible completion using $q$ with no larger objective. Lower latency for one isolated kernel on one machine is insufficient: replacement can change storage lifetimes, interference, or other consumers' readiness.
+
+\begin{proposition}[Contextual replacement]\label{prop:dominance}
+For every feasible design $d$ using $p$ in a context in $\Gamma$, suppose a replacement $\rho(d)$ using $q$ preserves the required interface, remains feasible, and satisfies $J(\rho(d))\le J(d)$. Removing the $p$ designs in $\Gamma$ preserves the minimum objective over that domain.
+\end{proposition}
+\begin{proof}
+The restricted set is a subset of the original set, so its optimum cannot improve. The replacement maps each removed design to a retained design with no worse objective, so its optimum cannot worsen.
+\end{proof}
+
+The useful engineering consequence is the scope of the rule. A dominance fact learned for one register budget or cache organization is stored with those conditions. A hardware change outside that context reopens the alternative. When the replacement conditions are only empirically suggested, exclusion is a heuristic search restriction and the branch remains available for reconsideration.
+
+\subsection{The software--hardware boundary as a variable}
+A boundary choice specifies which functions are fixed in hardware and which remain programmable. For a mechanism $j$, let $b_{j\mu}$ select one implementation mode $\mu$: a software sequence, a programmable instruction mechanism, or a specialized controller. The modes share an external functional interface but have different hardware requirements and lowering rules. We impose
+\begin{equation}
+ b_{j\mu}\in\{0,1\},\qquad \sum_{\mu\in M_j}b_{j\mu}=1.\label{eq:boundary}
+\end{equation}
+The choice may alter control area, instruction count, legal schedules, and supported tensor layouts. A capability is counted once in hardware and can serve many program regions. Each use pays its execution and contention costs.
+
+This representation makes an otherwise fixed interface negotiable within an explicit library. It also distinguishes architectural sizing from boundary design: increasing queue depth changes capacity; introducing a completion-event interface changes what software can express. Both can be optimized, but they are different design decisions and require different implementation artifacts.
