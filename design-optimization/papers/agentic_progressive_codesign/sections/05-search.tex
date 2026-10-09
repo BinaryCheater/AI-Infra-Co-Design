@@ -1,0 +1,52 @@
+\section{Agent-Guided Reformulation and Search}\label{sec:search}
+\subsection{The agent operates on design decisions and model structure}
+The proposed agent receives the current representation, a typed mapping from variables to design objects, solver diagnostics, and implementation evidence. It produces a model action with an explicit scope. The action identifies which designs are added or restricted, which assumptions change, how an existing incumbent is reconstructed, and which evaluation can resolve the next uncertainty. This preserves the meaning of decisions when an encoding introduces many auxiliary variables.
+
+The action space contains three groups. \emph{Construction actions} add algorithmic families, expose tensor dependencies, or introduce hardware capabilities. \emph{Reformulation actions} strengthen bounds, remove redundant variables, break valid symmetries, or choose a decomposition. \emph{Search actions} release a coupled neighborhood, revisit a branch, select a warm start, or allocate an implementation evaluation. Cost-model revisions accompany these actions when the execution evidence changes the ranking assumptions.
+
+This division matters operationally. A weak lower bound calls for a stronger mathematical representation. A fast solver repeatedly selecting slow implementations calls for a better performance model or a missing design family. A capacity failure after compilation calls for a resource constraint or another lowering. These observations should not all trigger a larger random search.
+
+\subsection{Structural reduction and coupled neighborhoods}
+Many variables in a detailed MIP are consequences of a smaller set of structural decisions. A selected tile, buffer organization, interface mode, and hardware allocation determine much of the remaining transfer and schedule structure. The agent can search this semantic core while a completion problem assigns times, memory slots, or detailed bindings.
+
+A useful neighborhood releases decisions connected by a mechanism. For a register-limited matrix multiplication, these can include tile shape, registers per multiprocessor, resident workgroups, tensor shape, and the area allocated to other storage. Releasing only tile size may find no improvement because the enabling hardware change remains fixed. Releasing only register capacity may appear wasteful because the software does not exploit it. The neighborhood should preserve their coupling while fixing unrelated choices.
+
+The formulation can exploit additional structure. Identical engine instances admit symmetry-breaking orderings if the workload and connectivity treat them interchangeably. Factorized loop mappings can avoid enumerating full schedules. Valid working-set inequalities can eliminate impossible combinations before introducing time-indexed variables. Derived demand variables can replace repeated expressions, and bounded binary--continuous products can use standard linearization. Each transformation is justified with respect to its declared domain; an instance-specific observation is not promoted to a universal rule.
+
+\subsection{Decomposition, completion, and bounds}
+A natural master problem chooses hardware, interface modes, and algorithmic families. Scenario subproblems choose detailed programs and schedules on that shared machine. This decomposition is useful when the master captures the strong global interactions and each scenario can otherwise be completed independently. Simultaneous multi-scenario execution requires a shared contention subproblem rather than independent completion.
+
+A failed completion returns information about the combination that failed. If an exact subproblem proves a particular structural assignment infeasible, a no-good constraint can exclude that assignment. A stronger conflict cut can exclude a larger set only when its derivation supports that scope. A compiler error or a timed-out scheduling attempt does not establish infeasibility of every possible implementation with those high-level choices.
+
+Primal and dual progress have different roles. A completed design gives a feasible objective for its evaluator. A solver lower bound applies to its formulation. For a branch $B$, a valid bound $\underline J_B\le\inf_{d\in B}J(d)$ permits pruning when $\underline J_B\ge U$, where $U$ is an accepted incumbent under the same objective and evaluator. An analytic model can support that statement if it is a certified relaxation of the target evaluation. A fitted prediction without a one-sided guarantee supports prioritization, not this bound-based exclusion.
+
+Equivalent reformulations can retain bound meaning through a known mapping. Expanding the candidate family can invalidate a lower bound for the previously restricted problem; changing latency coefficients changes the objective being bounded. The archive therefore indexes bounds by model identity and scope. This prevents an inexpensive local optimum from being treated as a conclusion about the full design domain.
+
+\subsection{Retaining and revisiting alternatives}
+The candidate archive stores accepted implementations, unresolved family branches, and contextual knowledge. Structural signatures describe algorithmic organization, reuse direction, storage placement, boundary mode, and hardware allocation. Retention can then preserve distinct possibilities rather than many parameter variations of the same design.
+
+An accepted design remains an incumbent when the representation expands, provided its workload and implementation conditions remain valid. A rejected design has a reason: illegal semantics, a resource violation, a provably dominated context, or an unfavorable evaluation. Only the last category is a performance judgment, and its scope includes the hardware and workload on which it was made. The packed-attention reversal in Section~\ref{sec:tiling-results} illustrates why this distinction matters.
+
+The archive also supports conditional knowledge reuse. A statement such as ``this tile reuses a weight panel until register pressure reduces occupancy'' contains a mechanism and applicability conditions. It can guide another scenario's initial formulation while leaving the threshold to be recomputed. A statement such as ``larger tiles are always better'' discards the conditions needed for transfer.
+
+\subsection{Feedback-driven action selection}
+The agent diagnoses three types of disagreement. \emph{Feasibility disagreement} occurs when a modeled design cannot be lowered or violates a realized resource limit. \emph{Ranking disagreement} occurs when implementation evaluation changes the ordering of candidates. \emph{Search disagreement} occurs when a promising represented family remains difficult to explore despite an adequate evaluator. The responses are respectively to repair the interface or constraint, revise the relevant cost mechanism, or restructure the optimization.
+
+Evaluation effort is directed toward decisions that can change the selected design. For example, two nearly tied memory organizations may justify detailed simulation of their contention, while a capacity-infeasible candidate can be removed analytically. When error bars are empirically estimated, they guide this allocation without becoming mathematical bounds. Expensive evaluations should include both promising designs and discriminating alternatives that test the agent's explanation of the bottleneck.
+
+The procedure below specifies the proposed control loop. Its policy can begin with explicit rules and language-model proposals; a learned action policy is an optional implementation of the same interface.
+
+\begin{quote}
+\small
+\textbf{Progressive co-design procedure}\par
+\textbf{Input:} workload set, component and transformation library, budgets, initial representation, and exploration budget.\par
+1. Build an initial formulation and preserve a feasible reference design.\par
+2. Diagnose missing families, solver difficulty, and implementation-model mismatch from the current record.\par
+3. Propose a scoped construction, reformulation, or search action; retain its assumptions and reconstruction map.\par
+4. Solve the active MIP or master/completion subproblems. Keep feasible assignments, bounds, and termination status.\par
+5. Decode selected assignments into paired software and hardware. Check functional and resource eligibility, then evaluate execution and implementation cost.\par
+6. Update coefficients, mechanism constraints, and contextual knowledge. Retain competitive structural alternatives and reopen affected branches.\par
+7. Repeat while the exploration budget permits; return the best eligible evaluated design and its model-specific optimization information.
+\end{quote}
+
+An evaluation of the agent should count the entire loop: formulation construction, language-model inference, solver calls, failed compilations, simulation, and synthesis. Solver time alone can improve while total exploration becomes more expensive. Conversely, an expensive model revision can be worthwhile when it is reused across many workload shapes. These are distinct amortization questions.

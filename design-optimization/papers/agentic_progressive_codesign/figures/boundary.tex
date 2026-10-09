@@ -1,0 +1,16 @@
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+\foreach \x/\title in {2.15/Software orchestration,7.15/Programmable mechanism,12.15/Specialized controller}{\node[font=\sffamily\scriptsize\bfseries,align=center] at (\x,4.65) {\title};}
+\node[block,font=\sffamily\scriptsize,text width=3.8cm,minimum height=1.55cm] (s1) at (2.15,3.35) {Load / compute / wait loop\\Software manages transfers\\and buffer transitions};
+\node[block,font=\sffamily\scriptsize,text width=3.8cm,minimum height=1.55cm] (s2) at (7.15,3.35) {Async issue and event waits\\Software chooses traversal,\\buffering, and synchronization};
+\node[block,font=\sffamily\scriptsize,text width=3.8cm,minimum height=1.55cm] (s3) at (12.15,3.35) {Configure and invoke\\Software supplies parameters\\for a supported pattern};
+\node[eval,font=\sffamily\scriptsize,text width=3.8cm,minimum height=1.55cm] (h1) at (2.15,1) {General load/store service\\Repeated instruction issue\\Little dedicated control};
+\node[eval,font=\sffamily\scriptsize,text width=3.8cm,minimum height=1.55cm] (h2) at (7.15,1) {Transfer engine and event state\\Queues and completion tracking\\Programmable overlap};
+\node[eval,font=\sffamily\scriptsize,text width=3.8cm,minimum height=1.55cm] (h3) at (12.15,1) {Address / pipeline controller\\Dedicated control and buffers\\Restricted execution patterns};
+\foreach \n in {1,2,3}{\draw[flow] (s\n.south)--(h\n.north);}
+\draw[dashed,draw=purpleedge] (0,2.17)--(14.3,2.17);
+\node[font=\sffamily\scriptsize,align=center,text width=13.8cm] at (7.15,-.6) {Choose each mode together with its software, resource demand, shared hardware cost, and supported workloads.};
+\end{tikzpicture}
+\caption{Three possible locations of transfer-control functionality. Each mode has a different software-visible contract and hardware realization. The optimization prices the remaining programmability through the workloads and capabilities that the design must support.}\label{fig:boundary}
+\end{figure}

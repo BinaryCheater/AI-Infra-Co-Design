@@ -1,0 +1,52 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.88in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs,array,longtable}
+\usepackage{graphicx,tikz,pgfplots}
+\usetikzlibrary{arrows.meta,positioning,calc,fit}
+\pgfplotsset{compat=1.18}
+\usepackage{xcolor,microtype,enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,citecolor=blue!45!black,urlcolor=blue!45!black,pdftitle={Agentic Progressive Optimization for Hardware-Software Co-Design of AI Infrastructure}}
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{2em}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\textfraction}{0.10}
+\renewcommand{\floatpagefraction}{0.80}
+\setlist[itemize]{topsep=3pt,itemsep=2pt,leftmargin=1.5em}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,leftmargin=1.8em}
+\newtheorem{proposition}{Proposition}
+\newcommand{\cD}{\mathcal D}
+\newcommand{\cW}{\mathcal W}
+\newcommand{\cF}{\mathcal F}
+\newcommand{\cR}{\mathcal R}
+\newcommand{\ind}{\mathbf 1}
+\definecolor{ink}{HTML}{26364B}
+\definecolor{softblue}{HTML}{EDF3FA}
+\definecolor{softpurple}{HTML}{F2EFF7}
+\definecolor{softgreen}{HTML}{EDF5F0}
+\definecolor{blueedge}{HTML}{527FB1}
+\definecolor{purpleedge}{HTML}{776292}
+\definecolor{greenedge}{HTML}{42846A}
+\tikzset{block/.style={draw=blueedge,fill=softblue,rounded corners=2pt,line width=.65pt,align=center,font=\footnotesize,inner sep=5pt},agent/.style={block,draw=purpleedge,fill=softpurple},eval/.style={block,draw=greenedge,fill=softgreen},flow/.style={-{Stealth[length=2mm]},draw=ink,line width=.7pt},feedback/.style={flow,dashed,draw=greenedge},labeltext/.style={font=\scriptsize,align=center,fill=white,inner sep=2pt}}
+\title{Agentic Progressive Optimization for Hardware--Software Co-Design of AI Infrastructure}
+\author{Research manuscript}
+\date{October 9, 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+AI infrastructure design couples algorithms, software mappings, instruction interfaces, and hardware resources. A fixed representation can exclude valuable implementations, while a sufficiently expressive mixed-integer program can be prohibitively difficult to solve. We propose \textbf{Agentic Progressive Co-Design}, a framework that treats the construction of the design space and the search within it as connected optimization tasks. Starting from workload semantics, agents introduce algorithmic and hardware mechanisms, expose tensor-level dependencies, and compile their interactions into mixed-integer formulations. They then restructure the formulations, select coupled neighborhoods, and retain alternatives whose value depends on unresolved hardware choices. A common design assignment drives software lowering and hardware configuration; implementation feedback identifies which representation, cost model, or search decision to revise. We develop the formulation through streaming attention and explicit software--hardware boundary choices. Ventus case studies show why these mechanisms matter: a larger computation tile becomes beneficial only with a matching register organization, a previously unfavorable attention mapping becomes useful on another architecture, and fusion preferences reverse across hardware configurations. In a controlled calibrated study, joint selection reduces prefill and decode objectives by 10.84\% and 22.01\% relative to the baseline; decode improves by a further 4.10\% over one-pass software-first optimization. Iterative alternating optimization reaches the same objective in that menu. The evidence establishes concrete cross-layer opportunities and motivates a design process that expands what can be expressed while concentrating the optimization effort needed to realize it.
+\end{abstract}
+\input{sections/01-introduction}
+\input{sections/02-related}
+\input{sections/03-design-space}
+\input{sections/04-formulation}
+\input{sections/05-search}
+\input{sections/06-evaluation}
+\input{sections/07-discussion}
+\input{references}
+\appendix
+\input{sections/08-appendix}
+\end{document}
