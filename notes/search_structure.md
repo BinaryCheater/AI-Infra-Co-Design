@@ -180,6 +180,20 @@ The rule follows:
 
 This also answers the open question of hard versus soft feedback. Every structure in the three buckets either narrows *what is correct* or narrows *what is worth searching*, and the agent must treat the two differently.
 
+### How a performance obligation is discharged (added after the follow-up discussion)
+
+Three means, in decreasing strength; use the strongest available:
+
+1. **Analytic bound over the branch.** The regime claim is an inequality between resource times with closed forms in the cost model. Show $\min_B t_{\text{HBM}} \ge \max_B t_r$ for every other resource $r$; usually interval arithmetic because traffic is monotone in tile size. Result: proved bound, may prune.
+2. **Regime as a constraint.** Write the inequality into the template's search constraints; the assumption then holds by construction (like K1). Designs outside go to a sibling template with a different surrogate; the boundary between them is the regime boundary.
+3. **Observation.** Probe sampled designs and record a trend. May only steer.
+
+**When the regime fails on a corner.** It is not a Pandora's box: the next resource takes over, which is one more compact regime, and the number of flips is bounded by the rungs of the hierarchy. The witness design names the variable that moved the bottleneck; split there. Guarantee: *regime-local optimality*, exact within each proved regime and over the regimes visited.
+
+**Is the corner worth searching?** The roofline ceiling of the next resource caps what the corner can deliver. Compare the cap with the incumbent; skip the corner if the upside is marginal. This is a bound only while the cost model is *optimistic* (never predicts faster than measured), which is checked continuously against the evaluator; the first violation demotes all ceiling-based skips to steer and reopens them.
+
+**Probing with a confidence.** Otherwise sample the corner, near the boundary first, best predicted upside first, within a budget $B$. After $n$ losing probes the fraction of the corner that would beat the incumbent is below $3/n$ at 95% (rule of three). Stop when that bound is below a threshold or the budget is spent. Record the best gain seen and the bound on what remains; the population keeps both as the regime's evidence. No magic here, but the budget is written down.
+
 ### Summary table
 
 | Structure | Bucket | Formulation move | Obligation | Typical strength | Verification cost |

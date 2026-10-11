@@ -42,15 +42,17 @@ The natural response is to remove the boundaries: write the whole co-design down
 
 This is where agentic AI changes the picture. Recent advances in agentic AI offer the potential to tackle complex domain-specific optimization problems by integrating AI for domain reasoning, mathematical optimization for principled search, and simulation and verification for testing the assumptions underlying optimization models. This is exactly the combination that formulation discovery requires. An agent can reason about the engineering problem in domain terms and decide what must be optimized jointly and what can be decomposed. Solvers then search each formulation with bounds and optimality guarantees relative to the model, and simulation and verification test whether the formulation describes the real system faithfully.
 
-We build on this capability to propose an agentic progressive refinement flow for the end-to-end design optimization and verification of AI computing infrastructure. Its central idea fits in one sentence. \textbf{A language-model agent discovers the structure of the co-design problem and packages it, one refinement step at a time, as templates that a solver can optimize and a verifier can check; because each step adds only a little new structure, both the search and the verification stay tractable across the entire stack.} The flow starts from the workload and its computation graph and descends toward the microarchitecture. Each step turns a coarse data transaction into finer ones: a sum of products becomes partial sums, a logical value becomes the contents of a buffer, an access becomes a transfer that is issued and later completes, and a transfer becomes requests that compete for banks and ports. The agent captures the decisions newly exposed by the step, in the software stack and in the chip, as a compact optimization \emph{template}: a design pattern packaged together with the conditions under which it is correct. A solver optimizes within the template, and a verifier checks, against the same conditions, that every design the template admits still computes exactly what the level above demanded.
+We build on this capability to propose an agentic progressive refinement flow for the end-to-end design optimization and verification of AI computing infrastructure. Its central idea fits in one sentence. \textbf{A language-model agent progressively refines the co-design problem across the layers of the stack, from the workload down to the chip microarchitecture, expressing each step as a template that a solver can optimize and a verifier can check; because each step adds only a little new structure, both the search and the verification stay tractable across the entire stack.} The flow starts from the workload and its computation graph and descends toward the microarchitecture. Each step turns a coarse data transaction into finer ones: a sum of products becomes partial sums, a logical value becomes the contents of a buffer, an access becomes a transfer that is issued and later completes, and a transfer becomes requests that compete for banks and ports. The agent captures the decisions newly exposed by the step, in the software stack and in the chip, as a compact optimization \emph{template}: a design pattern packaged together with the conditions under which it is correct. A solver optimizes within the template, and a verifier checks, against the same conditions, that every design the template admits still computes exactly what the level above demanded.
 
 Progressive refinement pays off twice. For the search, the flow never writes down the monolithic program. Each step solves a formulation over the decisions that step introduces, together with the coarser decisions they are coupled to. Every problem in the sequence is therefore small enough to solve with proven optimality, and an earlier decision is reopened when evidence shows that committing to it was a mistake. For verification, each step owes only a local proof that its finer transactions implement the coarser one. Local proofs compose back to the workload, and a step whose premises have not changed is not checked again. Templates add a second economy. A template's correctness is proved once, for its whole family of designs, after which each candidate the solver proposes needs only a quick check of the template's conditions. Verification can therefore run as a gate inside the optimization loop rather than as an audit at the end.
 
 The template is what holds optimization and verification together. It is the contract the language model writes between the solver and the verifier, and its conditions do triple duty. To the solver they are the constraints that bound the search, to the verifier they are the preconditions every design must satisfy, and to the agent they mark where the template may safely be reused. Because both algorithms read the same conditions, the designs the solver may choose are exactly the designs the verifier will accept. We seek the \emph{weakest} such conditions, in the sense of Dijkstra \cite{r12}: any stronger, and correct designs are needlessly shut out of the search; any weaker, and incorrect ones slip through. The agent keeps the templates it has certified as an evolving population of formulation patterns, so that a formulation discovered for one problem can become the starting point for the next.
 
+What guides the agent when it writes a template? The co-design space is not an arbitrary combinatorial problem. Its structure comes from physics: memory is large and far away, computation is fast and starved for data, and the cost of moving data falls in a known order down the memory hierarchy. From this follow a small number of recurring structures, such as a dominant bottleneck that collapses the objective, near-decomposability that collapses the variables, and symmetry that collapses the enumeration. Each of these is at once a \emph{move} the agent can make in the formulation and an \emph{obligation} it owes the verifier, because a structure holds only in a regime, and the regime must be checked. In this sense the structure \emph{is} the template. We catalog these structures, organize them by what they do to the search, and distinguish the obligations that gate a design from those that merely steer the search toward it.
+
 Our evaluation tests the parts of this idea that can be measured today. With templates written by hand, it shows that a template's search constraints and correctness conditions can coincide exactly; that the formulation at each step solves to proven optimality in well under a second; that local verification catches the errors each refinement step can introduce, and composes along a five-step chain at a fraction of the cost of rechecking; and that, on an open-source GPU running large-language-model workloads, designing the chip and the software together beats designing either alone. Template generation by the language model and the growth of the population across problems are not yet evaluated, and they are the main experiments that remain (§8).
 
-\textbf{Contributions.} This paper makes four contributions.
+\textbf{Contributions.} This paper makes five contributions.
 
 \begin{itemize}
 \tightlist
@@ -61,15 +63,17 @@ Our evaluation tests the parts of this idea that can be measured today. With tem
 \item
   \textbf{Templates as contracts.} We define templates whose conditions serve at once as search constraints, correctness preconditions and reuse scope. We show that the weakest such conditions give the largest correct search space, and we split the cost of trust into a one-time proof per template and a cheap check per candidate.
 \item
+  \textbf{Where templates come from.} We identify the physical origin of the structure in the co-design space, catalog the recurring structures an agent can exploit, and organize them into three classes by their effect on the search. Each structure maps to a formulation move and a verifier obligation, and we separate correctness obligations, which gate designs, from performance obligations, which steer the search.
+\item
   \textbf{Evaluation of design quality and tractability.} We evaluate the flow on a fully worked shared-memory tiling template, on GEMM refinements and workload checks, and on chip--software co-design studies on an open-source GPU, reporting for each both the quality of the design and the effort needed to reach and trust it.
 \end{itemize}
 
-\textbf{Organization.} Section 2 presents the flow end to end and defines the template as a contract. Section 3 develops progressive refinement across the stack. Section 4 presents the verification side, and Section 5 the optimization side. Section 6 reports the evaluation, Section 7 discusses related work, and Section 8 discusses what the evidence supports and what remains open.
+\textbf{Organization.} Section 2 presents the flow end to end, defines the template as a contract, and explains where templates come from. Section 3 develops progressive refinement across the stack. Section 4 presents the verification side, and Section 5 the optimization side. Section 6 reports the evaluation, Section 7 discusses related work, and Section 8 discusses what the evidence supports and what remains open.
 
 \hypertarget{the-agentic-progressive-refinement-flow}{%
 \section{The Agentic Progressive Refinement Flow}\label{the-agentic-progressive-refinement-flow}}
 
-This section presents the flow end to end. We first state what is being designed and what it must compute (§2.1), then walk through one iteration of the loop and the roles of its participants (§2.2). We then define the template precisely as a contract (§2.3), characterize its weakest form (§2.4), and describe the evolving population in which templates live (§2.5). Sections 3--5 develop the refinement structure, the verification side and the optimization side in turn. Figure 1 shows the flow as a whole.
+This section presents the flow end to end. We first state what is being designed and what it must compute (§2.1), then walk through one iteration of the loop and the roles of its participants (§2.2). We then define the template precisely as a contract (§2.3), characterize its weakest form (§2.4), describe the evolving population in which templates live (§2.5), and explain where the agent's templates come from: the exploitable structure of the co-design space (§2.6). Sections 3--5 develop the refinement structure, the verification side and the optimization side in turn. Figure 1 shows the flow as a whole.
 
 \begin{figure}
 \centering
@@ -337,7 +341,7 @@ Templates are not written once and filed away. The agent maintains them as a pop
 \[
 \mathcal Q_k=\{(\mathsf T_i,\;\Gamma_i,\;\mathcal E_i,\;\varsigma_i)\},
 \]
-in which each member pairs a template with its scope \(\Gamma_i\), its accumulated evidence \(\mathcal E_i\) (soundness proofs, certified instances, measured outcomes, counterexamples and their causes) and a structural signature \(\varsigma_i\) that summarizes what kind of design it produces: its algorithmic organization, reuse direction, storage placement, boundary mode and the chip resources it relies on. Members of the population are formulation patterns, not solved designs.
+in which each member pairs a template with its scope \(\Gamma_i\), its accumulated evidence \(\mathcal E_i\) (soundness proofs, certified instances, measured outcomes, counterexamples and their causes, and for each structural assumption its strength and where it was observed to flip, §4.7) and a structural signature \(\varsigma_i\) that summarizes what kind of design it produces: its algorithmic organization, reuse direction, storage placement, boundary mode and the chip resources it relies on. Members of the population are formulation patterns, not solved designs.
 
 In each iteration, the agent draws candidates whose scope covers the current context, adapts or recombines them, and returns those that survive verification, refined by what the iteration revealed. Three rules govern the population.
 
@@ -355,6 +359,70 @@ The population is what makes the flow compound. A formulation that was hard to d
 
 \begin{quote}
 \textbf{Evidence status.} The templates in our experiments were written by hand. Template generation by the language model, maintenance of the population and transfer across problems are not yet evaluated, and the one transfer measurement available is negative (§6.6). These are the main open experiments (§8).
+\end{quote}
+
+\hypertarget{where-templates-come-from-exploitable-structure}{%
+\subsection{Where templates come from: exploitable structure}\label{where-templates-come-from-exploitable-structure}}
+
+The sections above say what a template is and how it is checked. They do not say how the agent knows what to write. If the co-design space were an arbitrary combinatorial problem, nothing could guide it. It is not. Its structure comes from physics, and that structure is what the agent recognizes and writes into each template.
+
+\textbf{The physical origin.} Three facts govern every computer system. Memory can be large, but large means far away, and far means slow and costly to reach. Computation can be fast, but it is useless without data. Moving data is physics, and no design bends it. The memory hierarchy exists because of these facts, and it is a fixed ladder of cost rather than a design choice to search over: HBM, then L2, then shared memory, then registers, each roughly an order of magnitude better than the level below it in bandwidth, latency and energy per byte. Two consequences follow. Data movement dominates cost, and it dominates in a known order. Most of the structure below is a direct consequence.
+
+\textbf{A catalog of structures.} Table 1 lists the structures we have identified so far, with the effect each has on the search. The list is open; what matters more than its members is the organization in the paragraph that follows.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Structure
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Origin
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Effect on the search
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Bottleneck dominance} & one resource (e.g.~HBM) is far costlier than the rest & within its regime, that resource's utilization is a near-sufficient statistic; many objectives collapse to one tight bound, and branch-and-bound acquires optimal substructure \\
+\textbf{Near-decomposability} \cite{r101} & interactions across the stack are local & the coupling matrix is block-banded; clusters are solved jointly and only the weak coupling between them is paid for. The hierarchy itself cuts chains: shared memory separates HBM from the registers, so a three-way search becomes two pairwise ones \\
+\textbf{Concavity} & performance saturates in every resource (the roofline knee \cite{r102}) & optima lie on constraint boundaries or at a few knees; search the knees, not the continuum \\
+\textbf{Monotonicity} & at fixed area, more of a resource never hurts & valid one-sided bounds, which is what exact pruning needs \\
+\textbf{Scenario decomposition} & prefill and decode share a chip but want different software & the chip is the complicating variable; once fixed, each scenario is an independent subproblem (Benders structure, §5.3) \\
+\textbf{Low effective dimension} & only the knobs touching the bottleneck matter & twenty coupled decisions become the three or four that move bytes; the rest are frozen or coarsened \\
+\textbf{Symmetry} & identical units, interchangeable banks, mirrored layouts & symmetry breaking removes factorial blocks at no cost \\
+\textbf{Discrete menus} & powers of two, a handful of tile shapes & domains are small and enumerable \\
+\textbf{Dominance} & most designs are dominated on every metric & the Pareto front is thin; dominated designs are skipped without evaluation \\
+\end{longtable}
+
+\emph{Table 1. Exploitable structures in the co-design space. Each originates in a physical or combinatorial property of the stack and removes a large part of the search.}
+
+\textbf{Three classes.} The catalog is easier to use when organized by \emph{what each structure does to the search}, because that is what determines the formulation move:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Structures that collapse the objective} tell the agent \emph{what to optimize}: bottleneck dominance, concavity and monotonicity.
+\item
+  \textbf{Structures that collapse the variables} tell the agent \emph{what is independent}: near-decomposability, scenario decomposition and low effective dimension.
+\item
+  \textbf{Structures that collapse the enumeration} tell the agent \emph{which points to skip}: symmetry, discrete menus and dominance.
+\end{itemize}
+
+The agent's task when it writes a template is to answer these three questions for the current refinement step. A template that answers none of them has no reason to exist.
+
+\textbf{The structure is the template.} Each structure maps to two things at once, and this is what connects the catalog to the contract of §2.3. On the search face, it is a \emph{move in the formulation}: a surrogate objective, a decomposition, a bound, a frozen variable, a symmetry-breaking constraint. On the correctness face, it is an \emph{obligation}: the structure holds only in a \emph{regime}, for instance ``this region is HBM-bound'', and the agent owes the verifier evidence that the regime holds wherever the move is relied upon. That evidence becomes part of the template's precondition. The obligations differ in cost. Symmetry, monotonicity and discrete menus are algebraic; they are proved once per template and reused. Bottleneck dominance and near-decomposability are expensive; proving that a coupling really is weak, or that a bound really is tight, in this regime may cost a sub-solve. Section 4.7 draws the consequence: these are \emph{performance} obligations, a different kind from the correctness obligations of §4.2, and they are treated differently.
+
+\textbf{One structure end to end.} Consider the bottleneck. \emph{Detection} is cheap: the agent runs the coarse cost model once and reads each resource's utilization against its roofline ceiling. Suppose HBM sits at 95\% and the compute units at 40\%. The output is a claim: this region is HBM-bound. \emph{The move} rewrites the formulation in two ways. It replaces the full performance objective with a surrogate, HBM bandwidth utilization, which is tighter and simpler; and it freezes every variable that does not touch HBM traffic, such as register port count and tensor-unit shape, because by low effective dimension they are nearly free here. A problem over twenty coupled decisions becomes a problem over the three or four that move bytes: tiling, shared-memory residency and the transfer schedule. \emph{The obligation} is that HBM remains dominant across the feasible region of this subproblem. A tiling choice could relieve HBM and hand the bottleneck to shared memory, flipping the ranking of branches. The verifier therefore establishes a bound: even the most HBM-relieving design in the branch leaves HBM above the next level. If it cannot, the branch straddles a regime boundary and the agent splits it.
+
+\textbf{Regime flips are refinement steps.} When the evaluator reports that the bottleneck has moved, that is not a failure of the template; it is the signal to refine. The bottleneck has moved one rung down the hierarchy. The agent re-detects, finds shared memory pinned, and writes the next template one level lower, with a new surrogate and a new precondition. The regime boundaries of the search space are therefore the refinement steps of §3, seen through cost: the agent always formulates around the data movement that currently dominates, and physics tells it what to refine next.
+
+\textbf{What the population learns.} Each certified template records which structure it exploited, in which regime, and whether its regime assumption was proved as a bound or only observed as a trend (§4.7). Over many problems the population therefore accumulates not only formulations but \emph{structure--regime pairs}: which structures hold for which workload families on which chips. This is the sense in which the agent improves at formulating. It gets better at recognizing structure, and because every template passes the gate before it is admitted, the improvement rests on proof and measurement rather than on the agent's own judgment.
+
+\begin{quote}
+\textbf{Evidence status.} The catalog and its use by the agent are specified here but not yet evaluated. The structures in Table 1 are drawn from the co-design studies of §6.5 and from the GEMM progression of §3.3, in which they were exploited by hand.
 \end{quote}
 
 \hypertarget{iterative-optimization-through-progressive-refinement}{%
@@ -663,6 +731,69 @@ T_{\mathrm{total}}=V_{\mathrm{base}}+\sum_j T^{\mathrm{inc}}_j+n\,c_{\mathrm{che
 \]
 covering initial proof construction, incremental rechecking, per-candidate instance checks and the remaining implementation verification. The two-tier boundary appears directly in this sum: template soundness lives in \(V_{\mathrm{base}}\) and \(T^{\mathrm{inc}}\), while the gate contributes only \(n\,c_{\mathrm{check}}\).
 
+\hypertarget{two-kinds-of-obligation-correctness-gates-performance-steers}{%
+\subsection{Two kinds of obligation: correctness gates, performance steers}\label{two-kinds-of-obligation-correctness-gates-performance-steers}}
+
+Everything in §4.1--§4.6 concerns \emph{correctness} obligations: every admitted design computes the workload. The structures of §2.6 introduce a second kind. When a template relies on a regime, such as ``this branch is HBM-bound'', the agent owes evidence that the regime holds. If that evidence fails, the design is not wrong. A compute-bound design still computes the right answer. What fails is the surrogate's ranking of candidates: the solver was steered by a premise that did not hold. In the terms of §2.4, a failed regime assumption is prediction or representation loss, never a violation of the workload contract.
+
+These are therefore \emph{performance} obligations, and they behave differently from correctness obligations in two ways.
+
+\textbf{They never gate.} A correctness counterexample is final: the design is rejected. A failed performance obligation reopens a branch, descends a level (§2.6), or revises the cost model (§5.4); it discards nothing that was certified.
+
+\textbf{Their strength decides what they may do.} A performance obligation comes in two strengths.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Strength
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Established by
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+May
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+If wrong
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Proved bound} & a one-sided bound, e.g.~from monotonicity or an analytic roofline & \emph{prune}: branch-and-bound cuts the branch and stays exact & cannot be, within its declared scope \\
+\textbf{Observed trend} & measurement on the samples checked, e.g.~``HBM-bound on every probe so far'' & \emph{reorder}: exploration is prioritized, nothing is cut & the branch is reopened; no admitted design is affected \\
+\end{longtable}
+
+The rule that follows is short enough to state once: \textbf{correctness obligations gate; performance obligations steer.} Whether a structural assumption may gate, by pruning, or may only steer, by prioritizing, depends on whether it was proved as a bound or merely observed as a trend. A structure in the catalog either narrows what is \emph{correct} or narrows what is \emph{worth searching}, and the flow treats the two differently: the first is enforced by the verifier, the second is advice to the solver. Both are recorded with the template, so that a later problem knows not only that a structure was used but how much it was trusted.
+
+\textbf{Discharging a performance obligation.} The table says what a performance obligation may do; it remains to say how one is established. There are three ways, in decreasing strength, and the flow uses the strongest one available.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \emph{An analytic bound over the branch.} A regime claim is an inequality between resource times. ``HBM-bound'' means \(t_{\mathrm{HBM}}(d)\ge t_r(d)\) for every other resource \(r\), and both sides have closed forms in the cost model: traffic over bandwidth, operations over throughput. The claim holds over a branch \(B\) if
+  \[
+  \min_{d\in B}\,t_{\mathrm{HBM}}(d)\;\ge\;\max_{d\in B}\,t_r(d)\quad\text{for every }r\neq\mathrm{HBM}.
+  \]
+  Each side is a small optimization over the template's own variables, and because traffic is monotone in tile size and buffer count, it usually reduces to interval arithmetic. When the inequality holds, the regime is a proved bound over \(B\) and the surrogate may prune.
+\item
+  \emph{The regime as a constraint.} The inequality can be written directly into the template's search constraints \(C\). The solver then chooses only designs inside the regime, and the assumption holds by construction, in exactly the way K1 makes \(\mathrm{Pre}\) hold by construction. Designs outside the regime are not lost; they belong to a sibling template with a different surrogate, and the boundary between the two templates is the regime boundary.
+\item
+  \emph{Observation.} When neither bound can be established, the agent probes sampled designs and records the regime as a trend. This is the strength that may only steer.
+\end{enumerate}
+
+\textbf{When the regime does not hold everywhere.} A regime such as HBM-bound usually holds on most of a branch and fails on a sliver. The failure is not a return to the monolithic problem. When one resource stops dominating, the next one takes over, and that is a new regime with its own compact surrogate; the exposure is one additional small problem per flip, and the number of flips is bounded by the number of rungs in the hierarchy. The design that broke the bound is the witness: it names the variable that moved the bottleneck, and the branch is split on that variable so that each half is small again. The guarantee the flow offers is therefore \emph{regime-local optimality}: inside a regime with a proved bound the search is exact, and across regimes it is exact over the regimes visited. The certificate of a design lists the regimes visited and the bound that held in each. The flow never claims that a regime holds everywhere; it proves a bound where it can, pays for one extra regime where it cannot, and learns where the boundaries are.
+
+\textbf{Whether a corner is worth searching.} When a branch leaves its regime, the question is whether to search the new one. The roofline answers it cheaply. The best any design in the new regime can achieve is capped by the next resource's ceiling, so the agent compares that cap with the incumbent before searching. If the cap is only marginally better, the corner has a provably small upside and is skipped by a bound, not a guess; if the cap is far above the incumbent, the corner is where the gain lives and the search is paid for. The rule is to explore a regime only when its bounded upside exceeds its bounded cost, and it uses only what the flow already has: the ceiling for the upside and the template's cost model for the price of a sub-solve. Most corners fail the test, which is why bottleneck surrogates usually just work.
+
+This test is only as good as the ceiling, and a ceiling prunes only if the cost model is \emph{optimistic}: it must never predict a design faster than it measures. That property cannot be proved in general, but it can be checked continuously. Every evaluator measurement is compared with the model's prediction; while every measured design has run no faster than predicted, the model is one-sided on the evidence so far and its ceilings may prune. The first measurement that comes in faster than predicted demotes every ceiling-based pruning decision to steer, and the pruned regimes are reopened. The Ventus study of §6.6, in which the model erred by 58--63\%, is the case this check is designed to catch.
+
+\textbf{Probing with a stated confidence.} When the record is not clean, or no bound can be established, the agent samples the corner. Probes are taken near the regime boundary first, where the gain would be, and chosen by the cost model for the best predicted upside; if the most promising probes lose to the incumbent, the corner is very likely dead. The sample also says how likely a missed win is. After \(n\) probes with no improvement over the incumbent, the fraction of the corner that would improve on it is below \(3/n\) with 95\% confidence (the rule of three); twenty losing probes bound it below about 15\%, and more probes tighten the bound. The stopping rule is to probe until that bound falls below a threshold set for the run, or until a fixed probe budget is spent. The best gain observed and the confidence bound on what remains are both recorded with the template as the regime's evidence, so that the population accumulates not only which regimes hold but where they flip and how much was found beyond them.
+
+There is no exact procedure hidden in this. Inside a proved regime the search is exact; outside it, the flow spends a bounded number of probes and reports what they established. Writing the budget down is what makes the behavior a specification rather than a hope.
+
 \hypertarget{optimization-searching-within-the-contract}{%
 \section{Optimization: Searching Within the Contract}\label{optimization-searching-within-the-contract}}
 
@@ -742,7 +873,7 @@ applied separately to registers, shared memory and external storage. Port demand
 
 A natural decomposition lets a master problem choose the chip, boundary modes and algorithmic families, while scenario subproblems complete detailed programs and schedules on that shared chip. Simultaneous multi-scenario execution would require a shared contention subproblem instead. A failed completion returns information about the combination that failed. If an exact subproblem proves a structural assignment infeasible, a no-good constraint excludes it. A broader cut is admitted only when its derivation supports that scope. A compiler error or a timed-out schedule does not establish infeasibility.
 
-Bounds are indexed by the formulation that produced them. A lower bound \(\underline J^B\) on a branch \(B\) permits pruning against an accepted incumbent \(U\) when \(\underline J^B\ge U\), but only if both refer to the same objective and evaluator. A fitted cost prediction without a one-sided guarantee supports prioritization, not pruning. Expanding the candidate families invalidates bounds for the earlier, restricted problem, and changing latency coefficients changes the objective being bounded.
+Bounds are indexed by the formulation that produced them. A lower bound \(\underline J^B\) on a branch \(B\) permits pruning against an accepted incumbent \(U\) when \(\underline J^B\ge U\), but only if both refer to the same objective and evaluator. A fitted cost prediction without a one-sided guarantee supports prioritization, not pruning; §4.7 gives the rule in full, together with the running check that decides whether the cost model's ceilings are currently one-sided. Expanding the candidate families invalidates bounds for the earlier, restricted problem, and changing latency coefficients changes the objective being bounded.
 
 \hypertarget{the-agents-actions-and-how-it-chooses-them}{%
 \subsection{The agent's actions and how it chooses them}\label{the-agents-actions-and-how-it-chooses-them}}
@@ -752,7 +883,7 @@ The agent acts on the formulation and on the population, and every action carrie
 \begin{itemize}
 \tightlist
 \item
-  \textbf{Construction} generates or adapts templates, adds algorithmic families, exposes tensor dependencies or introduces chip capabilities and boundary modes.
+  \textbf{Construction} generates or adapts templates, adds algorithmic families, exposes tensor dependencies or introduces chip capabilities and boundary modes. Construction is guided by the structures of §2.6: the agent first detects which structure holds at the current step, then writes the corresponding move into the template and the corresponding obligation into its precondition.
 \item
   \textbf{Reformulation} tightens bounds, removes redundant variables, breaks valid symmetries, adds valid inequalities or chooses a decomposition. These are horizontal changes, which must preserve the decoded designs and their objective values.
 \item
@@ -781,6 +912,7 @@ A selected design cannot be lowered or violates a realized limit & the formulati
 Measured ranking differs from predicted ranking & the predictive model & revise the cost mechanism \\
 A promising family stays hard to explore despite an adequate model & the search policy or encoding & reformulate, decompose or change neighborhoods \\
 The verifier refutes a template or an export & the contract & repair the template, its map or its certificate \\
+The regime a template assumed no longer holds (the bottleneck has moved) & a performance premise (§4.7) & reopen the branch, or descend one level with a new template; nothing certified is discarded \\
 \end{longtable}
 
 These responses are different, and treating every failure as another design sample wastes effort. A weak bound needs a stronger formulation, a fast solver repeatedly selecting slow designs needs a better cost model, and a refuted contract needs repair, not more search.
@@ -838,7 +970,7 @@ RQ1 and RQ2 test correctness by construction; RQ3, together with the solve times
 \hypertarget{one-template-end-to-end-rq1}{%
 \subsection{One template, end to end (RQ1)}\label{one-template-end-to-end-rq1}}
 
-\textbf{The precondition is exact.} We ran the checker on all 24 combinations of slot count \(S\in\{1,2,3\}\), prefetch distance \(P\in\{0,\dots,3\}\) and trailing barrier \(\beta\). The set of schedules it certifies equals the template's precondition \(P\le S-2+\beta\) exactly, with no extra designs admitted and none wrongly excluded. Every rejected combination fails the same obligation, lifetime. Table 1 lists the safe prefetch distances. The result turns a piece of GPU programming folklore, that an extra buffer can replace the trailing \texttt{\_\_syncthreads()}, into a precise, checked condition: a third slot buys one more step of prefetch or the removal of the barrier, but not both.
+\textbf{The precondition is exact.} We ran the checker on all 24 combinations of slot count \(S\in\{1,2,3\}\), prefetch distance \(P\in\{0,\dots,3\}\) and trailing barrier \(\beta\). The set of schedules it certifies equals the template's precondition \(P\le S-2+\beta\) exactly, with no extra designs admitted and none wrongly excluded. Every rejected combination fails the same obligation, lifetime. Table 2 lists the safe prefetch distances. The result turns a piece of GPU programming folklore, that an extra buffer can replace the trailing \texttt{\_\_syncthreads()}, into a precise, checked condition: a third slot buys one more step of prefetch or the removal of the barrier, but not both.
 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
@@ -855,18 +987,18 @@ Slots \(S\) & Trailing barrier & Safe prefetch distances \(P\) \\
 3 & no & 0, 1 \\
 \end{longtable}
 
-\emph{Table 1. Safe schedules of the shared-memory tiling template. The verifier's accepted set equals the template's precondition \(P\le S-2+\beta\) on all 24 combinations.}
+\emph{Table 2. Safe schedules of the shared-memory tiling template. The verifier's accepted set equals the template's precondition \(P\le S-2+\beta\) on all 24 combinations.}
 
-\textbf{Search and certification.} Table 2 shows the designs the solver selects for three GEMM shapes. The MILP has 93 variables, 90 of them binary, and 248 constraints. HiGHS proves each selection optimal at zero gap in 0.03--0.16 s, and brute-force enumeration of the same 722 feasible designs reaches the same objective in every case. Certifying a selected design (12 obligations) takes about 25 ms. All three selections lie on the boundary of the precondition: three slots, prefetch distance one and \emph{no} trailing barrier. The optimizer spends shared memory to remove a barrier, which is legal only because the precondition is the weakest one.
+\textbf{Search and certification.} Table 3 shows the designs the solver selects for three GEMM shapes. The MILP has 93 variables, 90 of them binary, and 248 constraints. HiGHS proves each selection optimal at zero gap in 0.03--0.16 s, and brute-force enumeration of the same 722 feasible designs reaches the same objective in every case. Certifying a selected design (12 obligations) takes about 25 ms. All three selections lie on the boundary of the precondition: three slots, prefetch distance one and \emph{no} trailing barrier. The optimizer spends shared memory to remove a barrier, which is legal only because the precondition is the weakest one.
 \textbar{} GEMM \textbar{} Selected \((T_m,T_n,T_k,S,P,\beta)\) \textbar{} Shared memory \textbar{} Modeled time \textbar{} Gate \textbar{}
 \textbar------------\textbar----------------\textbar------------\textbar------------\textbar--------\textbar{}
 \textbar{} \(4096^3\) \textbar{} (128, 256, 16, 3, 1, 0) \textbar{} 72 KiB \textbar{} 1826.9 \(\mu\)s, memory-bound \textbar{} 12/12 proved \textbar{}
 \textbar{} \(64\times4096\times4096\) \textbar{} (64, 64, 16, 3, 1, 0) \textbar{} 24 KiB \textbar{} 75.1 \(\mu\)s, memory-bound \textbar{} 12/12 proved \textbar{}
 \textbar{} \(1000^3\), ragged tails \textbar{} (128, 128, 32, 3, 1, 0) \textbar{} 96 KiB, at capacity \textbar{} 53.1 \(\mu\)s, compute-bound \textbar{} 12/12 proved \textbar{}
 
-\emph{Table 2. Designs selected by the template's MILP and certified by the gate. Times are modeled.}
+\emph{Table 3. Designs selected by the template's MILP and certified by the gate. Times are modeled.}
 
-\textbf{What a wrong contract costs.} Replacing the template's precondition with a stronger or a weaker one, and keeping everything else fixed, reproduces both failure modes of §2.4 (Table 3).
+\textbf{What a wrong contract costs.} Replacing the template's precondition with a stronger or a weaker one, and keeping everything else fixed, reproduces both failure modes of §2.4 (Table 4).
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.4000}}
@@ -892,11 +1024,11 @@ Too strong: always keep the trailing barrier & +0.0\%, certified & +0.0\%, certi
 Too weak: \(P\le S-1\), barrier ignored & \textbf{rejected by gate} & \textbf{rejected by gate} & \textbf{rejected by gate} \\
 \end{longtable}
 
-\emph{Table 3. Contract ablation. Percentages are precondition loss in modeled latency relative to the exact contract.}
+\emph{Table 4. Contract ablation. Percentages are precondition loss in modeled latency relative to the exact contract.}
 
 The stronger contract is safe but loses the optimum wherever barriers matter: 1.34\% of latency on the compute-bound ragged shape, and nothing on the memory-bound shapes, so precondition loss depends on the workload as well as on the template. The weaker contract makes the solver choose, on all three shapes, double buffering with prefetch one and no trailing barrier, which the cost model predicts to be just as fast while using less shared memory. The gate rejects it and replays the race of Figure 4. The solver's answer is optimal for the constraints it was given, and wrong.
 
-\textbf{Deliberately broken variants.} Starting from the certified \(1000^3\) design, we injected six faults that a plausible implementation could contain. The gate rejects all six, each through the obligation responsible and each with a replayed defect (Table 4). For tiles overlapping with stride \(T-1\), the coverage certificate fails without a semantic witness, and the checker correctly records that failure as unresolved; the real defect is found by the exact-once obligation that owns it.
+\textbf{Deliberately broken variants.} Starting from the certified \(1000^3\) design, we injected six faults that a plausible implementation could contain. The gate rejects all six, each through the obligation responsible and each with a replayed defect (Table 5). For tiles overlapping with stride \(T-1\), the coverage certificate fails without a semantic witness, and the checker correctly records that failure as unresolved; the real defect is found by the exact-once obligation that owns it.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3636}}
@@ -922,14 +1054,14 @@ Double buffer, \(P=1\), no trailing barrier & lifetime & the race of Figure 4 \\
 Missing leading barrier & readiness, lifetime & reads of uninitialized slot elements \\
 \end{longtable}
 
-\emph{Table 4. Faults injected into the certified \(1000^3\) design, all rejected with a replayed defect.}
+\emph{Table 5. Faults injected into the certified \(1000^3\) design, all rejected with a replayed defect.}
 
 \textbf{Answer to RQ1.} For this template the search face and the correctness face coincide, so the solver's optimum is correct by construction and loses nothing to the contract. Soundness is argued once for the whole family; each instance then costs a solve of at most 0.16 s and a 25 ms check.
 
 \hypertarget{correctness-across-refinement-levels-rq2}{%
 \subsection{Correctness across refinement levels (RQ2)}\label{correctness-across-refinement-levels-rq2}}
 
-Table 5 reports the 78 structural variants. Each refinement level introduces failures that the level above cannot express, and each is caught by the obligation that the new structure brings with it.
+Table 6 reports the 78 structural variants. Each refinement level introduces failures that the level above cannot express, and each is caught by the obligation that the new structure brings with it.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2500}}
@@ -966,7 +1098,7 @@ Resource scheduling & 3 & 2 & 0 & 2 & 1 unfair-stall control \\
 Two connected GEMMs & 3 & 2 & 0 & 1 & --- \\
 \end{longtable}
 
-\emph{Table 5. Outcomes for 78 structural variants (31 new faults, 3 deadlocks). Unresolved entries use deliberately incorrect certificates; no unresolved case is counted as a defect.}
+\emph{Table 6. Outcomes for 78 structural variants (31 new faults, 3 deadlocks). Unresolved entries use deliberately incorrect certificates; no unresolved case is counted as a defect.}
 
 The failures follow the level structure:
 
@@ -986,7 +1118,7 @@ The failures follow the level structure:
 
 These are exactly the cross-layer errors that layer-by-layer verification misses.
 
-The workload components extend value identity beyond GEMM operands (Table 6). All 100 valid schedules match their references, and every one of the 16 injected fault families yields a replayed counterexample:
+The workload components extend value identity beyond GEMM operands (Table 7). All 100 valid schedules match their references, and every one of the 16 injected fault families yields a replayed counterexample:
 
 \begin{itemize}
 \tightlist
@@ -1027,7 +1159,7 @@ Prefill and two decode steps & 48 & 6 & 1 & 1 \\
 Training transition & 16 & 7 & 1 & 1 \\
 \end{longtable}
 
-\emph{Table 6. Finite workload coverage: 100 valid schedules accepted, 16 fault families each rejected with a replayed counterexample.}
+\emph{Table 7. Finite workload coverage: 100 valid schedules accepted, 16 fault families each rejected with a replayed counterexample.}
 
 \textbf{Answer to RQ2.} On bounded instances, the gate accepts every valid refinement, rejects every injected fault with a replayed witness, and distinguishes a failed certificate from a real defect. Each refinement step is caught by its own local obligation.
 
@@ -1036,7 +1168,7 @@ Training transition & 16 & 7 & 1 & 1 \\
 
 The gate runs inside the loop, so its cost is paid on every iteration. We compare reuse with full rechecking over identical revision streams, charging the initial proof to both modes; paired runs alternate their order, start from an empty cache, and always agree on every classification.
 
-\textbf{Reuse across design revisions.} The GEMM checker caches proved queries keyed by formula, source hash and solver settings, over streams containing a baseline, relevant edits, an injected fault and its repair; reuse cuts median checking time by 1.22--1.79\ensuremath{\times} and reuses roughly half of all queries (Table 7). The workload checker caches whole groups of schedules once every member has passed, over streams that also expand the family and force a context change; reuse saves 1.65--2.06\ensuremath{\times}.
+\textbf{Reuse across design revisions.} The GEMM checker caches proved queries keyed by formula, source hash and solver settings, over streams containing a baseline, relevant edits, an injected fault and its repair; reuse cuts median checking time by 1.22--1.79\ensuremath{\times} and reuses roughly half of all queries (Table 8). The workload checker caches whole groups of schedules once every member has passed, over streams that also expand the family and force a context change; reuse saves 1.65--2.06\ensuremath{\times}.
 
 \begin{longtable}[]{@{}lllll@{}}
 \toprule\noalign{}
@@ -1058,9 +1190,9 @@ Prefill and decode & 37.1 & 18.1 & 2.06\(\times\) & 71/120 \\
 Training transition & 30.3 & 15.1 & 2.01\(\times\) & 11/20 \\
 \end{longtable}
 
-\emph{Table 7. Verification reuse over revision streams (median of three paired repetitions). Structural streams reuse exact SMT queries; workload streams reuse completely checked schedule groups.}
+\emph{Table 8. Verification reuse over revision streams (median of three paired repetitions). Structural streams reuse exact SMT queries; workload streams reuse completely checked schedule groups.}
 
-\textbf{Reuse down the refinement chain.} The setting the flow depends on most is the five-step GEMM chain of §3.3. \emph{Full} mode rechecks every ancestor step at each depth; \emph{progressive} mode keeps each accepted step's certificate once the fingerprints of its premises are confirmed unchanged. Neither caches individual queries, both use identical models, and faults injected at each step are rejected in both. Table 8 reports medians of seven paired repetitions.
+\textbf{Reuse down the refinement chain.} The setting the flow depends on most is the five-step GEMM chain of §3.3. \emph{Full} mode rechecks every ancestor step at each depth; \emph{progressive} mode keeps each accepted step's certificate once the fingerprints of its premises are confirmed unchanged. Neither caches individual queries, both use identical models, and faults injected at each step are rejected in both. Table 9 reports medians of seven paired repetitions.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0714}}
@@ -1094,7 +1226,7 @@ Paired ratio
 5 & Shared resources & 958.4 & 380.6 & 92 / 27 & 2.51\(\times\) \\
 \end{longtable}
 
-\emph{Table 8. Cumulative checking cost along a five-level GEMM refinement chain.}
+\emph{Table 9. Cumulative checking cost along a five-level GEMM refinement chain.}
 
 The gain grows with depth. Full rechecking pays for everything already built; progressive checking pays only for what is new. At depth one there is nothing to inherit and bookkeeping costs a little (0.97\ensuremath{\times}); by depth five, progressive checking issues 27 solver queries instead of 92 and runs 2.51\ensuremath{\times} faster.
 
@@ -1105,7 +1237,7 @@ The gain grows with depth. Full rechecking pays for everything already built; pr
 
 The Ventus studies ask whether the coupling that the formulation exposes matters on a real GPU architecture running large-language-model workloads. Four results stand out.
 
-\textbf{Changing both sides beats changing either.} The first study pairs compiled kernels that remove indexing and access overhead with a redistribution of load/store and write-queue capacity \cite{r96}. In complete P128 simulation, the software alone reduces execution from 812.6 to 539.8 million cycles, and with the redistributed queues it falls to 264.1 million, a 67.5\% reduction (3.08\ensuremath{\times} faster) within 1.108 mm\ensuremath{^2}. The software cuts dynamic instructions from 386.3 to 334.4 million and requested bytes from 7.23 to 5.83 billion while leaving matrix instructions unchanged; the queues let the chip absorb the memory requests that remain. The combination beats both single-side controls on every task (Table 9). Joint search, however, only ties the sequential control here: the benefit comes from letting both sides change.
+\textbf{Changing both sides beats changing either.} The first study pairs compiled kernels that remove indexing and access overhead with a redistribution of load/store and write-queue capacity \cite{r96}. In complete P128 simulation, the software alone reduces execution from 812.6 to 539.8 million cycles, and with the redistributed queues it falls to 264.1 million, a 67.5\% reduction (3.08\ensuremath{\times} faster) within 1.108 mm\ensuremath{^2}. The software cuts dynamic instructions from 386.3 to 334.4 million and requested bytes from 7.23 to 5.83 billion while leaving matrix instructions unchanged; the queues let the chip absorb the memory requests that remain. The combination beats both single-side controls on every task (Table 10). Joint search, however, only ties the sequential control here: the benefit comes from letting both sides change.
 
 \begin{longtable}[]{@{}llllll@{}}
 \toprule\noalign{}
@@ -1119,9 +1251,9 @@ B: decode & 1.000 & 0.934 & 0.454 & 0.427 & 0.428 \\
 C: all scenarios & 1.000 & 0.934 & 0.454 & 0.427 & 0.428 \\
 \end{longtable}
 
-\emph{Table 9. Qwen2.5-0.5B, compiled kernels with queue reallocation: worst-scenario cycle ratios (lower is better). Simulated for P128; the 512-token scenarios are extrapolated \cite{r96}.}
+\emph{Table 10. Qwen2.5-0.5B, compiled kernels with queue reallocation: worst-scenario cycle ratios (lower is better). Simulated for P128; the 512-token scenarios are extrapolated \cite{r96}.}
 
-\textbf{A rejected kernel becomes the right one on a different chip.} The second study introduces a 64\ensuremath{\times}64 matrix tile \cite{r97} that cuts weight traffic by about one third but needs 173 vector registers. On the earlier chip it makes the design worse (cycle ratio 0.362 to 0.438); once the register file, tensor shape and cache allocation are reopened, the same kernel becomes valuable. Packed query--key computation, unfavorable on the default chip, likewise improves P512 from 0.377 to 0.334 on the new one. The final designs reach 2.93\ensuremath{\times} on the worst prefill scenario, or 3.58\ensuremath{\times} on the worst decode scenario for a decode-specialized chip that gives up prefill (Table 10).
+\textbf{A rejected kernel becomes the right one on a different chip.} The second study introduces a 64\ensuremath{\times}64 matrix tile \cite{r97} that cuts weight traffic by about one third but needs 173 vector registers. On the earlier chip it makes the design worse (cycle ratio 0.362 to 0.438); once the register file, tensor shape and cache allocation are reopened, the same kernel becomes valuable. Packed query--key computation, unfavorable on the default chip, likewise improves P512 from 0.377 to 0.334 on the new one. The final designs reach 2.93\ensuremath{\times} on the worst prefill scenario, or 3.58\ensuremath{\times} on the worst decode scenario for a decode-specialized chip that gives up prefill (Table 11).
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.3077}}
@@ -1155,9 +1287,9 @@ Selected for tasks A and C & 1.081 & 0.342 & 0.331 & 0.295 & 0.272 & 2.93\(\time
 Decode-specialized & 1.085 & 0.430 & 0.438 & 0.279 & 0.258 & 3.58\(\times\) on decode \\
 \end{longtable}
 
-\emph{Table 10. Qwen2.5-0.5B, kernel--architecture exploration: cycle ratios from complete instruction simulation of all 24 layers and 16 decode steps \cite{r97}.}
+\emph{Table 11. Qwen2.5-0.5B, kernel--architecture exploration: cycle ratios from complete instruction simulation of all 24 layers and 16 decode steps \cite{r97}.}
 
-\textbf{Committing early loses designs.} The third study scales the workload to Qwen2.5-14B on a chip scaled to 35.52 mm\ensuremath{^2} \cite{r98}. Its software menu, solved to zero gap, includes shared input packing, grouped query heads, merged decode softmax and fused projections. The decisive choice is whether to fuse the feed-forward gate and up projections: fusion is best on the reference chip but not on the selected one, which trades scalar registers and shared memory for more load/store and miss-status entries. The sequential strategy fixes the fusion choice on the reference chip and cannot undo it. Joint selection reopens it and lowers the decode objective by 4.10\% relative to sequential, 4.43\% relative to software only and 17.82\% relative to hardware only (Table 11); for prefill the gain is only 0.35\%. A software preference learned on one chip holds only \emph{under that chip}, and a flow that discards the alternative after one evaluation loses the better design.
+\textbf{Committing early loses designs.} The third study scales the workload to Qwen2.5-14B on a chip scaled to 35.52 mm\ensuremath{^2} \cite{r98}. Its software menu, solved to zero gap, includes shared input packing, grouped query heads, merged decode softmax and fused projections. The decisive choice is whether to fuse the feed-forward gate and up projections: fusion is best on the reference chip but not on the selected one, which trades scalar registers and shared memory for more load/store and miss-status entries. The sequential strategy fixes the fusion choice on the reference chip and cannot undo it. Joint selection reopens it and lowers the decode objective by 4.10\% relative to sequential, 4.43\% relative to software only and 17.82\% relative to hardware only (Table 12); for prefill the gain is only 0.35\%. A software preference learned on one chip holds only \emph{under that chip}, and a flow that discards the alternative after one evaluation loses the better design.
 
 \begin{longtable}[]{@{}llllll@{}}
 \toprule\noalign{}
@@ -1171,7 +1303,7 @@ B: decode & 1.000 & 0.816 & 0.949 & 0.813 & \textbf{0.780} \\
 C: all scenarios & 1.000 & 0.996 & 0.968 & 0.964 & 0.961 \\
 \end{longtable}
 
-\emph{Table 11. Qwen2.5-14B, fusion and mapping: worst-scenario cycle ratios, estimated by calibrated aggregation of representative instruction simulations over all 48 layers \cite{r98}.}
+\emph{Table 12. Qwen2.5-14B, fusion and mapping: worst-scenario cycle ratios, estimated by calibrated aggregation of representative instruction simulations over all 48 layers \cite{r98}.}
 
 \textbf{The chip can buy a smaller data representation.} The fourth study asks how much KV-cache storage can be saved under latency and accuracy limits \cite{r99}. It covers one decode step of Qwen2.5-0.5B with a single-layer KV append, choosing key and value precisions, quantization group size, head grouping and buffer reuse, and searches 4,092 hardware proposals. At allowed latency ratios of about 0.18--0.20, joint optimization needs 16--17\% less storage than software only under 2\% and 5\% local error thresholds; at tighter ratios, software only has no feasible choice at all. Faster hardware lets a compact format meet the latency limit, although a hardware-first sequential search finds essentially the same chip. The accuracy result applies to local attention probes, not to full-model accuracy.
 
@@ -1180,7 +1312,7 @@ C: all scenarios & 1.000 & 0.996 & 0.968 & 0.964 & 0.961 \\
 \hypertarget{when-the-formulation-is-wrong-rq5}{%
 \subsection{When the formulation is wrong (RQ5)}\label{when-the-formulation-is-wrong-rq5}}
 
-The fifth study shows what happens when the formulation itself is wrong \cite{r100}. It optimizes complete Qwen2.5-0.5B execution over two software families and 27 hardware fields (Table 12). All nine MIP solves close with zero gap and predict a worst-case ratio near 0.333, but simulation returns 0.791--0.899, an underestimate of 58--63\%. The selections follow the error: the joint design is \emph{worse} than hardware only on prefill (0.899 against 0.791), and the prefill-selected chip beats the chips selected for the other objectives on their own objectives. The solver did its job; the formulation did not describe the chip. A closed optimality gap certifies the model's optimum, not the design's.
+The fifth study shows what happens when the formulation itself is wrong \cite{r100}. It optimizes complete Qwen2.5-0.5B execution over two software families and 27 hardware fields (Table 13). All nine MIP solves close with zero gap and predict a worst-case ratio near 0.333, but simulation returns 0.791--0.899, an underestimate of 58--63\%. The selections follow the error: the joint design is \emph{worse} than hardware only on prefill (0.899 against 0.791), and the prefill-selected chip beats the chips selected for the other objectives on their own objectives. The solver did its job; the formulation did not describe the chip. A closed optimality gap certifies the model's optimum, not the design's.
 
 \begin{longtable}[]{@{}llll@{}}
 \toprule\noalign{}
@@ -1196,7 +1328,7 @@ Sequential & 0.791 & 0.797 & 0.827 \\
 Joint & 0.899 & 0.800 & 0.827 \\
 \end{longtable}
 
-\emph{Table 12. Qwen2.5-0.5B full-network optimization: simulated cycle ratios. MIP-predicted ratios were near 0.333 for every task \cite{r100}.}
+\emph{Table 13. Qwen2.5-0.5B full-network optimization: simulated cycle ratios. MIP-predicted ratios were near 0.333 for every task \cite{r100}.}
 
 A queue probe in the first study shows the same failure at a smaller scale \cite{r96}. Halving a write queue raises one subgraph's time by about 49\%, while the earlier model predicted no change; the queue capacity behind the 67.5\% design of §6.5 is precisely the resource that model had missed.
 
@@ -1219,7 +1351,7 @@ The experiments establish these failure modes and their attribution; they do not
 \hypertarget{summary}{%
 \subsection{Summary}\label{summary}}
 
-Table 13 collects the results on both axes.
+Table 14 collects the results on both axes.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2000}}
@@ -1250,7 +1382,7 @@ KV storage (§6.5) & 16--17\% less storage; feasible where software only is not 
 Model fidelity and transfer (§6.6) & 58--63\% prediction error despite zero gap; 3.07--5.60\(\times\) slowdown on transfer & --- & simulated \\
 \end{longtable}
 
-\emph{Table 13. Evaluation summary.}
+\emph{Table 14. Evaluation summary.}
 
 Taken together, the results support the central claim where it has been tested. The search stayed tractable: each per-step formulation was solved to proven optimality, in under 0.2 s for the tiling template and at zero gap over the co-design menus. Verification stayed tractable: every proof was local, every injected fault was caught with a replayed witness, and the cost of checking grew with what changed rather than with the depth of the stack. And the designs were good: changing the chip and the software together beat changing either alone in every study. The results also mark the claim's limits. A formulation that omits a mechanism misleads the solver no matter how exactly it is solved, and the discovery half of the flow, in which the language model writes the templates, has yet to be measured.
 
@@ -1260,7 +1392,7 @@ Taken together, the results support the central claim where it has been tested. 
 \begin{itemize}
 \tightlist
 \item
-  \textbf{Untraced headline figures.} The project proposal reports 4.34\ensuremath{\times} prefill, 3.93\ensuremath{\times} decode and 3.82\ensuremath{\times} combined speedups on Qwen2.5-0.5B, a 24--28\% prefill-cycle reduction from spill removal, and a 7.02\ensuremath{\times} speedup on the AI Infrastructure course benchmark. We could not trace these to the experiment reports used here; the largest traced 0.5B result is 2.93\ensuremath{\times} (Table 10).
+  \textbf{Untraced headline figures.} The project proposal reports 4.34\ensuremath{\times} prefill, 3.93\ensuremath{\times} decode and 3.82\ensuremath{\times} combined speedups on Qwen2.5-0.5B, a 24--28\% prefill-cycle reduction from spill removal, and a 7.02\ensuremath{\times} speedup on the AI Infrastructure course benchmark. We could not trace these to the experiment reports used here; the largest traced 0.5B result is 2.93\ensuremath{\times} (Table 11).
 \item
   \textbf{Earlier iteration of the 14B study.} The earlier optimization manuscript reports a 10.84\% prefill reduction and a 0.47\% joint-over-sequential prefill gain, and that alternation matched joint selection. These come from an earlier menu; the final report \cite{r98} gives 3.9\% and 0.35\% and does not include alternation. The decode results agree.
 \end{itemize}
@@ -1297,7 +1429,7 @@ Our work draws on eight lines of research: hardware--software co-design and desi
 \begin{itemize}
 \tightlist
 \item
-  \emph{Template generation.} Every template in §6 was written by hand, and the agent's diagnosis and revision steps were taken by a human-supervised workflow. Whether a language model can propose a template's precondition and certificate, and how often the verifier accepts or refutes them, is the most important open question.
+  \emph{Template generation.} Every template in §6 was written by hand, and the agent's diagnosis and revision steps were taken by a human-supervised workflow. Whether a language model, guided by the structure catalog of §2.6, can detect the structure of a refinement step and propose a template's move, precondition and certificate, and how often the verifier accepts or refutes them, is the most important open question. The catalog itself is drawn from the studies of §6, in which its structures were exploited by hand; whether it is complete, and how much each structure shrinks the search when applied by the agent, is not yet measured.
 \item
   \emph{The population and transfer.} The population of §2.5 has not been run across problems. The one transfer measurement available is negative: chips selected for Qwen ran 3.07--5.60 times slower than baseline on GPT-2 and Pythia (§6.6). The result supports storing knowledge with its scope, but it is not evidence that the population compounds.
 \item
@@ -1310,9 +1442,9 @@ Our work draws on eight lines of research: hardware--software co-design and desi
   \emph{Technology.} Physical and technology effects, such as memory macros, wiring and achievable frequency, are outside the scope of this paper.
 \end{itemize}
 
-\textbf{Next steps.} Three experiments would test the untested half of the claim most directly. First, let the language model propose templates, including their preconditions and certificates, and measure how many the verifier certifies, how many it refutes with a replayed counterexample, and how much precondition loss the certified ones carry. Second, reuse one certified template across new workloads and chip contracts, and compare the cost of an instance check with that of re-deriving the template. This turns the two-tier trust boundary into a measured saving. Third, carry one template through to execution on a real GPU and compare the result with an industrial library.
+\textbf{Next steps.} Three experiments would test the untested half of the claim most directly. First, let the language model propose templates from the structure catalog, including their preconditions and certificates, and measure how many the verifier certifies, how many it refutes with a replayed counterexample, how much precondition loss the certified ones carry, and, for each structure, how much of the search it removes, measured as solver nodes and time with and without it. Second, reuse one certified template across new workloads and chip contracts, and compare the cost of an instance check with that of re-deriving the template. This turns the two-tier trust boundary into a measured saving. Third, carry one template through to execution on a real GPU and compare the result with an industrial library.
 
-The broader lesson of this work is that the obstacle to whole-stack co-design is less the size of the design space than the absence of a formulation in which that space can be searched and trusted. Progressive refinement provides the structure. Templates make each step both solvable and checkable, and the agent is what can find them.
+The broader lesson of this work is that the obstacle to whole-stack co-design is less the size of the design space than the absence of a formulation in which that space can be searched and trusted. Progressive refinement provides the structure. Templates make each step both solvable and checkable, and the physics of the stack, read through a small catalog of exploitable structures, is what tells the agent which template to write.
 
 \begin{thebibliography}{99}
 \small
@@ -1416,5 +1548,7 @@ The broader lesson of this work is that the obstacle to whole-stack co-design is
 \bibitem{r98} Ventus Co-Design Project. \emph{Qwen2.5-14B Joint Hardware--Software Optimization}. Public experiment report, issue 4, October 9, 2026. \url{https://github.com/BinaryCheater/ventus-codesign/issues/4}.
 \bibitem{r99} Ventus Co-Design Project. \emph{Latency-Constrained KV Storage}. Public experiment report, issue 5, October 9, 2026. \url{https://github.com/BinaryCheater/ventus-codesign/issues/5}.
 \bibitem{r100} Ventus Co-Design Project. \emph{Qwen Full-Network Optimization and GPT-2/Pythia Transfer}. Public experiment report, issue 6, October 9, 2026. \url{https://github.com/BinaryCheater/ventus-codesign/issues/6}.
+\bibitem{r101} H. A. Simon. \emph{The Architecture of Complexity}. Proceedings of the American Philosophical Society, 106(6):467--482, 1962.
+\bibitem{r102} S. Williams, A. Waterman, and D. Patterson. \emph{Roofline: An Insightful Visual Performance Model for Multicore Architectures}. Communications of the ACM, 52(4):65--76, 2009.
 \end{thebibliography}
 \end{document}

@@ -146,8 +146,10 @@ loop:
   if v.verdict == refuted: diagnose(v.counterexample); continue
 
   m = Evaluator.measure(decode(T, x))
+  optimism.update(predicted=bound, measured=m)           # is the cost model still one-sided?
   if regime_flipped(T.structure.regime, m):              # bottleneck moved
-      ledger.append("regime_flip"); split_or_descend()   # this is the refinement signal
+      ledger.append("regime_flip", witness=x)
+      handle_regime(T, x, m)                             # §5.1: bound → constraint → probe → budget
   if discrepancy(m, bound) > tol:
       diagnose("model")                                  # revise cost model, not template
 
@@ -158,7 +160,45 @@ loop:
 
 **Diagnosis** is the paper's table, implemented as a function that maps a symptom to exactly one source (constraints, cost model, search policy, contract) and one response. The response is appended to the ledger *before* it is acted on, so the architect can see what the Orchestrator concluded and why.
 
-**Regime flips are not failures.** When the Evaluator reports that the assumed bottleneck has moved, the Orchestrator records it as the signal to refine one level lower, as described in the structure notes (§6).
+**Regime flips are not failures.** When the Evaluator reports that the assumed bottleneck has moved, the Orchestrator records it as the signal to refine one level lower, as described in the structure notes (§6). What it does next is `handle_regime`, specified below.
+
+### 2.4 Handling a regime: bound, constraint, probe, budget
+
+A performance obligation ("this branch is HBM-bound") is discharged by the strongest of three means, and the Orchestrator tries them in order. This is paper §4.7 made executable.
+
+```
+handle_regime(T, witness, m):
+  # 1. try to prove the regime over the branch (interval sub-solve on the cost model)
+  if analytic_bound(T.branch, T.structure.regime):       # min t_HBM >= max t_r over the branch
+      T.structure.strength = "proved"; return KEEP        # surrogate may prune
+
+  # 2. make the regime a constraint; designs outside it go to a sibling template
+  T_in  = T.with_constraint(regime_inequality)            # holds by construction, like K1
+  T_out = Formulator.propose(step, regime=next_resource(m))   # sibling, one rung lower
+  split_var = argmax_effect_on_bottleneck(witness)        # the variable that moved it
+  ledger.append("split", on=split_var, children=[T_in, T_out])
+
+  # 3. decide whether the sibling is worth searching: bounded upside vs incumbent
+  cap = roofline_ceiling(next_resource(m))                # best the new regime can do
+  if optimism.clean() and cap <= incumbent * (1 + eps):   # ceiling may prune only while model is one-sided
+      ledger.append("skip_regime", reason="bounded upside", cap=cap); return KEEP
+
+  # 4. otherwise probe the sibling with a budget and a stated confidence
+  wins, n = 0, 0
+  for d in probes_near_boundary(T_out, order_by=predicted_upside, budget=B):
+      n += 1; md = Evaluator.measure(d); optimism.update(...)
+      if md < incumbent: wins += 1; archive.update(d)
+      if wins == 0 and 3.0 / n < delta: break              # rule of three: P(missed win) < delta at 95%
+  ledger.append("probe_result", n=n, wins=wins, bound_on_missed=3.0/n if wins == 0 else None)
+  population.record_flip(T, at=witness, resource=next_resource(m), evidence=...)
+  return DESCEND if wins > 0 else KEEP
+```
+
+Parameters, all per run and recorded in the ledger: `eps` (how much better a ceiling must be to justify a search), `B` (probe budget per flip), `delta` (acceptable probability of a missed win, e.g. 0.15 → ~20 losing probes). There is no exact procedure behind step 4; the budget is what makes it a specification.
+
+**The optimism record.** `optimism` keeps, over the whole run, whether every measured design has run no faster than the cost model predicted. While the record is clean, ceilings from the model are one-sided and may prune (step 3). The first measurement that beats its prediction flips the record to dirty: every `skip_regime` decision taken on a ceiling is demoted to steer, the skipped regimes are reopened, and `diagnose("model")` runs. The record is a single boolean plus the list of decisions that depended on it; this is cheap and must be in S4 (Evaluator) from the start.
+
+**What the population learns from a flip.** `record_flip` stores the workload family, the chip, the resource the bottleneck moved to, the split variable and its value, and the probe outcome. Over many runs this becomes a regime map; the curator job (§10) uses it to promote trends that never flipped to candidate bounds, and to turn boundaries that recur into splits built into the template itself.
 
 ---
 
@@ -304,7 +344,7 @@ Each stage has a test that must pass before the next begins.
 | **S1** Verifier service | Wrap the existing bounded checker: `certify_family(T)`, `check_instance(T, x)` | Reproduces 24/24 on the tiling template; returns the replayed race for the unsound precondition. |
 | **S2** Solver service | Wrap the MILP: `solve(T)` | Reproduces the 93-variable GEMM solve in ≤ 0.2 s with the same optimum. |
 | **S3** Orchestrator + scripted Formulator | State machine; Formulator replaced by a script that replays the paper's five-step GEMM progression | Full loop runs end to end on GEMM, five levels, no model calls; ledger is complete; replay from any checkpoint reproduces the run byte-for-byte. |
-| **S4** Evaluator | Analytic roofline model + Ventus simulation adapter | Regime detection on the Qwen workload reproduces the HBM-bound / compute-bound split from the co-design study. |
+| **S4** Evaluator | Analytic roofline model + Ventus simulation adapter; the optimism record | Regime detection on the Qwen workload reproduces the HBM-bound / compute-bound split from the co-design study; the optimism record goes dirty on the 58–63%-error model of the KV study. |
 | **S5** Large-model Formulator | Prompted around the structure catalog, with the three tools of §2.2 | On the GEMM run, proposes templates that the Verifier certifies ≥ 80% of the time; every proposal carries a well-formed `structure` block. |
 | **S6** UI | Timeline + template view + commands | The architect can find, from the timeline alone, the iteration where a regime assumption was wrong, open it, and see the counterexample. |
 | **S7** Drive mode | Checkpoints, rewind, replay, override events | Edit a template mid-run, replay, and show both lineages in the population. |
@@ -389,5 +429,6 @@ Because nothing enters the population without passing the gate, this improvement
 2. **Formulator output format.** Should the model emit the contract JSON directly, or emit a structured plan that code expands into a contract? Recommendation: start with the latter (plan → code → contract); it is easier to validate and to keep K1 (C ⇒ Pre) true by construction.
 3. **Regime detection threshold.** What utilization ratio counts as "bound"? Needs calibration on Ventus.
 4. **Branch splitting.** When a branch straddles a regime boundary, split on which variable? Start with the one with the largest effect on the bottleneck resource in the cost model.
-5. **Human override semantics.** When the architect overrules a *performance* verdict (steer), the loop continues. When they attempt to overrule a *correctness* verdict (gate), the system refuses. Confirm this is the behavior we want.
-6. **Concurrency.** v1 is one run at a time. Does the population need to be shared across concurrent runs on different workloads? If so, S0 should use Postgres from the start.
+5. **Regime parameters.** Defaults for `eps`, `B` and `delta` need calibration on the GEMM and Ventus studies; start with `eps = 0.05`, `B = 20`, `delta = 0.15`.
+6. **Human override semantics.** When the architect overrules a *performance* verdict (steer), the loop continues. When they attempt to overrule a *correctness* verdict (gate), the system refuses. Confirm this is the behavior we want.
+7. **Concurrency.** v1 is one run at a time. Does the population need to be shared across concurrent runs on different workloads? If so, S0 should use Postgres from the start.
