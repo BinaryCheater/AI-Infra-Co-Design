@@ -1,0 +1,1420 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage[scaled=0.9]{helvet}
+\usepackage{courier}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\setkeys{Gin}{keepaspectratio}
+\usepackage{longtable,booktabs,array,calc}
+\usepackage{float}
+\usepackage{framed}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\setlength{\parskip}{0.4em}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{3em}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\newcommand{\pandocbounded}[1]{#1}
+\makeatletter
+\def\fps@figure{tbp}
+\makeatother
+\renewcommand{\quote}{\list{}{\rightmargin\leftmargin}\item\relax\small}
+\title{Learning to Formulate: Agentic Hardware--Software Co-Design of AI Infrastructure through Progressive Optimization and Verification}
+\author{Authors: TBD}
+\date{Draft, October 11, 2026.}
+\begin{document}
+\maketitle
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+Progress in AI is increasingly limited not by the models but by the infrastructure that runs them. Every gain in capability has been paid for with more computation, memory and data movement, and the cost, energy and availability of AI infrastructure now decide what can be trained and served. Designing that infrastructure is a co-design problem that spans the entire stack: the workload at the top, the AI infrastructure software stack that executes it, from training and serving systems through compilers and kernel libraries, and the AI hardware chip underneath, down to its microarchitecture. The layers are deeply coupled. Whether a kernel runs fast depends on the size of the register file and on-chip memory; whether that memory is worth its silicon depends on whether the software can reuse data through it. The largest efficiency gains come from exactly these interactions. The layers also move on mismatched timescales: a new model or inference technique can change the demands on the hardware within months, while a new AI chip takes years to design, verify and bring to production.
+
+Industry copes by taking the stack apart. AI chips and the software stack are developed on largely separate tracks. A chip is architected against representative workloads, which by the time it ships are the workloads of the past, and the software is then written to fit whatever chip it is handed. Within each track the decomposition continues layer by layer, behind interfaces frozen early. This separation is what has made modern AI systems buildable, but it fixes in advance which decisions may interact, and it commits to each decision before the decisions that depend on it are known. A tile size is chosen for a register file that was sized for last year's tiles. The cross-layer combinations where specialization pays off are never explored, not because they are hard to build, but because no step of the process ever considers them.
+
+The natural response is to remove the boundaries: write the whole co-design down as a single optimization problem and turn a solver loose on it. This does not work, and the reason is fundamental. Written all at once, with every choice of tiling, data movement, scheduling, instruction selection and hardware resource exposed together, co-design becomes an enormous mixed-integer program whose structure is far too weak for any solver to crack. The obstacle is neither the hardware nor the algorithm, but the \emph{formulation itself}. Layer-wise engineering is, in effect, a fixed and hand-made formulation that keeps the problem solvable by giving up its most valuable interactions; the monolithic model keeps every interaction and gives up solvability. Neither discovers the formulation in between, one that exposes the interactions that matter while remaining small enough to solve. The real question, then, is not how to solve a fixed formulation, but how to find one worth solving.
+
+This is where agentic AI changes the picture. Recent advances in agentic AI offer the potential to tackle complex domain-specific optimization problems by integrating AI for domain reasoning, mathematical optimization for principled search, and simulation and verification for testing the assumptions underlying optimization models. This is exactly the combination that formulation discovery requires. An agent can reason about the engineering problem in domain terms and decide what must be optimized jointly and what can be decomposed. Solvers then search each formulation with bounds and optimality guarantees relative to the model, and simulation and verification test whether the formulation describes the real system faithfully.
+
+We build on this capability to propose an agentic progressive refinement flow for the end-to-end design optimization and verification of AI computing infrastructure. Its central idea fits in one sentence. \textbf{A language-model agent discovers the structure of the co-design problem and packages it, one refinement step at a time, as templates that a solver can optimize and a verifier can check; because each step adds only a little new structure, both the search and the verification stay tractable across the entire stack.} The flow starts from the workload and its computation graph and descends toward the microarchitecture. Each step turns a coarse data transaction into finer ones: a sum of products becomes partial sums, a logical value becomes the contents of a buffer, an access becomes a transfer that is issued and later completes, and a transfer becomes requests that compete for banks and ports. The agent captures the decisions newly exposed by the step, in the software stack and in the chip, as a compact optimization \emph{template}: a design pattern packaged together with the conditions under which it is correct. A solver optimizes within the template, and a verifier checks, against the same conditions, that every design the template admits still computes exactly what the level above demanded.
+
+Progressive refinement pays off twice. For the search, the flow never writes down the monolithic program. Each step solves a formulation over the decisions that step introduces, together with the coarser decisions they are coupled to. Every problem in the sequence is therefore small enough to solve with proven optimality, and an earlier decision is reopened when evidence shows that committing to it was a mistake. For verification, each step owes only a local proof that its finer transactions implement the coarser one. Local proofs compose back to the workload, and a step whose premises have not changed is not checked again. Templates add a second economy. A template's correctness is proved once, for its whole family of designs, after which each candidate the solver proposes needs only a quick check of the template's conditions. Verification can therefore run as a gate inside the optimization loop rather than as an audit at the end.
+
+The template is what holds optimization and verification together. It is the contract the language model writes between the solver and the verifier, and its conditions do triple duty. To the solver they are the constraints that bound the search, to the verifier they are the preconditions every design must satisfy, and to the agent they mark where the template may safely be reused. Because both algorithms read the same conditions, the designs the solver may choose are exactly the designs the verifier will accept. We seek the \emph{weakest} such conditions, in the sense of Dijkstra \cite{r12}: any stronger, and correct designs are needlessly shut out of the search; any weaker, and incorrect ones slip through. The agent keeps the templates it has certified as an evolving population of formulation patterns, so that a formulation discovered for one problem can become the starting point for the next.
+
+Our evaluation tests the parts of this idea that can be measured today. With templates written by hand, it shows that a template's search constraints and correctness conditions can coincide exactly; that the formulation at each step solves to proven optimality in well under a second; that local verification catches the errors each refinement step can introduce, and composes along a five-step chain at a fraction of the cost of rechecking; and that, on an open-source GPU running large-language-model workloads, designing the chip and the software together beats designing either alone. Template generation by the language model and the growth of the population across problems are not yet evaluated, and they are the main experiments that remain (§8).
+
+\textbf{Contributions.} This paper makes four contributions.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{An agentic flow for whole-stack co-design.} A language-model agent, optimization solvers and a verifier work in one loop that co-designs the AI chip and its software stack from the computation graph to the microarchitecture, discovering the formulation as it goes rather than fixing it in advance.
+\item
+  \textbf{Progressive refinement that keeps search and verification tractable.} We cast co-design as a sequence of coarse-to-fine refinement steps, each adding a small optimization problem and a local proof obligation. We prove that the local obligations compose into correctness of the complete design, and that proofs whose premises are unchanged can be reused as formulations evolve.
+\item
+  \textbf{Templates as contracts.} We define templates whose conditions serve at once as search constraints, correctness preconditions and reuse scope. We show that the weakest such conditions give the largest correct search space, and we split the cost of trust into a one-time proof per template and a cheap check per candidate.
+\item
+  \textbf{Evaluation of design quality and tractability.} We evaluate the flow on a fully worked shared-memory tiling template, on GEMM refinements and workload checks, and on chip--software co-design studies on an open-source GPU, reporting for each both the quality of the design and the effort needed to reach and trust it.
+\end{itemize}
+
+\textbf{Organization.} Section 2 presents the flow end to end and defines the template as a contract. Section 3 develops progressive refinement across the stack. Section 4 presents the verification side, and Section 5 the optimization side. Section 6 reports the evaluation, Section 7 discusses related work, and Section 8 discusses what the evidence supports and what remains open.
+
+\hypertarget{the-agentic-progressive-refinement-flow}{%
+\section{The Agentic Progressive Refinement Flow}\label{the-agentic-progressive-refinement-flow}}
+
+This section presents the flow end to end. We first state what is being designed and what it must compute (§2.1), then walk through one iteration of the loop and the roles of its participants (§2.2). We then define the template precisely as a contract (§2.3), characterize its weakest form (§2.4), and describe the evolving population in which templates live (§2.5). Sections 3--5 develop the refinement structure, the verification side and the optimization side in turn. Figure 1 shows the flow as a whole.
+
+\begin{figure}
+\centering
+\includegraphics[width=1\textwidth,height=\textheight]{figures/fig1_flow.pdf}
+\caption{The agentic progressive refinement flow. The design moves down seven refinement levels, from the workload specification to the chip microarchitecture; each level adds detail to both the software stack and the chip. At each step the LLM agent draws a template from the population (or writes a new one). The template is a contract: its search constraints \(C\) bound the solver's joint search over software and chip decisions, and its preconditions \(\mathrm{Pre}\) are what the verification gate checks for every candidate. Only admitted designs reach the evaluator. Counterexamples return to the agent as template repairs, and costs and discrepancies return to the population as evidence. The output is one configuration across all seven layers, together with a proof that it computes the workload.}
+\end{figure}
+
+\hypertarget{what-is-designed-and-what-it-must-compute}{%
+\subsection{What is designed, and what it must compute}\label{what-is-designed-and-what-it-must-compute}}
+
+\textbf{Workloads.} The flow takes as input a large-model workload that the AI chip and its software stack must serve: a single kernel, such as a GEMM or an attention operator at given tensor shapes; a training step, covering the forward pass, backward pass and optimizer update; or an inference workload, such as prefilling a batch of prompts followed by a bounded number of decoding steps. Each is specified by its model or operator definition, tensor shapes, batch sizes, data types, permitted numerical error and persistent state, such as weights, optimizer state or the key--value cache. A design usually serves several workloads at once. An inference chip, for instance, must handle both prefill and decode, which share weights but stress the chip very differently. We call each workload a \emph{scenario} and let \(\mathcal W\) be the finite set of scenarios. Each scenario has a \emph{workload contract} with parameters \(p\in\mathcal P\), such as tensor dimensions and batch size, admissible runtime inputs \(U(p)\), and a set \(W(p,u)\) of acceptable behaviors for each input \(u\in U(p)\). A behavior records visible events, final outputs, state updates and completion status. Units of work are terminating, such as a kernel invocation, a bounded inference session or one training step, and the contract excludes deadlock and nontermination. The workload contract is the gold reference of the flow. It is specified independently of any optimization model, so that omitting a constraint from a formulation can never silently erase a requirement.
+
+\textbf{Hardware resource library.} The chip is assembled from a library \(\mathcal L\) of configurable hardware components. Each component type \(c\in\mathcal L\), such as a streaming multiprocessor, a tensor unit, a register file, a shared-memory block, an L2 cache slice, an HBM controller or an on-chip interconnect, has a configuration vector \(\theta_c\) drawn from a finite set \(\Theta_c\) of legal configurations. For a shared-memory block, \(\theta_c\) fixes its capacity in bytes and its number of banks; for a register file, its number of registers and read and write ports; for HBM, the number of channels and the bandwidth per channel; for a tensor unit, the shape of the matrix operation it executes per cycle; for the interconnect, its link width. Each component comes with a parameterized analytical model of its performance, power and area (PPA) as a function of its configuration:
+- a performance model \(\mathrm{Perf}_c(\theta_c)\) giving its latency, throughput or bandwidth, for example the cycles needed to serve a request or the bytes it delivers per cycle;
+- an area model \(A_c(\theta_c)\), in mm\ensuremath{^2};
+- an energy model \(E_c(\theta_c)\) giving the energy of one access or operation, and a static power \(P^{\mathrm{stat}}_c(\theta_c)\) drawn whenever the component is powered.
+
+The models are analytical or fitted to synthesis and simulation data, and they are what allow the optimizer to evaluate a configuration without building it. Changing the number of shared-memory banks, for instance, changes the bank-conflict latency seen by the software, the area of the block and its access energy, and all three follow from the component's model.
+
+\textbf{Designs.} The design space is organized by the seven layers of the stack, indexed \(\lambda=1,\dots,7\): workload specification, computation graph, operator transformation, tensor execution mapping, instruction scheduling, system architecture and chip microarchitecture. Each layer \(\lambda\) has its own set of design decisions, whose possible values form a domain \(\mathcal X_\lambda\). A \emph{design} selects one value for every decision at every layer,
+\[
+d=(x_1,\dots,x_7)\in\mathcal X=\mathcal X_1\times\cdots\times\mathcal X_7,
+\]
+and so fixes one concrete configuration of the entire software--hardware stack: the numerical formats and batching of the workload, the graph and its operator implementations, the tiling and mapping of every operator, the instruction schedule, and the organization and microarchitecture of the chip. The decisions at the system-architecture and microarchitecture layers determine the chip configuration \(h=\{(n_c,\theta_c)\}_{c\in\mathcal L}\), which chooses for each component type in the library a number of instances \(n_c\ge0\) and a configuration \(\theta_c\in\Theta_c\). The software--hardware boundary is one of the decisions rather than a fixed interface. We write \(b\) for the boundary decisions, which select, for mechanisms such as data transfer, whether each is realized in software, through a programmable instruction or by dedicated hardware (§3.1). When a design must serve several scenarios, the chip and its boundary are shared, while the software-side decisions of layers 1--5 may take a different value for each scenario, \(x_\lambda=(x_\lambda^w)_{w\in\mathcal W}\). Section 3 indexes the refinement levels below the workload specification by \(\ell=0,\dots,5\), so layer \(\lambda\) corresponds to level \(\ell=\lambda-2\). Every layer offers its own optimization opportunities, and the most valuable ones couple several layers at once (§3.1).
+
+\textbf{PPA metrics.} A design is judged by its performance, power and area, computed from the component models and the software running on the chip.
+- \emph{Area.} \(A(h,b)=A_0+\sum_{c\in\mathcal L}n_c\,A_c(\theta_c)+A_B(b)\) is the total chip area, where \(A_0\) is a fixed overhead for components outside the library and \(A_B(b)\) the area of the hardware mechanisms selected by the boundary \(b\).
+- \emph{Performance.} \(L_w(d)\) is the end-to-end execution time of scenario \(w\) on design \(d\): the number of cycles its software takes on the chip, obtained from the performance models and the schedule, divided by the clock frequency \(f\). For throughput-oriented scenarios, \(\Lambda_w(d)\) is the number of output units, such as generated tokens, completed per second.
+- \emph{Power.} \(P_w(d)\) is the average power drawn while running scenario \(w\): the static power \(\sum_c n_c P^{\mathrm{stat}}_c(\theta_c)\) plus the dynamic power \(\frac{1}{L_w(d)}\sum_c E_c(\theta_c)\,N_{c,w}(d)\), where \(N_{c,w}(d)\) counts the accesses or operations scenario \(w\) issues to components of type \(c\). The peak power \(\hat P_w(d)\) is the largest average over any window of a fixed length.
+
+\textbf{Objectives and requirements.} The flow optimizes a PPA objective \(J(d)\) subject to a budget and to the domain requirements of the deployment:
+\[
+\min_{d}\;J(d)\qquad\text{subject to}\qquad A(h,b)\le A_{\max},\qquad \hat P_w(d)\le P_{\max}\;\;\forall w\in\mathcal W,\qquad g_r(d)\le0\;\;\forall r\in\mathcal G,
+\]
+where \(A_{\max}\) is the area budget, \(P_{\max}\) the power envelope, and each \(g_r\) expresses one domain-specific requirement from the set \(\mathcal G\). The objective itself depends on the deployment.
+- \emph{Latency.} For a kernel or a training step, a natural objective is the worst normalized latency across scenarios, \(J(d)=\max_{w}L_w(d)/L_w^{\mathrm{ref}}\), where \(L_w^{\mathrm{ref}}\) is the execution time of scenario \(w\) on a fixed reference design. Normalizing makes scenarios of very different lengths comparable.
+- \emph{Serving efficiency.} For inference serving, the requirements are expressed in tokens. Let \(\tau_w(d)\) be the per-user token rate, the number of tokens per second delivered to each user (the inverse of the time per output token), and \(\Lambda_w(d)\) the aggregate token throughput. Typical objectives maximize energy efficiency \(\Lambda_w(d)/P_w(d)\), in tokens per second per watt, or throughput per unit area \(\Lambda_w(d)/A(h,b)\), subject to service-level requirements such as \(\tau_w(d)\ge\tau_{\min}\) tokens per second per user and a time to first token no longer than a bound \(t^{\mathrm{TTFT}}_{\max}\).
+- \emph{Composite.} When several metrics matter, \(J\) is a weighted combination of normalized metrics, or the flow returns the Pareto front over performance, power and area.
+
+Because \(J\), the area and power constraints and the requirements are all built from the component models and from quantities the software determines, every one of them couples software-stack and chip decisions.
+
+\hypertarget{one-iteration-of-the-flow}{%
+\subsection{One iteration of the flow}\label{one-iteration-of-the-flow}}
+
+The flow descends the stack from the computation graph to the microarchitecture. Its state after iteration \(k\) consists of a partially refined design, the active formulation \(\mathcal F_k\) that describes the decisions currently open, the evidence gathered so far, and the template population \(\mathcal Q_k\) (§2.5). Five participants act on that state.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{The language-model agent} reasons about the problem in domain terms. It decides which part of the design to refine next and at what granularity, draws candidate templates from the population, adapts or recombines them, and generates new ones when none fits. It also reads the evidence returned by the other participants and decides how to revise.
+\item
+  \textbf{The template} is the contract the agent writes for the step. It declares the new decisions, the constraints the solver must respect and the conditions the verifier must check (§2.3).
+\item
+  \textbf{The optimization solver} searches the formulation assembled from the active templates, jointly over software-stack and chip variables, and returns assignments, bounds and diagnostics.
+\item
+  \textbf{The verifier} establishes, against the template's own conditions, that every design the formulation admits still computes exactly what the level above demanded. It returns proofs, replayed counterexamples or an explicit \emph{unresolved} verdict.
+\item
+  \textbf{The evaluator} realizes selected assignments as a paired software implementation and chip configuration, and measures them through analytical models, simulation or emulation.
+\end{itemize}
+
+One iteration proceeds as follows.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Select the refinement.} The agent chooses the next boundary to cross, for example from logical tensors to tiles held in on-chip memory, and the region of the design it affects.
+\item
+  \textbf{Retrieve or generate the contract.} The agent queries the population for templates whose scope covers the current context. It instantiates a match, adapts or recombines near matches, or generates a new template from scratch.
+\item
+  \textbf{Certify the template if it is new.} A template that has not been certified before must pass a one-time soundness check over its whole declared family (§4.5). A failure returns a replayed counterexample, and the agent repairs the template or abandons it.
+\item
+  \textbf{Optimize.} The solver searches the formulation formed by the active templates and the shared hardware variables (§5).
+\item
+  \textbf{Gate each candidate.} Every selected assignment is checked against the instance-level conditions of its templates. Only candidates that pass are admitted; this check is cheap because the expensive argument was made once, in step 3.
+\item
+  \textbf{Evaluate.} Admitted candidates are realized and measured. Feasibility failures, ranking disagreements between the model and the measurement, and search difficulty are each attributed to their source (§5.4).
+\item
+  \textbf{Learn.} The agent updates cost coefficients and constraints, records the evidence and its scope, and returns the template, refined by what the solver, verifier and evaluator revealed, to the population. Unaffected proofs are retained, and only obligations whose premises changed are rechecked (§4.6).
+\end{enumerate}
+
+The loop repeats, refining further down the stack or revisiting an earlier boundary when new evidence warrants it, until the exploration budget is spent. It returns the best admitted design, the model-specific optimization information that supports it (bounds and termination status), and the composed correctness certificate that connects it to the workload.
+
+\hypertarget{the-template-as-a-contract}{%
+\subsection{The template as a contract}\label{the-template-as-a-contract}}
+
+A refinement template governs one boundary, from level \(\ell\) to level \(\ell+1\). It introduces one new design object and everything needed to optimize and verify it. Formally, a template is a tuple
+\[
+\mathsf T=\bigl(O,\;X,\;C,\;\mathrm{Pre},\;P,\;\pi,\;\Sigma,\;\hat J,\;\Gamma\bigr),
+\]
+whose components are:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.6429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2143}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Component
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Meaning
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Who uses it
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\(O\) & The new design object: a shared-memory tile, an asynchronous transfer, a buffer slot, a resource binding & all \\
+\(X\) & Its decision variables and domains, both software-stack (tile shape, buffering depth, schedule) and chip (capacity, banks, queue depth, boundary mode) & solver \\
+\(C\) & Search constraints over \(X\): the feasible region the solver may choose from & solver \\
+\(\mathrm{Pre}\) & Preconditions under which the object preserves the computation of level \(\ell\) & verifier \\
+\(P\) & Operation constructors that give the object an executable meaning at level \(\ell+1\) & verifier, evaluator \\
+\(\pi\) & The backward map that interprets a level-\((\ell+1)\) design as a level-\(\ell\) design & verifier \\
+\(\Sigma\) & A certificate schema: a state relation \(R\) and a progress rank \(\rho\) (§4.2) & verifier \\
+\(\hat J\) & Cost-model terms for the object & solver, evaluator \\
+\(\Gamma\) & Scope: the parameter family, coarse-level assumptions and hardware contracts under which the template is valid & agent, verifier \\
+\end{longtable}
+
+The template is a contract among three parties: the agent that authors it, the solver that must respect it and the verifier that enforces it. It binds them through three conditions.
+
+\textbf{(K1) The search face implies the verification face.} Every assignment the solver may choose satisfies the preconditions:
+\[
+\forall p\in\Gamma,\;\forall x\in X:\qquad C(p,x)\;\Longrightarrow\;\mathrm{Pre}(p,x).
+\]
+This is what allows the solver's choice to be trusted without re-deriving its correctness. When \(C\) is exported to a solver through auxiliary variables or big-\(M\) encodings, the exported predicate must also imply \(C\) (§4.5).
+
+\textbf{(K2) The preconditions are sufficient.} For every parameter in scope, every feasible coarse design and every assignment satisfying \(\mathrm{Pre}\), the refined design satisfies the local refinement obligations of §4.2 under the certificate schema \(\Sigma\). This lemma is proved once, for the whole family, and is then reused for every instance.
+
+\textbf{(K3) The contract is not empty.} A witness assignment exists for every supported parameter, so that a sound template cannot appear correct merely because it admits nothing.
+
+A contract satisfying K1--K3 is \emph{certified}. Checking an individual solution then reduces to confirming that it lies in \(C\) and that its context lies in \(\Gamma\). This split between a one-time family-level argument and a cheap per-instance check is the two-tier trust boundary at the center of the flow (§4.5).
+
+\textbf{Example: the shared-memory tiling template.} Listing 1 shows a complete template, the one evaluated in §6.2. It refines a GEMM \(C=AB\) from logical tensors to tiles staged through on-chip shared memory. Its new object is a shared-memory \emph{slot}: a thread block copies a \(T_m\times T_k\) tile of \(A\) and a \(T_k\times T_n\) tile of \(B\) into one of \(S\) slots, waits at a barrier, computes from the slot, and may wait at a second, trailing barrier (\(\beta=1\)) before the slot is refilled. Loads for reduction tile \(p+P\) are issued while tile \(p\) is being consumed, so the prefetch distance \(P\) overlaps data movement with computation. Every field of the tuple appears in the listing, and each is tagged with the party that reads it.
+
+\begin{figure}[tp]
+\begin{framed}
+\footnotesize
+\begin{verbatim}
+template SharedMemoryTiling        # GEMM -> shared-memory-tiled GEMM
+                                   # (operator level -> tensor-mapping level)
+object O:  shared-memory slot                                          [all]
+  # A block stages A[Tm x Tk] and B[Tk x Tn] into one of S slots;
+  # loads of k-tile p+P overlap the computation on k-tile p.
+
+scope Gamma:                                               [agent, verifier]
+  workload   C[M,N] += A[M,K] * B[K,N],  any M, N, K >= 1,  FP32
+  chip       M_s = 96 KiB shared memory per block, 256 threads per block,
+             R_acc = 32768 accumulators per block, e = 4 bytes/element
+  structure  leading barrier; grid ceil(M/Tm) x ceil(N/Tn);
+             tails guarded by (index < extent); tiles disjoint
+  # chip parameters are fixed here; a chip-level template makes them decisions
+
+decisions X:                                                        [solver]
+  Tm, Tn in {16, 32, 64, 128, 256}          # output tile        (software)
+  Tk     in {8, 16, 32, 64}                 # reduction tile     (software)
+  S      in {1, 2, 3}                       # slots per block    (software)
+  P      in {0, 1, 2}                       # prefetch distance  (software)
+  beta   in {0, 1}                          # trailing barrier   (software)
+
+constraints C:                                                      [solver]
+  C1  S * e * (Tm*Tk + Tk*Tn) <= M_s        # shared-memory capacity
+  C2  256 <= Tm*Tn <= R_acc                 # accumulator budget
+  C3  P <= S - 2 + beta                     # == Pre.lifetime  (K1)
+
+preconditions Pre:                                                [verifier]
+  lifetime   P <= S - 2 + beta              # weakest: exact on 24/24 cases
+
+program (level l+1):                                   [verifier, evaluator]
+  for each block (i, j):
+    for u in 0 .. P-1:   load k-tile u -> slot u mod S
+    for p in 0 .. KT-1:                     # KT = ceil(K/Tk)
+      if p+P < KT:       load k-tile p+P -> slot (p+P) mod S
+      barrier                               # leading
+      compute C[i,j] += slot (p mod S)
+      if beta: barrier                      # trailing
+
+backward map pi:                                                  [verifier]
+  forget the grid, the slots and the schedule  =>  C = A B over (M,N,K)
+
+certificate Sigma:                                                [verifier]
+  relation R   slot (u mod S) holds A[:,u], B[u,:] from the completion
+               of its load until the last read of k-tile u
+  rank rho     number of k-tiles not yet consumed
+  obligations  coverage, exact-once, no-phantom   (index; any extent)
+               readiness, lifetime                (schedule; all
+                                                   interleavings)
+               agreement: replay yields exactly the terms A[i,k]*B[k,j]
+
+cost J^:                                                 [solver, evaluator]
+  T >= T_comp,   T >= T_mem,   T >= T_comp + T_mem   if P = 0
+\end{verbatim}
+\end{framed}
+\vspace{-0.6em}
+{\small\textbf{Listing 1.} The shared-memory tiling template as a contract. Tags in brackets name the party that reads each field. Constraint C3 and the lifetime precondition are the same predicate; this is condition K1. Chip parameters ($M_s$, $R_{\mathrm{acc}}$) are fixed by the scope in this instance and become decisions when a chip-level template is active.}
+\end{figure}
+
+Read from top to bottom, the listing is the whole agreement. The solver sees the decisions \(X\), the constraints C1--C3 and the cost \(\hat J\). It never needs to know what a race is. The verifier sees the precondition, the program, the backward map \(\pi\) and the certificate \(\Sigma\). It never needs to know what is being optimized. The agent sees the scope \(\Gamma\): the template may be reused for any GEMM shape under the same chip parameters and structural choices, and must be re-examined when one of them changes, for instance when the leading barrier is removed or shared-memory capacity becomes a decision of the chip.
+
+\textbf{One line, three readers.} The constraint \(P\le S-2+\beta\) is where the contract becomes visible. With a trailing barrier, the slot refilled in phase \(p\) last held tile \(p+P-S\), which every warp finished before that barrier; this requires \(P\le S-1\). Without it, only the leading barrier of phase \(p-1\) orders a slow warp's reads, so the overwritten tile must have been consumed by phase \(p-2\), which requires \(P\le S-2\). Each party reads the same line differently:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1136}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4773}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4091}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Reader
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+How it reads \(P\le S-2+\beta\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+What follows
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Solver & A linear row over the menu indicators \(y^P_p\), \(y^S_s\) and the barrier bit: \(\sum_p p\,y^P_p-\sum_s s\,y^S_s-\beta\le-2\) & Unsafe schedules are outside the feasible region, so the optimum can never be one of them \\
+Verifier & The precondition of the lifetime obligation: in every admissible interleaving of loads, barriers and computes, no slot element is overwritten before its last read & Proved once for the family (K2); each instance is then certified by evaluating the line itself \\
+Agent & Evidence stored with the template: the condition is exact on all 24 checked combinations of \(S\), \(P\) and \(\beta\) (§6.2) & Precondition loss is zero; a stronger line costs 1.34\%, and a weaker one admits a race (Figures 3 and 4) \\
+\end{longtable}
+
+Because C3 is literally the precondition, K1 holds by construction. K2 is the lifetime lemma together with the index obligations, proved once over the family. K3 holds because the smallest tiles with \(S=1\), \(P=0\) and \(\beta=1\) satisfy C1--C3 for every shape in scope. In the flow, a listing like this is what the language model writes: a declarative contract, not a design. The solver and the verifier are then bound by it. In the experiments reported here, it was written by hand (§2.5). Figure 2 shows the same contract schematically.
+
+\begin{figure}
+\centering
+\includegraphics[width=1\textwidth,height=\textheight]{figures/fig2_contract.pdf}
+\caption{A template is one object read three ways. The solver reads its search face (domain \(X\), constraints \(C\), cost \(\hat J\)); the verifier reads its correctness face (preconditions \(\mathrm{Pre}\), backward map \(\pi\), certificate \((R,\rho)\)); the agent and the population read its scope \(\Gamma\) and signature. Conditions K1--K3 bind the three readings. Bottom: the shared-memory tiling instance, whose search constraints imply the five obligations the verifier discharges.}
+\end{figure}
+
+\hypertarget{the-weakest-contract}{%
+\subsection{The weakest contract}\label{the-weakest-contract}}
+
+For a template \(\mathsf T\) and parameters \(p\), let \(\mathrm{Safe}_{\mathsf T}(p)\) be the set of assignments whose refined designs actually preserve the coarse behavior. This is the weakest precondition, in Dijkstra's sense, of behavior preservation with respect to the template's operations. A precondition is \emph{sound} if \(\mathrm{Pre}\subseteq\mathrm{Safe}\) and \emph{exact} if equality holds. Let \(J^\star_k(\mathrm{Pre})\) denote the best objective attainable in the active formulation when the template's assignments are restricted to \(\mathrm{Pre}\).
+
+\textbf{Definition (precondition loss).} The precondition loss of a sound precondition is
+\[
+\Delta_{\mathrm{pre}}=J^\star_k(\mathrm{Pre})-J^\star_k(\mathrm{Safe})\;\ge\;0.
+\]
+
+\textbf{Proposition 1 (monotonicity of the contract).} If \(\mathrm{Pre}\subseteq\mathrm{Pre}'\subseteq\mathrm{Safe}\), then \(J^\star_k(\mathrm{Pre}')\le J^\star_k(\mathrm{Pre})\), and an exact precondition has zero precondition loss. If instead \(\mathrm{Pre}'\not\subseteq\mathrm{Safe}\), then the formulation admits a design that violates the workload contract, and its optimum need not be attainable by any correct design.
+
+\emph{Proof.} The first claim follows because the feasible set only grows. The second follows because some \(x\in\mathrm{Pre}'\setminus\mathrm{Safe}\) is feasible, and nothing prevents the objective from favoring it. \(\square\)
+
+The proposition is elementary, but it states the central tension precisely. Verification wants the honest boundary of correctness, and optimization wants the largest correct search space. Both want the same set. A contract that is too strong is safe but costly; one that is too weak is cheap to write but admits incorrect designs. Exact preconditions are rarely available in closed form, so the flow treats them as a target: the agent proposes \(\mathrm{Pre}\), and the verifier probes both directions, confirming soundness on the declared family and, where the family is finite, testing whether the rejected assignments are all genuinely unsafe.
+
+Figures 3 and 4 show both failure modes for the shared-memory tile of Listing 1. The exact precondition \(P\le S-2+\beta\) contains the solver's optimum on its boundary. Always keeping the trailing barrier is sound but too strong, and costs 1.34\% of latency on a ragged GEMM. Dropping the barrier from the precondition is too weak: the solver then selects a design with a race, which the verification gate rejects (§6.2).
+
+\begin{figure}
+\centering
+\includegraphics[width=1\textwidth,height=\textheight]{figures/fig3_precondition.pdf}
+\caption{Weakest precondition as least design loss, for the shared-memory tiling template. The exact precondition equals the safe set and contains the optimum on its boundary. A conservative precondition (always keep the trailing barrier) is sound but excludes that optimum, a precondition loss of \(1.34\%\) on the \(1000^3\) GEMM. An unsound precondition (\(P\le S-1\)) admits an unsafe design that the solver then selects, and the verification gate catches.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=1\textwidth,height=\textheight]{figures/fig4_race.pdf}
+\caption{The counterexample the gate replays for the unsound precondition, with \(S=2\) slots and prefetch distance \(P=1\). (a) Without a trailing barrier (\(\beta=0\)), warp 1 finishes reading slot 0, crosses no barrier, and prefetches k-tile 4 into slot 0 while warp 0 is still waiting to read k-tile 2 from it. Output \(C[0,1]\) then accumulates \(A[0,2]\,B[4,1]\) instead of \(A[0,2]\,B[2,1]\): one term is lost and a foreign one is added. (b) With the trailing barrier (\(\beta=1\)), which the exact precondition \(P\le S-2+\beta\) requires for this design, the load waits until every warp has finished reading the slot.}
+\end{figure}
+
+\hypertarget{the-evolving-template-population}{%
+\subsection{The evolving template population}\label{the-evolving-template-population}}
+
+Templates are not written once and filed away. The agent maintains them as a population
+\[
+\mathcal Q_k=\{(\mathsf T_i,\;\Gamma_i,\;\mathcal E_i,\;\varsigma_i)\},
+\]
+in which each member pairs a template with its scope \(\Gamma_i\), its accumulated evidence \(\mathcal E_i\) (soundness proofs, certified instances, measured outcomes, counterexamples and their causes) and a structural signature \(\varsigma_i\) that summarizes what kind of design it produces: its algorithmic organization, reuse direction, storage placement, boundary mode and the chip resources it relies on. Members of the population are formulation patterns, not solved designs.
+
+In each iteration, the agent draws candidates whose scope covers the current context, adapts or recombines them, and returns those that survive verification, refined by what the iteration revealed. Three rules govern the population.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Admission requires certification.} A template enters the population only after K1--K3 have been established within its declared scope. Uncertified proposals may be explored, but their results are labeled as such and are never composed into a correctness claim.
+\item
+  \textbf{Knowledge carries its conditions.} A statement such as ``fusing these two operators is faster'' is stored with the chip configuration and workload under which it was observed. A rejected design records why it was rejected: an illegal computation, a resource violation, provable dominance in a stated context, or an unfavorable measurement. Only the last is a performance judgment, and its scope is the hardware and workload on which it was made. A later change to the chip reopens it.
+\item
+  \textbf{Diversity is structural.} Retention favors members with distinct signatures over parameter variations of the same design, so that an alternative that looks unpromising on today's chip remains available when the chip changes.
+\end{itemize}
+
+The population is what makes the flow compound. A formulation that was hard to discover for one problem becomes a starting point for the next, and its evidence tells the agent when it applies and when it does not.
+
+\begin{quote}
+\textbf{Evidence status.} The templates in our experiments were written by hand. Template generation by the language model, maintenance of the population and transfer across problems are not yet evaluated, and the one transfer measurement available is negative (§6.6). These are the main open experiments (§8).
+\end{quote}
+
+\hypertarget{iterative-optimization-through-progressive-refinement}{%
+\section{Iterative Optimization through Progressive Refinement}\label{iterative-optimization-through-progressive-refinement}}
+
+A workload, at the top of the stack, describes its data movement only coarsely: an output \emph{is} a sum of products, and an activation \emph{flows} from one operator to the next. A running chip moves data in fine-grained transactions: a tile is copied into a numbered slot, a transfer is issued and later completes, a request waits in a queue for a bank port. Progressive refinement is the passage from the first description to the second, one step at a time. \textbf{Each refinement step replaces one coarse data transaction with finer ones that together implement it.}
+
+This principle is what makes whole-stack co-design tractable. Every step has two consequences, and both stay small:
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{The optimizer gains decisions.} The finer transactions come with choices the coarse one did not have, such as which group a product joins, which slot holds a tile, when a transfer is issued or which port serves a request. Some of these choices belong to the software stack and some to the chip.
+\item
+  \emph{The verifier owes an obligation.} The finer transactions can fail in ways the coarse one could not express: a slot is overwritten before its last read, a read happens before its transfer completes, two requests wait on each other forever. Each step must prove that its new transactions still implement the coarse one, and that proof is local to the step.
+\end{itemize}
+
+Optimization and verification therefore move down the stack together, and neither ever faces the whole stack at once: the optimizer solves a sequence of small formulations, and the verifier discharges a sequence of local proofs that compose. This section defines the levels (§3.1) and the kinds of change a formulation can undergo (§3.2), and then follows one GEMM through five steps (§3.3). Sections 4 and 5 return to the same five steps, from the side of the verifier and from the side of the optimizer.
+
+\hypertarget{refinement-levels}{%
+\subsection{Refinement levels}\label{refinement-levels}}
+
+Progressive refinement introduces software-stack and chip structure in a fixed order of \emph{what becomes concrete}, while leaving open \emph{when} each choice is fixed. The workload contract is the reference; the remaining representations are indexed \(\ell=0,\dots,L\), with \(\ell=0\) the computation graph. The second column of the table names the data transaction that each level makes finer.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.1579}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2105}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2105}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2105}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2105}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Level
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Data transactions at this level
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Software-stack structure introduced
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Chip structure introduced
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Principal obligations
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Workload specification & Required results: what is computed, not how & Required computation, admitted inputs, operator semantics & --- & Independent reference contract \\
+0. Computation graph & Tensor values flowing along graph edges & Operators, edges, parameter and state versions & --- & Correspondence to the workload specification \\
+1. Operator transformation & Reductions and partial results inside each operator & Fusion, decomposition, reduction partitioning, algorithmic families (e.g.~materialized vs.~streaming attention) & --- & Operator semantics and dependencies preserved \\
+2. Tensor execution mapping & Tile copies between memory levels; values held in storage slots & Tiles, layouts, memory placement, processor mapping & Register and on-chip memory capacity, number of processing units & Coverage, exact-once reductions, address maps, value lifetime \\
+3. Instruction scheduling & Issued and completed transfers; synchronized reads & Instruction selection, transfers, synchronization & Instruction interface, transfer mechanisms, software--hardware boundary & Operand readiness, visibility, progress \\
+4. System architecture & Transfers across units, memory channels and interconnect & Placement of work and data across units & Execution resources, memory hierarchy, interconnect & Resource compatibility, communication contracts \\
+5. Microarchitecture & Requests served by banks, ports and queues under arbitration & Bindings of operations to physical resources & Pipelines, banks, ports, queues, arbitration & Conflict handling, capacity, backpressure, justified progress \\
+\end{longtable}
+
+\textbf{Optimization opportunities at each level.} The levels are not only where structure appears; each one offers its own decisions to optimize, and many of the best designs come from making decisions at several levels together.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Workload specification:} numerical precision within the permitted error, batch and sequence-length buckets, and whether prefill and decode are batched together or separated.
+\item
+  \textbf{Computation graph:} storing or recomputing activations, operator order, layouts between operators and memory planning across the graph.
+\item
+  \textbf{Operator transformation:} fusion to keep intermediates on chip, splitting to expose parallelism, or a different algorithm for the same computation, such as streaming attention with an online softmax.
+\item
+  \textbf{Tensor execution mapping:} tile shapes at each level of the memory hierarchy, loop order, layout and swizzling, placement in registers, shared memory or HBM, division of work across streaming multiprocessors, and the number of buffers; on the chip side, register and shared-memory capacities and the number of processing units.
+\item
+  \textbf{Instruction scheduling:} tensor-unit or vector instructions, software pipelining, asynchronous or synchronous copies, barriers and register allocation; on the chip side, the instruction interface itself, including whether transfers are driven by software, by a programmable asynchronous instruction or by a dedicated controller.
+\item
+  \textbf{System architecture:} the number and mix of streaming multiprocessors, tensor and special-function units; register, shared-memory and cache capacities; HBM channels, interconnect bandwidth, clock and voltage, all within the area and power budgets.
+\item
+  \textbf{Chip microarchitecture:} banks, ports, queue depths, pipeline depth, issue width and arbitration, which determine how much of the nominal capacity the software can actually use.
+\end{itemize}
+
+Chip choices can remain symbolic at early levels and become concrete later. A capacity introduced as a variable at level 2 constrains tiling there and is fixed only when the level-4 formulation selects a memory hierarchy. The software--hardware boundary is an explicit decision rather than a fixed interface. For a mechanism \(j\), a one-hot variable
+\[
+b_{j\mu}\in\{0,1\},\qquad \sum_{\mu\in\mathcal M_j}b_{j\mu}=1
+\]
+selects whether it is realized as a software sequence, a programmable instruction mechanism or a dedicated controller. The modes share an external functional interface but differ in hardware cost, instruction overhead and the schedules they make legal. A capability built into the chip is paid for once and can serve many program regions.
+
+\hypertarget{four-kinds-of-change-to-a-formulation}{%
+\subsection{Four kinds of change to a formulation}\label{four-kinds-of-change-to-a-formulation}}
+
+Let the active formulation at iteration \(k\) be
+\[
+\mathcal F_k=(\mathcal R_k,\;X_k,\;C_k,\;\hat J_k,\;\mathcal D_k),
+\]
+with representation \(\mathcal R_k\), variables \(X_k\), constraints \(C_k\), modeled objective \(\hat J_k\) and a decoder \(\mathcal D_k\) that turns a feasible assignment into a paired software implementation and chip configuration. Its realizable set is \(\mathrm{Real}(\mathcal F_k)=\mathcal D_k(\{x\in X_k: C_k(x)\})\). The agent changes formulations in four distinct ways, and each carries a different obligation.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4167}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Change
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Effect on designs
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Obligation
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Vertical refinement} (new template) & Introduces a new object at the next level; may restrict choices & Template contract K1--K3 (§2.3) and composition (§4.4) \\
+\textbf{Representation expansion} & Adds a design family the model could not express, such as an online reduction or an asynchronous transfer mechanism & Certification of the new family's templates \\
+\textbf{Horizontal reformulation} & Changes the encoding within a level while preserving decoded designs and objective values (auxiliary variables, cuts, symmetry breaking) & Equivalence of the encoding, in the style of reformulation checkers \\
+\textbf{Restriction or cost revision} & Removes designs by a dominance rule or heuristic, or changes predicted costs & A scope-stated dominance argument (§5.4), or none if purely heuristic and labeled as such \\
+\end{longtable}
+
+These operations need not produce nested feasible sets. Adding a family enlarges the design space, modeling a previously omitted port conflict shrinks it, and changing coefficients alters the ranking without changing feasibility. The flow records each effect separately, so that a bound proved for one formulation is never mistaken for a bound on another.
+
+\hypertarget{a-worked-progression-one-gemm-five-steps-finer}{%
+\subsection{A worked progression: one GEMM, five steps finer}\label{a-worked-progression-one-gemm-five-steps-finer}}
+
+Consider a GEMM \(Y=AB\) with dimensions \(M,N,K\), where \(Y_{ij}=\sum_{k=0}^{K-1}A_{ik}B_{kj}\). At the top, each output is a single coarse transaction: ``sum these \(K\) products.'' Five templates make it concrete, and each replaces one transaction with finer ones, as the table below shows. The same five steps form the connected refinement chain measured in §6.4.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2131}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2623}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2623}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2623}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Step
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Coarse transaction \(\to\) finer transactions
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+The optimizer gains
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+The verifier owes
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1. Reduction partition & one sum of \(K\) products \(\to\) partial sums over groups, then a combine & the assignment \(x_{kr}\) of each reduction index \(k\) to a group \(r\) & exact-once: every product contributes exactly once \\
+2. Physical storage & a logical partial result or operand \(\to\) an occupancy of a reusable buffer & buffer assignments and the order \(z\) of values sharing a buffer & lifetime: a value survives until its last read \\
+3. Asynchronous transfer & an atomic write \(\to\) an issue event and a later completion & issue and completion times; the transfer mechanism \(b_{j\mu}\) (software, instruction or controller) & readiness: an operand is read only after its transfer completes \\
+4. Double buffering & one buffer per value \(\to\) generations rotating through \(S\) slots, loaded \(P\) tiles ahead & slots \(S\), prefetch distance \(P\), trailing barrier \(\beta\), and the shared-memory capacity that bounds them & generation correctness: a consumer reads the right generation; lifetime becomes \(P\le S-2+\beta\) (Listing 1) \\
+5. Shared resources & an untimed transfer or access \(\to\) requests to banks, ports and bounded queues & bindings of requests to banks and ports; queue depths and port counts on the chip & conflict freedom, no deadlock, and progress under the declared arbitration contract \\
+\end{longtable}
+
+Two of these steps show how a single line serves both readers. In step 2, with event times in a horizon \([0,H]\), a declared separation \(\delta>0\) and an order variable \(z\in\{0,1\}\) for two values sharing storage,
+\[
+l_v+\delta\le t_{v'}+(H+\delta)(1-z),\qquad l_{v'}+\delta\le t_v+(H+\delta)\,z,
+\]
+where \(t\) is a value's first destructive write and \(l\) its last required read. These inequalities are the solver's constraints and the verifier's lifetime precondition at once. Step 4 is the same idea specialized to rotating slots, and Listing 1 writes it out in full.
+
+Read down the table, the optimization variables grow from a partition to a storage assignment, an event schedule, a slot rotation and a resource configuration, and the chip enters as soon as a step needs a capacity, a mechanism or a port. Read across it, every new freedom arrives with exactly the obligation it could violate, and none of these obligations can even be stated one step earlier. A lifetime is meaningless before there is storage, and a deadlock is meaningless before there are queues. Through every step, the family of admitted designs keeps a certified connection to the single GEMM at the top (Theorem 2, §4.4). Section 4 shows how each obligation is discharged and composed, and Section 5 how the decisions at each step are optimized.
+
+\hypertarget{verification-certifying-each-refinement}{%
+\section{Verification: Certifying Each Refinement}\label{verification-certifying-each-refinement}}
+
+Verification proceeds with the refinement, one step at a time. At every step the verifier answers a single local question: do the finer transactions introduced here implement the coarser transaction they replace? It may assume that the level above has already been certified, and it owes nothing about the levels below, which have not yet been written. For the GEMM of §3.3 this means five separate, small proofs: exact-once accumulation for the partition, lifetime for storage, readiness for transfers, generation correctness for double buffering, and conflict freedom and progress for shared resources. None of them mentions the whole stack.
+
+Two results turn these local proofs into a global guarantee. Composition (§4.4) chains them back to the workload, so that the design at the bottom of the stack provably computes what the top requires. Incremental reuse (§4.6) keeps the chain cheap as formulations change, so that a step whose premises are unchanged is not checked again.
+
+\textbf{Vertical, not horizontal.} Checking optimization models is not new; reformulation checkers verify that two formulations at the same level are equivalent, typically that they have the same optimal solutions or that a solution of one maps to a solution of the other \cite{r11,r13,r14}. The obligation verified here is different in three ways.
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{What is related.} The two formulations sit at different levels, and the finer one contains objects (slots, transfers, queues) that the coarser one cannot name.
+\item
+  \emph{What is preserved.} Every admitted design, not just the optimal one, must compute what the coarser level demands. The objective plays no role in the proof.
+\item
+  \emph{How it is proved.} The proof object is a backward map with a state relation and a progress rank, discharged as the four obligations of §4.2. It is not a mapping between solutions.
+\end{itemize}
+
+Horizontal rewrites remain useful within a level, for example to tighten a relaxation, and the flow checks them as such (§3.2). The refinement steps that carry a design down the stack are the vertical ones.
+
+This section gives the semantic model (§4.1), the local obligations (§4.2) and their soundness (§4.3), their composition (§4.4), how contracts are checked and trusted (§4.5), and how earlier evidence is reused when formulations change (§4.6).
+
+\hypertarget{formulations-as-families-of-executable-designs}{%
+\subsection{Formulations as families of executable designs}\label{formulations-as-families-of-executable-designs}}
+
+At level \(\ell\), let \(d_\ell\) collect the design variables and \(C_\ell(p,d_\ell)\) the feasibility predicate assembled from the active templates. The formulation admits the family
+\[
+F_\ell(p)=\{d_\ell \mid C_\ell(p,d_\ell)\}.
+\]
+The semantic claim concerns \emph{every} admitted design, independently of which one the solver selects.
+
+Each formulation is stored as a typed model \(\mathcal M_\ell\) that declares variable domains, named constraint groups, the objective and an operation description \(P_\ell\). Substituting a design and an input into \(P_\ell\) yields an executable system
+\[
+\mathcal T_\ell(p,d_\ell,u)=\mathrm{Exec}_{\mathcal A_\ell}\bigl(P_\ell[p,d_\ell,u]\bigr),
+\]
+where \(\mathrm{Exec}\) is a fixed interpreter for the admitted operation constructors and \(\mathcal A_\ell\) records the declared component and environment contracts, including the hardware's. A storage read returns the contents of the modeled location; it does not assume that the intended value is still there. Proving that correspondence is precisely a refinement obligation.
+
+The system has states \(S_\ell\), a nonempty set of initial states \(I_\ell\), terminal states \(T_\ell\) without outgoing transitions, and a terminal observation function \(O_\ell\). A transition \(s\xrightarrow{w}_\ell s'\) emits a finite sequence \(w\) of visible events, and \(\varepsilon\) denotes internal work. Ending at a nonterminal state is a failure. Let \(B_\ell(p,d_\ell,u)\) be the behaviors of all maximal executions, including failure or divergence. A formulation is \emph{sound} if
+\[
+\forall p\in\mathcal P\;\forall d_\ell\in F_\ell(p)\;\forall u\in U(p):\qquad B_\ell(p,d_\ell,u)\subseteq W(p,u).
+\]
+The quantifiers matter. A proof for fixed shapes restricts \(\mathcal P\), and testing sampled data does not establish the quantifier over \(U(p)\). Floating-point accuracy and numerical stability are outside the scope of these obligations and are checked separately.
+
+\hypertarget{backward-maps-and-local-obligations}{%
+\subsection{Backward maps and local obligations}\label{backward-maps-and-local-obligations}}
+
+A backward map \(\pi_\ell(p,\cdot)\) interprets a level-\((\ell+1)\) design as a level-\(\ell\) design, for example recovering logical tensors from tile and storage assignments. It must be total on feasible refined designs and preserve feasibility:
+\[
+C_{\ell+1}(p,d)\;\Longrightarrow\;C_\ell\bigl(p,\pi_\ell(p,d)\bigr).
+\]
+The goal is behavior inclusion, \(B_{\ell+1}(p,d,u)\subseteq B_\ell(p,\pi_\ell(p,d),u)\), which we derive from local conditions rather than assume. Because the design map says nothing about intermediate values or progress, the template's certificate schema supplies a relation \(R(s,a)\) between fine states \(s\) and coarse states \(a\), and a rank \(\rho(s,a)\in\mathbb N\) that measures progress during internal work. Writing \(a\overset{m}{\underset{w}{\Rightarrow}}_c a'\) for a path of exactly \(m\) coarse steps with visible events \(w\), the certificate must establish four obligations:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Initialization.} \(\forall s_0\in I_f\;\exists a_0\in I_c:\;R(s_0,a_0)\).
+\item
+  \textbf{Step matching.} Every fine step has a finite coarse explanation with the same visible events, and a step explained by no coarse progress decreases the rank:
+  \[R(s,a)\land s\xrightarrow{w}_f s'\;\Longrightarrow\;\exists a',m:\;a\overset{m}{\underset{w}{\Rightarrow}}_c a'\land R(s',a')\land\bigl(m=0\Rightarrow\rho(s',a)<\rho(s,a)\bigr).\]
+\item
+  \textbf{Progress.} A represented nonterminal state has a successor: \(R(s,a)\land s\notin T_f\Rightarrow\exists s',w:\;s\xrightarrow{w}_f s'\).
+\item
+  \textbf{Completion agreement.} \(R(s,a)\land s\in T_f\Rightarrow a\in T_c\land O_f(s)=O_c(a)\).
+\end{itemize}
+
+The relation may carry invariants about ownership, stored values and completed work. The obligations quantify over all related states, which avoids relying on an unproved reachability approximation.
+
+\textbf{The obligations along the GEMM chain.} The four obligations are generic; what changes from step to step of §3.3 is the relation \(R\) and which obligation carries the weight.
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{Storage (step 2).} \(R\) states that every buffer holds the logical value it currently stands for. Step matching for a read is exactly the lifetime condition: the value read must be the one the coarse step consumes.
+\item
+  \emph{Asynchronous transfer (step 3).} The coarse atomic write is matched to the transfer's completion, and the issue is internal work. Step matching then fails precisely when a read precedes completion, which is the readiness condition.
+\item
+  \emph{Double buffering (step 4).} \(R\) tracks which generation each slot holds. Step matching requires that a consumer read the generation the coarse program names.
+\item
+  \emph{Shared resources (step 5).} Step matching holds easily, and the weight falls on progress. A waiting request must eventually be served, which the declared arbitration contract must justify.
+\end{itemize}
+
+\hypertarget{soundness-of-one-refinement}{%
+\subsection{Soundness of one refinement}\label{soundness-of-one-refinement}}
+
+\textbf{Theorem 1 (local refinement soundness).} Suppose the four obligations hold for a fixed design and input, and every maximal coarse execution terminates. Then every maximal fine execution terminates, and its visible history and terminal observation equal those of a maximal coarse execution. Hence \(B_{\ell+1}\subseteq B_\ell\).
+
+\emph{Proof sketch.} Initialization and repeated step matching map any fine execution to a concatenation of coarse paths with the same visible trace. A finite maximal fine execution ends in a terminal state, by progress, and completion agreement gives equal observations. An infinite fine execution would either map to an infinite coarse execution, contradicting coarse termination, or eventually make no coarse progress, in which case the rank would decrease forever, which is impossible in \(\mathbb N\). \(\square\)
+
+The rank permits finite silent work, such as cleanup after coarse completion, but excludes endless internal waiting. Progress that relies on hardware arbitration or transfer completion must follow from the declared hardware contract. An unstated fairness assumption cannot supply it. One sufficient contract bounds the number of consecutive primitive transitions in which no outstanding event completes. With \(n_e(s)\) outstanding events and a countdown \(h(s)\le\beta_{\max}\), the potential \(\Phi(s)=(\beta_{\max}+1)\,n_e(s)+h(s)\) decreases on every transition and bounds execution length by \((\beta_{\max}+1)N_e+\beta_{\max}\).
+
+\textbf{The reduction-partition certificate.} For the first refinement of §3.3, fine states record, for every output \((i,j)\) and group \(r\), the set \(D_{ijr}\subseteq S_r\) of consumed reduction indices and an accumulator \(b_{ijr}\). The relation requires \(b_{ijr}=\sum_{k\in D_{ijr}}A_{ik}B_{kj}\); the rank is \(MNK-\sum|D_{ijr}|+1\). Each consume step preserves the relation and lowers the rank, and finalization yields \(Y_{ij}=\sum_r b_{ijr}=(AB)_{ij}\) because the groups partition the reduction. The certificate holds for every positive \(M,N,K\) and group count, every partition and every matrix value. It establishes the partition refinement, but not that physical storage implements the atomic consume step; that is the next template's obligation.
+
+\hypertarget{composition-across-the-stack}{%
+\subsection{Composition across the stack}\label{composition-across-the-stack}}
+
+\textbf{Theorem 2 (progressive formulation soundness).} Suppose the computation-graph formulation is sound with terminating workload behaviors, and every refinement satisfies feasibility preservation and the obligations of Theorem 1 for every admitted parameter, feasible fine design and admissible input, under compatible environment assumptions. Then
+\[
+\forall p,\;\forall d\in F_L(p),\;\forall u\in U(p):\qquad B_L(p,d,u)\subseteq B_0\bigl(p,\Pi_{0:L}(d),u\bigr)\subseteq W(p,u).
+\]
+
+\emph{Proof sketch.} Define coarser designs backward by \(d_\ell=\pi_\ell(p,d_{\ell+1})\). Feasibility preservation gives \(C_0(p,d_0)\). Soundness of the graph formulation gives termination and \(B_0\subseteq W\), and induction over levels with Theorem 1 gives \(B_{\ell+1}\subseteq B_\ell\) at every level. \(\square\)
+
+Two caveats are essential. Soundness is distinct from nonemptiness, which requires a feasible witness at every level (K3). And a refinement may correctly restrict the design space without preserving its optimum: correctness composes, optimality does not, unless a reverse map or a dominance argument is supplied.
+
+Theorem 2 is what licenses verifying one step at a time. The proof is an induction down the stack in which each step contributes only its own local certificate. Adding a sixth step therefore costs one new local proof, not a new end-to-end argument. For the GEMM, the five local certificates of §3.3 compose into a proof that the design described in terms of banks, ports and queues computes \(Y=AB\). When one step changes, only that step's certificate and those that depend on it need rechecking (§4.6). Along the five-step chain, this cuts the cumulative solver queries at depth five from 92 to 27 (§6.4).
+
+\hypertarget{checking-contracts-the-two-tier-trust-boundary}{%
+\subsection{Checking contracts: the two-tier trust boundary}\label{checking-contracts-the-two-tier-trust-boundary}}
+
+\textbf{Tier 1: template soundness, once per template.} For a new or revised template, the checker instantiates the obligations of §4.2 under the template's schema and scope. Witness substitution turns each obligation into an implication \(H_j(\xi)\Rightarrow Q_j(\xi)\) over parameters, designs, states and events, and the checker searches for a violation, \(\exists\xi:\;H_j(\xi)\land\neg Q_j(\xi)\). Arithmetic, array and finite-width conditions go to an SMT solver. Symbolic reduction identities and parameterized paths use library lemmas or proof-assistant proofs, and finite execution families are explored exhaustively. Each query yields one of three outcomes.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Proved.} An unsatisfiable query establishes the implication within its declared scope, and the result is stored with its premises for reuse.
+\item
+  \textbf{Counterexample.} A satisfying assignment is replayed from initialization by an independent interpreter. It establishes a workload defect only if the replay reconstructs an admissible execution that violates the workload contract. Otherwise it shows a wrong map, an overly broad relation or an invalid progress argument, and the agent repairs the certificate rather than the design.
+\item
+  \textbf{Unresolved.} A timeout or unsupported theory leaves the template uncertified. Uncertainty is never treated as correctness.
+\end{itemize}
+
+\textbf{Tier 2: instance check, once per candidate.} The solver works with an exported predicate \(\widehat C(p,z)\) over its own variables \(z\), which may include auxiliaries, and a fixed decoder \(\eta\) maps solutions back to designs. Export is sound if
+\[
+\forall p,z:\quad \widehat C(p,z)\;\Longrightarrow\;\exists d:\;\eta(p,z)=d\;\land\;C(p,d).
+\]
+A verified exporter proves this for a class of models; otherwise a translation check parses the emitted constraints and verifies the implication for that export. Each selected assignment is then checked against the exact declared constraints and integrality requirements. Any modified assignment is a new candidate. This is the gate inside the loop. Because K1 has already established that \(C\) implies \(\mathrm{Pre}\), the per-candidate cost is that of evaluating a constraint system, not of re-proving correctness.
+
+\textbf{The trusted base} consists of the reviewed workload specification, the chosen proof logic and checker, the operation interpreter and the explicitly declared component and environment contracts. The agent may propose maps, invariants, preconditions and proof terms, but cannot turn an unproved statement into an axiom or silently change what an operation means. A new hardware assumption either follows from existing contracts or remains a visible, conditional premise.
+
+\hypertarget{incremental-reuse-keeping-the-gate-affordable}{%
+\subsection{Incremental reuse: keeping the gate affordable}\label{incremental-reuse-keeping-the-gate-affordable}}
+
+Formulations change constantly in the flow, and rechecking everything after every change would make the gate the bottleneck. Instead, proofs are reused whenever their premises are unchanged.
+
+The proof library is a directed acyclic graph \(G=(V,E)\) whose nodes are definitions, assumptions, theorem statements and checked proofs, and whose edges record dependence, including dependences hidden in imported lemmas, operation semantics and trusted backend assumptions. Each node \(v\) carries a certificate \(\kappa_v:\Gamma_v\vdash P_v\). Constraints are kept as named groups \(C=\bigwedge_{g\in\mathcal G_C}C_g\), so that a lemma depends only on the groups it uses. After a change producing \(G'=(V',E')\), let \(\Delta\) be the nodes whose definitions, assumptions, statements, certificates or incoming dependences changed, and invalidate
+\[
+A=\bigl(\Delta\cup\mathrm{Reach}^{+}_{G\cup G'}(\Delta)\bigr)\cap V'.
+\]
+The affected nodes are rechecked in topological order.
+
+\textbf{Theorem 3 (soundness of incremental reuse).} Suppose dependency information is complete, all affected nodes are rechecked against their revised statements and contexts, and acceptance requires accepted non-root premises. Then every retained or newly accepted theorem has a valid derivation under the revised root assumptions.
+
+\textbf{Corollary 1 (reuse under constraint strengthening).} If parameter, design and input domains, the workload contract, execution semantics and environment assumptions are unchanged, and \(C_{\mathrm{new}}\Rightarrow C_{\mathrm{old}}\), then soundness of the old formulation implies soundness of the new one.
+
+Incremental checking saves work exactly when its overhead \(h_j\) is smaller than the proof work it avoids:
+\[
+T^{\mathrm{inc}}_j<T^{\mathrm{full}}_j\iff h_j<\sum_{i\in Q_j\setminus A_j}t_{i,j},
+\]
+where \(Q_j\) are the obligations after refinement \(j\), \(A_j\subseteq Q_j\) those new or invalidated, and \(t_{i,j}\) the cost of obligation \(i\). The total accounted cost of a design campaign is
+\[
+T_{\mathrm{total}}=V_{\mathrm{base}}+\sum_j T^{\mathrm{inc}}_j+n\,c_{\mathrm{check}}+V_{\mathrm{lower}},
+\]
+covering initial proof construction, incremental rechecking, per-candidate instance checks and the remaining implementation verification. The two-tier boundary appears directly in this sum: template soundness lives in \(V_{\mathrm{base}}\) and \(T^{\mathrm{inc}}\), while the gate contributes only \(n\,c_{\mathrm{check}}\).
+
+\hypertarget{optimization-searching-within-the-contract}{%
+\section{Optimization: Searching Within the Contract}\label{optimization-searching-within-the-contract}}
+
+Progressive refinement is also what keeps the search tractable. The optimizer refines its formulation in lockstep with the verifier, and never writes down the monolithic program of §1, in which every tiling, transfer, schedule and hardware resource appears at once. Instead it solves a \emph{sequence} of formulations. Each refinement step adds only the decisions that its finer transactions introduce, and each step is solved before the next one adds more detail. For the GEMM of §3.3, the first formulation chooses a reduction partition. The next adds buffer assignments, then transfer times and a transfer mechanism, then a slot rotation, then bank, port and queue bindings. Every formulation in the sequence is small enough to solve. The tiling step of Listing 1, for instance, is a MILP with 93 variables that HiGHS solves to proven optimality in under 0.2 s (§6.2).
+
+What keeps the sequence from becoming a greedy, layer-by-layer pass is how it treats coarser decisions. When a step begins, each decision made earlier is handled in one of three ways:
+
+\begin{itemize}
+\tightlist
+\item
+  it is \emph{fixed}, when nothing at the new step depends on it;
+\item
+  it is \emph{carried forward as a variable}, when it is coupled to the new decisions, as a tile shape is coupled to the shared-memory capacity that bounds it;
+\item
+  it is \emph{reopened later}, when evidence shows that a coupled neighborhood is worth releasing (§5.4).
+\end{itemize}
+
+Chip parameters in particular may stay symbolic across several steps and become concrete only when a formulation selects a memory hierarchy (§3.1). The 14B study of §6.5 shows why the third option matters: a fusion decision made on the reference chip had to be reopened once the chip changed, and reopening it improved the decode objective by 4.10\%.
+
+The optimization side thus has two jobs: assembling the active templates of the current step into a solvable joint formulation over software-stack and chip variables (§5.2--5.3), and steering how that formulation evolves from step to step (§5.1, §5.4).
+
+\hypertarget{why-the-formulation-must-evolve}{%
+\subsection{Why the formulation must evolve}\label{why-the-formulation-must-evolve}}
+
+A richer representation can only improve the best attainable design.
+
+\textbf{Proposition 2 (expansion under a fixed evaluator).} If \(\mathrm{Real}(\mathcal F_k)\subseteq\mathrm{Real}(\mathcal F_{k+1})\), both are nonempty and the true objective \(J\) is unchanged, then \(\min_{\mathrm{Real}(\mathcal F_{k+1})}J\le\min_{\mathrm{Real}(\mathcal F_k)}J\).
+
+A richer representation can also be much harder to search. The agent's job is to balance the two, and it is useful to separate the sources of design loss. Let \(J^\star\) be the optimum over all correct designs, \(J^\star_k(\mathrm{Safe})\) the optimum the active representation could reach with exact contracts, and \(J^\star_k(\mathrm{Pre})\) the optimum under the contracts actually used.
+
+\textbf{Proposition 3 (four sources of design loss).} Suppose the modeled objective is uniformly accurate on the realizable set, \(|\hat J_k(d)-J(d)|\le\epsilon_k\), and the selected design \(\hat d_k\) satisfies \(\hat J_k(\hat d_k)\le\min\hat J_k+\delta_k\). Then
+\[
+J(\hat d_k)-J^\star\;\le\;\underbrace{J^\star_k(\mathrm{Safe})-J^\star}_{\text{representation}}\;+\;\underbrace{\Delta_{\mathrm{pre}}}_{\text{contract}}\;+\;\underbrace{\delta_k}_{\text{optimization}}\;+\;\underbrace{2\epsilon_k}_{\text{prediction}}.
+\]
+
+\emph{Proof.} For a true minimizer \(d^\star\) under the contracts used, \(J(\hat d_k)\le\hat J_k(\hat d_k)+\epsilon_k\le\hat J_k(d^\star)+\delta_k+\epsilon_k\le J^\star_k(\mathrm{Pre})+\delta_k+2\epsilon_k\). Subtract \(J^\star\) and split \(J^\star_k(\mathrm{Pre})-J^\star\) at \(J^\star_k(\mathrm{Safe})\). \(\square\)
+
+Each term has its own remedy, and this is how the agent decides what to do next. Representation loss calls for a new family or template. Contract loss calls for a weaker, still sound precondition. Optimization error calls for a stronger encoding or better search, and prediction error calls for a better cost model. More solver time cannot repair a prediction error, and a richer representation cannot repair a weak relaxation. A formal use of the bound requires a uniform error guarantee; residuals measured on sampled designs guide experiments but do not supply one.
+
+\hypertarget{assembling-the-joint-formulation}{%
+\subsection{Assembling the joint formulation}\label{assembling-the-joint-formulation}}
+
+Each template contributes a block of variables and constraints. Blocks share chip variables, boundary variables and interface events, and their union is the level's mixed-integer program. Products of decisions are either evaluated on finite menus or linearized exactly; they are never left as unresolved bilinear terms. Indices are \(u\) for semantic units, \(r\) for candidate regions with implementations \(c\in C_r\), \(i\) for hardware slots with configurations \(p\in P_i\), and \(h\) for resource types.
+
+\textbf{Coverage and selection.} With \(q_{rc}\in\{0,1\}\) selecting an implementation,
+\[
+\sum_{r,c:\,u\in\mathrm{cover}(r,c)}q_{rc}=1\quad\forall u,\qquad\sum_{c\in C_r}q_{rc}\le1\quad\forall r,
+\]
+selecting a nonoverlapping cover. Algebraically different families, such as a materialized softmax and an online recurrence, are selected first by a family variable. Each family then activates its own internal decomposition, and they share only the region's external interface.
+
+\textbf{Chip supply and capability.} With \(y_{ip}\in\{0,1\}\) selecting at most one configuration per slot,
+\[
+\mathrm{Cap}_h(y)=\sum_{i,p}K_{iph}\,y_{ip},\qquad A(y,b)=A_0+\sum_{i,p}A_{ip}\,y_{ip}+\sum_{j,\mu}A^{B}_{j\mu}\,b_{j\mu}\le A_{\max},
+\]
+and a selected implementation that needs capability \(g\) requires \(q_{rc}\le\sum_{i,p:\,g\in\mathrm{cap}(i,p)}y_{ip}\). Shared components are paid for once.
+
+\textbf{Timing and shared resources.} With \(x_{rct}=1\) when implementation \((r,c)\) starts at tick \(t\), \(\sum_t x_{rct}=q_{rc}\), a duration \(d_{rc}\) and a resource profile \(U_{rch}\) fixed for that mode,
+\[
+\sum_{r,c,t}U_{rch}(\tau-t)\,x_{rct}\le\mathrm{Cap}_h(y)\qquad\forall h,\tau.
+\]
+For a producer \(r\) and consumer \(r'\) linked by an activation variable \(g_{rr'}\), \(s_{r'}\ge f_r+\delta_{rr'}-H(1-g_{rr'})\). A chip choice that changes a latency selects a corresponding performance mode; it cannot silently change a coefficient after optimization.
+
+\textbf{Storage and ports.} With residency variables \(\lambda_{v\tau}\) tied to production and last use, and byte sizes \(B_v\),
+\[
+\sum_v B_v\,\lambda_{v\tau}+\sum_{r,c,t}S_{rc}(\tau-t)\,x_{rct}\le\mathrm{Cap}_{\mathrm{mem}}(y)\qquad\forall\tau,
+\]
+applied separately to registers, shared memory and external storage. Port demand and outstanding transfers consume separate resources: two buffers make room for overlap, but do not establish that the ports or queues can sustain it.
+
+\textbf{Objective.} Each scenario has its own program variables and shares \(y\) and \(b\). The worst-case objective of §2.1 is linearized by an epigraph variable, \(T\ge L_w/L^{\mathrm{ref}}_w\) for all \(w\), and minimizing \(T\).
+
+\textbf{Exact linearizations.} For binaries \(q,y\), the conjunction \(z=q\land y\) uses \(z\le q\), \(z\le y\), \(z\ge q+y-1\). For a binary \(q\) and a continuous \(v\in[L,U]\), the product \(z=qv\) uses \(Lq\le z\le Uq\) and \(v-U(1-q)\le z\le v-L(1-q)\). Tight bounds matter: a generic large constant yields a valid but needlessly weak relaxation.
+
+\textbf{Movable boundaries.} A transfer can be orchestrated in software, exposed through an asynchronous instruction or managed by a controller. A family that needs asynchronous completion requires \(q_{rc}\le\sum_{\mu\in\mathcal M_{rc}}b_{j\mu}\), together with a compatible transfer engine, enough in-flight slots and a buffer lifetime spanning completion. Choosing a mode also selects its lowering recipe. A programmable mode emits completion events and waits, and a controller mode emits configuration and invocation commands. Specialization pays a shared area cost once, while software pays a recurring instruction and scheduling cost wherever it is used, and the optimization weighs the two across all scenarios.
+
+\hypertarget{decomposition-and-bounds}{%
+\subsection{Decomposition and bounds}\label{decomposition-and-bounds}}
+
+A natural decomposition lets a master problem choose the chip, boundary modes and algorithmic families, while scenario subproblems complete detailed programs and schedules on that shared chip. Simultaneous multi-scenario execution would require a shared contention subproblem instead. A failed completion returns information about the combination that failed. If an exact subproblem proves a structural assignment infeasible, a no-good constraint excludes it. A broader cut is admitted only when its derivation supports that scope. A compiler error or a timed-out schedule does not establish infeasibility.
+
+Bounds are indexed by the formulation that produced them. A lower bound \(\underline J^B\) on a branch \(B\) permits pruning against an accepted incumbent \(U\) when \(\underline J^B\ge U\), but only if both refer to the same objective and evaluator. A fitted cost prediction without a one-sided guarantee supports prioritization, not pruning. Expanding the candidate families invalidates bounds for the earlier, restricted problem, and changing latency coefficients changes the objective being bounded.
+
+\hypertarget{the-agents-actions-and-how-it-chooses-them}{%
+\subsection{The agent's actions and how it chooses them}\label{the-agents-actions-and-how-it-chooses-them}}
+
+The agent acts on the formulation and on the population, and every action carries an explicit scope: which designs it adds or removes, which assumptions it changes, how an existing incumbent is reconstructed, and which evaluation can resolve the next uncertainty. Actions fall into three groups.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Construction} generates or adapts templates, adds algorithmic families, exposes tensor dependencies or introduces chip capabilities and boundary modes.
+\item
+  \textbf{Reformulation} tightens bounds, removes redundant variables, breaks valid symmetries, adds valid inequalities or chooses a decomposition. These are horizontal changes, which must preserve the decoded designs and their objective values.
+\item
+  \textbf{Search} releases a coupled neighborhood, revisits a branch, selects a warm start or allocates an expensive evaluation.
+\end{itemize}
+
+\textbf{Diagnosis.} The agent attributes every disagreement to one of four sources before acting:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3636}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2727}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3636}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Symptom
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Source
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Response
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+A selected design cannot be lowered or violates a realized limit & the formulation's constraints or interface & add the missing constraint or repair the interface \\
+Measured ranking differs from predicted ranking & the predictive model & revise the cost mechanism \\
+A promising family stays hard to explore despite an adequate model & the search policy or encoding & reformulate, decompose or change neighborhoods \\
+The verifier refutes a template or an export & the contract & repair the template, its map or its certificate \\
+\end{longtable}
+
+These responses are different, and treating every failure as another design sample wastes effort. A weak bound needs a stronger formulation, a fast solver repeatedly selecting slow designs needs a better cost model, and a refuted contract needs repair, not more search.
+
+\textbf{Coupled neighborhoods.} Many variables are consequences of a few structural decisions: a tile, a buffer organization, a boundary mode and a hardware allocation determine much of the remaining schedule. Useful neighborhoods release decisions connected by one mechanism. For a register-limited matrix multiplication, these are the tile shape, register capacity, resident thread groups and tensor-unit shape together. Releasing only the tile finds nothing if the enabling chip change stays fixed, and releasing only the registers looks wasteful if the software cannot use them.
+
+\textbf{Conditional dominance.} Removing an alternative is safe only in context.
+
+\textbf{Proposition 4 (contextual replacement).} Let \(p\) and \(q\) be program fragments with the same functional interface, and \(\Gamma\) a set of chip configurations and surrounding programs. If every feasible design using \(p\) in \(\Gamma\) has a replacement using \(q\) that preserves the interface, remains feasible and is no worse, then removing \(p\) within \(\Gamma\) preserves the optimum over that domain.
+
+The engineering consequence is that every dominance fact is stored with its context. A rule learned for one register budget or cache organization does not apply outside it, and a change to the chip reopens the excluded alternative. When the replacement conditions are only suggested by measurement, the exclusion is a labeled heuristic, and the alternative remains in the population for reconsideration.
+
+\begin{quote}
+\textbf{Evidence status.} The diagnosis policy is specified here but has not been evaluated as an autonomous agent; in the studies of §6, these actions were taken by a human-supervised agent workflow.
+\end{quote}
+
+\hypertarget{evaluation}{%
+\section{Evaluation}\label{evaluation}}
+
+The evaluation is organized around the paper's central claim: that progressive refinement, with templates as contracts, keeps both the search and the verification of chip--software co-design tractable without giving up the quality of the design. Every result is therefore reported on two axes. \emph{Effectiveness} is the quality of the design: its latency, its use of chip area and storage, and whether it computes the workload correctly. \emph{Tractability} is the effort needed to reach and trust that design: solver time, the number and cost of checks, and how much earlier evidence can be reused. Five questions follow from the claim.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{RQ1 (the contract).} Does a template's search face coincide with its correctness face, so that the solver's optimum is correct by construction? What does a contract that is too strong or too weak cost?
+\item
+  \textbf{RQ2 (correctness across levels).} As software and chip structure are introduced level by level, does the gate certify valid refinements and expose the new errors that each level can introduce?
+\item
+  \textbf{RQ3 (the cost of the gate).} Does incremental reuse keep verification affordable as formulations change and refinements deepen?
+\item
+  \textbf{RQ4 (the value of co-design).} On an open-source GPU running large-language-model workloads, does choosing the chip and the software together beat choosing either alone? When does revisiting a coupled decision matter?
+\item
+  \textbf{RQ5 (fidelity and scope).} When does the formulation mislead the solver, and what must the loop learn when it does?
+\end{itemize}
+
+RQ1 and RQ2 test correctness by construction; RQ3, together with the solve times reported under RQ1 and RQ4, tests tractability; RQ4 and RQ5 test the quality of the resulting designs and the limits of the formulation.
+
+\hypertarget{experimental-setup}{%
+\subsection{Experimental setup}\label{experimental-setup}}
+
+\textbf{Template prototype (RQ1).} The shared-memory tiling template of Listing 1 is implemented end to end. Its search face is a mixed-integer linear program solved with HiGHS \cite{r91}; its correctness face is discharged with the Z3 SMT solver \cite{r90}, and every counterexample is replayed by an independent interpreter. The cost model belongs to an illustrative chip contract with 128 SMs, 1.8 TB/s of DRAM bandwidth, 80 TFLOP/s in FP32 and a 40-cycle barrier. Index obligations are proved for every tensor extent at each menu tile size, and schedule obligations for every interleaving of an event model with two warps and five reduction phases.
+
+\textbf{Refinement and workload checker (RQ2, RQ3).} A Python/Z3 checker implements the backward maps and obligations of §4. Eight structural groups start from the same GEMM and add, in turn, reduction partitions, buffer reuse, asynchronous transfer completion, double buffering, address mapping, tiled boundaries, resource scheduling over banks, ports and bounded queues, and two GEMMs connected through a shared intermediate. Three workload components cover causal attention, prefill followed by two decode steps, and one training transition with two microbatches. Domains are small enough for every counterexample to be replayed from initialization and every finite state space to be explored completely. Each case is classified as \emph{accepted}, a \emph{new fault} with a replayed witness, a \emph{parent fault} inherited from an earlier level, a \emph{deadlock}, \emph{unresolved} (a proposed certificate failed but no semantic witness exists) or \emph{infeasible} (an empty design domain). Cases and their expected classifications were fixed before the final runs.
+
+\textbf{Chip--software co-design on Ventus (RQ4, RQ5).} The co-design studies start from Ventus, an open-source RISC-V GPGPU \cite{r89}. The reference chip has two streaming multiprocessors (SMs), each with up to eight resident warps of 32 threads, 1,024 vector-register slots, one (4, 8, 4) tensor unit, 128 KiB of shared memory and a 64 KiB L1 cache, together with a 128 KiB shared L2 cache and one external-memory channel at 64 bytes per cycle. The search redistributes a fixed area budget across 27 hardware fields, from SM count and register ports to caches and load/store queues. External-memory service is held fixed, so any gain must come from using compute and bandwidth better, not from buying more bandwidth. Area follows a library model of the kind described in §2.1, with logic calibrated to 15 synthesis points in the ASAP7 7-nm predictive library \cite{r92} and SRAM costs derived from CACTI \cite{r56}; the small-model budget is 1.11 mm\ensuremath{^2}. Software comes from the Ventus PyTorch backend compiled with Ventus LLVM. Its reference implementation already reuses matrix operands across output tiles, so the baseline is optimized rather than naive. The primary workload is Qwen2.5-0.5B-Instruct \cite{r93} at batch size one (24 layers, BF16 storage, FP32 accumulation). Further studies use Qwen2.5-14B on a chip scaled to 35.52 mm\ensuremath{^2}, GPT-2 small \cite{r94} and Pythia-160M \cite{r95} to test transfer, and a single-layer key--value (KV) cache. Performance is measured in device cycles by an instruction-level timing model that follows compiled control flow and addresses and accounts for dependencies, ports, pipelines, queues, caches and external memory, but does not compute tensor values.
+
+\textbf{Objectives and controls.} P128 and P512 denote prefill of a 128- or 512-token prompt, and D128 and D512 denote 16 decode steps from a KV cache of 128 or 512 tokens. The \emph{cycle ratio} \(r_w(d)=L_w(d)/L_w(d_{\mathrm{ref}})\) is the latency objective of §2.1 normalized by the study's reference design; lower is better, and \(1/r\) is the speedup. Task A takes the worst ratio over the two prefill scenarios, task B over the two decode scenarios, and task C over all four. Each study compares the same final menus under five strategies: the \emph{baseline}; \emph{software only}, with the chip fixed at the reference; \emph{hardware only}, with the software fixed; \emph{sequential}, which chooses the software on the reference chip and then the chip for that software; and \emph{joint}, which solves one formulation over both.
+
+\textbf{Kinds of evidence.} Every result is labeled as \emph{proved} within a stated bounded scope, \emph{simulated} by complete instruction-level execution, \emph{estimated} by calibrated aggregation of representative programs, or \emph{modeled} by a cost model alone. The Ventus evaluation is area-constrained and cycle-based, with no power model and no common physical clock. Its studies differ in evaluator and baseline, so ratios are compared only within a study; they draw on the project's public experiment reports \cite{r96,r97,r98,r99,r100}.
+
+\begin{quote}
+\textbf{Evidence status.} No part of this evaluation runs the language-model agent autonomously. Templates were written by hand, and in the Ventus studies the agent's actions (expanding a menu, reopening a branch, revising a cost model) were taken by a human-supervised agent workflow. The results test the contract, the gate, reuse and the value of the co-design formulation, not template generation, the population or the diagnosis policy.
+\end{quote}
+
+\hypertarget{one-template-end-to-end-rq1}{%
+\subsection{One template, end to end (RQ1)}\label{one-template-end-to-end-rq1}}
+
+\textbf{The precondition is exact.} We ran the checker on all 24 combinations of slot count \(S\in\{1,2,3\}\), prefetch distance \(P\in\{0,\dots,3\}\) and trailing barrier \(\beta\). The set of schedules it certifies equals the template's precondition \(P\le S-2+\beta\) exactly, with no extra designs admitted and none wrongly excluded. Every rejected combination fails the same obligation, lifetime. Table 1 lists the safe prefetch distances. The result turns a piece of GPU programming folklore, that an extra buffer can replace the trailing \texttt{\_\_syncthreads()}, into a precise, checked condition: a third slot buys one more step of prefetch or the removal of the barrier, but not both.
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+Slots \(S\) & Trailing barrier & Safe prefetch distances \(P\) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & yes & 0 \\
+1 & no & none \\
+2 & yes & 0, 1 \\
+2 & no & 0 \\
+3 & yes & 0, 1, 2 \\
+3 & no & 0, 1 \\
+\end{longtable}
+
+\emph{Table 1. Safe schedules of the shared-memory tiling template. The verifier's accepted set equals the template's precondition \(P\le S-2+\beta\) on all 24 combinations.}
+
+\textbf{Search and certification.} Table 2 shows the designs the solver selects for three GEMM shapes. The MILP has 93 variables, 90 of them binary, and 248 constraints. HiGHS proves each selection optimal at zero gap in 0.03--0.16 s, and brute-force enumeration of the same 722 feasible designs reaches the same objective in every case. Certifying a selected design (12 obligations) takes about 25 ms. All three selections lie on the boundary of the precondition: three slots, prefetch distance one and \emph{no} trailing barrier. The optimizer spends shared memory to remove a barrier, which is legal only because the precondition is the weakest one.
+\textbar{} GEMM \textbar{} Selected \((T_m,T_n,T_k,S,P,\beta)\) \textbar{} Shared memory \textbar{} Modeled time \textbar{} Gate \textbar{}
+\textbar------------\textbar----------------\textbar------------\textbar------------\textbar--------\textbar{}
+\textbar{} \(4096^3\) \textbar{} (128, 256, 16, 3, 1, 0) \textbar{} 72 KiB \textbar{} 1826.9 \(\mu\)s, memory-bound \textbar{} 12/12 proved \textbar{}
+\textbar{} \(64\times4096\times4096\) \textbar{} (64, 64, 16, 3, 1, 0) \textbar{} 24 KiB \textbar{} 75.1 \(\mu\)s, memory-bound \textbar{} 12/12 proved \textbar{}
+\textbar{} \(1000^3\), ragged tails \textbar{} (128, 128, 32, 3, 1, 0) \textbar{} 96 KiB, at capacity \textbar{} 53.1 \(\mu\)s, compute-bound \textbar{} 12/12 proved \textbar{}
+
+\emph{Table 2. Designs selected by the template's MILP and certified by the gate. Times are modeled.}
+
+\textbf{What a wrong contract costs.} Replacing the template's precondition with a stronger or a weaker one, and keeping everything else fixed, reproduces both failure modes of §2.4 (Table 3).
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.4000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Precondition given to the solver
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(4096^3\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(64\times4096^2\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(1000^3\)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Exact, \(P\le S-2+\beta\) & optimal, certified & optimal, certified & optimal, certified \\
+Too strong: always keep the trailing barrier & +0.0\%, certified & +0.0\%, certified & \textbf{+1.34\%}, certified \\
+Too weak: \(P\le S-1\), barrier ignored & \textbf{rejected by gate} & \textbf{rejected by gate} & \textbf{rejected by gate} \\
+\end{longtable}
+
+\emph{Table 3. Contract ablation. Percentages are precondition loss in modeled latency relative to the exact contract.}
+
+The stronger contract is safe but loses the optimum wherever barriers matter: 1.34\% of latency on the compute-bound ragged shape, and nothing on the memory-bound shapes, so precondition loss depends on the workload as well as on the template. The weaker contract makes the solver choose, on all three shapes, double buffering with prefetch one and no trailing barrier, which the cost model predicts to be just as fast while using less shared memory. The gate rejects it and replays the race of Figure 4. The solver's answer is optimal for the constraints it was given, and wrong.
+
+\textbf{Deliberately broken variants.} Starting from the certified \(1000^3\) design, we injected six faults that a plausible implementation could contain. The gate rejects all six, each through the obligation responsible and each with a replayed defect (Table 4). For tiles overlapping with stride \(T-1\), the coverage certificate fails without a semantic witness, and the checker correctly records that failure as unresolved; the real defect is found by the exact-once obligation that owns it.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3636}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2727}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3636}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Variant
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Failing obligation
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Replayed defect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Floor-divided grid (tail uncovered) & coverage & missing reduction terms \\
+Unguarded tail & no phantom & write outside \(C\); padding term added \\
+Overlapping tiles (stride \(T-1\)) & exact-once & \(C[127,0]\) receives \(A[127,0]\,B[0,0]\) twice \\
+Single buffer with prefetch one & lifetime & missing term \\
+Double buffer, \(P=1\), no trailing barrier & lifetime & the race of Figure 4 \\
+Missing leading barrier & readiness, lifetime & reads of uninitialized slot elements \\
+\end{longtable}
+
+\emph{Table 4. Faults injected into the certified \(1000^3\) design, all rejected with a replayed defect.}
+
+\textbf{Answer to RQ1.} For this template the search face and the correctness face coincide, so the solver's optimum is correct by construction and loses nothing to the contract. Soundness is argued once for the whole family; each instance then costs a solve of at most 0.16 s and a 25 ms check.
+
+\hypertarget{correctness-across-refinement-levels-rq2}{%
+\subsection{Correctness across refinement levels (RQ2)}\label{correctness-across-refinement-levels-rq2}}
+
+Table 5 reports the 78 structural variants. Each refinement level introduces failures that the level above cannot express, and each is caught by the obligation that the new structure brings with it.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1250}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Refinement
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Accepted
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+New faults
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Parent faults
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Deadlocks
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Other
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Reduction partition & 6 & 5 & 0 & 0 & 2 unresolved; 1 infeasible \\
+Buffer reuse & 5 & 4 & 1 & 0 & 1 infeasible \\
+Transfer completion & 5 & 4 & 1 & 0 & 1 unresolved; 1 infeasible \\
+Double buffering & 3 & 4 & 0 & 0 & 1 infeasible \\
+Address mapping & 4 & 5 & 1 & 0 & 1 unresolved \\
+Tiled boundaries & 3 & 5 & 0 & 0 & --- \\
+Resource scheduling & 3 & 2 & 0 & 2 & 1 unfair-stall control \\
+Two connected GEMMs & 3 & 2 & 0 & 1 & --- \\
+\end{longtable}
+
+\emph{Table 5. Outcomes for 78 structural variants (31 new faults, 3 deadlocks). Unresolved entries use deliberately incorrect certificates; no unresolved case is counted as a defect.}
+
+The failures follow the level structure:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Storage breaks a correct computation.} In one witness, value \(v_0\) is written, its first element is read, \(v_1\) overwrites the buffer, and the second element of \(v_0\) is then read. Every parent event occurs, and the result is still wrong.
+\item
+  \textbf{Transfers separate issue from completion.} A later transfer may be issued while an earlier value is still live, but it must complete only after that value's last read.
+\item
+  \textbf{Partial tiles.} All five boundary faults satisfy the coarse partition constraint, yet omit tail work, duplicate it or touch unguarded padding, so a feasible backward map alone does not prove that execution is preserved.
+\item
+  \textbf{Shared resources deadlock.} Exhaustive exploration of 45--123 states per case finds two deadlocks: a waiting consumer holds the only queue entry its producer needs, and two tasks each hold a bank the other is waiting for.
+\item
+  \textbf{Correct operators compose incorrectly.} Two GEMMs that pass their isolated checks produce a wrong result through an incorrect consumer address or a premature overwrite, and a shared resource adds a third deadlock.
+\end{itemize}
+
+These are exactly the cross-layer errors that layer-by-layer verification misses.
+
+The workload components extend value identity beyond GEMM operands (Table 6). All 100 valid schedules match their references, and every one of the 16 injected fault families yields a replayed counterexample:
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{attention:} wrong mask, wrong key--value pairing or wrong query origin;
+\item
+  \emph{inference:} wrong cache extent, lost prefix, wrong append position or wrong version;
+\item
+  \emph{training:} recomputation with the wrong parameter, input or random key; an omitted or duplicated gradient; missing mean scaling; or an update made too early.
+\end{itemize}
+
+A matching tensor shape or storage slot does not identify a value; its position, version and computational origin must also agree.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Component
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Valid schedules
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fault families
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Unresolved
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Infeasible
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Causal attention & 36 & 3 & 1 & 1 \\
+Prefill and two decode steps & 48 & 6 & 1 & 1 \\
+Training transition & 16 & 7 & 1 & 1 \\
+\end{longtable}
+
+\emph{Table 6. Finite workload coverage: 100 valid schedules accepted, 16 fault families each rejected with a replayed counterexample.}
+
+\textbf{Answer to RQ2.} On bounded instances, the gate accepts every valid refinement, rejects every injected fault with a replayed witness, and distinguishes a failed certificate from a real defect. Each refinement step is caught by its own local obligation.
+
+\hypertarget{keeping-the-gate-affordable-rq3}{%
+\subsection{Keeping the gate affordable (RQ3)}\label{keeping-the-gate-affordable-rq3}}
+
+The gate runs inside the loop, so its cost is paid on every iteration. We compare reuse with full rechecking over identical revision streams, charging the initial proof to both modes; paired runs alternate their order, start from an empty cache, and always agree on every classification.
+
+\textbf{Reuse across design revisions.} The GEMM checker caches proved queries keyed by formula, source hash and solver settings, over streams containing a baseline, relevant edits, an injected fault and its repair; reuse cuts median checking time by 1.22--1.79\ensuremath{\times} and reuses roughly half of all queries (Table 7). The workload checker caches whole groups of schedules once every member has passed, over streams that also expand the family and force a context change; reuse saves 1.65--2.06\ensuremath{\times}.
+
+\begin{longtable}[]{@{}lllll@{}}
+\toprule\noalign{}
+Stream & Full (ms) & With reuse (ms) & Paired ratio & Reused \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Reduction partition & 168.6 & 104.8 & 1.65\(\times\) & 26/41 queries \\
+Buffer reuse & 138.4 & 103.6 & 1.34\(\times\) & 29/57 \\
+Transfer completion & 198.6 & 159.9 & 1.24\(\times\) & 39/77 \\
+Double buffering & 645.6 & 480.7 & 1.35\(\times\) & 45/77 \\
+Address mapping & 1127.3 & 923.3 & 1.22\(\times\) & 59/101 \\
+Tiled boundaries & 368.5 & 202.3 & 1.79\(\times\) & 29/49 \\
+Resource scheduling & 70.1 & 48.7 & 1.44\(\times\) & 33/52 \\
+Two connected GEMMs & 79.3 & 53.2 & 1.44\(\times\) & 55/84 \\
+Causal attention & 10.5 & 6.4 & 1.65\(\times\) & 17/30 groups \\
+Prefill and decode & 37.1 & 18.1 & 2.06\(\times\) & 71/120 \\
+Training transition & 30.3 & 15.1 & 2.01\(\times\) & 11/20 \\
+\end{longtable}
+
+\emph{Table 7. Verification reuse over revision streams (median of three paired repetitions). Structural streams reuse exact SMT queries; workload streams reuse completely checked schedule groups.}
+
+\textbf{Reuse down the refinement chain.} The setting the flow depends on most is the five-step GEMM chain of §3.3. \emph{Full} mode rechecks every ancestor step at each depth; \emph{progressive} mode keeps each accepted step's certificate once the fingerprints of its premises are confirmed unchanged. Neither caches individual queries, both use identical models, and faults injected at each step are rejected in both. Table 8 reports medians of seven paired repetitions.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.0714}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2857}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.2143}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1429}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Depth
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Level added
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Full (ms)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Progressive (ms)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Solver queries (full / progressive)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Paired ratio
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & Reduction partition & 25.5 & 26.3 & 8 / 8 & 0.97\(\times\) \\
+2 & Storage & 73.8 & 48.7 & 23 / 15 & 1.51\(\times\) \\
+3 & Asynchronous transfer & 289.0 & 200.6 & 43 / 20 & 1.50\(\times\) \\
+4 & Double buffering & 528.1 & 218.9 & 65 / 22 & 2.41\(\times\) \\
+5 & Shared resources & 958.4 & 380.6 & 92 / 27 & 2.51\(\times\) \\
+\end{longtable}
+
+\emph{Table 8. Cumulative checking cost along a five-level GEMM refinement chain.}
+
+The gain grows with depth. Full rechecking pays for everything already built; progressive checking pays only for what is new. At depth one there is nothing to inherit and bookkeeping costs a little (0.97\ensuremath{\times}); by depth five, progressive checking issues 27 solver queries instead of 92 and runs 2.51\ensuremath{\times} faster.
+
+\textbf{Answer to RQ3.} Verification stays tractable as the stack deepens: its cost tracks what changed, saving 1.22--2.06\ensuremath{\times} across revisions and 2.51\ensuremath{\times} at depth five without changing a classification. The gains vary (one attention pair ran slower with reuse, 11.6 ms against 9.4 ms), and the structural streams reuse exact queries rather than automatically extracted semantic dependencies (§4.6).
+
+\hypertarget{co-design-of-chip-and-software-on-ventus-rq4}{%
+\subsection{Co-design of chip and software on Ventus (RQ4)}\label{co-design-of-chip-and-software-on-ventus-rq4}}
+
+The Ventus studies ask whether the coupling that the formulation exposes matters on a real GPU architecture running large-language-model workloads. Four results stand out.
+
+\textbf{Changing both sides beats changing either.} The first study pairs compiled kernels that remove indexing and access overhead with a redistribution of load/store and write-queue capacity \cite{r96}. In complete P128 simulation, the software alone reduces execution from 812.6 to 539.8 million cycles, and with the redistributed queues it falls to 264.1 million, a 67.5\% reduction (3.08\ensuremath{\times} faster) within 1.108 mm\ensuremath{^2}. The software cuts dynamic instructions from 386.3 to 334.4 million and requested bytes from 7.23 to 5.83 billion while leaving matrix instructions unchanged; the queues let the chip absorb the memory requests that remain. The combination beats both single-side controls on every task (Table 9). Joint search, however, only ties the sequential control here: the benefit comes from letting both sides change.
+
+\begin{longtable}[]{@{}llllll@{}}
+\toprule\noalign{}
+Task & Baseline & Software only & Hardware only & Sequential & Joint \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+A: prefill & 1.000 & 0.758 & 0.440 & 0.377 & 0.377 \\
+B: decode & 1.000 & 0.934 & 0.454 & 0.427 & 0.428 \\
+C: all scenarios & 1.000 & 0.934 & 0.454 & 0.427 & 0.428 \\
+\end{longtable}
+
+\emph{Table 9. Qwen2.5-0.5B, compiled kernels with queue reallocation: worst-scenario cycle ratios (lower is better). Simulated for P128; the 512-token scenarios are extrapolated \cite{r96}.}
+
+\textbf{A rejected kernel becomes the right one on a different chip.} The second study introduces a 64\ensuremath{\times}64 matrix tile \cite{r97} that cuts weight traffic by about one third but needs 173 vector registers. On the earlier chip it makes the design worse (cycle ratio 0.362 to 0.438); once the register file, tensor shape and cache allocation are reopened, the same kernel becomes valuable. Packed query--key computation, unfavorable on the default chip, likewise improves P512 from 0.377 to 0.334 on the new one. The final designs reach 2.93\ensuremath{\times} on the worst prefill scenario, or 3.58\ensuremath{\times} on the worst decode scenario for a decode-specialized chip that gives up prefill (Table 10).
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.3077}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1538}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.2308}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Design
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Area (mm\ensuremath{^2})
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+P128
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+P512
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+D128
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+D512
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Worst-case speedup
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Selected for tasks A and C & 1.081 & 0.342 & 0.331 & 0.295 & 0.272 & 2.93\(\times\) \\
+Decode-specialized & 1.085 & 0.430 & 0.438 & 0.279 & 0.258 & 3.58\(\times\) on decode \\
+\end{longtable}
+
+\emph{Table 10. Qwen2.5-0.5B, kernel--architecture exploration: cycle ratios from complete instruction simulation of all 24 layers and 16 decode steps \cite{r97}.}
+
+\textbf{Committing early loses designs.} The third study scales the workload to Qwen2.5-14B on a chip scaled to 35.52 mm\ensuremath{^2} \cite{r98}. Its software menu, solved to zero gap, includes shared input packing, grouped query heads, merged decode softmax and fused projections. The decisive choice is whether to fuse the feed-forward gate and up projections: fusion is best on the reference chip but not on the selected one, which trades scalar registers and shared memory for more load/store and miss-status entries. The sequential strategy fixes the fusion choice on the reference chip and cannot undo it. Joint selection reopens it and lowers the decode objective by 4.10\% relative to sequential, 4.43\% relative to software only and 17.82\% relative to hardware only (Table 11); for prefill the gain is only 0.35\%. A software preference learned on one chip holds only \emph{under that chip}, and a flow that discards the alternative after one evaluation loses the better design.
+
+\begin{longtable}[]{@{}llllll@{}}
+\toprule\noalign{}
+Task & Baseline & Software only & Hardware only & Sequential & Joint \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+A: prefill & 1.000 & 0.996 & 0.968 & 0.964 & 0.961 \\
+B: decode & 1.000 & 0.816 & 0.949 & 0.813 & \textbf{0.780} \\
+C: all scenarios & 1.000 & 0.996 & 0.968 & 0.964 & 0.961 \\
+\end{longtable}
+
+\emph{Table 11. Qwen2.5-14B, fusion and mapping: worst-scenario cycle ratios, estimated by calibrated aggregation of representative instruction simulations over all 48 layers \cite{r98}.}
+
+\textbf{The chip can buy a smaller data representation.} The fourth study asks how much KV-cache storage can be saved under latency and accuracy limits \cite{r99}. It covers one decode step of Qwen2.5-0.5B with a single-layer KV append, choosing key and value precisions, quantization group size, head grouping and buffer reuse, and searches 4,092 hardware proposals. At allowed latency ratios of about 0.18--0.20, joint optimization needs 16--17\% less storage than software only under 2\% and 5\% local error thresholds; at tighter ratios, software only has no feasible choice at all. Faster hardware lets a compact format meet the latency limit, although a hardware-first sequential search finds essentially the same chip. The accuracy result applies to local attention probes, not to full-model accuracy.
+
+\textbf{Answer to RQ4.} In every study, changing the chip and the software together beats changing either alone. The \emph{coupling} matters more often than the \emph{search procedure}: joint selection beats a sequential pass decisively only where an early commitment excludes the better design. What the flow must preserve, then, is the alternatives and the conditions under which each holds, so that coupled decisions can be revisited.
+
+\hypertarget{when-the-formulation-is-wrong-rq5}{%
+\subsection{When the formulation is wrong (RQ5)}\label{when-the-formulation-is-wrong-rq5}}
+
+The fifth study shows what happens when the formulation itself is wrong \cite{r100}. It optimizes complete Qwen2.5-0.5B execution over two software families and 27 hardware fields (Table 12). All nine MIP solves close with zero gap and predict a worst-case ratio near 0.333, but simulation returns 0.791--0.899, an underestimate of 58--63\%. The selections follow the error: the joint design is \emph{worse} than hardware only on prefill (0.899 against 0.791), and the prefill-selected chip beats the chips selected for the other objectives on their own objectives. The solver did its job; the formulation did not describe the chip. A closed optimality gap certifies the model's optimum, not the design's.
+
+\begin{longtable}[]{@{}llll@{}}
+\toprule\noalign{}
+Strategy & A: prefill & B: decode & C: all scenarios \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Baseline & 1.000 & 1.000 & 1.000 \\
+Software only & 1.000 & 1.000 & 1.000 \\
+Hardware only & 0.791 & 0.797 & 0.827 \\
+Sequential & 0.791 & 0.797 & 0.827 \\
+Joint & 0.899 & 0.800 & 0.827 \\
+\end{longtable}
+
+\emph{Table 12. Qwen2.5-0.5B full-network optimization: simulated cycle ratios. MIP-predicted ratios were near 0.333 for every task \cite{r100}.}
+
+A queue probe in the first study shows the same failure at a smaller scale \cite{r96}. Halving a write queue raises one subgraph's time by about 49\%, while the earlier model predicted no change; the queue capacity behind the 67.5\% design of §6.5 is precisely the resource that model had missed.
+
+Transfer exposes the scope of what was learned. Running GPT-2 small and Pythia-160M on the Qwen-selected chips takes 3.07--5.60\ensuremath{\times} their own baseline cycles in all 18 evaluations, mostly in the feed-forward down projection, where memory reads rise to 8.4--9.0\ensuremath{\times} the baseline volume. A chip that improves Qwen is not a better language-model processor in general.
+
+\textbf{Answer to RQ5.} These failures are what the loop of §2.2 and the diagnosis of §5.4 exist to catch. Each is attributed to a different source of design loss (Proposition 3):
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{Prediction loss:} the model omits queue pressure and mapping-dependent traffic. The remedy is cost and mechanism revision, not more solver time.
+\item
+  \emph{Representation loss:} the 64\ensuremath{\times}64 tile and the packed query--key kernel were absent from the initial family. The remedy is expansion.
+\item
+  \emph{Scope:} the Qwen-selected chip fails on GPT-2 and Pythia. The remedy is to store the knowledge with its workload conditions, as the population's scope \(\Gamma\) requires.
+\end{itemize}
+
+The experiments establish these failure modes and their attribution; they do not yet show the agent detecting and repairing them on its own.
+
+\hypertarget{summary}{%
+\subsection{Summary}\label{summary}}
+
+Table 13 collects the results on both axes.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2667}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Study
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Effectiveness
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Tractability
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Evidence
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Tiling template (§6.2) & optimal design certified; exact precondition (24/24); conservative contract costs 1.34\%; unsound contract and six faults rejected & MILP 0.03--0.16 s; 25 ms per certificate; soundness argued once per family & proved (bounded) + modeled \\
+Refinement checks (§6.3) & 78 variants: 31 new faults, 3 deadlocks; 100 schedules accepted; 16 fault families replayed & exhaustive exploration of 17--126 states per case & proved (bounded) \\
+Verification reuse (§6.4) & classifications unchanged & 1.22--2.06\(\times\) across revisions; 92 \(\to\) 27 queries and 2.51\(\times\) at depth five & measured checker time \\
+Queues and kernels, 0.5B (§6.5) & 67.5\% fewer P128 cycles; joint ties sequential & --- & simulated + extrapolated \\
+Kernel--architecture, 0.5B (§6.5) & 2.93\(\times\) worst prefill; 3.58\(\times\) worst decode; two preference reversals & --- & simulated \\
+Fusion, 14B (§6.5) & joint beats sequential by 4.10\% on decode & menu solved at zero gap & estimated \\
+KV storage (§6.5) & 16--17\% less storage; feasible where software only is not & 4,092 proposals, 10 finalists & timing prototype \\
+Model fidelity and transfer (§6.6) & 58--63\% prediction error despite zero gap; 3.07--5.60\(\times\) slowdown on transfer & --- & simulated \\
+\end{longtable}
+
+\emph{Table 13. Evaluation summary.}
+
+Taken together, the results support the central claim where it has been tested. The search stayed tractable: each per-step formulation was solved to proven optimality, in under 0.2 s for the tiling template and at zero gap over the co-design menus. Verification stayed tractable: every proof was local, every injected fault was caught with a replayed witness, and the cost of checking grew with what changed rather than with the depth of the stack. And the designs were good: changing the chip and the software together beat changing either alone in every study. The results also mark the claim's limits. A formulation that omits a mechanism misleads the solver no matter how exactly it is solved, and the discovery half of the flow, in which the language model writes the templates, has yet to be measured.
+
+\begin{quote}
+\textbf{Author note (remove before submission).} Two sets of numbers from the source material are deliberately not used.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Untraced headline figures.} The project proposal reports 4.34\ensuremath{\times} prefill, 3.93\ensuremath{\times} decode and 3.82\ensuremath{\times} combined speedups on Qwen2.5-0.5B, a 24--28\% prefill-cycle reduction from spill removal, and a 7.02\ensuremath{\times} speedup on the AI Infrastructure course benchmark. We could not trace these to the experiment reports used here; the largest traced 0.5B result is 2.93\ensuremath{\times} (Table 10).
+\item
+  \textbf{Earlier iteration of the 14B study.} The earlier optimization manuscript reports a 10.84\% prefill reduction and a 0.47\% joint-over-sequential prefill gain, and that alternation matched joint selection. These come from an earlier menu; the final report \cite{r98} gives 3.9\% and 0.35\% and does not include alternation. The decode results agree.
+\end{itemize}
+\end{quote}
+
+\hypertarget{related-work}{%
+\section{Related Work}\label{related-work}}
+
+Our work draws on eight lines of research: hardware--software co-design and design-space exploration; hardware modeling and simulation; tensor-program representation and compilation; optimized kernels and serving systems; learning-based methods for optimization and design; program synthesis, counterexample-guided search and library learning; verification of optimization models; and verification of refinements, compilers and hardware. Each provides an essential ingredient. None discovers and certifies the formulation of a co-design problem across the whole chip--software stack.
+
+\textbf{Hardware--software co-design and design-space exploration.} A long line of work shows that decisions traditionally left to heuristics can be expressed mathematically. PLUTO uses integer linear optimization to select loop transformations \cite{r28}. CoSA encodes the spatial and temporal scheduling of DNN accelerators as a mixed-integer program built from the computation and the architecture \cite{r9}. Checkmate optimizes tensor rematerialization through MILP \cite{r15}, and COSMA jointly optimizes operator scheduling, memory allocation and tensor replacement for a given scratchpad \cite{r16}. Joint search over mappings and hardware is equally established. DiGamma co-optimizes hardware and mapping with a domain-aware genetic algorithm \cite{r17}, and DOSA explores both through differentiable performance models \cite{r10}. Timeloop evaluates accelerator architectures and mappings analytically \cite{r18}, Gemmini couples a parameterized accelerator generator with its software stack \cite{r19}, and FireSim provides cycle-exact FPGA-accelerated simulation \cite{r20}. Chipyard integrates the design, simulation and implementation of custom SoCs \cite{r83}, and Spatial compiles high-level programs to application accelerators \cite{r84}. In high-level synthesis, SDC-based scheduling poses operation scheduling as a system of difference constraints \cite{r87}, while ScaleHLS and AutoDSE explore HLS design spaces over multi-level representations and with bottleneck-guided search \cite{r85,r86}. These systems supply the evaluation and realization paths our flow builds on. Each of them, however, optimizes within a formulation or search space that is fixed in advance and confined to a few layers. Our flow treats the formulation itself as the object of design. It grows the formulation layer by layer from the workload to the microarchitecture, and certifies every step.
+
+\textbf{Hardware modeling and simulation.} The hardware resource library of §2.1 rests on a mature body of component and system models. Accelergy estimates accelerator energy from component characteristics and activity counts \cite{r54}, McPAT models power, area and timing for multicore processors \cite{r55}, and CACTI models the access time, energy and area of caches and memories \cite{r56}. Aladdin estimates the performance and power of accelerators before RTL is written \cite{r57}. For detailed evaluation, gem5 simulates full systems \cite{r58}, and GPGPU-Sim and Accel-Sim simulate GPUs at the cycle level, the latter validated against modern hardware \cite{r59,r60}. These tools trade fidelity against cost in different ways. Our flow uses analytical models for broad search and higher-fidelity simulation to resolve close decisions, and treats every disagreement between them as evidence for revising the formulation rather than as noise.
+
+\textbf{Tensor-program representation and compilation.} The representation determines which optimizations can be found. MLIR organizes compilation around multiple abstraction levels and domain-specific dialects \cite{r21}, and TensorIR makes tensorized computation primitives explicit \cite{r22}. Ansor searches generated schedules with a learned cost model \cite{r23}. Mirage searches algebraic and scheduling transformations jointly at the kernel, thread-block and thread levels \cite{r24}. Axon generates tensor-graph alternatives, synthesizes instruction sequences from semantics and retains alternatives across stages \cite{r25}. Exo 2 and Exo-GPU build scheduling libraries from trusted primitives and check schedules against a sequential interpretation \cite{r26,r27}. These systems target a given chip. In our flow, chip resources and the software--hardware boundary sit in the same representation as tiles, layouts and schedules, so a software alternative is ranked together with the hardware that would make it valuable.
+
+\textbf{Optimized kernels and serving systems.} Industrial AI software reaches its performance through expert-crafted libraries and compilers. cuBLAS and CUTLASS provide hand-tuned GEMM kernels and templates for NVIDIA GPUs \cite{r88,r75}, Triton lets developers write tiled kernels that a compiler optimizes \cite{r76}, and TVM compiles and autotunes deep-learning workloads end to end \cite{r79}. FlashAttention and FlashAttention-2 restructure attention around on-chip memory to remove most off-chip traffic \cite{r77,r78}. For serving, vLLM manages the key--value cache with paging \cite{r80}, and Splitwise and DistServe separate prefill from decode to meet latency targets \cite{r81,r82}. Language models now write such kernels as well: KernelBench measures their ability to produce efficient GPU kernels \cite{r73}, and agentic systems iteratively translate and optimize CUDA code \cite{r74}. These systems are the baselines our designs must match. All of them optimize software for a chip that is already fixed, and LLM-generated kernels are accepted on the strength of tests. In our flow the chip is a design variable, and every accepted design comes with a correctness certificate.
+
+\textbf{Learning and language models for optimization and design.} Coupled with automatic evaluation, language models discover algorithms and mathematical constructions \cite{r1,r2}, and evolving agent populations accumulate reusable mechanisms and failure modes \cite{r5}. For mathematical optimization, OptiMUS constructs and solves models from problem descriptions \cite{r3}, FormuEvo evolves MIP formulations toward solver efficiency \cite{r4}, LLM4MIP analyzes formulated instances to find feasible solutions and stronger bounds \cite{r29}, and LLM4Branch discovers branching policies \cite{r32}. Learning-based methods also reach the compiler and the chip: CompilerDream learns a world model for code optimization \cite{r30}, Compiler-R1 tunes compilers agentically with reinforcement learning \cite{r31}, ChatArch reasons about processor architecture \cite{r6}, graph placement accelerates chip floorplanning \cite{r7}, and Dr.~RTL optimizes RTL autonomously \cite{r8}. These methods generate programs, formulations or designs for one problem at one layer, and judge them by measured quality. In our flow, the language model generates templates: formulation patterns that carry their own correctness conditions and scope of reuse. It maintains them as an evolving population across the whole stack, and nothing the model produces is accepted until the verifier certifies it.
+
+\textbf{Program synthesis, counterexample-guided search and library learning.} A template with holes that a solver fills is close in spirit to program sketching, in which a programmer supplies a partial program and a synthesizer completes it \cite{r64}. Syntax-guided synthesis generalizes this to a grammar of candidates \cite{r61}, and stochastic superoptimization searches directly over instruction sequences for faster equivalent code \cite{r62}. Sketching introduced counterexample-guided inductive synthesis, which alternates between proposing a candidate and checking it, turning each counterexample into a new constraint \cite{r64}. Counterexample-guided abstraction refinement plays the same role in model checking \cite{r63}. Optimization has its own version of this loop: Benders decomposition and its logic-based and combinatorial variants turn failed subproblems into cuts on a master problem \cite{r65,r66,r67}. On the learning side, DreamCoder and LILO grow libraries of reusable abstractions from solved problems \cite{r68,r69}, Voyager's agent accumulates a library of executable skills \cite{r70}, MAP-Elites maintains a population that is diverse in behavior rather than in encoding \cite{r71}, and evolution through large models uses a language model as the mutation operator \cite{r72}. Our flow combines these ideas in a new setting. A template is a sketch whose holes span the chip and the software stack, and whose correctness conditions are also the solver's constraints. Verifier counterexamples repair templates, and failed subproblems return cuts, as in CEGIS and Benders decomposition. The template population is a library of formulation knowledge, kept diverse by structure and admitted only once certified.
+
+\textbf{Verifying optimization models.} A growing body of work checks that optimization models mean what they should. CvxLean formalizes correctness-preserving reductions in Lean \cite{r33}, and Conjure refines abstract constraint specifications into concrete solver models \cite{r34}. EquivaMap uses language models to find mappings between formulations and validates them on instances \cite{r13}. FLARE produces machine-checked proofs of MILP reformulations \cite{r11}, and SOVER combines LLM-assisted mappings with SMT checks \cite{r14}. At the solver level, VIPR certifies integer-programming results \cite{r35}, and proof logging certifies presolve reductions \cite{r36}. These methods verify relationships within a single level: a solution against its model, or one formulation against another with the optimum preserved. The refinements verified here cross levels instead, and §4 explains how that changes what must be proved. Rewrites within a level remain useful in our flow, which checks them as such.
+
+\textbf{Verification of refinements, compilers and hardware.} Our correctness argument rests on classical foundations. Dijkstra's weakest preconditions made correctness by construction a calculus \cite{r12}. Abadi and Lamport established refinement mappings between levels of abstraction \cite{r37}, Event-B organizes development as refinement with explicit proof obligations \cite{r38}, and contract-based design separates the assumptions of components from their guarantees \cite{r39}. Verified compilation and translation validation prove that program transformations preserve meaning: CompCert for a full compiler \cite{r53}, Alive2 for LLVM optimizations \cite{r40}, and verified polyhedral code generation and scheduling validation for loop nests \cite{r41,r42}. TensorRight verifies tensor-graph rewrites for tensors of arbitrary rank \cite{r43}, and Tenspiler validates lifted tensor computations with an SMT prover \cite{r44}. At the hardware--software interface, ILA specifies accelerator behavior at the instruction level \cite{r45}, 3LA builds application-level validation on it \cite{r46}, BOLT verifies compiler-to-accelerator mappings against formal hardware semantics \cite{r47}, Kami supports modular hardware verification \cite{r48}, and COVERIF co-verifies hardware and firmware by symbolic execution \cite{r49}. Fine-grained caching of verification results \cite{r50,r51} and retrieval-augmented theorem proving \cite{r52} make repeated and agent-assisted proof practical. Each of these verifies one artifact or one transformation. Our flow verifies a formulation: every design a template admits, whichever one the solver selects. It runs as a gate inside the optimization loop, and earlier proofs are reused as long as their premises hold.
+
+\hypertarget{discussion-and-limitations}{%
+\section{Discussion and Limitations}\label{discussion-and-limitations}}
+
+\textbf{What the evidence supports.} The central claim of this paper is that an agent can make whole-stack co-design tractable by discovering its structure and packaging that structure, one refinement step at a time, as templates that are both optimizable and verifiable. The half of that claim that concerns tractability \emph{given} the structure is supported by the evaluation. A template's search constraints and its correctness conditions can coincide exactly, so that the solver's optimum is correct by construction. Each per-step formulation is small enough to solve to proven optimality. Verification decomposes into local proofs that catch the errors each step introduces and compose along the stack, at a cost that tracks what changed rather than how deep the stack is. And on an open-source GPU running large-language-model workloads, the coupled designs that this structure exposes beat designs in which either the chip or the software is held fixed.
+
+\textbf{What it does not yet support.} The discovery half of the claim is untested.
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{Template generation.} Every template in §6 was written by hand, and the agent's diagnosis and revision steps were taken by a human-supervised workflow. Whether a language model can propose a template's precondition and certificate, and how often the verifier accepts or refutes them, is the most important open question.
+\item
+  \emph{The population and transfer.} The population of §2.5 has not been run across problems. The one transfer measurement available is negative: chips selected for Qwen ran 3.07--5.60 times slower than baseline on GPT-2 and Pythia (§6.6). The result supports storing knowledge with its scope, but it is not evidence that the population compounds.
+\item
+  \emph{Fidelity of the cost model.} A closed optimality gap certifies the model's optimum, not the design's. The tiling cost model has not been validated on hardware, and a co-design model with a 58--63\% prediction error selected poor designs (§6.6).
+\item
+  \emph{Scope of the proofs.} Proofs cover small fixed shapes, an event model with two warps and finite schedule families, and they rely on a trusted checker written in Python over Z3. The workload components are not yet connected to the structural storage and resource models by checked mappings.
+\item
+  \emph{Scope of the measurements.} The Ventus studies are cycle-based and area-constrained, with no power model and no physical implementation. No result is compared against an industrially optimized implementation such as cuBLAS or FlashAttention.
+\item
+  \emph{Technology.} Physical and technology effects, such as memory macros, wiring and achievable frequency, are outside the scope of this paper.
+\end{itemize}
+
+\textbf{Next steps.} Three experiments would test the untested half of the claim most directly. First, let the language model propose templates, including their preconditions and certificates, and measure how many the verifier certifies, how many it refutes with a replayed counterexample, and how much precondition loss the certified ones carry. Second, reuse one certified template across new workloads and chip contracts, and compare the cost of an instance check with that of re-deriving the template. This turns the two-tier trust boundary into a measured saving. Third, carry one template through to execution on a real GPU and compare the result with an industrial library.
+
+The broader lesson of this work is that the obstacle to whole-stack co-design is less the size of the design space than the absence of a formulation in which that space can be searched and trusted. Progressive refinement provides the structure. Templates make each step both solvable and checkable, and the agent is what can find them.
+
+\begin{thebibliography}{99}
+\small
+\bibitem{r1} B. Romera-Paredes et al. \emph{Mathematical Discoveries from Program Search with Large Language Models}. Nature, 2024.
+\bibitem{r2} A. Novikov et al. \emph{AlphaEvolve: A Coding Agent for Scientific and Algorithmic Discovery}. arXiv:2506.13131, 2025.
+\bibitem{r3} A. AhmadiTeshnizi et al. \emph{OptiMUS-0.3: Using Large Language Models to Model and Solve Optimization Problems at Scale}. arXiv:2407.19633, 2026.
+\bibitem{r4} H. Yuan et al. \emph{FormuEvo: LLM-Guided Evolution for Discovering Solver-Efficient Mixed-Integer Programming Formulations}. arXiv:2608.23353, 2026.
+\bibitem{r5} Yu and Yang. \emph{Evolving Ensemble of Agents}. arXiv:2605.09018, 2026.
+\bibitem{r6} Wu et al. \emph{ChatArch: A Knowledge-driven Graph-of-thought LLM Framework for Processor Architecture Optimization}. ACM TODAES 31(2), 2025.
+\bibitem{r7} A. Mirhoseini et al. \emph{A Graph Placement Methodology for Fast Chip Design}. Nature 594:207--212, 2021.
+\bibitem{r8} Fang et al. \emph{Dr. RTL: Autonomous Agentic RTL Optimization through Tool-Grounded Self-Improvement}. arXiv preprint, 2026.
+\bibitem{r9} Q. Huang et al. \emph{CoSA: Scheduling by Constrained Optimization for Spatial Accelerators}. ISCA, 2021.
+\bibitem{r10} C. Hong, Q. Huang, G. Dinh, M. Subedar, and Y. S. Shao. \emph{DOSA: Differentiable Model-Based One-Loop Search for DNN Accelerators}. MICRO, 2023.
+\bibitem{r11} H. Robbins, C. Lawless, M. Udell, and E. Vitercik. \emph{FLARE: Verifying MILP Reformulations with LLM-Based Theorem Proving}. arXiv:2608.25220, 2026.
+\bibitem{r12} E. W. Dijkstra. \emph{Guarded Commands, Nondeterminacy and Formal Derivation of Programs}. Communications of the ACM, 18(8):453--457, 1975.
+\bibitem{r13} H. Zhai, C. Lawless, E. Vitercik, and L. Leqi. \emph{EquivaMap: Leveraging LLMs for Automatic Equivalence Checking of Optimization Formulations}. arXiv:2502.14760, 2025.
+\bibitem{r14} S. Bhattacharyya and M. Baranwal. \emph{SOVER: Formal Certification of Optimization Reformulations via LLM-Assisted SMT Verification}. arXiv:2609.00728, 2026.
+\bibitem{r15} P. Jain et al. \emph{Checkmate: Breaking the Memory Wall with Optimal Tensor Rematerialization}. MLSys, 2020.
+\bibitem{r16} Y. Li, A. Gupta, and S. Malik. \emph{Combined Scheduling, Memory Allocation and Tensor Replacement for Minimizing Off-Chip Data Accesses of DNN Accelerators}. arXiv:2311.18246, 2023.
+\bibitem{r17} S.-C. Kao et al. \emph{DiGamma: Domain-aware Genetic Algorithm for HW-Mapping Co-optimization for DNN Accelerators}. DATE, 2022.
+\bibitem{r18} A. Parashar et al. \emph{Timeloop: A Systematic Approach to DNN Accelerator Evaluation}. ISPASS, 2019.
+\bibitem{r19} H. Genc et al. \emph{Gemmini: Enabling Systematic Deep-Learning Architecture Evaluation via Full-Stack Integration}. DAC, 2021.
+\bibitem{r20} S. Karandikar et al. \emph{FireSim: FPGA-Accelerated Cycle-Exact Scale-Out System Simulation in the Public Cloud}. ISCA, 2018.
+\bibitem{r21} C. Lattner et al. \emph{MLIR: Scaling Compiler Infrastructure for Domain Specific Computation}. CGO, 2021.
+\bibitem{r22} S. Feng et al. \emph{TensorIR: An Abstraction for Automatic Tensorized Program Optimization}. ASPLOS, 2023.
+\bibitem{r23} L. Zheng et al. \emph{Ansor: Generating High-Performance Tensor Programs for Deep Learning}. OSDI, 2020.
+\bibitem{r24} M. Wu et al. \emph{Mirage: A Multi-Level Superoptimizer for Tensor Programs}. OSDI, 2025.
+\bibitem{r25} A. Kothari, S. Zhu, D. Kroening, and C. Sung. \emph{Axon: A Synthesizing Superoptimizer for Tensor Programs}. arXiv:2606.26344, 2026.
+\bibitem{r26} Y. Ikarashi et al. \emph{Exo 2: Growing a Scheduling Language}. ASPLOS, 2025.
+\bibitem{r27} D. Z. Akeley, Y. Ikarashi, and J. Ragan-Kelley. \emph{Exo-GPU: Safe, Imperative, User-schedulable Programming for Tensor Cores}. arXiv:2609.16389, 2026.
+\bibitem{r28} U. Bondhugula, A. Hartono, J. Ramanujam, and P. Sadayappan. \emph{A Practical Automatic Polyhedral Parallelizer and Locality Optimizer}. PLDI, 2008.
+\bibitem{r29} Y. Huang, W. Gao, D. Ge, M. Udell, and Y. Ye. \emph{How Much Can LLMs Help Solve MIPs?} Research website and released workflows, 2026. \url{https://llm4mip.github.io/}
+\bibitem{r30} Deng et al. \emph{CompilerDream: Learning a Compiler World Model for General Code Optimization}. KDD, 2025.
+\bibitem{r31} Pan et al. \emph{Compiler-R1: Towards Agentic Compiler Auto-tuning with Reinforcement Learning}. arXiv preprint, 2025.
+\bibitem{r32} Hou et al. \emph{LLM4Branch: Large Language Model for Discovering Efficient Branching Policies of Integer Programs}. arXiv preprint, 2026.
+\bibitem{r33} A. Bentkamp, R. Fernández Mir, and J. Avigad. \emph{Verified Reductions for Optimization}. TACAS, 2023.
+\bibitem{r34} Ö. Akgün, A. M. Frisch, I. P. Gent, C. Jefferson, I. Miguel, and P. Nightingale. \emph{Conjure: Automatic Generation of Constraint Models from Problem Specifications}. IJCAI, 2023.
+\bibitem{r35} K. K. H. Cheung, A. Gleixner, and D. E. Steffy. \emph{Verifying Integer Programming Results}. IPCO, 2017.
+\bibitem{r36} A. Hoen, A. Oertel, A. Gleixner, and J. Nordström. \emph{Certifying MIP-based Presolve Reductions for 0--1 Integer Linear Programs}. CPAIOR, 2024.
+\bibitem{r37} M. Abadi and L. Lamport. \emph{The Existence of Refinement Mappings}. Theoretical Computer Science, 82(2):253--284, 1991.
+\bibitem{r38} Rodin Project. \emph{Rodin User's Handbook, Section 2.7.4: Refinement}.
+\bibitem{r39} P. Nuzzo, A. L. Sangiovanni-Vincentelli, D. Bresolin, L. Geretti, and T. Villa. \emph{A Platform-Based Design Methodology With Contracts and Related Tools for the Design of Cyber-Physical Systems}. Proceedings of the IEEE, 103(11):2104--2132, 2015.
+\bibitem{r40} N. P. Lopes, J. Lee, C.-K. Hur, Z. Liu, and J. Regehr. \emph{Alive2: Bounded Translation Validation for LLVM}. PLDI, 2021.
+\bibitem{r41} N. Courant and X. Leroy. \emph{Verified Code Generation for the Polyhedral Model}. POPL, 2021.
+\bibitem{r42} X. Li, H. Liang, and X. Feng. \emph{Verified Validation for Affine Scheduling in Polyhedral Compilation}. TASE, 2024.
+\bibitem{r43} J. Arora et al. \emph{TensorRight: Automated Verification of Tensor Graph Rewrites}. POPL, 2025.
+\bibitem{r44} J. Qiu, C. Cai, S. Bhatia, N. Hasabnis, S. A. Seshia, and A. Cheung. \emph{Tenspiler: A Verified Lifting-Based Compiler for Tensor Operations}. ECOOP, 2024.
+\bibitem{r45} B.-Y. Huang, H. Zhang, P. Subramanyan, Y. Vizel, A. Gupta, and S. Malik. \emph{Instruction-Level Abstraction (ILA): A Uniform Specification for System-on-Chip (SoC) Verification}. arXiv:1801.01114, 2018.
+\bibitem{r46} B.-Y. Huang et al. \emph{Application-Level Validation of Accelerator Designs Using a Formal Software/Hardware Interface}. arXiv:2203.00218, 2023.
+\bibitem{r47} A. Gaonkar et al. \emph{Verification of Compiler-to-Accelerator Mappings for Machine Learning Accelerators}. arXiv:2609.30651, 2026.
+\bibitem{r48} J. Choi, M. Vijayaraghavan, B. Sherman, A. Chlipala, and Arvind. \emph{Kami: A Platform for High-Level Parametric Hardware Specification and Its Modular Verification}. ICFP, 2017.
+\bibitem{r49} R. Mukherjee, S. Joshi, J. O'Leary, D. Kroening, and T. Melham. \emph{COVERIF: Hardware/Software Co-verification Using Path-based Symbolic Execution}. arXiv:2001.01324, 2020.
+\bibitem{r50} K. R. M. Leino and V. Wüstholz. \emph{Fine-grained Caching of Verification Results}. CAV, 2015.
+\bibitem{r51} W. Visser, J. Geldenhuys, and M. B. Dwyer. \emph{Green: Reducing, Reusing and Recycling Constraints in Program Analysis}. FSE, 2012.
+\bibitem{r52} K. Yang et al. \emph{LeanDojo: Theorem Proving with Retrieval-Augmented Language Models}. NeurIPS, 2023.
+\bibitem{r53} X. Leroy. \emph{Formal Verification of a Realistic Compiler}. Communications of the ACM, 52(7):107--115, 2009.
+\bibitem{r54} Y. N. Wu, J. S. Emer, and V. Sze. \emph{Accelergy: An Architecture-Level Energy Estimation Methodology for Accelerator Designs}. ICCAD, 2019.
+\bibitem{r55} S. Li, J. H. Ahn, R. D. Strong, J. B. Brockman, D. M. Tullsen, and N. P. Jouppi. \emph{McPAT: An Integrated Power, Area, and Timing Modeling Framework for Multicore and Manycore Architectures}. MICRO, 2009.
+\bibitem{r56} N. Muralimanohar, R. Balasubramonian, and N. P. Jouppi. \emph{CACTI 6.0: A Tool to Model Large Caches}. HP Laboratories Technical Report HPL-2009-85, 2009.
+\bibitem{r57} Y. S. Shao, B. Reagen, G.-Y. Wei, and D. Brooks. \emph{Aladdin: A Pre-RTL, Power-Performance Accelerator Simulator Enabling Large Design Space Exploration of Customized Architectures}. ISCA, 2014.
+\bibitem{r58} N. Binkert et al. \emph{The gem5 Simulator}. ACM SIGARCH Computer Architecture News, 39(2), 2011.
+\bibitem{r59} A. Bakhoda, G. L. Yuan, W. W. L. Fung, H. Wong, and T. M. Aamodt. \emph{Analyzing CUDA Workloads Using a Detailed GPU Simulator}. ISPASS, 2009.
+\bibitem{r60} M. Khairy, Z. Shen, T. M. Aamodt, and T. G. Rogers. \emph{Accel-Sim: An Extensible Simulation Framework for Validated GPU Modeling}. ISCA, 2020.
+\bibitem{r61} R. Alur et al. \emph{Syntax-Guided Synthesis}. FMCAD, 2013.
+\bibitem{r62} E. Schkufza, R. Sharma, and A. Aiken. \emph{Stochastic Superoptimization}. ASPLOS, 2013.
+\bibitem{r63} E. Clarke, O. Grumberg, S. Jha, Y. Lu, and H. Veith. \emph{Counterexample-Guided Abstraction Refinement}. CAV, 2000.
+\bibitem{r64} A. Solar-Lezama, L. Tancau, R. Bodík, S. Seshia, and V. Saraswat. \emph{Combinatorial Sketching for Finite Programs}. ASPLOS, 2006.
+\bibitem{r65} J. F. Benders. \emph{Partitioning Procedures for Solving Mixed-Variables Programming Problems}. Numerische Mathematik, 4:238--252, 1962.
+\bibitem{r66} J. N. Hooker and G. Ottosson. \emph{Logic-Based Benders Decomposition}. Mathematical Programming, 96:33--60, 2003.
+\bibitem{r67} G. Codato and M. Fischetti. \emph{Combinatorial Benders' Cuts for Mixed-Integer Linear Programming}. Operations Research, 54(4):756--766, 2006.
+\bibitem{r68} K. Ellis et al. \emph{DreamCoder: Bootstrapping Inductive Program Synthesis with Wake-Sleep Library Learning}. PLDI, 2021.
+\bibitem{r69} G. Grand et al. \emph{LILO: Learning Interpretable Libraries by Compressing and Documenting Code}. ICLR, 2024.
+\bibitem{r70} G. Wang et al. \emph{Voyager: An Open-Ended Embodied Agent with Large Language Models}. TMLR, 2024.
+\bibitem{r71} J.-B. Mouret and J. Clune. \emph{Illuminating Search Spaces by Mapping Elites}. arXiv:1504.04909, 2015.
+\bibitem{r72} J. Lehman et al. \emph{Evolution through Large Models}. arXiv:2206.08896, 2022.
+\bibitem{r73} A. Ouyang et al. \emph{KernelBench: Can LLMs Write Efficient GPU Kernels?} ICML, 2025.
+\bibitem{r74} R. T. Lange et al. \emph{The AI CUDA Engineer: Agentic CUDA Kernel Discovery, Optimization and Composition}. Sakana AI technical report, 2025.
+\bibitem{r75} NVIDIA. \emph{CUTLASS: CUDA Templates for Linear Algebra Subroutines}. Software library.
+\bibitem{r76} P. Tillet, H. T. Kung, and D. Cox. \emph{Triton: An Intermediate Language and Compiler for Tiled Neural Network Computations}. MAPL, 2019.
+\bibitem{r77} T. Dao, D. Y. Fu, S. Ermon, A. Rudra, and C. Ré. \emph{FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness}. NeurIPS, 2022.
+\bibitem{r78} T. Dao. \emph{FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning}. ICLR, 2024.
+\bibitem{r79} T. Chen et al. \emph{TVM: An Automated End-to-End Optimizing Compiler for Deep Learning}. OSDI, 2018.
+\bibitem{r80} W. Kwon et al. \emph{Efficient Memory Management for Large Language Model Serving with PagedAttention}. SOSP, 2023.
+\bibitem{r81} P. Patel et al. \emph{Splitwise: Efficient Generative LLM Inference Using Phase Splitting}. ISCA, 2024.
+\bibitem{r82} Y. Zhong et al. \emph{DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving}. OSDI, 2024.
+\bibitem{r83} A. Amid et al. \emph{Chipyard: Integrated Design, Simulation, and Implementation Framework for Custom SoCs}. IEEE Micro, 40(4):10--21, 2020.
+\bibitem{r84} D. Koeplinger et al. \emph{Spatial: A Language and Compiler for Application Accelerators}. PLDI, 2018.
+\bibitem{r85} H. Ye et al. \emph{ScaleHLS: A New Scalable High-Level Synthesis Framework on Multi-Level Intermediate Representation}. HPCA, 2022.
+\bibitem{r86} A. Sohrabizadeh, C. H. Yu, M. Gao, and J. Cong. \emph{AutoDSE: Enabling Software Programmers to Design Efficient FPGA Accelerators}. ACM TODAES, 27(4), 2022.
+\bibitem{r87} J. Cong and Z. Zhang. \emph{An Efficient and Versatile Scheduling Algorithm Based on SDC Formulation}. DAC, 2006.
+\bibitem{r88} NVIDIA. \emph{cuBLAS: Basic Linear Algebra on NVIDIA GPUs}. Software library.
+\bibitem{r89} Ventus GPGPU Project. \emph{Ventus: An Open-Source RISC-V GPGPU}. Tsinghua University. \url{https://github.com/THU-DSP-LAB/ventus-gpgpu}.
+\bibitem{r90} L. de Moura and N. Bjørner. \emph{Z3: An Efficient SMT Solver}. TACAS, 2008.
+\bibitem{r91} Q. Huangfu and J. A. J. Hall. \emph{Parallelizing the Dual Revised Simplex Method}. Mathematical Programming Computation, 10:119--142, 2018.
+\bibitem{r92} L. T. Clark et al. \emph{ASAP7: A 7-nm FinFET Predictive Process Design Kit}. Microelectronics Journal, 53:105--115, 2016.
+\bibitem{r93} Qwen Team. \emph{Qwen2.5 Technical Report}. arXiv:2412.15115, 2024.
+\bibitem{r94} A. Radford et al. \emph{Language Models are Unsupervised Multitask Learners}. OpenAI technical report, 2019.
+\bibitem{r95} S. Biderman et al. \emph{Pythia: A Suite for Analyzing Large Language Models Across Training and Scaling}. ICML, 2023.
+\bibitem{r96} Ventus Co-Design Project. \emph{Compiled Kernels and Queue Allocation for Qwen2.5-0.5B}. Public experiment report, issue 2, October 9, 2026. \url{https://github.com/BinaryCheater/ventus-codesign/issues/2}.
+\bibitem{r97} Ventus Co-Design Project. \emph{Tiling, Register Allocation and Attention-Mapping Co-Design Study}. Public experiment report, issue 3, October 9, 2026. \url{https://github.com/BinaryCheater/ventus-codesign/issues/3}.
+\bibitem{r98} Ventus Co-Design Project. \emph{Qwen2.5-14B Joint Hardware--Software Optimization}. Public experiment report, issue 4, October 9, 2026. \url{https://github.com/BinaryCheater/ventus-codesign/issues/4}.
+\bibitem{r99} Ventus Co-Design Project. \emph{Latency-Constrained KV Storage}. Public experiment report, issue 5, October 9, 2026. \url{https://github.com/BinaryCheater/ventus-codesign/issues/5}.
+\bibitem{r100} Ventus Co-Design Project. \emph{Qwen Full-Network Optimization and GPT-2/Pythia Transfer}. Public experiment report, issue 6, October 9, 2026. \url{https://github.com/BinaryCheater/ventus-codesign/issues/6}.
+\end{thebibliography}
+\end{document}
