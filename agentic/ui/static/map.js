@@ -43,7 +43,7 @@ window.MapView = (() => {
     path(`M${c(g).cx},${g.y + g.h} L${c(e).cx},${e.y}`);
     path(`M${e.x},${c(e).cy} L${o.x + o.w},${c(o).cy}`);
     path(`M${c(o).cx},${o.y} L${c(f).cx},${f.y + f.h}`);
-    text(svg, g.x + g.w + 8, c(g).cy + 4, "the verifier's second door", "ladder", "start").setAttribute("fill", "#6E7E84");
+    text(svg, g.x + g.w + 8, c(g).cy + 4, "verifier's 2nd door", "ladder", "start").setAttribute("fill", "#6E7E84");
     // stations + badges
     for (const [key, st] of Object.entries(STATIONS)) {
       const gr = mk("g", { class: "station " + key }); nodes[key] = gr;
@@ -57,7 +57,7 @@ window.MapView = (() => {
       text(bg, bx + 8, by + 15, "", "", "start");
       bg.style.display = "none";
     }
-    note = text(svg, c(o).cx, o.y + o.h + 48, "", "note");
+    note = text(svg, c(o).cx + 40, o.y + o.h + 46, "", "note");
     // token
     token = mk("g", { class: "token" });
     mk("rect", { x: -34, y: -17, width: 68, height: 34 }, token);
@@ -69,7 +69,7 @@ window.MapView = (() => {
   function placeToken(station, instant) {
     // the token sits on the station's top-right corner so the station name and badge stay readable
     const st = STATIONS[station] || STATIONS.orchestrator;
-    const x = st.x + st.w - 26, y = st.y - 2;
+    const x = st.x + st.w - 22, y = st.y - 18;
     token.classList.toggle("instant", !!instant || S.state.speed === "inf");
     token.setAttribute("transform", `translate(${x},${y})`);
   }
