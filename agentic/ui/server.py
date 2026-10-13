@@ -20,8 +20,9 @@ from websockets.asyncio.server import serve
 
 from ..agents.formulator import catalog
 from ..agents.formulator.scripted import ScriptedFormulator
-from ..agents.orchestrator import Controller, Orchestrator
+from ..agents.orchestrator import DEFAULT_BREAKPOINTS, Controller, Orchestrator
 from ..ledger import Ledger, rebuild, template_view, timeline
+from ..ledger.story import story, story_entry
 
 STATIC = Path(__file__).resolve().parent / "static"
 
@@ -32,7 +33,7 @@ class Session:
     def __init__(self, ledger: Ledger, run: str | None = None):
         self.ledger = ledger
         self.run = run or (ledger.runs()[-1] if ledger.runs() else None)
-        self.ctl = Controller("step")
+        self.ctl = Controller("step", breakpoints=set(DEFAULT_BREAKPOINTS))
         self.orch: Orchestrator | None = None
         self.thread: threading.Thread | None = None
         self.loop: asyncio.AbstractEventLoop | None = None
@@ -46,7 +47,7 @@ class Session:
     def start(self, run: str, mode: str = "step", formulator=None):
         if self.live():
             raise RuntimeError("a run is already live")
-        self.ctl = Controller(mode)
+        self.ctl = Controller(mode, breakpoints=set(self.ctl.breakpoints))   # keep the architect's toggles
         self.run = run
         self.orch = Orchestrator(self.ledger, run, formulator or ScriptedFormulator(), self.ctl)
         self.thread = threading.Thread(target=self._guarded_run, name=f"run:{run}", daemon=True)
@@ -57,7 +58,9 @@ class Session:
             self.orch.run_loop()
         except Exception:
             pass                                   # already recorded in the ledger by the orchestrator
-        self._broadcast({"type": "controller", "controller": self.state()["controller"]})
+        # announce the end from the event loop, once this thread has actually exited (live -> false)
+        if self.loop is not None:
+            self.loop.call_soon_threadsafe(self.loop.call_later, 0.2, self._broadcast_controller)
 
     def state(self) -> dict:
         ctl = self.ctl.snapshot()
@@ -88,6 +91,8 @@ class Session:
             self.run = msg["run"]
         elif op == "mode":
             self.ctl.set_mode(msg["mode"])
+        elif op == "breakpoints":
+            self.ctl.set_breakpoints(msg.get("names", []))
         elif op == "pause":
             self.ctl.pause()
         elif op in ("resume", "step"):
@@ -111,14 +116,22 @@ class Session:
         else:
             return {"type": "error", "error": f"unknown op {op!r}"}
         snap = self.state()["controller"]
-        self._broadcast({"type": "controller", "controller": snap})
-        return {"type": "ok", "op": op, "controller": snap}
+        self._broadcast({"type": "controller", "controller": snap, "run": self.run})
+        return {"type": "ok", "op": op, "controller": snap, "run": self.run}
 
     # ---------------------------------------------------------------- streaming
     def _on_event(self, ev: dict):
         self._broadcast({"type": "event", "event": ev})
-        if ev["kind"] == "checkpoint":
-            self._broadcast({"type": "controller", "controller": self.state()["controller"]})
+        if ev["iteration"] > 0:
+            entry = story_entry(self.ledger, ev["run"], ev["iteration"])
+            if entry:
+                self._broadcast({"type": "story", "run": ev["run"], "iteration": ev["iteration"], "entry": entry})
+        if ev["kind"] == "checkpoint" and self.loop is not None:
+            # the Controller marks itself waiting just after this event is appended: snapshot it a moment later
+            self.loop.call_soon_threadsafe(self.loop.call_later, 0.15, self._broadcast_controller)
+
+    def _broadcast_controller(self):
+        self._broadcast({"type": "controller", "controller": self.state()["controller"], "run": self.run})
 
     def _broadcast(self, msg: dict):
         if self.loop is None or not self.clients:
@@ -188,6 +201,8 @@ def api(session: Session, route: str, q: dict):
         return session.state()
     if route == "timeline":
         return timeline(L, run)
+    if route == "story":
+        return story(L, run) if run else []
     if route == "events":
         return L.events(run, since=int(q.get("since", 0)))
     if route == "catalog":

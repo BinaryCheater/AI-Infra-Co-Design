@@ -4,94 +4,86 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Architect console</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="console.css">
 </head>
 <body>
 <header id="top">
-  <div class="brand">Agentic co-design <span class="dim">· architect console</span></div>
-  <div class="controls">
-    <label>run <select id="run-select"></select></label>
-    <label>mode
-      <span class="seg" id="mode-seg">
-        <button data-mode="observe" title="loop runs freely; the ledger streams">observe</button>
-        <button data-mode="step" title="pause at every proposed and admitted checkpoint">step</button>
-        <button data-mode="drive" title="pause at every checkpoint">drive</button>
-      </span>
-    </label>
-    <button id="btn-start" title="start a new scripted run on this ledger">start run</button>
-    <button id="btn-pause">pause</button>
-    <button id="btn-step" class="primary">continue ▸</button>
-    <button id="btn-replay" title="rewind to the first checkpoint and replay the formulator's recorded proposals">replay</button>
-    <button id="btn-stop" class="danger">stop</button>
-  </div>
-  <div id="status" class="status">connecting…</div>
+  <div class="brand">ARCHITECT CONSOLE</div>
+  <label class="field">run <select id="run-select"></select></label>
+  <span id="live-state" class="live-state">recorded</span>
+  <button id="btn-back-live" class="ghost" hidden>⇥ back to live</button>
+  <span class="spacer"></span>
+  <label class="field">speed
+    <span class="seg" id="speed-seg">
+      <button data-speed="1">1×</button><button data-speed="4">4×</button><button data-speed="inf">∞</button>
+    </span>
+  </label>
+  <button id="btn-new-run" class="ghost">new run</button>
+  <a class="ghost link" href="debug.html" title="the v1 ledger debugger">ledger</a>
 </header>
 
+<section id="transport">
+  <div class="row">
+    <span class="seg">
+      <button id="tp-first" title="first iteration">⏮</button><button id="tp-prev" title="previous iteration">◀</button>
+      <button id="tp-next" title="next iteration">▶</button><button id="tp-last" title="last iteration">⏭</button>
+    </span>
+    <button id="tp-run" class="primary">Run</button>
+    <button id="tp-pause">Pause</button>
+    <button id="tp-step-it">Step iteration</button>
+    <button id="tp-step-st">Step station</button>
+    <button id="tp-continue">Continue</button>
+    <span id="tp-status" class="status"></span>
+  </div>
+  <div class="row">
+    <span class="label">Stop at:</span>
+    <span id="breakpoints" class="bps">
+      <button data-bp="refuted">bug found</button>
+      <button data-bp="regime_flip">bottleneck moved</button>
+      <button data-bp="proposed">proposed</button>
+      <button data-bp="solved">solved</button>
+      <button data-bp="admitted">accepted</button>
+    </span>
+  </div>
+  <div id="scrubber" class="scrubber">
+    <div class="track"><div class="ticks" id="ticks"></div><div class="cursor" id="cursor"></div></div>
+    <div class="legend"><span class="dot accepted"></span> accepted <span class="dot rejected"></span> rejected
+      <span class="dot flip"></span> bottleneck moved <span class="person">☺</span> you acted</div>
+  </div>
+</section>
+
 <main>
-  <section id="timeline-pane">
-    <div class="pane-head">
-      <h2>Timeline <span class="dim">one row per iteration</span></h2>
-      <span class="legend">
-        <span class="mk proved"></span> proved&nbsp; <span class="mk observed"></span> observed&nbsp;
-        <span class="tag ok">gate ✓</span> <span class="tag bad">gate ✗</span> <span class="tag flip">regime flip</span>
-        <span class="tag human">human</span>
-      </span>
-    </div>
-    <table id="timeline">
-      <thead><tr>
-        <th>#</th><th>L</th><th>What was refined</th><th>Workload</th><th>Structure (bucket)</th><th>Regime</th>
-        <th>Solver: bound / gap / time</th><th>Gate</th><th>Measured vs predicted</th><th>Outcome</th>
-      </tr></thead>
-      <tbody></tbody>
-    </table>
+  <section id="map-pane">
+    <svg id="map" viewBox="0 0 760 440" preserveAspectRatio="xMidYMid meet" aria-label="the map"></svg>
   </section>
-
-  <section id="template-pane" class="empty">
-    <div class="pane-head"><h2>Template view <span id="tv-id" class="mono dim"></span></h2>
-      <span id="tv-status" class="dim"></span></div>
-    <div id="tv-empty" class="dim">Select a row of the timeline.</div>
-    <div id="tv-body" hidden>
-      <div id="why" class="why">
-        <div class="why-head">WHY <span id="why-name"></span> <span class="dim">· bucket:</span> <span id="why-bucket"></span>
-          <span class="dim">· regime:</span> <span id="why-regime"></span></div>
-        <div><span class="dim">move:</span> <span id="why-move"></span></div>
-        <div><span class="dim">obligation:</span> <span id="why-obl"></span> <span class="dim">· strength:</span>
-          <span id="why-strength"></span> <span class="dim">→</span> <span id="why-gate"></span></div>
-        <div class="rationale"><span class="dim">rationale:</span> <span id="why-rationale"></span>
-          <span id="why-evidence" class="mono dim"></span></div>
-      </div>
-      <div class="faces">
-        <div class="face"><h3>Formulation</h3><div id="face-form"></div></div>
-        <div class="face"><h3>Optimization</h3><div id="face-opt"></div></div>
-        <div class="face"><h3>Verification</h3><div id="face-ver"></div></div>
-      </div>
-      <div id="evidence" class="strip"><b>EVIDENCE</b> <span id="evidence-body"></span></div>
-      <div id="actions" class="strip actions">
-        <b>ACTIONS</b>
-        <button id="act-edit">edit</button>
-        <button id="act-inject">inject</button>
-        <button id="act-override">override</button>
-        <button id="act-rewind">rewind to proposed</button>
-        <button id="act-rewind-fresh" title="rewind and ask the formulator for a fresh proposal">rewind + fresh</button>
-        <span id="act-hint" class="dim"></span>
-      </div>
-      <div id="editor" class="editor" hidden>
-        <div class="editor-head"><span id="editor-title"></span>
-          <span><button id="editor-submit" class="primary">submit</button> <button id="editor-cancel">cancel</button></span></div>
-        <div id="editor-form"></div>
-        <textarea id="editor-text" spellcheck="false" hidden></textarea>
-      </div>
-    </div>
-  </section>
-
-  <aside id="side">
-    <div class="pane-head"><h2>Stores</h2></div>
-    <div id="stores"></div>
-    <div class="pane-head"><h2>Ledger <span id="ledger-count" class="dim"></span></h2>
-      <label class="dim"><input type="checkbox" id="ledger-follow" checked> follow</label></div>
-    <div id="ledger"></div>
+  <aside id="pool-pane">
+    <div class="pane-head"><h2>THE POOL</h2><span id="pool-count" class="muted"></span></div>
+    <div id="pool"></div>
   </aside>
 </main>
-<script src="app.js"></script>
+
+<section id="narration-pane">
+  <div id="narration-title" class="narration-title"></div>
+  <div id="narration" class="narration"></div>
+</section>
+
+<aside id="inspector" class="inspector" hidden>
+  <div class="inspector-head">
+    <div><span id="insp-short" class="short"></span> <span id="insp-id" class="muted mono"></span></div>
+    <button id="insp-close" class="ghost">close ✕</button>
+  </div>
+  <div id="insp-actions" class="insp-actions"></div>
+  <div id="insp-body"></div>
+</aside>
+
+<div id="toasts"></div>
+<script src="session.js"></script>
+<script src="narration.js"></script>
+<script src="map.js"></script>
+<script src="scrubber.js"></script>
+<script src="pool.js"></script>
+<script src="inspector.js"></script>
+<script src="transport.js"></script>
+<script src="console.js"></script>
 </body>
 </html>

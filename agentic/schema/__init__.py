@@ -33,7 +33,8 @@ def canonical(obj) -> str:
 
 # Recorded but never part of an identity or of a replay comparison: wall-clock fields, and the SMT
 # query hash, because Z3's SMT-LIB text carries fresh internal names that differ between calls.
-TIMING_KEYS = frozenset({"checker_time", "solver_time", "seconds", "ts", "query_sha256"})
+TIMING_KEYS = frozenset({"checker_time", "solver_time", "formulator_time", "evaluator_time", "seconds", "ts",
+                         "query_sha256"})
 
 
 def strip_timing(obj):

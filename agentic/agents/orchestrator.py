@@ -13,6 +13,7 @@ from __future__ import annotations
 import threading
 from collections import deque
 from dataclasses import dataclass, field
+from time import perf_counter
 
 from ..ledger import Ledger, rebuild, search
 from . import evaluator as evaluator_svc
@@ -23,6 +24,8 @@ from .formulator import well_formed
 
 MODES = ("observe", "step", "drive")
 STEP_CHECKPOINTS = ("proposed", "admitted")
+CHECKPOINTS = ("proposed", "solved", "refuted", "regime_flip", "admitted")
+DEFAULT_BREAKPOINTS = frozenset({"refuted", "regime_flip"})
 DEFAULT_PARAMS = {"eps": 0.05, "B": 20, "delta": 0.15, "discrepancy_tol": 0.05}
 
 
@@ -44,6 +47,10 @@ class Controller:
     """
     mode: str = "observe"
     paused: bool = False
+    # Breakpoints: checkpoint names that block in any mode (the console's "Stop at" toggles). The
+    # console arms {"refuted", "regime_flip"} by default (DEFAULT_BREAKPOINTS); a headless Controller
+    # starts with none so that `agentic run` and the tests' observe-mode runs never wait on nobody.
+    breakpoints: set = field(default_factory=set)
     _go: int = 0
     _stop: bool = False
     _queue: deque = field(default_factory=deque)
@@ -54,11 +61,18 @@ class Controller:
     def should_block(self, name: str) -> bool:
         if self.paused:
             return True
+        if name in self.breakpoints:
+            return True
         if self.mode == "observe":
             return False
         if self.mode == "step":
             return name in STEP_CHECKPOINTS
         return True
+
+    def set_breakpoints(self, names):
+        with self.cv:
+            self.breakpoints = set(names)
+            self.cv.notify_all()
 
     def wait_at(self, name: str, info: dict) -> tuple[list[dict], bool]:
         """Block at a checkpoint. Returns (commands, released): commands arrive while still waiting so
@@ -138,7 +152,7 @@ class Controller:
 
     def snapshot(self) -> dict:
         with self.cv:
-            return {"mode": self.mode, "paused": self.paused,
+            return {"mode": self.mode, "paused": self.paused, "breakpoints": sorted(self.breakpoints),
                     "waiting": dict(self.waiting) if self.waiting is not None else None,
                     "queued": len(self._queue), "stopped": self._stop}
 
@@ -272,7 +286,9 @@ class Orchestrator:
         hits = [h["contract"]["id"] for h in search(views["population"])][-3:]
         request = {"step": cur["step"], "level": cur["level"], "coarse_template": cur["coarse_template"],
                    "evidence": self._evidence(), "population_hits": hits}
+        t0 = perf_counter()
         T = self._propose(request)
+        formulator_time = perf_counter() - t0
         if T is None:                       # the Formulator has nothing left to propose
             cur["iteration"] -= 1
             return True
@@ -280,7 +296,8 @@ class Orchestrator:
         tid = self.ledger.put("contract", T, "tmpl")
         T = self.ledger.get(tid)
         self._append("proposed", {"step": cur["step"], "structure": T["structure"],
-                                  "refines": T["provenance"].get("refines"), "workload": T["scope"]["workload"]}, tid)
+                                  "refines": T["provenance"].get("refines"), "workload": T["scope"]["workload"],
+                                  "formulator_time": formulator_time}, tid)
 
         box = {"T": T, "tid": tid}
 
@@ -344,11 +361,14 @@ class Orchestrator:
             cur["step"] += 1
             return False
 
+        t0 = perf_counter()
         m = self.ledger.put("measurement", evaluator_svc.measure(T, X, self.backend), "meas")
+        evaluator_time = perf_counter() - t0
         M = self.ledger.get(m)
         self._append("measured", {"predicted": M["predicted_cost"], "measured": M["measured_cost"],
                                   "discrepancy": M["discrepancy"], "utilizations": M["utilizations"],
-                                  "dominant_resource": M["dominant_resource"], "simulator": M["simulator"]}, m)
+                                  "dominant_resource": M["dominant_resource"], "simulator": M["simulator"],
+                                  "evaluator_time": evaluator_time}, m)
         was_clean = self.optimism.clean
         self.optimism.update(M["predicted_cost"], M["measured_cost"], m)
         self._append("optimism", {**self.optimism.to_dict(), "went_dirty": was_clean and not self.optimism.clean})
@@ -363,6 +383,7 @@ class Orchestrator:
         if assumed != actual:
             self._append("regime_flip", {"assumed": assumed, "actual": actual, "witness": x,
                                          "utilizations": M["utilizations"]}, m)
+            self._checkpoint("regime_flip", m)          # the architect's stay / descend decision is taken here
             strength = self._handle_regime(T, X, M, views)
         elif strength == "observed":
             pr = evaluator_svc.probe(T)
