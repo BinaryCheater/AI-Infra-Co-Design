@@ -1,0 +1,61 @@
+# Per-template phrasing for the three lenses (notes/describing_templates.md §4.3).
+# Everything else the describer says comes from the contract's own structured fields.
+smem_tiling:
+  what_it_decides: "tiles {workload} through on-chip shared memory"
+  decides_in_words: >-
+    the output tile (Tm × Tn rows by columns), the reduction tile Tk, how many buffer slots S each
+    block rotates through, how far ahead to prefetch (P tiles), and whether to keep a trailing
+    barrier (β)
+  precondition_in_words:
+    exact: "prefetch may run at most S − 2 tiles ahead, one more if the trailing barrier is kept"
+    conservative: "the trailing barrier is always kept, and prefetch may run at most S − 1 tiles ahead"
+    unsound: "prefetch may run up to S − 1 tiles ahead regardless of the trailing barrier"
+  # how strict each prefetch rule is, to say "looser" or "stricter" than the parent
+  precondition_strictness: {conservative: 0, exact: 1, unsound: 2}
+  precondition_label:
+    exact: "exact"
+    conservative: "conservative"
+    unsound: "loose"
+  structure_in_words:
+    grid_rounding:
+      ceil: "partial tail tiles are kept and guarded"
+      floor: "the tail tiles are dropped (the grid is rounded down)"
+    leading_barrier:
+      "true": "a barrier separates each tile's loads from its compute"
+      "false": "no barrier separates a tile's loads from its compute"
+    guard:
+      bounded: "tail elements are guarded by index < extent"
+      unguarded: "tail elements are not guarded"
+  failure_in_words:
+    lifetime: "a slow warp can still be reading a slot when the prefetch for a later tile overwrites it"
+    readiness: "a warp reads a slot before the load into it has completed"
+    coverage: "part of the output is never computed (the tail tiles are dropped)"
+    exact_once: "some output elements are computed twice"
+    no_phantom: "the program reads or writes past the end of a tensor"
+    terminal_agreement: "the replayed execution does not compute the reference product"
+  decision_order: [Tm, Tn, Tk, S, P, beta]
+  # how to say a decision's value and what changing it means
+  decision_units:
+    Tm: "rows"
+    Tn: "columns"
+    Tk: "reduction elements"
+    S: "slots"
+    P: "tiles ahead"
+    beta: ""
+  decision_change_in_words:
+    beta:
+      "1->0": "the trailing barrier could be dropped"
+      "0->1": "a trailing barrier was added"
+    S: "{new} slots instead of {old}"
+    P: "prefetch {new} instead of {old}"
+    Tm: "tile rows {new} instead of {old}"
+    Tn: "tile columns {new} instead of {old}"
+    Tk: "reduction tile {new} instead of {old}"
+  family_sweep_in_words: >-
+    swept over the 24-point family (S, P, β) at tile 16×16×8 under a two-warp event model
+  delta_fields:
+    - preconditions[0].mode
+    - scope.structure.grid_rounding
+    - scope.structure.leading_barrier
+    - scope.structure.guard
+    - scope.workload.name

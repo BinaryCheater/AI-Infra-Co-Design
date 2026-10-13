@@ -24,7 +24,8 @@ window.Session = (() => {
       else if (msg.type === "event") {
         const ev = msg.event;
         if (ev.run !== state.run) return;
-        if (ev.kind === "run_finished" || ev.kind === "admitted") refreshSummary();
+        if (ev.kind === "run_finished" || ev.kind === "admitted") { refreshSummary(); loadDescribe(); }
+        if (["proposed", "family_check", "solved", "instance_check", "measured", "diagnosis"].includes(ev.kind)) loadDescribe();
         if (ev.kind === "human_refused") emit("toast", "Not allowed: " + ev.payload.rule, true);
         if (ev.kind === "human_edit" || ev.kind === "human_inject") refreshSummary();
       }
@@ -48,6 +49,11 @@ window.Session = (() => {
     state.story = state.run ? await api("story") : [];
     state.storyByIt = Object.fromEntries(state.story.map(e => [e.iteration, e]));
     emit("story");
+    loadDescribe();
+  }
+  async function loadDescribe() {
+    state.describe = state.run ? await api("describe_all") : {};
+    emit("describe");
   }
   async function refreshSummary() { const s = await api("state"); state.summary = s.summary; state.timeline = s.timeline; emit("summary"); }
   function onStory(entry) {
@@ -111,5 +117,5 @@ window.Session = (() => {
   function atLiveEdge() { const l = last(); return !!l && state.clock.it === l.iteration && state.clock.v === l.visits.length; }
 
   return { state, on, emit, connect, send, api, setClock, seekEnd, stepStation, stepIteration, play, pause, setSpeed,
-           detach, backToLive, atLiveEdge, loadStory, refreshSummary };
+           detach, backToLive, atLiveEdge, loadStory, loadDescribe, refreshSummary };
 })();

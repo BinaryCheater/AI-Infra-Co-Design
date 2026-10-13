@@ -55,6 +55,21 @@ The v1 ledger debugger is still served at `/debug.html`.
 Console acceptance tests (design §6) are in `tests/test_story.py` (C0, C4, C5 headless); C1–C3 and
 the live C4/C5 were checked in the browser on `runs/demo.db`.
 
+### Round 3: three readers (`notes/describing_templates.md`)
+
+`agentic/ledger/describe.py` renders every template three ways from the same structured fields —
+**Systems** (what hardware/software decision, what it cost), **Optimization** (variables, objective,
+constraints, size, solver status, bound and gap) and **Proof** (obligations, scope of the family
+proof vs the instance check, the counterexample) — under one shared headline
+("T5 · Tiles the ragged 1000³ GEMM through on-chip shared memory · accepted · best so far, 53.1 µs")
+and a "what's different from the parent" line. The phrasing per template backend lives in
+`agentic/templates/<name>/describe.yaml`; display names for workloads and chips in `describe.py`;
+hover glosses in `agentic/ui/static/glossary.json`. Pool cards show the headline and the delta line
+(the formulator's `refines` shorthand is no longer shown); the inspector has the three lens tabs,
+defaulting to Systems for accepted and Proof for rejected templates, with the user's choice
+remembered in the browser. API: `/api/describe/<contract>` and `/api/describe_all`. Tests:
+`tests/test_describe.py` (D0) and the D4 assertion in `tests/test_story.py`.
+
 ## What the architect can do (design §5)
 
 | Action | Effect | Recorded as |

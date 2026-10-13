@@ -22,6 +22,7 @@ from ..agents.formulator import catalog
 from ..agents.formulator.scripted import ScriptedFormulator
 from ..agents.orchestrator import DEFAULT_BREAKPOINTS, Controller, Orchestrator
 from ..ledger import Ledger, rebuild, template_view, timeline
+from ..ledger.describe import describe, describe_all
 from ..ledger.story import story, story_entry
 
 STATIC = Path(__file__).resolve().parent / "static"
@@ -209,6 +210,10 @@ def api(session: Session, route: str, q: dict):
         return catalog()
     if route == "population":
         return session._summary()
+    if route == "describe_all":
+        return describe_all(L, run) if run else {}
+    if route.startswith("describe/"):
+        return describe(L, route[9:], run)
     if route.startswith("template/"):
         return template_view(L, route[9:], run)
     if route.startswith("artifact/"):

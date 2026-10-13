@@ -22,7 +22,8 @@ window.Narration = (() => {
     const c = S.state.controller;
     if (S.state.live && c.waiting && c.waiting.iteration === it && v >= e.visits.length) box.append(el("span", "paused", " — paused here (" + c.waiting.checkpoint + ")"));
     else if (S.state.live && e.outcome === "in_progress" && v >= e.visits.length && !S.state.detached) box.append(el("span", "pending", " …"));
+    if (window.Glossary) Glossary.apply(box);
   }
-  S.on("clock", render); S.on("story", render); S.on("controller", render);
+  S.on("clock", render); S.on("story", render); S.on("controller", render); S.on("glossary", render);
   return { render };
 })();

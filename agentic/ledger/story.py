@@ -8,6 +8,7 @@ number of the proposal it replaced.
 """
 from __future__ import annotations
 
+from .describe import display_name
 from .ledger import Ledger
 from .views import rebuild
 
@@ -80,8 +81,8 @@ def story(ledger: Ledger, run: str) -> list[dict]:
             e["visits"].append({"station": "formulator", "verdict_text": f"proposed {e['template']['short']}",
                                 "time_s": p.get("formulator_time"), "ok": True, "artifact": a, "seq": ev["seq"]})
             clauses.append({"station": "formulator", "text":
-                            f"The agent proposed {p.get('refines') or 'a template'} for the "
-                            f"{e['template']['workload']}, assuming {e['template']['regime']}."})
+                            f"The agent proposed {p.get('refines') or 'a template'} for "
+                            f"{display_name(e['template']['workload'])}, assuming {e['template']['regime']}."})
         elif k in ("human_edit", "human_inject"):
             new = a
             T = ledger.get(new)
@@ -192,7 +193,7 @@ def story(ledger: Ledger, run: str) -> list[dict]:
             e["visits"].append({"station": "orchestrator", "verdict_text": badge, "time_s": None, "ok": True,
                                 "artifact": a, "seq": ev["seq"]})
             clauses.append({"station": "orchestrator", "text": "Accepted into the pool."
-                            + (f" New best so far for the {wl}." if is_inc else "")})
+                            + (f" New best so far for {display_name(wl)}." if is_inc else "")})
         elif k == "rewind":
             e["human"].append({"kind": k, "who": p.get("who"), "reason": None, "seq": ev["seq"]})
             e["outcome"] = "rewound"

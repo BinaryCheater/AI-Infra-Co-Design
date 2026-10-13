@@ -37,6 +37,8 @@ def test_c0_story_on_demo(demo):
     names = short_names(L, run)
     assert sorted(set(names.values())) == [f"T{i}" for i in range(1, 8)]
     assert all("tmpl_" not in e["sentence"] for e in s)
+    assert "for the ragged 1000³ GEMM" in by[4]["sentence"]                       # D4: display names
+    assert all("ragged_1000x1000x1000" not in e["sentence"] for e in s)
 
 
 def _drive_with_breakpoints(tmp_path, breakpoints, on_wait):

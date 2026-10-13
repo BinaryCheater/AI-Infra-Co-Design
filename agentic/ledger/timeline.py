@@ -101,6 +101,8 @@ def template_view(ledger: Ledger, contract_id: str, run: str | None = None) -> d
         except KeyError:
             continue
         body = ledger.get(a)
+        if any(body["id"] == y["id"] for y in out["assignments"] + out["verdicts"] + out["measurements"] + out["diagnoses"]):
+            continue                      # several events (e.g. a checkpoint) may point at one artifact
         if kind == "assignment" and body["contract"] == contract_id:
             out["assignments"].append(body)
         elif kind == "verdict" and body["contract"] == contract_id:

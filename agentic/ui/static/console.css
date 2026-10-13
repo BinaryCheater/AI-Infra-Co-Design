@@ -149,3 +149,21 @@ details.raw summary { cursor: pointer; color: var(--muted); }
 #toasts { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); display: grid; gap: 6px; z-index: 20; }
 .toast { background: var(--navy); color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 15px; max-width: 70vw; box-shadow: 0 4px 14px rgba(0, 0, 0, .25); }
 .toast.bad { background: var(--red); }
+
+/* round 3: headlines, lenses, glossary */
+.card .headline .what { font-size: 14px; }
+.card .outcome { font-size: 13px; color: var(--text); margin-top: 2px; }
+.card .outcome.star { color: var(--amber); font-weight: 600; }
+.card .delta { font-size: 13px; color: var(--muted); margin-top: 3px; }
+.headline-big { font-size: 17px; font-weight: 600; color: var(--navy); margin: 2px 0 4px; }
+.inspector .delta { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+.tabs { display: flex; align-items: center; gap: 4px; margin: 6px 0 10px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.tabs button.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+.tabs .help { margin-left: 8px; font-size: 13px; }
+.lens-text p { margin: 0 0 8px; font-size: 15.5px; line-height: 1.5; }
+.inspector table.grid { border-collapse: collapse; width: 100%; font-size: 14px; margin: 4px 0 8px; }
+.inspector table.grid th, .inspector table.grid td { border-bottom: 1px solid var(--line); padding: 3px 6px; text-align: left; vertical-align: top; }
+.inspector table.grid th { color: var(--muted); font-weight: 500; }
+.inspector blockquote { margin: 4px 0; padding: 4px 10px; border-left: 3px solid var(--line); color: var(--muted); font-style: italic; }
+.gloss { border-bottom: 1px dotted var(--teal); cursor: help; }
+.gloss:hover { background: #E7EFEE; }
