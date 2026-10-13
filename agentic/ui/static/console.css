@@ -121,8 +121,8 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 0; min-h
 .card .link { font-size: 12.5px; color: var(--teal); }
 
 /* inspector */
-.inspector { position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 92vw); background: var(--panel); border-left: 2px solid var(--navy); box-shadow: -6px 0 18px rgba(0, 0, 0, .18); padding: 14px 18px; overflow: auto; z-index: 10; transform: translateX(0); transition: transform .25s; }
-.inspector[hidden] { display: block; transform: translateX(105%); }
+.inspector { position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 92vw); background: var(--panel); border-left: 2px solid var(--navy); box-shadow: -6px 0 18px rgba(0, 0, 0, .18); padding: 14px 18px; overflow: auto; z-index: 10; }
+.inspector[hidden] { display: none; }
 .inspector-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .inspector .short { font-weight: 700; font-size: 20px; color: var(--navy); }
 .insp-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
