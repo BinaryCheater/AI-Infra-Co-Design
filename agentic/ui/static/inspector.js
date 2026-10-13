@@ -1,6 +1,7 @@
 /* The inspector (round 3): the shared headline, then three lenses — Systems · Optimization · Proof —
    over the describer's output (/api/describe/<id>). The default lens follows the template's status
-   (Systems when accepted, Proof when rejected); a lens the user picks is remembered in this browser. */
+   (Systems when accepted, Proof when rejected: the question each status raises first); a lens the
+   user picks overrides that for the rest of the browser session. */
 window.Inspector = (() => {
   const S = Session;
   const pane = document.getElementById("inspector"), body = document.getElementById("insp-body"), actions = document.getElementById("insp-actions");
@@ -9,8 +10,8 @@ window.Inspector = (() => {
   const t = s => s == null ? "?" : s < 1e-3 ? (s * 1e6).toFixed(0) + " µs" : s < 1 ? (s * 1e3).toFixed(0) + " ms" : s.toFixed(2) + " s";
   const LENSES = [["systems", "Systems"], ["optimization", "Optimization"], ["proof", "Proof"]];
   let current = null, lens = null, view = null, desc = null;
-  const stored = () => { try { return localStorage.getItem("agentic.lens"); } catch (e) { return null; } };
-  const remember = l => { try { localStorage.setItem("agentic.lens", l); } catch (e) { /* ignore */ } };
+  const stored = () => { try { return sessionStorage.getItem("agentic.lens"); } catch (e) { return null; } };
+  const remember = l => { try { sessionStorage.setItem("agentic.lens", l); } catch (e) { /* ignore */ } };
 
   async function open(id, iteration, keepLens) {
     current = { id, iteration };
