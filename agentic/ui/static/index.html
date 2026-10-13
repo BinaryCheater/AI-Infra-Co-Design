@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Architect console</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header id="top">
+  <div class="brand">Agentic co-design <span class="dim">· architect console</span></div>
+  <div class="controls">
+    <label>run <select id="run-select"></select></label>
+    <label>mode
+      <span class="seg" id="mode-seg">
+        <button data-mode="observe" title="loop runs freely; the ledger streams">observe</button>
+        <button data-mode="step" title="pause at every proposed and admitted checkpoint">step</button>
+        <button data-mode="drive" title="pause at every checkpoint">drive</button>
+      </span>
+    </label>
+    <button id="btn-start" title="start a new scripted run on this ledger">start run</button>
+    <button id="btn-pause">pause</button>
+    <button id="btn-step" class="primary">continue ▸</button>
+    <button id="btn-replay" title="rewind to the first checkpoint and replay the formulator's recorded proposals">replay</button>
+    <button id="btn-stop" class="danger">stop</button>
+  </div>
+  <div id="status" class="status">connecting…</div>
+</header>
+
+<main>
+  <section id="timeline-pane">
+    <div class="pane-head">
+      <h2>Timeline <span class="dim">one row per iteration</span></h2>
+      <span class="legend">
+        <span class="mk proved"></span> proved&nbsp; <span class="mk observed"></span> observed&nbsp;
+        <span class="tag ok">gate ✓</span> <span class="tag bad">gate ✗</span> <span class="tag flip">regime flip</span>
+        <span class="tag human">human</span>
+      </span>
+    </div>
+    <table id="timeline">
+      <thead><tr>
+        <th>#</th><th>L</th><th>What was refined</th><th>Workload</th><th>Structure (bucket)</th><th>Regime</th>
+        <th>Solver: bound / gap / time</th><th>Gate</th><th>Measured vs predicted</th><th>Outcome</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section id="template-pane" class="empty">
+    <div class="pane-head"><h2>Template view <span id="tv-id" class="mono dim"></span></h2>
+      <span id="tv-status" class="dim"></span></div>
+    <div id="tv-empty" class="dim">Select a row of the timeline.</div>
+    <div id="tv-body" hidden>
+      <div id="why" class="why">
+        <div class="why-head">WHY <span id="why-name"></span> <span class="dim">· bucket:</span> <span id="why-bucket"></span>
+          <span class="dim">· regime:</span> <span id="why-regime"></span></div>
+        <div><span class="dim">move:</span> <span id="why-move"></span></div>
+        <div><span class="dim">obligation:</span> <span id="why-obl"></span> <span class="dim">· strength:</span>
+          <span id="why-strength"></span> <span class="dim">→</span> <span id="why-gate"></span></div>
+        <div class="rationale"><span class="dim">rationale:</span> <span id="why-rationale"></span>
+          <span id="why-evidence" class="mono dim"></span></div>
+      </div>
+      <div class="faces">
+        <div class="face"><h3>Formulation</h3><div id="face-form"></div></div>
+        <div class="face"><h3>Optimization</h3><div id="face-opt"></div></div>
+        <div class="face"><h3>Verification</h3><div id="face-ver"></div></div>
+      </div>
+      <div id="evidence" class="strip"><b>EVIDENCE</b> <span id="evidence-body"></span></div>
+      <div id="actions" class="strip actions">
+        <b>ACTIONS</b>
+        <button id="act-edit">edit</button>
+        <button id="act-inject">inject</button>
+        <button id="act-override">override</button>
+        <button id="act-rewind">rewind to proposed</button>
+        <button id="act-rewind-fresh" title="rewind and ask the formulator for a fresh proposal">rewind + fresh</button>
+        <span id="act-hint" class="dim"></span>
+      </div>
+      <div id="editor" class="editor" hidden>
+        <div class="editor-head"><span id="editor-title"></span>
+          <span><button id="editor-submit" class="primary">submit</button> <button id="editor-cancel">cancel</button></span></div>
+        <div id="editor-form"></div>
+        <textarea id="editor-text" spellcheck="false" hidden></textarea>
+      </div>
+    </div>
+  </section>
+
+  <aside id="side">
+    <div class="pane-head"><h2>Stores</h2></div>
+    <div id="stores"></div>
+    <div class="pane-head"><h2>Ledger <span id="ledger-count" class="dim"></span></h2>
+      <label class="dim"><input type="checkbox" id="ledger-follow" checked> follow</label></div>
+    <div id="ledger"></div>
+  </aside>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

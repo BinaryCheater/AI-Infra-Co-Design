@@ -1,7 +1,12 @@
 *.aux
+*.egg-info/
+*.fdb_latexmk
+*.fls
 *.log
 *.out
 *.toc
-*.fls
-*.fdb_latexmk
 .DS_Store
+.pytest_cache/
+__pycache__/
+runs/*.db
+runs/*.db-journal

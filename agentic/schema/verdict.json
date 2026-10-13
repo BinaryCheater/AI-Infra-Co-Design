@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agentic/verdict",
+  "title": "Verifier output: a verdict with a counterexample or a certificate",
+  "type": "object",
+  "required": ["id", "contract", "check", "verdict", "obligations", "checker_time"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string"},
+    "contract": {"type": "string"},
+    "assignment": {"type": ["string", "null"]},
+    "check": {"type": "string", "enum": ["family", "instance"]},
+    "verdict": {"type": "string", "enum": ["proved", "refuted", "open"]},
+    "obligations": {
+      "type": "array",
+      "items": {"type": "object", "required": ["obligation", "status"],
+                "properties": {"obligation": {"type": "string"}, "scope": {"type": "string"},
+                               "status": {"type": "string"}, "seconds": {"type": "number"},
+                               "query_sha256": {"type": "string"}, "reused": {"type": "boolean"}}}
+    },
+    "counterexample": {
+      "type": ["object", "null"],
+      "properties": {"obligation": {"type": "string"}, "design": {"type": "object"},
+                     "model": {"type": "object"}, "replay": {"type": "object"}}
+    },
+    "certificate": {"type": ["string", "null"], "description": "id of the certificate artifact when proved"},
+    "checker_time": {"type": "number"},
+    "provenance": {"type": "object"}
+  }
+}

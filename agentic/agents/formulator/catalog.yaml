@@ -1,0 +1,76 @@
+# The structure catalog (notes/search_structure.md) as data.
+# Three consumers: the Formulator (vocabulary of the `structure` block), the Orchestrator
+# (strength -> gate/steer, verification budget) and the UI (rendering the why).
+# Adding a structure means adding an entry here, not changing code.
+
+- name: bottleneck_dominance
+  bucket: objective
+  detect: roofline probe; the resource with the largest utilization/ceiling ratio
+  move: surrogate objective = that resource's utilization; freeze variables that do not touch it
+  obligation: the resource stays dominant across the branch
+  default_strength: observed
+  verification_cost: expensive
+
+- name: concavity
+  bucket: objective
+  detect: performance saturates in one resource (roofline knee)
+  move: restrict the search to knees and constraint boundaries
+  obligation: saturation holds in this range
+  default_strength: observed
+  verification_cost: moderate
+
+- name: monotonicity
+  bucket: objective
+  detect: at fixed area, more of a resource never hurts a fixed schedule
+  move: one-sided bounds for pruning
+  obligation: monotone in the resource
+  default_strength: proved
+  verification_cost: cheap
+
+- name: near_decomposability
+  bucket: variables
+  detect: the hierarchy cuts the chain; shared memory separates HBM from registers
+  move: split into clusters; couple only through the separator
+  obligation: cross-cluster coupling is weak
+  default_strength: observed
+  verification_cost: expensive
+
+- name: scenario_decomposition
+  bucket: variables
+  detect: scenarios (prefill, decode) share the chip but want different software
+  move: Benders split; fix the hardware, solve each scenario separately, return cuts
+  obligation: scenarios interact only through the hardware
+  default_strength: proved
+  verification_cost: cheap
+
+- name: low_effective_dimension
+  bucket: variables
+  detect: once the bottleneck is fixed, few variables touch it
+  move: freeze or coarsen variables that do not move bytes through the bottleneck
+  obligation: frozen variables do not affect the bound
+  default_strength: observed
+  verification_cost: moderate
+
+- name: symmetry
+  bucket: enumeration
+  detect: identical units, interchangeable banks, mirrored layouts
+  move: symmetry-breaking constraints
+  obligation: configurations are equivalent
+  default_strength: proved
+  verification_cost: cheap
+
+- name: tiny_menus
+  bucket: enumeration
+  detect: each decision has a small discrete menu (powers of two, a few precisions)
+  move: small discrete domains
+  obligation: the menu covers the useful values
+  default_strength: proved
+  verification_cost: cheap
+
+- name: dominance
+  bucket: enumeration
+  detect: most designs are dominated on every metric; the Pareto front is thin
+  move: discard dominated designs without evaluating them
+  obligation: the dominance relation holds in this context
+  default_strength: proved
+  verification_cost: cheap

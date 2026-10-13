@@ -7,6 +7,15 @@ Research on progressive hardware–software co-design for AI infrastructure, wit
 
 Optimization proposes and evaluates design choices. Verification checks their preservation obligations and returns counterexamples or accepted evidence to guide further refinement.
 
+## Infrastructure
+
+[`agentic/`](agentic/) implements the multi-agent loop of [`notes/multi_agent_design.md`](notes/multi_agent_design.md):
+a scripted or large-model Formulator proposes template contracts, a MILP Solver and a bounded Verifier
+work on their two faces, an Evaluator measures the decoded design, and an append-only ledger feeds a
+web console in which a computer architect can observe, step, edit, inject, override and rewind the loop.
+It runs end to end on the paper's shared-memory tiling template; see [`agentic/README.md`](agentic/README.md)
+for the stage status and how to run it.
+
 ## Current paper
 
 [Agentic Progressive Verification for Hardware-Software Co-Design of AI Infrastructure](design-verification/papers/agentic_progressive_verification/paper.tex)

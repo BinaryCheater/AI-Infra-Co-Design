@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agentic/diagnosis",
+  "title": "Orchestrator diagnosis: one symptom, one source, one response",
+  "type": "object",
+  "required": ["id", "symptom", "source", "response", "target_artifact"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string"},
+    "symptom": {"type": "string"},
+    "source": {"type": "string", "enum": ["constraints", "cost_model", "search_policy", "contract", "model"]},
+    "response": {"type": "string"},
+    "target_artifact": {"type": ["string", "null"]},
+    "detail": {"type": "object"}
+  }
+}

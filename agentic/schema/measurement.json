@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agentic/measurement",
+  "title": "Evaluator output for one decoded design",
+  "type": "object",
+  "required": ["id", "contract", "assignment", "design", "predicted_cost", "measured_cost", "utilizations",
+               "dominant_resource", "simulator"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string"},
+    "contract": {"type": "string"},
+    "assignment": {"type": "string"},
+    "design": {"type": "object"},
+    "predicted_cost": {"type": "number"},
+    "measured_cost": {"type": "number"},
+    "discrepancy": {"type": "number", "description": "(measured - predicted) / predicted"},
+    "utilizations": {"type": "object", "additionalProperties": {"type": "number"}},
+    "dominant_resource": {"type": "string"},
+    "simulator": {"type": "string"},
+    "seed": {"type": ["integer", "null"]},
+    "detail": {"type": "object"},
+    "provenance": {"type": "object"}
+  }
+}

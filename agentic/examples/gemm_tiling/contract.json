@@ -1,0 +1,188 @@
+{
+  "parent": null,
+  "level": 4,
+  "object": "shared-memory slot",
+  "template": "smem_tiling",
+  "scope": {
+    "workload": {
+      "name": "ragged_1000x1000x1000",
+      "m": 1000,
+      "n": 1000,
+      "k": 1000
+    },
+    "chip": {
+      "name": "illustrative-fp32-gpu",
+      "sms": 128,
+      "smem_bytes_per_block": 98304,
+      "threads_per_block": 256,
+      "max_accumulators_per_thread": 128,
+      "dram_bytes_per_s": 1800000000000.0,
+      "fp32_flops_per_s_per_sm": 625000000000.0,
+      "barrier_s": 2.2222222222222224e-08,
+      "bytes_per_element": 4
+    },
+    "structure": {
+      "leading_barrier": true,
+      "grid_rounding": "ceil",
+      "guard": "bounded",
+      "stride_offset": 0
+    }
+  },
+  "signature": "smem_tiling:exact:ceil:bounded:0:1",
+  "decisions": {
+    "Tm": {
+      "domain": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "kind": "software",
+      "meaning": "output tile rows"
+    },
+    "Tn": {
+      "domain": [
+        16,
+        32,
+        64,
+        128,
+        256
+      ],
+      "kind": "software",
+      "meaning": "output tile columns"
+    },
+    "Tk": {
+      "domain": [
+        8,
+        16,
+        32,
+        64
+      ],
+      "kind": "software",
+      "meaning": "reduction tile"
+    },
+    "S": {
+      "domain": [
+        1,
+        2,
+        3
+      ],
+      "kind": "software",
+      "meaning": "slots per block"
+    },
+    "P": {
+      "domain": [
+        0,
+        1,
+        2
+      ],
+      "kind": "software",
+      "meaning": "prefetch distance"
+    },
+    "beta": {
+      "domain": [
+        0,
+        1
+      ],
+      "kind": "software",
+      "meaning": "trailing barrier"
+    }
+  },
+  "constraints": [
+    {
+      "id": "C1",
+      "expr": "S * e * (Tm*Tk + Tk*Tn) <= M_s",
+      "meaning": "shared-memory capacity"
+    },
+    {
+      "id": "C2",
+      "expr": "256 <= Tm*Tn <= R_acc",
+      "meaning": "accumulator budget"
+    },
+    {
+      "id": "C3",
+      "expr": "P <= S - 2 + beta",
+      "meaning": "== Pre.lifetime (K1)"
+    }
+  ],
+  "cost": {
+    "model": "T >= T_comp, T >= T_mem, T >= T_comp + T_mem if P = 0",
+    "objective": "time_us",
+    "terms": {
+      "T_mem": "DRAM traffic / bandwidth with A re-read per column block and B per row block",
+      "T_comp": "waves * (2*Tm*Tn*K / FLOPs_per_SM + barriers * t_barrier)"
+    }
+  },
+  "decomposition": null,
+  "preconditions": [
+    {
+      "id": "lifetime",
+      "expr": "P <= S - 2 + beta",
+      "mode": "exact",
+      "meaning": "P <= S - 2 + trailing_barrier (template claim)"
+    }
+  ],
+  "program": "for each block (i, j):\n  for u in 0 .. P-1:   load k-tile u -> slot u mod S\n  for p in 0 .. KT-1:                     # KT = ceil(K/Tk)\n    if p+P < KT:       load k-tile p+P -> slot (p+P) mod S\n    barrier                               # leading\n    compute C[i,j] += slot (p mod S)\n    if beta: barrier                      # trailing",
+  "backward_map": "forget the grid, the slots and the schedule => C = A B over (M, N, K)",
+  "certificate_schema": {
+    "relation": "slot (u mod S) holds A[:,u], B[u,:] from the completion of its load until the last read of k-tile u",
+    "rank": "number of k-tiles not yet consumed",
+    "obligations": [
+      {
+        "name": "coverage",
+        "kind": "index",
+        "scope": "any extent",
+        "meaning": "every output index of each dimension lies in some admitted tile"
+      },
+      {
+        "name": "exact_once",
+        "kind": "index",
+        "scope": "any extent",
+        "meaning": "no two admitted (tile, offset) pairs denote the same in-range index"
+      },
+      {
+        "name": "no_phantom",
+        "kind": "index",
+        "scope": "any extent",
+        "meaning": "no admitted (tile, offset) consumes or writes an index >= extent"
+      },
+      {
+        "name": "readiness",
+        "kind": "schedule",
+        "scope": "all interleavings of the event model",
+        "meaning": "a warp reads a slot only after every write of the tile it consumes"
+      },
+      {
+        "name": "lifetime",
+        "kind": "schedule",
+        "scope": "all interleavings of the event model",
+        "meaning": "no slot element is overwritten between its defining write and its last read"
+      },
+      {
+        "name": "agreement",
+        "kind": "replay",
+        "scope": "one admissible interleaving",
+        "meaning": "a replayed execution yields exactly the reference tokens A[i,k]*B[k,j]"
+      }
+    ]
+  },
+  "structure": {
+    "name": "bottleneck_dominance",
+    "bucket": "objective",
+    "regime": "compute-bound: util(compute) >= util(DRAM)",
+    "move": "epigraph cost T >= max(T_comp, T_mem); search the tile menu with prefetch overlap",
+    "obligation": "the dominant resource stays dominant across the feasible region of the menu",
+    "strength": "observed",
+    "evidence": []
+  },
+  "rationale": "Listing 1 of the paper. Shared-memory staging with S rotating slots and prefetch distance P; the lifetime precondition P <= S - 2 + beta is the weakest one on the checked family (24/24).",
+  "status": "proposed",
+  "certificate": null,
+  "provenance": {
+    "formulator": "scripted",
+    "model": null,
+    "prompt_hash": null
+  },
+  "id": "tmpl_de9576aac1f8"
+}

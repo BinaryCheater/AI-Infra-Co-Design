@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agentic/assignment",
+  "title": "Solver output: an assignment of X with a bound",
+  "type": "object",
+  "required": ["id", "contract", "values", "objective", "bound", "gap", "solver_time", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string"},
+    "contract": {"type": "string"},
+    "values": {"type": "object", "description": "value of every decision in X"},
+    "objective": {"type": "number", "description": "predicted cost of the assignment, from J^"},
+    "bound": {"type": "number", "description": "dual bound: no feasible design in C does better than this"},
+    "gap": {"type": "number"},
+    "solver_time": {"type": "number"},
+    "status": {"type": "string"},
+    "diagnostics": {"type": "object"},
+    "provenance": {"type": "object"}
+  }
+}
