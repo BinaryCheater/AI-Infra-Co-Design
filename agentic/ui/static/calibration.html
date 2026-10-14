@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calibration</title>
+<link rel="stylesheet" href="console.css">
+<style>
+  body { display: block; overflow: auto; height: auto; }
+  main.cal { display: block; padding: 18px; max-width: 1100px; margin: 0 auto; }
+  table.cal { border-collapse: collapse; width: 100%; font-size: 14px; margin: 8px 0 18px; }
+  table.cal th, table.cal td { border-bottom: 1px solid var(--line); padding: 4px 8px; text-align: left; vertical-align: top; }
+  table.cal th { color: var(--muted); font-weight: 500; }
+  .cal a { color: var(--teal); }
+  .prov { font-size: 13px; color: var(--muted); }
+  h2 { margin-top: 18px; }
+</style>
+</head>
+<body>
+<header id="top"><div class="brand">CALIBRATION</div><span class="spacer"></span><a class="ghost link" href="/">console</a></header>
+<main class="cal">
+  <p class="muted">Measured hardware contracts (<code>calibration/&lt;host&gt;/contract.yaml</code>), one table per host: each row a quantity with its value, interval, method and date, and a link to the raw JSON record it came from.</p>
+  <div id="hosts">loading…</div>
+</main>
+<script>
+(async () => {
+  const hosts = await (await fetch("/api/calibration")).json();
+  const box = document.getElementById("hosts"); box.innerHTML = "";
+  const fmt = v => typeof v === "number" ? (Math.abs(v) >= 1e4 || (Math.abs(v) < 1e-2 && v !== 0) ? v.toExponential(3) : (Number.isInteger(v) ? v : v.toPrecision(4))) : (v == null ? "–" : (typeof v === "object" ? JSON.stringify(v) : String(v)));
+  const esc = s => String(s).replace(/[&<>]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"}[c]));
+  for (const h of hosts) {
+    const c = h.contract, p = c.provenance || {}, src = p.sources || {};
+    const rawLink = q => { const names = Array.isArray(q) ? q : [q]; return names.map(n => { const fn = String(n).replace(/[^A-Za-z0-9_.=\[\]-]/g, "_") + ".json"; return h.raw_files.includes(fn) ? `<a href="/calibration-files/${h.host}/raw/${encodeURIComponent(fn)}">${esc(n)}</a>` : esc(n); }).join(", "); };
+    const rows = [];
+    const skip = new Set(["provenance", "fixed", "datasheet", "name", "kind", "gpu", "compute_capability", "suite_level"]);
+    for (const [k, v] of Object.entries(c)) {
+      if (skip.has(k)) continue;
+      const s = src[k] || {};
+      rows.push(`<tr><td><b>${esc(k)}</b></td><td>${esc(fmt(v))}</td><td>${s.ci95 != null && typeof s.ci95 === "number" ? (s.ci95 * 100).toFixed(1) + " %" : (s.ci95 ? esc(JSON.stringify(s.ci95)) : "–")}</td><td>${esc(s.method || s.note || (k in src ? "" : "declared (B1)"))}</td><td>${s.from ? rawLink(s.from) : (h.raw_files.includes("device_properties.json") ? `<a href="/calibration-files/${h.host}/raw/device_properties.json">device_properties</a>` : "–")}</td></tr>`);
+    }
+    const links = [h.preflight ? `<a href="/calibration-files/${h.host}/preflight.md">preflight.md</a>` : "", `<a href="/calibration-files/${h.host}/contract.yaml">contract.yaml</a>`, h.f3 ? `<a href="/calibration-files/${h.host}/f3_results.json">f3_results.json</a>` : "", h.f4 ? `<a href="/calibration-files/${h.host}/f4_run.json">f4_run.json</a>` : ""].filter(Boolean).join(" · ");
+    box.insertAdjacentHTML("beforeend", `<h2>${esc(c.name)} <span class="muted">· ${esc(c.gpu || "")} · cc ${esc(c.compute_capability || "")} · ${esc(c.kind)} · suite ${esc(c.suite_level || "")}</span></h2>
+      <div class="prov">host ${esc(p.host)} · ${esc(p.date)} · driver ${esc(p.driver)} · ${esc(p.toolkit)} · arch ${esc(p.arch)} · clocks ${p.clocks && p.clocks.locked ? "locked" : "not locked"}${p.clocks && p.clocks.variance != null ? ", variance " + (p.clocks.variance * 100).toFixed(1) + " % (" + esc(p.clocks.variance_source || "") + ")" : ""} · suite commit ${esc((p.suite_commit || "").slice(0, 10))} · fixed: ${esc((c.fixed || []).join(", "))} · ${links}</div>
+      <table class="cal"><tr><th>quantity</th><th>value</th><th>interval (95 %)</th><th>method</th><th>raw</th></tr>${rows.join("")}</table>`);
+  }
+  if (!hosts.length) box.textContent = "no calibration records in this checkout";
+})();
+</script>
+</body>
+</html>

@@ -30,6 +30,7 @@ CHIP_NAMES = {
     "illustrative-fp32-gpu": "the illustrative FP32 GPU (128 SMs, 96 KiB smem/block, 1.8 TB/s)",
 }
 REGIME_WORDS = {"compute": "compute-bound", "DRAM": "memory-bound"}
+CHIP_SHORT = {"illustrative-fp32-gpu": "the illustrative FP32 GPU", "spark-6951-gb10": "spark-6951 (GB10)"}
 SUP = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
 
 
@@ -182,7 +183,8 @@ def describe(ledger: Ledger, contract_id: str, run: str | None = None, _ctx: dic
         outcome = f"{x['objective']:.1f} µs predicted"
     else:
         outcome = "waiting"
-    headline = f"{short} · {what[0].upper() + what[1:]} · {status} · {outcome}"
+    chip_short = CHIP_SHORT.get(chip.get("name"), chip.get("name", "?"))
+    headline = f"{short} · {what[0].upper() + what[1:]} on {chip_short} · {status} · {outcome}"
 
     # ---- delta from parent
     delta = _delta(T, parent["contract"] if parent else None, parent_short, ph, mode, wl_name)
@@ -193,7 +195,8 @@ def describe(ledger: Ledger, contract_id: str, run: str | None = None, _ctx: dic
     proof = _proof(T, fam, inst, cex, ph, mode, pre, reused_owner, failure_words, diag)
     return {
         "id": contract_id, "short": short, "status": status, "headline": headline, "delta_from_parent": delta,
-        "workload": wl_name, "chip": chip_name, "parent": T.get("parent"), "parent_short": parent_short,
+        "workload": wl_name, "chip": chip_name, "chip_short": chip_short, "chip_kind": chip.get("kind", "illustrative"),
+        "parent": T.get("parent"), "parent_short": parent_short,
         "is_best": is_best, "objective": x["objective"] if x else None,
         "rationale": T.get("rationale", ""),
         "systems": systems, "optimization": optimization, "proof": proof,

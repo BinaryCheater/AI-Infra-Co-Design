@@ -178,6 +178,28 @@ def _static(connection, name: str):
                      mimetypes.guess_type(str(path))[0] or "application/octet-stream")
 
 
+CALIBRATION = Path(__file__).resolve().parents[2] / "calibration"
+
+
+def _calibration_file(connection, rel: str):
+    path = (CALIBRATION / rel).resolve()
+    if not path.is_file() or CALIBRATION not in path.parents:
+        return connection.respond(HTTPStatus.NOT_FOUND, "not found\n")
+    return _response(connection, HTTPStatus.OK, path.read_bytes(), mimetypes.guess_type(str(path))[0] or "text/plain")
+
+
+def calibration_index() -> list[dict]:
+    """One entry per host with a fitted contract: the contract, its sources, and the raw file names."""
+    import yaml
+    out = []
+    for f in sorted(CALIBRATION.glob("*/contract.yaml")) if CALIBRATION.exists() else []:
+        c = yaml.safe_load(f.read_text()); host = f.parent.name
+        raw = sorted(p.name for p in (f.parent / "raw").glob("*.json")) if (f.parent / "raw").exists() else []
+        out.append({"host": host, "contract": c, "raw_files": raw, "preflight": (f.parent / "preflight.md").exists(),
+                    "f3": (f.parent / "f3_results.json").exists(), "f4": (f.parent / "f4_run.json").exists()})
+    return out
+
+
 def make_process_request(session: Session):
     def process_request(connection, request):
         url = urlparse(request.path)
@@ -187,6 +209,10 @@ def make_process_request(session: Session):
             return None                                   # upgrade to WebSocket
         if p == "/" or p == "/index.html":
             return _static(connection, "index.html")
+        if p == "/calibration" or p == "/calibration/":
+            return _static(connection, "calibration.html")
+        if p.startswith("/calibration-files/"):
+            return _calibration_file(connection, p[len("/calibration-files/"):])
         if p.startswith("/api/"):
             try:
                 return _json(connection, api(session, p[5:], q))
@@ -209,6 +235,8 @@ def api(session: Session, route: str, q: dict):
         return L.events(run, since=int(q.get("since", 0)))
     if route == "catalog":
         return catalog()
+    if route == "calibration":
+        return calibration_index()
     if route == "population":
         return session._summary()
     if route == "describe_all":

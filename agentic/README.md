@@ -132,3 +132,26 @@ Known limits of v1: one template backend (the tiling template), so a regime flip
 request but cannot formulate it; the solver dispatches on `contract.template` rather than reading a
 solver-agnostic search face; Z3's choice of race witness is deterministic across processes, not within
 one, so an in-process rewind of a refuted iteration may record a different (equally valid) witness.
+
+### Hardware calibration (`notes/hardware_calibration_design.md`, F0–F5)
+
+`calibration/` grounds the hardware model on a real GPU. `calibration/suite/` is the microbenchmark
+suite (B1–B12; `remote.sh <ssh-alias>` runs it on a host and `fit.py` writes the measured contract),
+`calibration/runner/` compiles and times a generated kernel and checks it against cuBLAS, and
+`calibration/spark-6951/` holds the DGX Spark (GB10) records: `preflight.md`, `raw/`, `contract.yaml`
+(validates against `agentic/schema/chip.json`), `f3_results.json` (T5 agrees with cuBLAS, the T7 floor
+grid disagrees from column 896) and `f4_run.json` (the scripted run on `spark-6951-gb10` with the real
+evaluator). Run it with
+
+```bash
+agentic run --ledger runs/spark-001.db --run spark-001 --chip spark-6951-gb10 --evaluator cuda:<ssh-alias> --extrapolation --export out.json
+```
+
+`agentic/chips` loads measured contracts and detects extrapolation (a template that changes a `fixed`
+field of a measured chip is measured by the roofline backend and its regime may only steer);
+`agentic/agents/evaluator/cuda.py` renders the kernel (`templates/smem_tiling/kernel.cu.j2`), runs it
+through the runner over SSH, and records `reference_agrees`; a disagreement is a `trusted_base`
+diagnosis and stops the run. The console shows modeled and measured bars side by side, scales the
+pipeline's block time to the measured kernel time, names the chip on each card, and serves the
+calibration tables at `/calibration`. No host address or key is stored in the repository; the SSH
+alias is a parameter.

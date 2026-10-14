@@ -118,17 +118,30 @@ window.ScheduleView = (() => {
     const axY = top + laneNames.length * (laneH + rowGap) + 4;
     mk("line", { x1: left, x2: left + axisW * scale, y1: axY, y2: axY, stroke: LINE }, svg);
     for (const p of contiguous) { const x = X(b.computes[p].t0); txt(svg, x, axY + 12, `k${p}`, { "text-anchor": "middle" }); }
-    txt(svg, left, axY + 24, `0 → ${us(tEnd)}` + (state.all ? "" : ` · phases ${contiguous[0]}–${contiguous[contiguous.length - 1]} of ${sch.axis.phases}`), {});
+    const sc = sch.axis.measured_scale || 1;
+    txt(svg, left, axY + 24, `0 → ${us(tEnd)}` + (state.all ? "" : ` · phases ${contiguous[0]}–${contiguous[contiguous.length - 1]} of ${sch.axis.phases}`) + (sch.axis.modeled ? "" : ` · block time ×${sc.toFixed(2)} to match the measured ${us(sch.block.block_time * sc)}`), {});
     if (tail.length) { const x = left + axisW * scale + 8; txt(svg, x, axY + 12, "…", { "font-size": 16 }); const p = tail[tail.length - 1], c = b.computes[p]; const r = mk("rect", { x: x + 16, y: laneY(laneNames.length - 1) + 3, width: Math.max(8, (c.t1 - c.t0) / (tEnd - t0) * axisW * scale), height: laneH - 6, fill: NAVY, rx: 2 }, svg); mk("title", {}, r).textContent = `compute k-tile ${c.tile} (last phase) · ${us(c.t0)}–${us(c.t1)}`; txt(svg, x + 16, axY + 12, `k${p}`); txt(svg, x + 16, axY + 24, `ends ${us(b.block_time)}`); }
     return svg;
   }
 
   // ------------------------------------------------------------------ the resource strip
   function strip(sch) {
-    const r = sch.resources, W = 760, H = 86, left = 130, barW = W - left - 150;
+    const r = sch.resources, m = r.measured, W = 760, left = 130, barW = W - left - 190;
+    const rowH = m ? 40 : 26, H = 6 + 3 * rowH + 14;
     const svg = mk("svg", { viewBox: `0 0 ${W} ${H}`, class: "sched-svg" });
-    const rows = [["DRAM bandwidth", r.dram.util, `${(r.dram.bytes / 1e6).toFixed(1)} MB · ${us(r.dram.s)}`, r.dominant === "DRAM"], ["compute", r.compute.util, us(r.compute.s), r.dominant === "compute"], ["shared memory", r.smem.util, `${(r.smem.bytes / 1024).toFixed(0)} KiB of ${(r.smem.cap / 1024).toFixed(0)} KiB`, false]];
-    rows.forEach(([name, u, label, dom], i) => { const y = 6 + i * 26; txt(svg, 4, y + 13, name + (dom ? " · dominant" : ""), { fill: dom ? NAVY : MUTED, "font-weight": dom ? 700 : 400, "font-size": 12 }); mk("rect", { x: left, y, width: barW, height: 18, fill: LIGHT, stroke: LINE }, svg); const f = mk("rect", { x: left, y, width: Math.max(0, Math.min(1, u)) * barW, height: 18, fill: dom ? NAVY : TEAL, opacity: dom ? 1 : 0.75 }, svg); mk("title", {}, f).textContent = `${name}: ${(u * 100).toFixed(0)} %`; txt(svg, left + barW + 8, y + 13, `${(u * 100).toFixed(0)} % · ${label}`, { "font-size": 11 }); });
+    const rows = [["DRAM bandwidth", r.dram.util, m && m.dram.util, `${(r.dram.bytes / 1e6).toFixed(1)} MB · ${us(r.dram.s)}`, r.dominant === "DRAM", m && m.dominant === "DRAM"],
+                  ["compute", r.compute.util, m && m.compute.util, us(r.compute.s), r.dominant === "compute", m && m.dominant === "compute"],
+                  ["shared memory", r.smem.util, null, `${(r.smem.bytes / 1024).toFixed(0)} KiB of ${(r.smem.cap / 1024).toFixed(0)} KiB`, false, false]];
+    const bar = (y, u, dom, h, title) => { mk("rect", { x: left, y, width: barW, height: h, fill: LIGHT, stroke: LINE }, svg); const f = mk("rect", { x: left, y, width: Math.max(0, Math.min(1, u)) * barW, height: h, fill: dom ? NAVY : TEAL, opacity: dom ? 1 : 0.75 }, svg); if (u > 1) mk("rect", { x: left + barW - 6, y, width: 6, height: h, fill: RED }, svg); mk("title", {}, f).textContent = title; };
+    rows.forEach(([name, u, um, label, dom, domM], i) => {
+      const y = 6 + i * rowH;
+      txt(svg, 4, y + 13, name + (dom ? " · dominant" : ""), { fill: dom ? NAVY : MUTED, "font-weight": dom ? 700 : 400, "font-size": 12 });
+      if (!m) { bar(y, u, dom, 18, `${name}: ${(u * 100).toFixed(0)} % (modeled)`); txt(svg, left + barW + 8, y + 13, `${(u * 100).toFixed(0)} % · ${label}`, { "font-size": 11 }); return; }
+      bar(y, u, dom, 14, `${name}, modeled: ${(u * 100).toFixed(0)} %`); txt(svg, left + barW + 8, y + 11, `modeled ${(u * 100).toFixed(0)} % · ${label}`, { "font-size": 11 });
+      if (um != null) { bar(y + 17, um, domM, 14, `${name}, measured: ${(um * 100).toFixed(0)} % of the measured contract's rate over the measured time`); const d = um - u; txt(svg, left + barW + 8, y + 28, `measured ${(um * 100).toFixed(0)} % (${d >= 0 ? "+" : ""}${(d * 100).toFixed(0)} pts)` + (um > 1 ? " · over 100 %: the model over-counts this resource" : ""), { "font-size": 11, fill: um > 1 ? RED : MUTED }); }
+      else txt(svg, left + barW + 8, y + 28, "not measured", { "font-size": 11 });
+    });
+    txt(svg, 4, H - 4, m ? "two bars per resource: modeled (top) and measured (bottom)" : "modeled, not measured", { "font-size": 11 });
     return svg;
   }
 

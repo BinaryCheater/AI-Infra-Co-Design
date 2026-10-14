@@ -31,6 +31,15 @@ def schedule(ledger: Ledger, contract_id: str, run: str | None = None) -> dict:
     tpl = importlib.import_module(f"agentic.templates.{T['template']}")
     be = _backend(T["template"])
     x = _dedupe(v["assignments"])[-1] if v["assignments"] else None
+    meas = _dedupe(v["measurements"])[-1] if v["measurements"] else None
+    measured = None
+    if meas and str(meas.get("simulator", "")).startswith("cuda:"):
+        ci = meas.get("ci95") or [None, None]
+        half = ((ci[1] - ci[0]) / 2 / meas["measured_cost"]) if ci[0] is not None and meas["measured_cost"] else None
+        measured = {"time_us": meas["measured_cost"], "predicted_us": meas["predicted_cost"], "discrepancy": meas.get("discrepancy"),
+                    "ci95_us": ci, "half_width_rel": half, "host": meas.get("host") or meas["simulator"][5:],
+                    "reps": (meas.get("detail") or {}).get("reps"), "reference_agrees": meas.get("reference_agrees"),
+                    "utilizations": meas.get("utilizations"), "kernel": meas.get("kernel"), "clocks": meas.get("clocks")}
     verdicts = _dedupe(v["verdicts"])
     fam = next((w for w in verdicts if w["check"] == "family"), None)
     inst = next((w for w in verdicts if w["check"] == "instance"), None)
@@ -41,7 +50,7 @@ def schedule(ledger: Ledger, contract_id: str, run: str | None = None) -> dict:
     out = {"id": contract_id, "short": names.get(contract_id, "T?"), "workload": display_name(w.name),
            "chip": display_name(hw.name, "chip"), "parent": T.get("parent"), "parent_short": names.get(T.get("parent") or ""),
            "objective_us": x["objective"] if x else None, "design": None, "axis": None, "block": None, "grid": None,
-           "resources": None, "proved": None, "counterexample": None, "lanes": []}
+           "resources": None, "proved": None, "counterexample": None, "lanes": [], "measured": measured}
 
     cex = (inst and inst["counterexample"]) or (fam and fam["counterexample"]) or None
     if cex:
@@ -75,12 +84,21 @@ def schedule(ledger: Ledger, contract_id: str, run: str | None = None) -> dict:
     shown = list(range(shown_n)) + ([KT - 1] if KT - 1 >= shown_n else [])
     dur = ev["durations"]
     out["design"] = {"Tm": d.tm, "Tn": d.tn, "Tk": d.tk, "S": S, "P": P, "beta": ev["beta"], "grid_rounding": d.grid_rounding}
+    formulas = (f"compute bar = block FLOPs / KT / per-SM rate = {dur['compute'] * 1e6:.3f} µs; "
+                f"load bar = tile bytes / (DRAM bandwidth / {ev['blocks_per_wave']} blocks per wave) = {dur['load'] * 1e6:.3f} µs; "
+                f"barrier tick = {dur['barrier'] * 1e9:.1f} ns. One block of {ev['waves']} wave{'s' if ev['waves'] != 1 else ''}.")
+    if measured:
+        pm = f"±{measured['half_width_rel'] * 100:.1f} %" if measured.get("half_width_rel") is not None else ""
+        scale = (measured["time_us"] * 1e-6 / ev["waves"]) / ev["block_time"] if ev["block_time"] and ev["waves"] else 1.0
+        caption = (f"Structure modeled; total measured on {measured['host']}, {measured['reps']} runs, {pm}: "
+                   f"{measured['time_us']:.1f} µs against {measured['predicted_us']:.1f} µs predicted ({measured['discrepancy']:+.0%}); "
+                   f"the pipeline's block time is scaled ×{scale:.2f} to the measured kernel time. Per-phase durations: {formulas}")
+    else:
+        scale = 1.0
+        caption = "Modeled, not measured: " + formulas
     out["axis"] = {
-        "unit": "s", "phases": KT, "shown": shown, "block_time": ev["block_time"], "waves": ev["waves"], "modeled": True,
-        "caption": (f"Modeled, not measured: compute bar = block FLOPs / KT / per-SM rate = {dur['compute'] * 1e6:.3f} µs; "
-                    f"load bar = tile bytes / (DRAM bandwidth / {ev['blocks_per_wave']} blocks per wave) = {dur['load'] * 1e6:.3f} µs; "
-                    f"barrier tick = {dur['barrier'] * 1e9:.1f} ns. One block of {ev['waves']} wave{'s' if ev['waves'] != 1 else ''}."),
-        "durations": dur}
+        "unit": "s", "phases": KT, "shown": shown, "block_time": ev["block_time"], "waves": ev["waves"], "modeled": measured is None,
+        "measured_scale": scale, "caption": caption, "durations": dur}
     out["block"] = {"loads": ev["loads"], "slots": ev["slots"], "barriers": ev["barriers"], "computes": ev["computes"],
                     "block_time": ev["block_time"]}
     g = ev["grid"]
@@ -104,7 +122,10 @@ def schedule(ledger: Ledger, contract_id: str, run: str | None = None) -> dict:
         "compute": {"util": cm["compute_s"] / t_total if t_total else 0, "s": cm["compute_s"]},
         "smem": {"bytes": cm["smem_bytes"], "cap": hw.smem_bytes_per_block, "util": cm["smem_bytes"] / hw.smem_bytes_per_block},
         "dominant": "compute" if cm["compute_s"] >= cm["memory_s"] else "DRAM", "time_s": t_total,
-        "baseline_s": tpl.baseline_cost(w, hw)["time_s"]}
+        "baseline_s": tpl.baseline_cost(w, hw)["time_s"],
+        "measured": ({"dram": {"util": measured["utilizations"].get("DRAM")}, "compute": {"util": measured["utilizations"].get("compute")},
+                      "dominant": max(measured["utilizations"], key=measured["utilizations"].get), "time_s": measured["time_us"] * 1e-6}
+                     if measured and measured.get("utilizations") else None)}
     windows = be.proved_windows(ev)
     status = {}
     if inst:
