@@ -24,6 +24,11 @@ from .smem_template import TilingDesign
 def warp_programs(design: TilingDesign, warps: int, phases: int, tile_bytes: int = 0, flops_per_phase: float = 0.0,
                   store_bytes: int = 0) -> Program:
     S, P = design.stages, design.prefetch
+    # the generated kernel (kernel.cu.j2): a 16 x 16 thread grid, RM x RN outputs per thread; per k-step each thread
+    # loads RM values of A (broadcast across the warp's 16 columns: one wavefront each) and RN values of B
+    # (16 consecutive words: one wavefront each), so (RM + RN) * Tk ld.shared wavefronts per warp per phase
+    rm, rn = max(1, design.tm // 16), max(1, design.tn // 16)
+    smem_wf = (rm + rn) * design.tk if tile_bytes else 0
     progs = []
     for w in range(warps):
         seq = []
@@ -37,7 +42,7 @@ def warp_programs(design: TilingDesign, warps: int, phases: int, tile_bytes: int
             seq.append(Wait(w, group=p))
             if design.leading_barrier:
                 seq.append(BarrierArrive(w, f"A{p}", p, "leading"))
-            seq.append(Compute(w, (p % S,), flops_per_phase, "fp32", tile=p, phase=p))
+            seq.append(Compute(w, (p % S,), flops_per_phase, "fp32", tile=p, phase=p, smem_wavefronts=smem_wf, smem_stride=1))
             if design.trailing_barrier:
                 seq.append(BarrierArrive(w, f"B{p}", p, "trailing"))
         if store_bytes:

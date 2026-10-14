@@ -65,6 +65,8 @@ class Compute(Event):
     unit: str = "fp32"
     tile: int | None = None     # the k-tile consumed (for the tiling template)
     phase: int | None = None
+    smem_wavefronts: int = 0    # warp-level ld.shared instructions this step issues (each a wavefront when conflict-free)
+    smem_stride: int = 1        # word stride of those accesses across the warp (bank-conflict degree, M3)
 
 
 @dataclass

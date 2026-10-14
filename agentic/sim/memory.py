@@ -35,6 +35,15 @@ class Hierarchy(Memory):
         self.hits = 0
         self.misses = 0
         self.policy = structural.get("l2_policy", "lru-fully-associative")
+        # M4: a per-SM window of outstanding copy chunks (B8: the per-SM copy rate at the L2 latency fixes its depth);
+        # a request of n chunks is served in ceil(n / depth) rounds, each paying the level latency, plus the measured
+        # completion overhead of a cp.async group (B8's intercept above the L2 latency at the smallest tile)
+        self.copy_depth = int(structural.get("copy_queue_depth", 256))
+        self.copy_chunk = int(structural.get("copy_chunk_bytes", 16))
+        lat4k = (c.get("async_copy_latency_s") or {}).get("4096")
+        window_rate_l2 = self.copy_depth * self.copy_chunk / self.lat_l2
+        self.copy_overhead = max(0.0, float(lat4k) - self.lat_l2 - 4096 / window_rate_l2) if lat4k else 0.0
+        self.windows: dict[int, Fifo] = {}
 
     # ---- the LRU
     def lookup(self, key, bytes_: int) -> bool:
@@ -60,15 +69,22 @@ class Hierarchy(Memory):
             # (every warp asks for its part at once); later warps hit in L2 and move only their share.
             _, i, j, tile = src
             frac = bytes_ / max(1, self.tile_bytes)
+            window = self.windows.setdefault(sm, Fifo())
             t_end = now
             for k, nb in ((("A", i, tile), self.a_bytes), (("B", tile, j), self.b_bytes)):
-                self.l2_bytes += nb * frac
-                if self.lookup(k, nb):
-                    _, t = self.l2_q.serve(now + self.lat_l2, nb * frac / self.l2_bw)
-                else:
+                share = nb * frac
+                self.l2_bytes += share
+                hit = self.lookup(k, nb)
+                if not hit:
                     self.dram_bytes += nb
-                    _, t = self.dram_q.serve(now + self.lat_dram, nb / self.dram_bw_read)
-                t_end = max(t_end, t)
+                lat = self.lat_l2 if hit else self.lat_dram
+                q, bw, nbytes = (self.l2_q, self.l2_bw, share) if hit else (self.dram_q, self.dram_bw_read, nb)
+                # the SM's copy window: `copy_depth` chunks in flight per SM, so the window's own rate is
+                # depth * chunk / latency of the level; the share flows through the window and the level's bandwidth queue
+                window_rate = self.copy_depth * self.copy_chunk / lat
+                t0, t_win = window.serve(now, share / window_rate)
+                _, t = q.serve(max(t_win, now) + lat, nbytes / bw if not hit else share / bw)
+                t_end = max(t_end, t + self.copy_overhead)
             engine.at(t_end, done)
             return
         engine.at(self._serve(now, key, bytes_, write), done)
@@ -98,7 +114,8 @@ class Hierarchy(Memory):
         self.tile_bytes = meta["tile_bytes"]
 
     def stats(self) -> dict:
-        return {"l2_hits": self.hits, "l2_misses": self.misses, "l2_capacity": self.l2_capacity,
+        return {"l2_hits": self.hits, "l2_misses": self.misses, "l2_capacity": self.l2_capacity, "copy_depth": self.copy_depth,
+                "copy_overhead_s": self.copy_overhead,
                 "dram_bytes": self.dram_bytes, "l2_bytes": self.l2_bytes, "dram_busy_s": self.dram_q.busy, "l2_busy_s": self.l2_q.busy}
 
 

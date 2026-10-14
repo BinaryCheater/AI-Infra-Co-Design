@@ -136,8 +136,9 @@ class Block:
 
 
 class Simulator:
-    def __init__(self, cfg: SimConfig, memory: Memory | None = None, smem=None):
+    def __init__(self, cfg: SimConfig, memory: Memory | None = None, smem=None, amplify: tuple | None = None):
         self.cfg = cfg
+        self.amplify = amplify                               # (warp, cycles): delay that warp before every compute
         self.engine = Engine()
         self.memory = memory or Memory(cfg.contract, cfg.structural, cfg.fixed)
         self.smem = smem                                     # M3 (G3); None = no bank model
@@ -204,11 +205,12 @@ class Simulator:
         name = type(e).__name__
         cost = self.issue_s.get(name, 0.0)
         if isinstance(e, IssueCopy):
-            b.groups_issued[e.group] = now
-            self.memory.request(self.engine, b.sm, e.src, e.bytes, lambda t=None, b=b, g=e.group: self._copy_done(b, g))
+            # cp.async groups are per thread: each warp commits and waits for its own share of the tile
+            b.groups_issued[(w, e.group)] = now
+            self.memory.request(self.engine, b.sm, e.src, e.bytes, lambda t=None, b=b, w=w, g=e.group: self._copy_done(b, w, g))
             self._advance(b, w, now + cost, "issue_copy", e)
         elif isinstance(e, Wait):
-            if e.group in b.groups_done:
+            if (w, e.group) in b.groups_done:
                 self._advance(b, w, now + cost, "wait", e)
             else:
                 b.waiting[w] = ("copy", now, e)
@@ -229,12 +231,19 @@ class Simulator:
             else:
                 b.waiting[w] = ("barrier", now, e)
         elif isinstance(e, Compute):
+            if self.amplify and w == self.amplify[0]:
+                now += self.amplify[1] / self.cfg.clock_hz           # the race amplifier: this warp spins before its compute
             service = self._compute_service(b, e)
             start, end = self.compute[b.sm].serve(now, service)
+            end_smem = start
+            if self.smem is not None and e.smem_wavefronts:
+                # the FMA pipe and the shared-memory pipe run in parallel per SM; the step ends when both have served it
+                s0, end_smem = self.smem.serve(b.sm, now, e.smem_wavefronts, e.smem_stride)
+                self._account(b, w, "smem", end_smem - now, e.phase)
             if start > now:
                 self._account(b, w, "compute_queue", start - now, e.phase)
             self._account(b, w, "compute", service, e.phase)
-            self._advance(b, w, end, "compute", e)
+            self._advance(b, w, max(end, end_smem), "compute", e)
         elif isinstance(e, Store):
             # a write-back: the warp continues after issue (stores are fire-and-forget), the bytes go to DRAM
             if hasattr(self.memory, "request_write"):
@@ -246,10 +255,7 @@ class Simulator:
     def _compute_service(self, b: Block, e: Compute) -> float:
         rate = float(self.cfg.contract["fp32_flops_per_s_per_sm"]) if e.unit == "fp32" else float(
             (self.cfg.contract.get("tensor_flops_per_s_per_sm") or {}).get(e.unit) or self.cfg.contract["fp32_flops_per_s_per_sm"])
-        t = e.flops / rate
-        if self.smem is not None:
-            t += self.smem.access_time(b, e)          # M3 (G3): shared-memory reads with bank conflicts
-        return t
+        return e.flops / rate
 
     def _advance(self, b: Block, w: int, t: float, kind: str, e):
         if self.record:
@@ -258,15 +264,16 @@ class Simulator:
         b.warp_time[w] = t
         self.engine.at(t, self._step, b, w)
 
-    def _copy_done(self, b: Block, group: int):
+    def _copy_done(self, b: Block, w: int, group: int):
         now = self.engine.t
-        b.groups_done[group] = now
+        b.groups_done[(w, group)] = now
         if self.record:
-            self.trace.append((now, b.sm, b.idx, None, "copy_done", {"group": group}))
-        for w, (reason, since, ev) in list(b.waiting.items()):
-            if reason == "copy" and ev.group in b.groups_done and all(g in b.groups_done for g in b.groups_issued if g <= ev.group):
+            self.trace.append((now, b.sm, b.idx, w, "copy_done", {"group": group}))
+        if w in b.waiting:
+            reason, since, ev = b.waiting[w]
+            if reason == "copy" and (w, ev.group) in b.groups_done:
                 del b.waiting[w]
-                self._account(b, w, "copy", now - since, getattr(ev, "group", None))
+                self._account(b, w, "copy", now - since, ev.group)
                 self._advance(b, w, now + self.issue_s.get("Wait", 0.0), "wait", ev)
 
     def _account(self, b: Block, w: int, reason: str, seconds: float, phase):
@@ -295,6 +302,8 @@ class Simulator:
                 "waves": None, "waits_s": dict(self.waits), "critical_path": critical, "critical_counts": dict(counts),
                 "dram_bytes": self.memory.dram_bytes, "l2_bytes": self.memory.l2_bytes,
                 "compute_busy_s": sum(c.busy for c in self.compute),
+                "smem_busy_s": self.smem.busy() if self.smem is not None else 0.0,
+                "memory": self.memory.stats() if hasattr(self.memory, "stats") else {},
                 "trace": self.trace if self.record else None}
 
 
@@ -312,5 +321,5 @@ def _brief(e) -> dict:
 
 # ------------------------------------------------------------------------ convenience
 def simulate(programs: list[Program], cfg: SimConfig, threads: int, smem_bytes: int, memory: Memory | None = None,
-             smem=None, record_trace: bool = False) -> dict:
-    return Simulator(cfg, memory, smem).launch(programs, threads, smem_bytes, record_trace)
+             smem=None, record_trace: bool = False, amplify: tuple | None = None) -> dict:
+    return Simulator(cfg, memory, smem, amplify).launch(programs, threads, smem_bytes, record_trace)

@@ -17,12 +17,12 @@ def check_trace(trace: list, programs: list[Program]) -> dict:
             for e in seq:
                 if isinstance(e, IssueCopy):
                     group_meta.setdefault(bi, {})[e.group] = (e.dst_slot, e.tile)
-    done = defaultdict(dict)              # block -> group -> t
+    landed = defaultdict(lambda: defaultdict(list))   # block -> group -> [t of each warp's share]
     computes = defaultdict(list)          # block -> [(t_start, t_end, warp, tile, slot)]
     starts = {}
     for t, sm, b, w, kind, info in sorted(trace, key=lambda r: r[0]):
         if kind == "copy_done":
-            done[b][info["group"]] = t
+            landed[b][info["group"]].append(t)
         elif kind == "compute" and w is not None:
             # the trace records the end; the start is the previous advance of this warp
             key = (b, w)
@@ -33,12 +33,14 @@ def check_trace(trace: list, programs: list[Program]) -> dict:
     readiness, lifetime = [], []
     for b, cs in computes.items():
         for t0, t1, w, tile, slot in cs:
-            td = done[b].get(tile)
+            shares = landed[b].get(tile)
+            td = max(shares) if shares else None          # the tile is in its slot when every warp's share has landed
             if td is None or (t0 is not None and td > t0):
                 readiness.append({"block": b, "warp": w, "tile": tile, "copy_done": td, "compute_start": t0})
-            # any other tile's copy into this slot landing in (td, t1] clobbers the read
-            for g, tg in done[b].items():
+            # the first share of another tile landing in this slot during (td, t1] overwrites data being read
+            for g, ts in landed[b].items():
                 s2, tile2 = group_meta[b][g]
+                tg = min(ts)
                 if s2 == slot and tile2 != tile and td is not None and td < tg <= t1:
                     lifetime.append({"block": b, "warp": w, "tile": tile, "slot": slot, "clobbered_by": tile2, "at": tg, "read_end": t1})
     return {"readiness": readiness, "lifetime": lifetime}

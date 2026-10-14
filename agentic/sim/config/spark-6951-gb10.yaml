@@ -17,8 +17,9 @@ structural:
     policy: breadth-first-least-loaded # M8: each block goes to the SM with the most free capacity, in grid order (B9 fixes the capacity)
     justified_by: B9
   copy_chunk_bytes: 16                 # M4: cp.async.cg request size the kernel issues (one 16 B chunk per thread)
-  copy_queue_depth: 256                # M4: outstanding chunks per SM. B8: ~37 GB/s per SM at the L2 latency (136 ns) -> 37e9*136e-9/16 B ~ 314;
-                                       #     one block of 256 threads keeps at most 256 in flight with one group outstanding
+  copy_queue_depth: 370                # M4: outstanding 16 B chunks per SM. B8's latency-vs-size slope from 4 KB to 48 KB is 22.9 ns/KB
+                                       #     = 43.7 GB/s per SM at the L2 latency (136 ns): 43.7e9 * 136e-9 / 16 B = 371 -> 370.
+                                       #     The per-SM rate is not constant in tile size (62 -> 37 GB/s); see notes/sim_gaps.md #2
   copy_queue_justified_by: B8
   banks: 32                            # M3: 32 banks of 8 bytes. B6: strides 1 and 2 words conflict-free, penalty = stride/2 from 4 on
   bank_bytes: 8
