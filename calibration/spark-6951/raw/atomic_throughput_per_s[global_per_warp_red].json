@@ -2,45 +2,45 @@
  "quantity": "atomic_throughput_per_s[global_per_warp_red]",
  "unit": "atomics/s",
  "samples": [
-  26782585500.0,
-  26792426900.0,
-  26798393100.0,
-  26848672700.0,
-  26811679000.0,
-  26815426000.0,
-  25200446400.0,
-  25044406700.0,
-  26168601600.0,
-  25091077300.0
+  26039331300.0,
+  25794824400.0,
+  25784225800.0,
+  25785879900.0,
+  25782755700.0,
+  25794186100.0,
+  25758684600.0,
+  24675445500.0,
+  24342853300.0,
+  25609084700.0
  ],
  "detail": {
   "blocks": 48,
   "threads": 256,
   "iters": 2000,
-  "sm_clock_mhz": 2521.8
+  "sm_clock_mhz": 2502.4
  },
- "value": 26787506200.0,
- "ci95": 0.031095039933205875,
+ "value": 25783490750.0,
+ "ci95": 0.012642217578703922,
  "n": 10,
  "repeat_policy": "to_ci",
  "method": "atomicAdd / red throughput by scope and address pattern; contention curve",
  "benchmark": "b24_atomics_reductions",
  "clocks": {
   "before": {
-   "sm_mhz": 2411.0,
+   "sm_mhz": 2405.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 47.0,
-   "power_w": 11.62,
+   "temp_c": 61.0,
+   "power_w": 15.65,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2515.0,
+   "sm_mhz": 2496.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 49.0,
-   "power_w": 20.92,
+   "temp_c": 62.0,
+   "power_w": 25.04,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:30:57Z",
+ "timestamp": "2026-10-14T18:10:26Z",
  "arch": "sm_121"
 }

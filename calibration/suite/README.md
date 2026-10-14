@@ -54,3 +54,5 @@ IEEE TPDS 2017.
 
 
 The structure suite B13–B26 (`calibration/suite/B13_plus.md`) runs with `driver.py --micro`; its fitters are in `fit_micro.py`, one per benchmark, and its fields land in the same contract under the `M1–M12` groups of the `/calibration` page, with B26's answers under `functional:`. Benchmarks that report a structure rather than a rate (B13, B16, B18, B22, B23, B26) run once per invocation (`repeat_policy: once` in their records).
+
+After P0 (profiler counters unlocked), `driver.py --crosscheck` runs `ncu_crosscheck.py`: `bench/bx_counters.cu` under `ncu`, one record `counter_<check>[a=,b=]` per configuration, fitted into the contract's `counter_crosscheck:` block (L2 fill bytes per request, L2 hit rate vs footprint, issue rate vs warps, inner-loop stall reasons, shared-memory wavefronts, L1 hit rate by footprint and carve-out). A counter supersedes a timing inference of the same quantity.

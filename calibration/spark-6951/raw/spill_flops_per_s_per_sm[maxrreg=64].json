@@ -2,16 +2,16 @@
  "quantity": "spill_flops_per_s_per_sm[maxrreg=64]",
  "unit": "flop/s",
  "samples": [
-  86478769900.0,
-  87420873400.0,
-  87447744900.0,
-  87387250400.0,
-  87735501900.0,
-  87734891500.0,
-  87367635500.0,
-  87744195000.0,
-  87309902900.0,
-  87731088800.0
+  87968637700.0,
+  87964623300.0,
+  87845059100.0,
+  88579113200.0,
+  87913549700.0,
+  88587780200.0,
+  88588882200.0,
+  88236924000.0,
+  88591132100.0,
+  88596740100.0
  ],
  "detail": {
   "maxrregcount": 64,
@@ -19,30 +19,30 @@
   "local_bytes": 40,
   "spill_bytes_ptxas": 216,
   "method": "64-accumulator FMA kernel per register cap; throughput per SM; spill bytes from ptxas -v",
-  "sm_clock_mhz": 2502.9
+  "sm_clock_mhz": 2502.3
  },
- "value": 87434309150.0,
- "ci95": 0.002209171970108716,
+ "value": 88408018600.0,
+ "ci95": 0.0036782277235653375,
  "n": 10,
+ "repeat_policy": "to_ci",
  "method": "FMA kernel under -maxrregcount (spill curve from ptxas -v); local-memory chase and stream; allocation granularity from B9",
  "benchmark": "b19_registers_local",
  "clocks": {
   "before": {
    "sm_mhz": 208.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 57.0,
-   "power_w": 4.69,
+   "temp_c": 52.0,
+   "power_w": 4.57,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2483.0,
+   "sm_mhz": 2489.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 65.0,
-   "power_w": 35.15,
+   "temp_c": 60.0,
+   "power_w": 36.01,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:19:18Z",
- "arch": "sm_121",
- "repeat_policy": "to_ci"
+ "timestamp": "2026-10-14T18:06:52Z",
+ "arch": "sm_121"
 }

@@ -2,44 +2,44 @@
  "quantity": "local_mem_latency_ns",
  "unit": "ns",
  "samples": [
-  15.4672953,
-  15.4671754,
-  15.5142498,
-  15.4788441,
-  15.4669756,
-  15.5154087,
-  15.5979687,
-  15.6553531,
-  15.6581903,
-  15.5270374
+  15.3483929,
+  15.3482739,
+  15.3974847,
+  15.3597736,
+  15.3480757,
+  15.3950261,
+  15.4826616,
+  15.534093,
+  15.5378205,
+  15.4059706
  ],
  "detail": {
   "local_bytes_per_thread": 1024,
   "method": "single-thread dependent chase over a 1 KB local array (dynamic index)",
-  "sm_clock_mhz": 2502.4
+  "sm_clock_mhz": 2521.8
  },
- "value": 15.51482925,
- "ci95": 0.005135912146761113,
+ "value": 15.396255400000001,
+ "ci95": 0.005195562032570563,
  "n": 10,
+ "repeat_policy": "to_ci",
  "method": "FMA kernel under -maxrregcount (spill curve from ptxas -v); local-memory chase and stream; allocation granularity from B9",
  "benchmark": "b19_registers_local",
  "clocks": {
   "before": {
    "sm_mhz": 208.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 57.0,
-   "power_w": 4.69,
+   "temp_c": 52.0,
+   "power_w": 4.57,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2483.0,
+   "sm_mhz": 2489.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 65.0,
-   "power_w": 35.15,
+   "temp_c": 60.0,
+   "power_w": 36.01,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:19:18Z",
- "arch": "sm_121",
- "repeat_policy": "to_ci"
+ "timestamp": "2026-10-14T18:06:52Z",
+ "arch": "sm_121"
 }

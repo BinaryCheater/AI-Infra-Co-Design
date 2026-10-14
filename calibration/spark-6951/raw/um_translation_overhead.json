@@ -2,36 +2,36 @@
  "quantity": "um_translation_overhead",
  "unit": "ratio",
  "samples": [
-  1.43181364
+  1.45313928
  ],
  "detail": {
-  "device_bytes_per_s": 233200000000.0,
+  "device_bytes_per_s": 236700000000.0,
   "managed_bytes_per_s": 162900000000.0,
   "method": "device vs GPU-first managed streaming with the CPU idle; the ratio is the managed-page overhead itself",
-  "sm_clock_mhz": 2521.9
+  "sm_clock_mhz": 2482.8
  },
- "value": 1.43181364,
- "ci95": 0.0,
+ "value": 1.45313928,
+ "ci95": 1.0,
  "n": 1,
  "repeat_policy": "once",
  "method": "first-touch cost by page size, prefetch, host-resident access, managed-vs-device overhead with the CPU idle, allocation limits",
  "benchmark": "b23_unified_mechanics",
  "clocks": {
   "before": {
-   "sm_mhz": 208.0,
+   "sm_mhz": 2392.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 45.0,
-   "power_w": 4.4,
+   "temp_c": 63.0,
+   "power_w": 14.87,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2411.0,
+   "sm_mhz": 2405.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 47.0,
-   "power_w": 12.72,
+   "temp_c": 61.0,
+   "power_w": 15.66,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:31:40Z",
+ "timestamp": "2026-10-14T18:10:24Z",
  "arch": "sm_121"
 }

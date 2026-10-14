@@ -2,20 +2,20 @@
  "quantity": "concurrent_kernels[blocks=48]",
  "unit": "ratio",
  "samples": [
-  1.00076525,
-  1.00074924,
-  1.00073329
+  1.00076519,
+  1.00066951,
+  1.00063765
  ],
  "detail": {
   "blocks_per_kernel": 48,
-  "one_kernel_s": 0.002007,
+  "one_kernel_s": 0.002008,
   "two_streams_s": 0.002009,
   "concurrent": true,
   "method": "two 2 ms kernels on two streams; ratio ~1 = co-run, ~2 = serialized",
   "sm_clock_mhz": 2502.4
  },
- "value": 1.00074924,
- "ci95": 1.596803610854154e-05,
+ "value": 1.00066951,
+ "ci95": 6.372733391269065e-05,
  "n": 3,
  "repeat_policy": "to_ci",
  "method": "kernel-to-kernel gap, CUDA graph gap, two-stream concurrency, L2 persistence across kernels",
@@ -24,18 +24,18 @@
   "before": {
    "sm_mhz": 2405.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 54.0,
-   "power_w": 9.5,
+   "temp_c": 60.0,
+   "power_w": 13.65,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2463.0,
+   "sm_mhz": 2405.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 55.0,
-   "power_w": 16.74,
+   "temp_c": 61.0,
+   "power_w": 18.17,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:20:13Z",
+ "timestamp": "2026-10-14T18:10:28Z",
  "arch": "sm_121"
 }

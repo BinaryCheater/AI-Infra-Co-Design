@@ -1,0 +1,45 @@
+{
+ "quantity": "counter_smem_banks[a=8,b=0]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B6 / B26.6: shared-memory wavefronts and bank conflicts per instruction vs word stride",
+ "benchmark": "bx_counters",
+ "arch": "sm_121",
+ "timestamp": "2026-10-14T18:11:21Z",
+ "detail": {
+  "kernel": "smem_stride",
+  "a": 8,
+  "b": 0,
+  "metrics": {
+   "gpu__time_duration.sum": [
+    957920.0,
+    "ns"
+   ],
+   "l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum": [
+    86017903.0,
+    ""
+   ],
+   "l1tex__data_pipe_lsu_wavefronts_mem_shared.sum": [
+    98407663.0,
+    ""
+   ],
+   "sm__sass_data_bytes_mem_shared.sum": [
+    1585446912.0,
+    "byte"
+   ],
+   "sm__sass_inst_executed_op_shared_ld.sum": [
+    12288000.0,
+    "inst"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 1.9
+ }
+}

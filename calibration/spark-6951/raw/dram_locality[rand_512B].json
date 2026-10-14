@@ -2,37 +2,37 @@
  "quantity": "dram_locality[rand_512B]",
  "unit": "byte/s",
  "samples": [
-  227227322000.0,
-  229043627000.0,
-  228728243000.0
+  224787188000.0,
+  220490285000.0,
+  229348902000.0
  ],
  "detail": {
   "chunk_bytes": 512,
   "order": "random",
   "sm_clock_mhz": 2521.9
  },
- "value": 228728243000.0,
- "ci95": 0.003970443212821776,
+ "value": 224787188000.0,
+ "ci95": 0.019704452639889777,
  "n": 3,
+ "repeat_policy": "once",
  "method": "bandwidth vs power-of-two stride (interleave bits, channels), sequential vs random (page locality), read/write mix, CPU contention, 60 s drift",
  "benchmark": "b18_dram",
  "clocks": {
   "before": {
-   "sm_mhz": 2502.0,
+   "sm_mhz": 819.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 53.0,
-   "power_w": 12.94,
+   "temp_c": 44.0,
+   "power_w": 9.11,
    "sw_power_cap": "Not Active"
   },
   "after": {
    "sm_mhz": 2502.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 61.0,
-   "power_w": 23.69,
+   "temp_c": 56.0,
+   "power_w": 24.61,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:18:49Z",
- "arch": "sm_121",
- "repeat_policy": "once"
+ "timestamp": "2026-10-14T18:06:23Z",
+ "arch": "sm_121"
 }

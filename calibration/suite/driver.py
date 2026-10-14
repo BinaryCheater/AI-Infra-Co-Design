@@ -155,6 +155,7 @@ def main():
     ap.add_argument("--only", nargs="*", default=None); ap.add_argument("--full", action="store_true")
     ap.add_argument("--micro", action="store_true", help="run B13-B26 (the structure suite)")
     ap.add_argument("--extra", default="", help="extra args passed to every benchmark")
+    ap.add_argument("--crosscheck", action="store_true", help="after the benchmarks, run the ncu counter cross-checks (ncu_crosscheck.py)")
     a = ap.parse_args()
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     build_dir = HERE / "build"; build_dir.mkdir(exist_ok=True)
@@ -212,6 +213,9 @@ def main():
         summary["benchmarks"][name] = {"quantities": len(records), "seconds": round(time.time() - t0, 1), "reps": total,
                                        "worst_ci95": max((r["ci95"] or 0 for r in records.values()), default=None)}
         print(f"[done] {name}: {len(records)} quantities, {total} reps, {time.time() - t0:.1f} s", file=sys.stderr)
+    if a.crosscheck:
+        r = subprocess.run([sys.executable, str(HERE / "ncu_crosscheck.py"), "--out", str(out), "--build", str(build_dir), "--arch", a.arch], text=True)
+        summary["crosscheck"] = "ok" if r.returncode == 0 else f"failed ({r.returncode})"
     summary["finished"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     (out / "_summary.json").write_text(json.dumps(summary, indent=1) + "\n")
     print(json.dumps(summary, indent=1))

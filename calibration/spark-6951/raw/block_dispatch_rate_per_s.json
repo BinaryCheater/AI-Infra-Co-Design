@@ -2,39 +2,39 @@
  "quantity": "block_dispatch_rate_per_s",
  "unit": "blocks/s",
  "samples": [
-  2182916130.0,
-  1973478790.0,
-  1897974460.0
+  2087458890.0,
+  2066993450.0,
+  1965812110.0
  ],
  "detail": {
   "blocks": 4096,
   "threads": 128,
   "globaltimer_resolution_ns": 32,
   "method": "(time of 4096 empty blocks - time of 48) / (4096 - 48), cudaEvent over 20 launches; the entry-timestamp method is limited by the globaltimer resolution given here",
-  "sm_clock_mhz": 2502.4
+  "sm_clock_mhz": 2541.5
  },
- "value": 1973478790.0,
- "ci95": 0.07219273686746844,
+ "value": 2066993450.0,
+ "ci95": 0.029426019709931833,
  "n": 3,
  "repeat_policy": "once",
  "method": "blocks record %smid and %globaltimer at entry: dispatch order, rate, refill latency, wave staircase (Accel-Sim)",
  "benchmark": "b16_block_scheduler",
  "clocks": {
   "before": {
-   "sm_mhz": 2405.0,
+   "sm_mhz": 2294.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 54.0,
-   "power_w": 9.86,
+   "temp_c": 44.0,
+   "power_w": 10.72,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2405.0,
+   "sm_mhz": 2294.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 54.0,
-   "power_w": 9.53,
+   "temp_c": 44.0,
+   "power_w": 11.48,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:20:11Z",
+ "timestamp": "2026-10-14T18:05:13Z",
  "arch": "sm_121"
 }

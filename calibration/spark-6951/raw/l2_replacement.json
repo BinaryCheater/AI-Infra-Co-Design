@@ -2,72 +2,72 @@
  "quantity": "l2_replacement",
  "unit": "hit_rate_at_24MiB_seq",
  "samples": [
-  0.914350284
+  0.432238453
  ],
  "detail": {
   "hit_rate_by_footprint_mb_seq_rand": [
    [
     8,
-    1.0,
-    1.0
+    0.997,
+    0.998
    ],
    [
     12,
-    1.0,
-    0.996
-   ],
-   [
-    16,
-    0.979,
+    0.985,
     0.992
    ],
    [
+    16,
+    0.845,
+    0.854
+   ],
+   [
     20,
-    0.997,
-    0.989
+    0.543,
+    0.527
    ],
    [
     24,
-    0.914,
-    0.932
+    0.432,
+    0.442
    ],
    [
     32,
-    0.017,
-    0.0
+    0.183,
+    0.167
    ],
    [
     48,
-    0.01,
-    0.0
+    0.042,
+    0.02
    ]
   ],
   "classification": "other (sequential cyclic keeps hits past capacity)",
   "method": "hit rate = (lat_dram - mean latency) / (lat_dram - lat_l2) for a cyclic chase over the footprint, sequential vs random order of the same lines",
-  "sm_clock_mhz": 2521.9
+  "sm_clock_mhz": 2541.5
  },
- "value": 0.914350284,
- "ci95": 0.0,
+ "value": 0.432238453,
+ "ci95": 1.0,
  "n": 1,
+ "repeat_policy": "once",
  "method": "pointer chases: sector/line fill, set-conflict (stride, n) grid for ways and sets, one-bit address flips for slice bits, cyclic vs random footprints for replacement (Mei & Chu 2017; Jia et al. 2018)",
  "benchmark": "b13_l2_structure",
  "clocks": {
   "before": {
    "sm_mhz": 208.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 47.0,
-   "power_w": 4.47,
+   "temp_c": 41.0,
+   "power_w": 4.22,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2515.0,
+   "sm_mhz": 2476.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 49.0,
-   "power_w": 16.65,
+   "temp_c": 44.0,
+   "power_w": 17.79,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:14:10Z",
- "arch": "sm_121",
- "repeat_policy": "once"
+ "timestamp": "2026-10-14T18:05:05Z",
+ "arch": "sm_121"
 }

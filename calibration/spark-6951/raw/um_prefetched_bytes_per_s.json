@@ -2,36 +2,36 @@
  "quantity": "um_prefetched_bytes_per_s",
  "unit": "byte/s",
  "samples": [
-  163456098000.0,
-  162876497000.0,
-  162916833000.0
+  162913663000.0,
+  162952037000.0,
+  162950846000.0
  ],
  "detail": {
   "method": "managed buffer touched by the CPU, cudaMemPrefetchAsync to the GPU, then streamed",
-  "sm_clock_mhz": 2521.9
+  "sm_clock_mhz": 2482.8
  },
- "value": 162916833000.0,
- "ci95": 0.0017788247823354141,
+ "value": 162950846000.0,
+ "ci95": 0.00011774716407425095,
  "n": 3,
  "repeat_policy": "once",
  "method": "first-touch cost by page size, prefetch, host-resident access, managed-vs-device overhead with the CPU idle, allocation limits",
  "benchmark": "b23_unified_mechanics",
  "clocks": {
   "before": {
-   "sm_mhz": 208.0,
+   "sm_mhz": 2392.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 45.0,
-   "power_w": 4.4,
+   "temp_c": 63.0,
+   "power_w": 14.87,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2411.0,
+   "sm_mhz": 2405.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 47.0,
-   "power_w": 12.72,
+   "temp_c": 61.0,
+   "power_w": 15.66,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:31:40Z",
+ "timestamp": "2026-10-14T18:10:24Z",
  "arch": "sm_121"
 }

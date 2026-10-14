@@ -1,0 +1,89 @@
+{
+ "quantity": "counter_inner_loop[a=0,b=0]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B21: issue-active fraction, FMA pipe activity, LSU share and stall reasons of the T1 inner loop",
+ "benchmark": "bx_counters",
+ "arch": "sm_121",
+ "timestamp": "2026-10-14T18:11:10Z",
+ "detail": {
+  "kernel": "inner_T1",
+  "a": 0,
+  "b": 0,
+  "metrics": {
+   "gpu__time_duration.sum": [
+    651648.0,
+    "ns"
+   ],
+   "sm__cycles_active.avg": [
+    1386170.25,
+    "cycle"
+   ],
+   "sm__inst_executed_pipe_alu.sum": [
+    1377408.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_fma.sum": [
+    157366656.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_lsu.sum": [
+    22129152.0,
+    "inst"
+   ],
+   "sm__inst_issued.sum": [
+    182579328.0,
+    "inst"
+   ],
+   "sm__issue_active.avg": [
+    950934.0,
+    "cycle"
+   ],
+   "sm__pipe_fma_cycles_active.avg": [
+    6841409.17,
+    "cycle"
+   ],
+   "smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio": [
+    0.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio": [
+    0.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio": [
+    0.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio": [
+    0.31,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio": [
+    0.84,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio": [
+    0.11,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_wait_per_issue_active.ratio": [
+    0.15,
+    "inst"
+   ],
+   "smsp__warps_active.avg": [
+    2765697.39,
+    "warp"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 1.9
+ }
+}

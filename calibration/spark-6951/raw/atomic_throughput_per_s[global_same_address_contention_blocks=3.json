@@ -51,6 +51,5 @@
   }
  },
  "timestamp": "2026-10-14T17:08:46Z",
- "arch": "sm_121",
- "repeat_policy": "to_ci"
+ "arch": "sm_121"
 }

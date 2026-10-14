@@ -4,39 +4,37 @@
  "samples": [
   0,
   0,
-  0,
-  0,
   0
  ],
  "detail": {
-  "chase_cycles_after_copy": 257.9,
+  "chase_cycles_after_copy": 263.0,
   "l1_hit_cycles": 43.0,
   "allocates_l1": false,
   "method": "32 KB copied global->smem, then the same 256 lines chased with ld.global.ca: L1-hit latency means the copy allocated",
-  "sm_clock_mhz": 2518.5
+  "sm_clock_mhz": 2541.3
  },
  "value": 0,
  "ci95": 0.0,
- "n": 5,
+ "n": 3,
+ "repeat_policy": "structural",
  "method": "pointer chase vs footprint per shared-memory carve-out; L1 allocation after cp.async.cg / .ca / TMA",
  "benchmark": "b14_l1_carveout",
  "clocks": {
   "before": {
-   "sm_mhz": 2411.0,
+   "sm_mhz": 2405.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 50.0,
-   "power_w": 10.69,
+   "temp_c": 43.0,
+   "power_w": 11.18,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2522.0,
+   "sm_mhz": 2502.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 51.0,
-   "power_w": 17.17,
+   "temp_c": 44.0,
+   "power_w": 16.61,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:14:27Z",
- "arch": "sm_121",
- "repeat_policy": "structural"
+ "timestamp": "2026-10-14T18:05:08Z",
+ "arch": "sm_121"
 }

@@ -1,0 +1,53 @@
+{
+ "quantity": "counter_l2_fill[a=256,b=0]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B13.1 fill granularity: L2 sectors per request and DRAM (miss) sectors per request at each stride",
+ "benchmark": "bx_counters",
+ "arch": "sm_121",
+ "timestamp": "2026-10-14T18:10:40Z",
+ "detail": {
+  "kernel": "strided",
+  "a": 256,
+  "b": 0,
+  "metrics": {
+   "gpu__time_duration.sum": [
+    1110784.0,
+    "ns"
+   ],
+   "lts__t_requests_srcunit_tex.sum": [
+    4194304.0,
+    "request"
+   ],
+   "lts__t_sector_hit_rate.pct": [
+    0.06,
+    "%"
+   ],
+   "lts__t_sectors_op_read_lookup_hit.sum": [
+    437.0,
+    "sector"
+   ],
+   "lts__t_sectors_op_read_lookup_miss.sum": [
+    4196355.0,
+    "sector"
+   ],
+   "lts__t_sectors_srcunit_tex.sum": [
+    4194304.0,
+    "sector"
+   ],
+   "lts__t_sectors_srcunit_tex_op_read.sum": [
+    4194304.0,
+    "sector"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 2.1
+ }
+}

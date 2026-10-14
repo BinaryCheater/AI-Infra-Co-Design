@@ -2,46 +2,46 @@
  "quantity": "cp_async_latency_dist[tile=16384,resident=1]",
  "unit": "cycles",
  "samples": [
-  961,
-  968,
-  964
+  931,
+  946,
+  934
  ],
  "detail": {
   "tile_bytes": 16384,
   "resident_blocks_per_sm": 1,
   "trials": 96000,
-  "p1_cycles": 770,
-  "p50_cycles": 961,
-  "p99_cycles": 1278,
-  "max_cycles": 2290,
-  "p1_s": 3.126e-07,
-  "p50_s": 3.901e-07,
-  "p99_s": 5.188e-07,
-  "max_s": 9.296e-07,
-  "sm_clock_mhz": 2463.4
+  "p1_cycles": 722,
+  "p50_cycles": 931,
+  "p99_cycles": 1279,
+  "max_cycles": 2223,
+  "p1_s": 2.846e-07,
+  "p50_s": 3.669e-07,
+  "p99_s": 5.041e-07,
+  "max_s": 8.761e-07,
+  "sm_clock_mhz": 2537.3
  },
- "value": 964,
- "ci95": 0.0036307053941908715,
+ "value": 934,
+ "ci95": 0.008029978586723769,
  "n": 3,
+ "repeat_policy": "to_ci",
  "method": "cp.async group issue time vs pending groups; completion-time distribution; cp.async vs TMA contention; TMA 2-D and mbarrier cost; per-instruction issue cost (Luo et al. 2024)",
  "benchmark": "b15_copy_queue",
  "clocks": {
   "before": {
-   "sm_mhz": 2457.0,
+   "sm_mhz": 2411.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 79.0,
-   "power_w": 76.75,
+   "temp_c": 44.0,
+   "power_w": 10.69,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2457.0,
+   "sm_mhz": 2431.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 79.0,
-   "power_w": 72.6,
+   "temp_c": 45.0,
+   "power_w": 15.63,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:03:35Z",
- "arch": "sm_121",
- "repeat_policy": "to_ci"
+ "timestamp": "2026-10-14T18:05:11Z",
+ "arch": "sm_121"
 }

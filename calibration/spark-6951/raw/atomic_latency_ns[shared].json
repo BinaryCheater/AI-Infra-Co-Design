@@ -2,22 +2,22 @@
  "quantity": "atomic_latency_ns[shared]",
  "unit": "ns",
  "samples": [
-  53.135911,
-  53.135911,
-  53.135911,
-  53.135911,
-  53.135911,
-  53.135911,
-  53.135911,
-  53.135911,
-  53.135911,
-  53.135911
+  53.5487003,
+  53.5487003,
+  53.5487003,
+  53.5487003,
+  53.5487003,
+  53.5487003,
+  53.5487003,
+  53.5487003,
+  53.5487003,
+  53.5487003
  ],
  "detail": {
   "method": "single-thread dependent shared atomicAdd chain",
-  "sm_clock_mhz": 2521.8
+  "sm_clock_mhz": 2502.4
  },
- "value": 53.135911,
+ "value": 53.5487003,
  "ci95": 0.0,
  "n": 10,
  "repeat_policy": "to_ci",
@@ -25,20 +25,20 @@
  "benchmark": "b24_atomics_reductions",
  "clocks": {
   "before": {
-   "sm_mhz": 2411.0,
+   "sm_mhz": 2405.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 47.0,
-   "power_w": 11.62,
+   "temp_c": 61.0,
+   "power_w": 15.65,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2515.0,
+   "sm_mhz": 2496.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 49.0,
-   "power_w": 20.92,
+   "temp_c": 62.0,
+   "power_w": 25.04,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:30:57Z",
+ "timestamp": "2026-10-14T18:10:26Z",
  "arch": "sm_121"
 }

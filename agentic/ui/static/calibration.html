@@ -47,6 +47,7 @@
       ["M10 clocks and power", ["clock_hz_sustained", "clock_variance_sustained", "power_w_sustained", "clock_warmup_s", "clock_idle_hz", "clock_hz_sustained_by_load", "clock_governor_limit", "clock_after_gap_hz"]],
       ["M11 unified memory", ["unified_memory", "unified_memory_penalty", "coherent_access_bytes_per_s", "um_first_touch_s", "um_prefetched_bytes_per_s", "um_translation_overhead", "um_host_resident_bytes_per_s", "um_max_alloc_bytes", "dram_bytes_per_s_under_cpu_load"]],
       ["M12 atomics", ["atomic_throughput_per_s", "atomic_contention_curve", "atomic_latency_ns"]],
+      ["counters (ncu cross-checks of the inferences)", ["counter_crosscheck"]],
     ];
     const placed = new Set(); for (const [, ks] of MECH) ks.forEach(k => placed.add(k));
     const skip = new Set(["provenance", "fixed", "datasheet", "name", "kind", "gpu", "compute_capability", "suite_level", "functional", "micro_benchmarks"]);
@@ -61,7 +62,7 @@
     const chipRows = Object.entries(c).filter(([k]) => !skip.has(k) && !placed.has(k)).map(([k, v]) => row(k, v));
     if (chipRows.length) groups.push(`<h3>chip (B1)</h3><table class="cal">${header}${chipRows.join("")}</table>`);
     for (const [title, ks] of MECH) {
-      const rs = ks.filter(k => k in c).map(k => row(k, c[k]));
+      const rs = ks.filter(k => k in c).flatMap(k => k === "counter_crosscheck" ? Object.entries(c[k]).map(([kk, vv]) => { const sk = Object.keys(src).find(x => x.startsWith("counter_crosscheck.") && kk.startsWith(x.split(".")[1])); const sv = sk ? src[sk] : {}; src["counter_crosscheck/" + kk] = sv; return row("counter_crosscheck/" + kk, vv); }) : [row(k, c[k])]);
       if (rs.length) groups.push(`<h3>${esc(title)}</h3><table class="cal">${header}${rs.join("")}</table>`);
     }
     if (c.functional) {

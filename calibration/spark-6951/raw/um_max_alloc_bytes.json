@@ -2,40 +2,40 @@
  "quantity": "um_max_alloc_bytes",
  "unit": "bytes",
  "samples": [
-  116088435000.0
+  115729220000.0
  ],
  "detail": {
   "total_bytes": 128520019968,
-  "free_bytes": 124678369280,
-  "tried_bytes": 116088434688,
+  "free_bytes": 124319154176,
+  "tried_bytes": 115729219584,
   "cudaMalloc_ok": true,
   "cudaMallocManaged_ok": true,
   "oversubscription_probed": false,
   "method": "one allocation of free - 8 GiB per API, freed untouched; larger probes are unsafe on unified memory (a binary search OOM-killed host services)",
-  "sm_clock_mhz": 2521.9
+  "sm_clock_mhz": 2482.8
  },
- "value": 116088435000.0,
- "ci95": 0.0,
+ "value": 115729220000.0,
+ "ci95": 1.0,
  "n": 1,
  "repeat_policy": "once",
  "method": "first-touch cost by page size, prefetch, host-resident access, managed-vs-device overhead with the CPU idle, allocation limits",
  "benchmark": "b23_unified_mechanics",
  "clocks": {
   "before": {
-   "sm_mhz": 208.0,
+   "sm_mhz": 2392.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 45.0,
-   "power_w": 4.4,
+   "temp_c": 63.0,
+   "power_w": 14.87,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2411.0,
+   "sm_mhz": 2405.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 47.0,
-   "power_w": 12.72,
+   "temp_c": 61.0,
+   "power_w": 15.66,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:31:40Z",
+ "timestamp": "2026-10-14T18:10:24Z",
  "arch": "sm_121"
 }

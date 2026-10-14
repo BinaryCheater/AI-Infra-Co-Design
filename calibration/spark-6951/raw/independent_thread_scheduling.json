@@ -10,30 +10,30 @@
   "syncwarp_reconverge_spread_cycles_p50": 0,
   "spread_p99": 0,
   "method": "odd lanes spin 2000 cycles in one branch, even lanes record their start in the other: interleaved if an even lane's start precedes the odd branch's end; spread of clock64 across lanes after __syncwarp",
-  "sm_clock_mhz": 2521.9
+  "sm_clock_mhz": 2502.4
  },
  "value": 0,
- "ci95": 0.0,
+ "ci95": 1.0,
  "n": 1,
  "repeat_policy": "once",
  "method": "in-flight cp.async visibility and chunk order, wait_group semantics, barrier/fence visibility, TMA early bytes, FP32 contraction/ftz/tensor rounding, bank map, independent thread scheduling",
  "benchmark": "b26_functional_probes",
  "clocks": {
   "before": {
-   "sm_mhz": 208.0,
+   "sm_mhz": 2405.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 48.0,
-   "power_w": 4.43,
+   "temp_c": 59.0,
+   "power_w": 12.81,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2463.0,
+   "sm_mhz": 2405.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 49.0,
-   "power_w": 9.18,
+   "temp_c": 59.0,
+   "power_w": 13.36,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:26:56Z",
+ "timestamp": "2026-10-14T18:10:31Z",
  "arch": "sm_121"
 }

@@ -1,0 +1,41 @@
+{
+ "quantity": "counter_l1_hit[a=16,b=0]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B14.1: L1 sector hit rate of a 128 B-stride chase at footprint KiB (a) and smem request bytes (b)",
+ "benchmark": "bx_counters",
+ "arch": "sm_121",
+ "timestamp": "2026-10-14T18:11:27Z",
+ "detail": {
+  "kernel": "l1_chase",
+  "a": 16,
+  "b": 0,
+  "metrics": {
+   "gpu__time_duration.sum": [
+    484384.0,
+    "ns"
+   ],
+   "l1tex__t_requests.sum": [
+    20001.0,
+    ""
+   ],
+   "l1tex__t_sector_hit_rate.pct": [
+    99.36,
+    "%"
+   ],
+   "l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum": [
+    20000.0,
+    "sector"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 1.9
+ }
+}

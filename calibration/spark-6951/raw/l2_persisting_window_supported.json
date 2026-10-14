@@ -7,8 +7,8 @@
   1
  ],
  "detail": {
-  "warm_read_bytes_per_s": 648900000000.0,
-  "after_64MiB_flush_bytes_per_s": 240300000000.0,
+  "warm_read_bytes_per_s": 832200000000.0,
+  "after_64MiB_flush_bytes_per_s": 221400000000.0,
   "persists": true,
   "persisting_window_api": "no error / no error",
   "method": "kernel A writes 8 MiB, kernel B reads it at once (warm) or after a 56 MiB read (cold); L2-level warm bandwidth means L2 persists across launches",
@@ -24,18 +24,18 @@
   "before": {
    "sm_mhz": 2405.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 54.0,
-   "power_w": 9.5,
+   "temp_c": 60.0,
+   "power_w": 13.65,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2463.0,
+   "sm_mhz": 2405.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 55.0,
-   "power_w": 16.74,
+   "temp_c": 61.0,
+   "power_w": 18.17,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:20:13Z",
+ "timestamp": "2026-10-14T18:10:28Z",
  "arch": "sm_121"
 }

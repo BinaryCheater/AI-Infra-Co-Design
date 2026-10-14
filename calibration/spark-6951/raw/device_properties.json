@@ -18,7 +18,7 @@
   "clock_khz": 2418000,
   "mem_clock_khz": 8533000,
   "bus_width_bits": 256,
-  "total_mem_bytes": 128520015872,
+  "total_mem_bytes": 128520019968,
   "managed": 1,
   "pageable_access": 1,
   "integrated": 1,
@@ -28,24 +28,25 @@
  "value": null,
  "ci95": null,
  "n": 0,
+ "repeat_policy": "to_ci",
  "method": "cudaGetDeviceProperties / cudaDeviceGetAttribute (declared values)",
  "benchmark": "b1_props",
  "clocks": {
   "before": {
    "sm_mhz": 208.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 39.0,
-   "power_w": 4.08,
-   "sw_power_cap": "Active"
+   "temp_c": 40.0,
+   "power_w": 4.28,
+   "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 227.0,
+   "sm_mhz": 208.0,
    "max_sm_mhz": 3003.0,
    "temp_c": 40.0,
-   "power_w": 4.18,
+   "power_w": 4.28,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T14:54:20Z",
+ "timestamp": "2026-10-14T18:01:53Z",
  "arch": "sm_121"
 }

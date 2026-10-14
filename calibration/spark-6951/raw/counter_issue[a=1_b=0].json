@@ -1,0 +1,61 @@
+{
+ "quantity": "counter_issue[a=1,b=0]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B17.4: instructions issued per active SM cycle and issue-active fraction vs warps",
+ "benchmark": "bx_counters",
+ "arch": "sm_121",
+ "timestamp": "2026-10-14T18:11:00Z",
+ "detail": {
+  "kernel": "fma_issue",
+  "a": 1,
+  "b": 0,
+  "metrics": {
+   "gpu__time_duration.sum": [
+    124064.0,
+    "ns"
+   ],
+   "sm__cycles_active.avg": [
+    258624.02,
+    "cycle"
+   ],
+   "sm__inst_executed_pipe_alu.sum": [
+    48.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_fma.sum": [
+    7920816.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_lsu.sum": [
+    96.0,
+    "inst"
+   ],
+   "sm__inst_issued.sum": [
+    8641728.0,
+    "inst"
+   ],
+   "sm__issue_active.avg": [
+    45009.0,
+    "cycle"
+   ],
+   "sm__pipe_fma_cycles_active.avg": [
+    345031.0,
+    "cycle"
+   ],
+   "smsp__warps_active.avg": [
+    64651.51,
+    "warp"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 1.8
+ }
+}

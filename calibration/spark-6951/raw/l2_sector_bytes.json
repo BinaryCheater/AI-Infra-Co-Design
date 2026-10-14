@@ -8,61 +8,61 @@
   "table_stride_seconds_bytesPerRequest": [
    [
     4,
-    0.00443,
-    3.9
+    0.004841,
+    4.2
    ],
    [
     32,
-    0.004253,
-    29.8
+    0.004542,
+    31.9
    ],
    [
     64,
-    0.004207,
-    59.0
+    0.004655,
+    65.3
    ],
    [
     128,
-    0.001901,
-    53.3
+    0.001929,
+    54.1
    ],
    [
     256,
-    0.00108,
-    60.6
+    0.001022,
+    57.4
    ],
    [
     512,
-    0.0006812,
-    76.5
+    0.0005162,
+    57.9
    ]
   ],
   "inferred_sector_bytes": 64,
   "method": "time at stride s over 1 GiB times the B4 DRAM rate, divided by requests; the stride where bytes per request stops growing is the fill granularity",
-  "sm_clock_mhz": 2521.9
+  "sm_clock_mhz": 2541.5
  },
  "value": 64,
- "ci95": 0.0,
+ "ci95": 1.0,
  "n": 1,
+ "repeat_policy": "once",
  "method": "pointer chases: sector/line fill, set-conflict (stride, n) grid for ways and sets, one-bit address flips for slice bits, cyclic vs random footprints for replacement (Mei & Chu 2017; Jia et al. 2018)",
  "benchmark": "b13_l2_structure",
  "clocks": {
   "before": {
    "sm_mhz": 208.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 47.0,
-   "power_w": 4.47,
+   "temp_c": 41.0,
+   "power_w": 4.22,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2515.0,
+   "sm_mhz": 2476.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 49.0,
-   "power_w": 16.65,
+   "temp_c": 44.0,
+   "power_w": 17.79,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:14:10Z",
- "arch": "sm_121",
- "repeat_policy": "once"
+ "timestamp": "2026-10-14T18:05:05Z",
+ "arch": "sm_121"
 }

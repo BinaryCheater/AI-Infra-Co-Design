@@ -492,6 +492,77 @@ def fit_b26(recs):
     return f, s
 
 
+# ---------------------------------------------------------------- BX counter cross-checks (ncu, after P0)
+def fit_counters(recs):
+    """ncu records -> contract['counter_crosscheck']: the same questions as B13/B14/B17/B21/B26 answered from hardware counters."""
+    cc, s = {}, {}
+    rows = {}
+    for q, r in recs.items():
+        m = re.fullmatch(r"counter_(\w+)\[a=(-?\d+),b=(-?\d+)\]", q)
+        if m and r.get("detail", {}).get("measured"):
+            rows.setdefault(m.group(1), {})[(int(m.group(2)), int(m.group(3)))] = {k: v[0] for k, v in r["detail"]["metrics"].items()}
+    def g(mt, *names):
+        for n in names:
+            if n in mt: return mt[n]
+        return None
+    fill = rows.get("l2_fill")
+    if fill:
+        tab = {}
+        for (st, _), mt in sorted(fill.items()):
+            req = g(mt, "lts__t_requests_srcunit_tex.sum"); sec = g(mt, "lts__t_sectors_srcunit_tex_op_read.sum", "lts__t_sectors_srcunit_tex.sum"); miss = g(mt, "lts__t_sectors_op_read_lookup_miss.sum")
+            tab[str(st)] = {"l2_sectors_per_request": round(sec / req, 3) if req and sec else None, "dram_bytes_per_request": round(32 * miss / req, 1) if req and miss else None, "hit_rate_pct": g(mt, "lts__t_sector_hit_rate.pct")}
+        big = [v["dram_bytes_per_request"] for st, v in tab.items() if int(st) >= 128 and v["dram_bytes_per_request"]]
+        cc["l2_fill_by_stride"] = tab
+        cc["l2_fill_bytes_per_request_at_128B_plus"] = round(sum(big) / len(big), 1) if big else None
+        s["counter_crosscheck.l2_fill"] = {"from": [f"counter_l2_fill[a={a},b={b}]" for (a, b) in fill], "method": "ncu: L2 sectors (32 B) per L2 request and L2-miss sectors per request for a strided 4 B read over 1 GiB; at strides >= 128 B every request is its own line, so miss bytes per request is the DRAM fill granularity"}
+    hit = rows.get("l2_hit_rate")
+    if hit:
+        curve = {str(a): g(mt, "lts__t_sector_hit_rate.pct") for (a, b), mt in sorted(hit.items())}
+        cc["l2_hit_rate_pct_by_footprint_mib"] = curve
+        # 8 passes, the first fills: a fully resident footprint reads 7/8 = 87.5 % hits; capacity = the last footprint within 3 points of that plateau
+        cap = max((int(k) for k, v in curve.items() if v is not None and v >= 87.5 - 3), default=None)
+        cc["l2_capacity_mib_from_counters"] = cap
+        s["counter_crosscheck.l2_hit_rate"] = {"from": [f"counter_l2_hit_rate[a={a},b={b}]" for (a, b) in hit], "method": "ncu: L2 sector hit rate of an 8-pass per-block cyclic stream, L1 bypassed (first pass fills, 87.5 % = fully resident); capacity = largest footprint within 3 points of that plateau"}
+    iss = rows.get("issue")
+    if iss:
+        tab = {}
+        for (w, _), mt in sorted(iss.items()):
+            cyc = g(mt, "sm__cycles_active.avg"); issued = g(mt, "sm__inst_issued.sum")
+            tab[str(w)] = {"inst_issued_per_active_cycle_per_sm": round(issued / 48 / cyc, 3) if cyc and issued else None, "issue_active_fraction": round(g(mt, "sm__issue_active.avg") / cyc, 3) if cyc and g(mt, "sm__issue_active.avg") is not None else None, "fma_pipe_active_fraction": round(g(mt, "sm__pipe_fma_cycles_active.avg") / cyc / 8, 3) if cyc and g(mt, "sm__pipe_fma_cycles_active.avg") is not None else None}
+        cc["issue_by_warps"] = tab
+        s["counter_crosscheck.issue"] = {"from": [f"counter_issue[a={a},b={b}]" for (a, b) in iss], "method": "ncu: sm__inst_issued per active SM cycle (48 SMs), the issue-active fraction and the FP32 pipe activity (sm__pipe_fma_cycles_active over active cycles x 8: four sub-partitions x two FP32 pipes) for the B17 FFMA kernel at w warps per SM; compare issue_rate_warp_instr_per_cycle_per_sm"}
+    for key, nm in (("inner_loop", "T1_128x256x16"), ("inner_loop_T5", "T5_128x128x32"), ("inner_loop_R2", "R2_32x32x32")):
+        il = rows.get(key)
+        if il:
+            mt = next(iter(il.values())); cyc = g(mt, "sm__cycles_active.avg"); issued = g(mt, "sm__inst_issued.sum")
+            stalls = {k.split("stalled_")[1].split("_per")[0]: round(v, 3) for k, v in mt.items() if "issue_stalled" in k}
+            fma = g(mt, "sm__inst_executed_pipe_fma.sum"); lsu = g(mt, "sm__inst_executed_pipe_lsu.sum"); alu = g(mt, "sm__inst_executed_pipe_alu.sum")
+            tot = (fma or 0) + (lsu or 0) + (alu or 0)
+            cc.setdefault("inner_loop", {})[nm] = {"inst_issued_per_active_cycle_per_sm": round(issued / 48 / cyc, 3) if cyc and issued else None, "issue_active_fraction": round(g(mt, "sm__issue_active.avg") / cyc, 3) if cyc and g(mt, "sm__issue_active.avg") is not None else None, "fma_pipe_active_fraction": round(g(mt, "sm__pipe_fma_cycles_active.avg") / cyc / 8, 3) if cyc and g(mt, "sm__pipe_fma_cycles_active.avg") is not None else None,
+                                                   "pipe_share": {"fma": round(fma / tot, 3) if tot and fma else None, "lsu": round(lsu / tot, 3) if tot and lsu else None, "alu": round(alu / tot, 3) if tot and alu else None}, "warps_stalled_per_issue_active": stalls}
+            s["counter_crosscheck.inner_loop"] = {"from": [f"counter_{k}[a=0,b=0]" for k in ("inner_loop", "inner_loop_T5", "inner_loop_R2") if k in rows], "method": "ncu: the B21 inner loops, one block per SM, tile pre-filled: issue rate, FMA-pipe activity, instructions by pipe and the average warps stalled per issue-active cycle by reason (what keeps the FMA pipe below 100 %)"}
+    sb = rows.get("smem_banks")
+    if sb:
+        tab = {}
+        for (st, _), mt in sorted(sb.items()):
+            wf = g(mt, "l1tex__data_pipe_lsu_wavefronts_mem_shared.sum"); ins = g(mt, "sm__sass_inst_executed_op_shared_ld.sum"); conf = g(mt, "l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum")
+            tab[str(st)] = {"wavefronts_per_instruction": round(wf / ins, 3) if wf and ins else None, "bank_conflicts_per_instruction": round(conf / ins, 3) if ins and conf is not None else None}
+        cc["smem_wavefronts_by_stride"] = tab
+        s["counter_crosscheck.smem_banks"] = {"from": [f"counter_smem_banks[a={a},b={b}]" for (a, b) in sb], "method": "ncu: shared-memory wavefronts and bank conflicts per 4 B ld.shared warp instruction at word stride s; compare bank_conflict_penalty (B6) and functional.smem_bank_map (B26)"}
+    l1 = rows.get("l1_hit")
+    if l1:
+        cc["l1_hit_rate_pct"] = {f"footprint_kib={a},smem={b}": g(mt, "l1tex__t_sector_hit_rate.pct") for (a, b), mt in sorted(l1.items())}
+        caps = {}
+        for (a, b), mt in sorted(l1.items()):
+            hr = g(mt, "l1tex__t_sector_hit_rate.pct")
+            if hr is not None and hr >= 90:
+                caps[str(b)] = max(caps.get(str(b), 0), a * 1024)
+        cc["l1_capacity_bytes_from_counters_by_smem"] = caps   # largest chase footprint still >= 90 % L1 hits, per smem request
+        s["counter_crosscheck.l1_capacity"] = {"from": [f"counter_l1_hit[a={a},b={b}]" for (a, b) in l1], "method": "ncu: largest 128 B-stride chase footprint with >= 90 % L1 sector hits per shared-memory request (a cyclic chase past capacity drops to near 0 under LRU)"}
+        s["counter_crosscheck.l1_hit"] = {"from": [f"counter_l1_hit[a={a},b={b}]" for (a, b) in l1], "method": "ncu: L1 sector hit rate of a single-thread 128 B-stride chase (ld.global.ca) by footprint and shared-memory request; compare l1_bytes_by_carveout (B14)"}
+    return ({"counter_crosscheck": cc} if cc else {}), s
+
+
 FITTERS = [("b13_l2_structure", fit_b13), ("b14_l1_carveout", fit_b14), ("b15_copy_queue", fit_b15), ("b16_block_scheduler", fit_b16),
            ("b17_latency_hiding", None), ("b18_dram", fit_b18), ("b19_registers_local", fit_b19), ("b20_tensor_detail", fit_b20),
            ("b21_compute_block", fit_b21), ("b22_clock_governor", fit_b22), ("b23_unified_mechanics", fit_b23), ("b24_atomics_reductions", fit_b24),
@@ -505,11 +576,26 @@ FUNCTIONAL_FIELDS = ["cp_async_chunk_order", "cp_async_window_cycles", "cp_async
 def fit_micro(recs, contract):
     """Apply every fitter; functional fields go under contract['functional']. Returns (fields, sources, benchmarks_present)."""
     fields, sources, present = {}, {}, []
+    # a counter measurement supersedes a timing inference of the same quantity: the sector size (B13.1 vs ncu L2 miss bytes per request)
+    def reconcile(fields, sources):
+        cc = fields.get("counter_crosscheck") or {}
+        fill = cc.get("l2_fill_bytes_per_request_at_128B_plus")
+        if fill and fields.get("l2_sector_bytes") and fill != fields["l2_sector_bytes"]:
+            sources["l2_sector_bytes"] = dict(sources.get("l2_sector_bytes", {}), superseded_timing_inference=fields["l2_sector_bytes"],
+                                              method="ncu: L2-miss bytes per request for a strided read at >= 128 B strides (counter); B13.1's timing inference gave " + str(fields["l2_sector_bytes"]) + " B and is kept in inferred_from")
+            fields["l2_sector_bytes"] = int(fill)
+        caps = cc.get("l1_capacity_bytes_from_counters_by_smem")
+        if caps:
+            fields["l1_bytes_by_carveout_counters"] = caps
+            sources["l1_bytes_by_carveout_counters"] = sources.get("counter_crosscheck.l1_capacity", {})
     for name, fn in FITTERS:
         f, s = (fit_b17(recs, contract) if name == "b17_latency_hiding" else fn(recs))
         if f and not (name == "b19_registers_local" and "spill_penalty_curve" not in f):   # B19's granularity row is derived from B9
             present.append(name)
         fields.update(f); sources.update(s)
+    cf, cs = fit_counters(recs)
+    fields.update(cf); sources.update(cs)
+    reconcile(fields, sources)
     functional = {k: fields.pop(k) for k in FUNCTIONAL_FIELDS if k in fields}
     if functional:
         fields["functional"] = functional

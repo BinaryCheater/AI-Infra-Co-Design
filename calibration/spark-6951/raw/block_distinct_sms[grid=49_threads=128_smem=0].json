@@ -19,7 +19,7 @@
   "smem_bytes": 0,
   "identical_orderings_fraction": 1.0,
   "sms_with_two_blocks_median": 1,
-  "sm_clock_mhz": 2502.4
+  "sm_clock_mhz": 2541.5
  },
  "value": 48.0,
  "ci95": 0.0,
@@ -29,20 +29,20 @@
  "benchmark": "b16_block_scheduler",
  "clocks": {
   "before": {
-   "sm_mhz": 2405.0,
+   "sm_mhz": 2294.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 54.0,
-   "power_w": 9.86,
+   "temp_c": 44.0,
+   "power_w": 10.72,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2405.0,
+   "sm_mhz": 2294.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 54.0,
-   "power_w": 9.53,
+   "temp_c": 44.0,
+   "power_w": 11.48,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:20:11Z",
+ "timestamp": "2026-10-14T18:05:13Z",
  "arch": "sm_121"
 }

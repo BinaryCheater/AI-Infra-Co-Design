@@ -41,44 +41,34 @@
   4,
   4,
   4,
-  4,
-  4,
-  4,
-  4,
-  4,
-  4,
-  4,
-  4,
-  4,
-  4,
   4
  ],
  "detail": {
   "method": "single-warp dependent chain, clock64 per op",
-  "sm_clock_mhz": 2521.8
+  "sm_clock_mhz": 2521.9
  },
  "value": 4.0,
  "ci95": 0.0,
- "n": 50,
+ "n": 40,
  "repeat_policy": "to_ci",
  "method": "bandwidth vs resident warps (DRAM and L2), per-warp MLP, per-SM outstanding requests, issue width, dependent-chain latencies (Volkov 2016; Jia et al. 2018)",
  "benchmark": "b17_latency_hiding",
  "clocks": {
   "before": {
-   "sm_mhz": 208.0,
+   "sm_mhz": 2294.0,
    "max_sm_mhz": 3003.0,
    "temp_c": 44.0,
-   "power_w": 4.25,
+   "power_w": 11.57,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2522.0,
+   "sm_mhz": 2489.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 48.0,
-   "power_w": 20.01,
+   "temp_c": 46.0,
+   "power_w": 21.62,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T17:32:38Z",
+ "timestamp": "2026-10-14T18:05:18Z",
  "arch": "sm_121"
 }
