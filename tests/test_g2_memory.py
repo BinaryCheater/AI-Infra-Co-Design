@@ -1,5 +1,6 @@
-"""G2 acceptance: B4's three plateaus within 5 % with the knee at 16 MiB (not told), B5 latencies within
-5 %, and the 4096^3 GEMM within 10 % of the Spark measurement in f4_run.json (was -33 %)."""
+"""G2 acceptance: B4's three plateaus within 5 % with the knee at 16 MiB as a prediction (the L2 capacity is the
+measured 24 MiB since B27_plus.md §3.1), B5 latencies within 5 %, and the 4096^3 GEMM within 10 % of the Spark
+measurement in f4_run.json (was -33 %)."""
 import json
 from pathlib import Path
 
@@ -31,7 +32,8 @@ def test_g2_b4_plateaus_and_knee():
     bw = {s: stream_bandwidth(C, S, F, s)["bytes_per_s"] for s in sizes}
     thr = large + 0.6 * (small - large)
     knee = max(s for s in sizes if bw[s] >= thr)
-    assert knee == C["l2_bytes_effective"] == 16 << 20, (knee, {k: f"{v:.3g}" for k, v in bw.items()})
+    assert knee == 16 << 20, (knee, {k: f"{v:.3g}" for k, v in bw.items()})          # B4's measured knee on its size grid
+    assert C["l2_capacity_bytes"] == 24 << 20 and Hierarchy(C, S, F).l2_capacity == 24 << 20
     w = stream_bandwidth(C, S, F, 1 << 30, write=True)["bytes_per_s"]
     assert abs(w / _raw("bandwidth_write[1073741824]") - 1) < 0.05
 

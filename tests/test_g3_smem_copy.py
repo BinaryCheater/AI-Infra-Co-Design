@@ -38,14 +38,17 @@ def test_g3_b6_bank_conflict_curve():
 
 
 def test_g3_b8_copy_latency_curve():
-    """Endpoints within 5 %; the mid sizes carry the residual logged as notes/sim_gaps.md #2 (<= 25 %)."""
+    """B8 with the per-chunk issue cost charged explicitly (B27_plus.md §3.4): every tile size within 5 % if gap #2 closed,
+    else the endpoints within 5 % and the mid sizes within the residual recorded in notes/sim_gaps.md #2."""
     h = Hierarchy(C, S, F)
-    rate = h.copy_depth * h.copy_chunk / h.lat_l2
+    errs = {}
     for tile in (4096, 8192, 16384, 32768, 49152):
-        simulated = h.copy_overhead + h.lat_l2 + tile / rate
+        simulated = h.copy_time(tile, h.lat_l2)
         measured = C["async_copy_latency_s"][str(tile)]
-        tol = 0.05 if tile in (4096, 49152) else 0.25
-        assert abs(simulated / measured - 1) < tol, (tile, simulated, measured)
+        errs[tile] = simulated / measured - 1
+        print(f"B8 {tile}: simulated {simulated * 1e6:.3f} us, measured {measured * 1e6:.3f} us ({errs[tile]:+.1%})")
+    assert abs(errs[4096]) < 0.05 and abs(errs[49152]) < 0.05, errs
+    assert all(abs(e) < 0.25 for e in errs.values()), errs
 
 
 def _measured_runs():

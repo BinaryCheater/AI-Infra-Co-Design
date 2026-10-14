@@ -1,0 +1,160 @@
+{
+ "quantity": "smem_port_contention_table",
+ "unit": "table",
+ "samples": [
+  119.156364,
+  119.156364,
+  119.156364
+ ],
+ "detail": {
+  "table_mix_b_cyclesPerStep_smemBytesPerCycle_copyBytesPerS_cv": [
+   [
+    "lds",
+    1,
+    206.3,
+    119.2,
+    0,
+    0.001
+   ],
+   [
+    "lds",
+    2,
+    396.1,
+    124.1,
+    0,
+    0.294
+   ],
+   [
+    "lds",
+    3,
+    407.0,
+    181.2,
+    0,
+    0.374
+   ],
+   [
+    "lds",
+    4,
+    475.3,
+    207.0,
+    0,
+    0.328
+   ],
+   [
+    "lds",
+    6,
+    562.6,
+    262.1,
+    0,
+    0.299
+   ],
+   [
+    "copy",
+    1,
+    66.4,
+    0.0,
+    19610000000.0,
+    0.028
+   ],
+   [
+    "copy",
+    2,
+    133.3,
+    0.0,
+    19570000000.0,
+    0.024
+   ],
+   [
+    "copy",
+    3,
+    202.0,
+    0.0,
+    19450000000.0,
+    0.035
+   ],
+   [
+    "copy",
+    4,
+    197.6,
+    0.0,
+    26360000000.0,
+    0.162
+   ],
+   [
+    "copy",
+    6,
+    321.5,
+    0.0,
+    24450000000.0,
+    0.259
+   ],
+   [
+    "both",
+    1,
+    219.7,
+    111.9,
+    5924000000.0,
+    0.0
+   ],
+   [
+    "both",
+    2,
+    422.7,
+    116.3,
+    6158000000.0,
+    0.28
+   ],
+   [
+    "both",
+    3,
+    441.8,
+    166.9,
+    8837000000.0,
+    0.361
+   ],
+   [
+    "both",
+    4,
+    547.9,
+    179.4,
+    9501000000.0,
+    0.322
+   ],
+   [
+    "both",
+    6,
+    646.9,
+    228.1,
+    12070000000.0,
+    0.308
+   ]
+  ],
+  "lds_bytes_per_step_per_block": 24576,
+  "method": "T5-width ld.shared pattern (4 x 128-bit + 8 x 32-bit per thread per step), one 16 B cp.async per thread per phase (8 steps) with wait_group 1, 256 threads; residency forced by dynamic-smem padding; aggregate = b x per-block bytes over the median block's time; cv = spread of per-block times (0 = fair share)",
+  "sm_clock_mhz": 2541.4
+ },
+ "value": 119.156364,
+ "ci95": 0.0,
+ "n": 3,
+ "repeat_policy": "to_ci",
+ "method": "LSU and shared-memory port sharing across resident blocks: T5-width ld.shared + cp.async pattern at 1-6 blocks per SM (B27_plus.md)",
+ "benchmark": "b28_lsu_port_contention",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 42.0,
+   "power_w": 10.91,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2535.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 19.88,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T20:31:30Z",
+ "arch": "sm_121"
+}

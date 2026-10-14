@@ -1,11 +1,12 @@
 """M5, the memory hierarchy (§2): L1 (bypassed by cp.async.cg), L2 as an LRU over regions with the
-measured effective capacity, DRAM as a bandwidth-limited queue with the measured read/write rates.
+measured capacity, DRAM as a bandwidth-limited queue with the measured read/write rates.
 
-Phenomenological, and labeled so (§9.2): the GB10's L2 set/slice structure is not public; an LRU over
-regions with capacity `l2_bytes_effective` reproduces B4's plateaus and places the knee at the
-capacity, which is what the tiling template's reuse pattern needs (every block in a row panel reads
-the same A tile at the same phase). A region is one request's footprint (a tile for the template, a
-chunk for a streaming kernel), so sizes stay exact and the LRU stays fast.
+The L2 capacity is the measured one: B13's single-warp chase keeps 91 % hits at 24 MiB and collapses at
+32, and the counter cross-check reads 87 % hits through 24 MiB (`l2_chase_capacity_bytes`). B4's 16 MiB
+streaming knee is then a prediction of the bandwidth queue under many concurrent streams, not an input
+(B27_plus.md §3.1). What stays phenomenological (§9.2) is the set/slice structure: B13 found hashed sets
+and no slice latency spread, so the LRU is over regions, fully associative. A region is one request's
+footprint (a tile for the template, a chunk for a streaming kernel), so sizes stay exact and the LRU fast.
 
 Timing of one request: lookup -> (hit) L2 latency + bytes through the L2 bandwidth queue, or (miss)
 DRAM latency + bytes through the DRAM queue, then through L2. Every byte served by DRAM is counted,
@@ -22,7 +23,7 @@ class Hierarchy(Memory):
     def __init__(self, contract: dict, structural: dict, fixed: dict):
         super().__init__(contract, structural, fixed)
         c = contract
-        self.l2_capacity = int(c.get("l2_bytes_effective") or c["l2_bytes"])
+        self.l2_capacity = int(c.get("l2_capacity_bytes") or c.get("l2_chase_capacity_bytes") or c["l2_bytes"])     # measured (counters, B13), not B4's streaming knee
         self.lat_l2 = float(c["latency_ns"]["l2"]) * 1e-9
         self.lat_dram = float(c["latency_ns"]["dram"]) * 1e-9
         self.l2_bw = float(c["l2_bytes_per_s"])
@@ -35,15 +36,30 @@ class Hierarchy(Memory):
         self.hits = 0
         self.misses = 0
         self.policy = structural.get("l2_policy", "lru-fully-associative")
-        # M4: a per-SM window of outstanding copy chunks (B8: the per-SM copy rate at the L2 latency fixes its depth);
-        # a request of n chunks is served in ceil(n / depth) rounds, each paying the level latency, plus the measured
-        # completion overhead of a cp.async group (B8's intercept above the L2 latency at the smallest tile)
-        self.copy_depth = int(structural.get("copy_queue_depth", 256))
+        # M4: a per-SM throughput window of copy chunks in flight (B8's latency-vs-size slope after the measured per-chunk
+        # issue cost is taken out, at the L2 latency; B27_plus.md §3.3-3.4). The issue cost is charged explicitly: each warp
+        # issues its chunks serially at B15.3's cycles per 16 B. Completion of a tile = max(issue, window streaming) + the level
+        # latency + the measured completion overhead of a cp.async group (B8's 4 KB intercept under this formula).
+        self.copy_depth = int(structural.get("copy_throughput_window_chunks") or structural.get("copy_queue_depth", 256))
         self.copy_chunk = int(structural.get("copy_chunk_bytes", 16))
+        hz = float(c.get("clock_hz_sustained") or 2.4e9)
+        self.copy_issue_s_per_chunk_per_warp = float(c.get("cp_async_issue_cycles_per_16B") or 0.0) / hz
+        self.threads_per_block = int(c.get("threads_per_block") or 256)
         lat4k = (c.get("async_copy_latency_s") or {}).get("4096")
-        window_rate_l2 = self.copy_depth * self.copy_chunk / self.lat_l2
-        self.copy_overhead = max(0.0, float(lat4k) - self.lat_l2 - 4096 / window_rate_l2) if lat4k else 0.0
+        self.copy_overhead = 0.0
+        if lat4k:
+            self.copy_overhead = max(0.0, float(lat4k) - self.copy_time(4096, self.lat_l2))
         self.windows: dict[int, Fifo] = {}
+
+    def copy_issue_s(self, bytes_block: int) -> float:
+        """Serial issue time of one warp's share of a block-wide copy: chunks per thread x the measured issue cost per chunk."""
+        chunks_per_thread = bytes_block / (self.threads_per_block * self.copy_chunk)
+        return chunks_per_thread * self.copy_issue_s_per_chunk_per_warp
+
+    def copy_time(self, bytes_block: int, lat: float) -> float:
+        """One block's tile of `bytes_block` from a level of latency `lat` with the SM's window to itself (B8's setting)."""
+        window_rate = self.copy_depth * self.copy_chunk / lat
+        return self.copy_issue_s(bytes_block) + bytes_block / window_rate + lat + self.copy_overhead   # issue, then the chunks stream (B8's slope is their sum)
 
     # ---- the LRU
     def lookup(self, key, bytes_: int) -> bool:
@@ -80,10 +96,12 @@ class Hierarchy(Memory):
                 lat = self.lat_l2 if hit else self.lat_dram
                 q, bw, nbytes = (self.l2_q, self.l2_bw, share) if hit else (self.dram_q, self.dram_bw_read, nb)
                 # the SM's copy window: `copy_depth` chunks in flight per SM, so the window's own rate is
-                # depth * chunk / latency of the level; the share flows through the window and the level's bandwidth queue
+                # depth * chunk / latency of the level; the share flows through the window and the level's bandwidth queue;
+                # the warp's own chunk issue (serial, B15.3) must also have finished before the last chunk can be in flight
                 window_rate = self.copy_depth * self.copy_chunk / lat
                 t0, t_win = window.serve(now, share / window_rate)
-                _, t = q.serve(max(t_win, now) + lat, nbytes / bw if not hit else share / bw)
+                issue_end = now + self.copy_issue_s(share * (self.tile_bytes / max(1, bytes_)))   # the block's whole tile, per warp share
+                _, t = q.serve(max(t_win, now) + (issue_end - now) + lat, nbytes / bw if not hit else share / bw)
                 t_end = max(t_end, t + self.copy_overhead)
             engine.at(t_end, done)
             return

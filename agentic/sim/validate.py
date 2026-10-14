@@ -23,7 +23,7 @@ from ..templates.smem_tiling import TilingDesign, Workload, cost_model
 from ..templates.smem_tiling.remote import run_remote
 from ..templates.smem_tiling.smem_template import K_TILE_MENU, PREFETCH_MENU, STAGE_MENU, TILE_MENU, search_face_violations
 from .config import load
-from .issue import IssueModel
+from .warp import WarpModel
 from .memory import Hierarchy
 from .run import SimConfig
 from .tiling import simulate_design
@@ -35,6 +35,8 @@ WORKLOADS = [Workload("square_4096", 4096, 4096, 4096), Workload("skinny_64x4096
 STALL_FAMILY = {"compute": {"not_selected", "mio_throttle", "short_scoreboard", "wait", "math_pipe_throttle", "selected"},
                 "copy": {"long_scoreboard", "lg_throttle", "membar"}, "barrier": {"barrier"}}
 SIM_FAMILY = {"compute": "compute", "compute_queue": "compute", "smem": "compute", "copy": "copy", "barrier": "barrier"}
+# the warp model's histogram families map to the profiler's: issued/not_selected -> not_selected family, scoreboard -> short_scoreboard, lsu -> mio_throttle
+WARP_TO_NCU = {"issued": "not_selected", "not_selected": "not_selected", "scoreboard": "short_scoreboard", "lsu": "mio_throttle", "done": None}
 
 
 def dominant_families(sim_waits: dict, stalls: dict) -> tuple[str | None, str | None, dict, dict]:
@@ -52,22 +54,40 @@ def dominant_families(sim_waits: dict, stalls: dict) -> tuple[str | None, str | 
 def simulate_row(row: dict, sc, C, S, F) -> dict:
     """(Re)simulate one measured row with the current model; fills the sim_* fields and the family agreement."""
     w = next(x for x in WORKLOADS if x.name == row["workload"]); d = TilingDesign(**{k: v for k, v in row["design"].items() if k in TilingDesign.__dataclass_fields__})
-    sim = simulate_design(d, w, sc, Hierarchy(C, S, F), None, issue=IssueModel(C, S))
+    sim = simulate_design(d, w, sc, Hierarchy(C, S, F), None, issue=WarpModel(C, S))
     sim_dom, ncu_dom, sim_f, ncu_f = dominant_families(sim["waits_s"], (row.get("ncu") or {}).get("stalls_per_issue_active"))
+    wf = sim.get("wait_families_s") or {}
     row.update({"simulated_us": sim["time_us"], "sim_error": (sim["time_us"] / row["measured_us"] - 1) if row.get("measured_us") else None,
                 "sim_critical": max(sim["critical_counts"], key=sim["critical_counts"].get) if sim["critical_counts"] else None, "sim_critical_counts": sim["critical_counts"],
                 "sim_dram_bytes": sim["dram_bytes"], "sim_waves": sim["waves"], "sim_wait_families_warp_s": sim_f, "ncu_stall_families": ncu_f,
-                "sim_dominant_family": sim_dom, "ncu_dominant_family": ncu_dom, "critical_agrees_with_stalls": (sim_dom == ncu_dom) if (sim_dom and ncu_dom) else None})
+                "sim_dominant_family": sim_dom, "ncu_dominant_family": ncu_dom, "critical_agrees_with_stalls": (sim_dom == ncu_dom) if (sim_dom and ncu_dom) else None,
+                "sim_warp_histogram_s": wf, "sim_dominant_warp_stall": (WARP_TO_NCU.get(max((k for k in wf if k != "done" and k != "issued"), key=wf.get)) if any(k not in ("done", "issued") for k in wf) else None)})
     return row
 
 
 def summarize(rows: list) -> dict:
+    """B27_plus.md §3.2: per-family agreement. For each family the profiler reports as dominant, the fraction of those designs where
+    the simulator's dominant family agrees; the gate needs >= 80 % overall and at least half of the non-compute designs."""
     errs = sorted(abs(r["sim_error"]) for r in rows if r["sim_error"] is not None)
     agree = [r["critical_agrees_with_stalls"] for r in rows if r["critical_agrees_with_stalls"] is not None]
+    per_family = {}
+    for r in rows:
+        f = r.get("ncu_dominant_family")
+        if f and r.get("critical_agrees_with_stalls") is not None:
+            d = per_family.setdefault(f, {"designs": 0, "agree": 0}); d["designs"] += 1; d["agree"] += int(r["critical_agrees_with_stalls"])
+    for f, d in per_family.items():
+        d["fraction"] = round(d["agree"] / d["designs"], 3) if d["designs"] else None
+    non_compute = [r for r in rows if r.get("ncu_dominant_family") and r["ncu_dominant_family"] != "compute" and r.get("critical_agrees_with_stalls") is not None]
+    overall = (sum(1 for x in agree if x) / len(agree)) if agree else None
+    nc_frac = (sum(1 for r in non_compute if r["critical_agrees_with_stalls"]) / len(non_compute)) if non_compute else None
     return {"designs": len(rows), "ran": sum(1 for r in rows if r["ran"]), "reference_agrees": sum(1 for r in rows if r["reference_agrees"]),
             "median_abs_error": errs[len(errs) // 2] if errs else None, "worst_abs_error": errs[-1] if errs else None,
+            "within_10": sum(1 for e in errs if e <= 0.10), "within_20": sum(1 for e in errs if e <= 0.20),
             "signed_median_error": sorted(r["sim_error"] for r in rows if r["sim_error"] is not None)[len(errs) // 2] if errs else None,
-            "critical_agreement": f"{sum(1 for x in agree if x)}/{len(agree)}", "gate": {"median_abs_error": 0.10, "worst_abs_error": 0.20, "critical_agreement_min": 24}}
+            "critical_agreement": f"{sum(1 for x in agree if x)}/{len(agree)}", "agreement_overall": overall, "agreement_by_ncu_family": per_family,
+            "agreement_non_compute": nc_frac, "non_compute_designs": len(non_compute),
+            "gate": {"median_abs_error": 0.10, "worst_abs_error": 0.20, "agreement_overall_min": 0.80, "agreement_non_compute_min": 0.5},
+            "gate_passed": bool(errs and errs[len(errs) // 2] <= 0.10 and errs[-1] <= 0.20 and overall is not None and overall >= 0.8 and (nc_frac is None or nc_frac >= 0.5))}
 
 
 BUDGET_BLOCK_PHASES = 1_200_000     # the Python simulator runs about 2 us per event, 40 events per block-phase: ~100 s at this budget

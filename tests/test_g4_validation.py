@@ -21,14 +21,21 @@ def test_g4_validation_set_recorded():
     assert all(r["measured_us"] and r["simulated_us"] and r["ncu"].get("ok") for r in v["rows"])
 
 
-@pytest.mark.xfail(strict=True, reason="G4 error gate not passed: median 13.9 %, worst 65 % on the sampled menu; the tiny-tile and many-block corners are notes/sim_gaps.md #8")
+@pytest.mark.xfail(strict=True, reason="G4 gate (B27_plus.md §3.2) not passed with the warp model: median 9.2%, worst 63%, non-compute family agreement 0%; notes/sim_gaps.md #8-#12")
 def test_g4_validation_error_gate():
     v = _rows(); s = v["summary"]
     assert s["median_abs_error"] <= 0.10, s
     assert s["worst_abs_error"] <= 0.20, s
+    assert s["agreement_overall"] >= 0.80 and (s["agreement_non_compute"] is None or s["agreement_non_compute"] >= 0.5), s
 
 
-def test_g4_validation_critical_path_agrees_with_stalls():
+def test_g4_validation_per_family_agreement_recorded():
+    v = _rows(); s = v["summary"]
+    assert "agreement_by_ncu_family" in s and "agreement_non_compute" in s and "gate_passed" in s
+    assert s["agreement_by_ncu_family"].get("compute", {}).get("designs", 0) >= 20
+
+
+def test_g4_validation_overall_agreement():
     v = _rows(); s = v["summary"]
     agree, total = map(int, s["critical_agreement"].split("/"))
     assert total >= 30 and agree >= 24, s["critical_agreement"]

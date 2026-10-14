@@ -1,0 +1,80 @@
+{
+ "quantity": "inner_loop_ground_truth[kernel=ragged_256x16x32_S2_P0,variant=real,b=1]",
+ "unit": "cycles",
+ "samples": [
+  175.9
+ ],
+ "value": 175.9,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "benchmark": "b29_ground_truth",
+ "arch": "sm_121",
+ "timestamp": "2026-10-14T20:45:24Z",
+ "method": "B29: generated kernel (codegen) at the bad corners, one wave of 48 x b blocks with residency forced by smem padding; cycles per k-step per block from the wall time at the in-run clock; ncu issue and stall breakdown",
+ "detail": {
+  "kernel": "ragged_256x16x32_S2_P0",
+  "variant": "real",
+  "blocks_per_sm": 1,
+  "workload": "ragged_1000x1000x1000",
+  "design": {
+   "Tm": 256,
+   "Tn": 16,
+   "Tk": 32,
+   "S": 2,
+   "P": 0,
+   "beta": 0
+  },
+  "timing": {
+   "blocks": 48,
+   "b": 1,
+   "threads": 256,
+   "smem_pad": 98304,
+   "KT": 32,
+   "median_s": 7.088e-05,
+   "sm_mhz": 2541.6,
+   "cycles_per_step_per_block": 175.9,
+   "cycles_per_phase": 5629.5
+  },
+  "measured": true,
+  "ncu": {
+   "issue_active_fraction": 0.21357514769738328,
+   "inst_issued_per_active_cycle_per_sm": 0.8543005907895331,
+   "fma_pipe_active_fraction": 0.134369905596263,
+   "lsu_wavefronts_per_active_cycle_per_sm": 0.2552769672060193,
+   "warps_active_pct": 16.65,
+   "stalls_per_issue_active": {
+    "barrier": 1.35,
+    "lg_throttle": 0.0,
+    "long_scoreboard": 3.12,
+    "math_pipe_throttle": 0.05,
+    "mio_throttle": 0.34,
+    "no_instruction": 0.09,
+    "not_selected": 0.38,
+    "short_scoreboard": 0.65,
+    "wait": 1.01
+   },
+   "dominant_stall": "long_scoreboard",
+   "raw": {
+    "l1tex__data_pipe_lsu_wavefronts_mem_shared.sum": 3646353.0,
+    "sm__cycles_active.avg": 297581.44,
+    "sm__inst_executed_pipe_fma.sum": 6871296.0,
+    "sm__inst_executed_pipe_lsu.sum": 2181888.0,
+    "sm__inst_issued.sum": 12202752.0,
+    "sm__issue_active.avg": 63556.0,
+    "sm__pipe_fma_cycles_active.avg": 319887.92,
+    "sm__warps_active.avg.pct_of_peak_sustained_active": 16.65,
+    "smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio": 1.35,
+    "smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio": 0.0,
+    "smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio": 3.12,
+    "smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio": 0.05,
+    "smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio": 0.34,
+    "smsp__average_warps_issue_stalled_no_instruction_per_issue_active.ratio": 0.09,
+    "smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio": 0.38,
+    "smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio": 0.65,
+    "smsp__average_warps_issue_stalled_wait_per_issue_active.ratio": 1.01,
+    "smsp__inst_executed.sum": 12202752.0
+   }
+  }
+ }
+}

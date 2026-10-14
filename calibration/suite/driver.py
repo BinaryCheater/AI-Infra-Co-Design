@@ -38,9 +38,12 @@ METHODS = {
     "b23_unified_mechanics": "first-touch cost by page size, prefetch, host-resident access, managed-vs-device overhead with the CPU idle, allocation limits",
     "b24_atomics_reductions": "atomicAdd / red throughput by scope and address pattern; contention curve",
     "b25_multi_kernel": "kernel-to-kernel gap, CUDA graph gap, two-stream concurrency, L2 persistence across kernels",
+    "b27_dependency_ilp": "dependency chains vs ILP vs TLP on one scheduler: loads-then-FFMA iterations over (a, w, L); FFMA and LDS latency references (B27_plus.md)",
+    "b28_lsu_port_contention": "LSU and shared-memory port sharing across resident blocks: T5-width ld.shared + cp.async pattern at 1-6 blocks per SM (B27_plus.md)",
     "b26_functional_probes": "in-flight cp.async visibility and chunk order, wait_group semantics, barrier/fence visibility, TMA early bytes, FP32 contraction/ftz/tensor rounding, bank map, independent thread scheduling",
 }
 MICRO = [f"b{i}_" for i in range(13, 27)]
+MICRO3 = ["b27_", "b28_"]            # B27_plus.md: the warp-model benchmarks (B29 is driven by b29_ground_truth.py)
 MINIMUM = ["b1_props", "b2_fma", "b4_bandwidth", "b5_latency", "b6_smem", "b7_barrier"]
 
 
@@ -154,12 +157,13 @@ def main():
     ap.add_argument("--ci", type=float, default=0.04); ap.add_argument("--max-reps", type=int, default=50)
     ap.add_argument("--only", nargs="*", default=None); ap.add_argument("--full", action="store_true")
     ap.add_argument("--micro", action="store_true", help="run B13-B26 (the structure suite)")
+    ap.add_argument("--micro3", action="store_true", help="run B27-B28 (the warp-model benchmarks)")
     ap.add_argument("--extra", default="", help="extra args passed to every benchmark")
     ap.add_argument("--crosscheck", action="store_true", help="after the benchmarks, run the ncu counter cross-checks (ncu_crosscheck.py)")
     a = ap.parse_args()
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     build_dir = HERE / "build"; build_dir.mkdir(exist_ok=True)
-    names = a.only or ([n for n in METHODS if any(n.startswith(m) for m in MICRO)] if a.micro else (list(METHODS) if a.full else MINIMUM))
+    names = a.only or ([n for n in METHODS if any(n.startswith(m) for m in MICRO)] if a.micro else ([n for n in METHODS if any(n.startswith(m) for m in MICRO3)] if a.micro3 else (list(METHODS) if a.full else MINIMUM)))
     names = [n for n in names if (HERE / "bench" / f"{n}.cu").exists()]
     summary = {"host": os.uname().nodename, "arch": a.arch, "ci_target": a.ci, "max_reps": a.max_reps,
                "nvcc": sh("nvcc --version | tail -1").stdout.strip(), "driver": sh("nvidia-smi --query-gpu=driver_version --format=csv,noheader").stdout.strip(),

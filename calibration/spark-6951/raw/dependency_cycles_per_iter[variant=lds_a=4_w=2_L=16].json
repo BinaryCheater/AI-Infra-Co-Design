@@ -1,0 +1,70 @@
+{
+ "quantity": "dependency_cycles_per_iter[variant=lds,a=4,w=2,L=16]",
+ "unit": "cycles",
+ "samples": [
+  64.0527344,
+  64.0529785,
+  64.0537109,
+  64.0546875,
+  64.0549316,
+  64.0554199,
+  64.0556641,
+  64.0556641,
+  64.0566406,
+  64.0566406,
+  64.0537109,
+  64.0539551,
+  64.0549316,
+  64.0549316,
+  64.0556641,
+  64.0556641,
+  64.0556641,
+  64.0561523,
+  64.0563965,
+  64.057373,
+  64.0524902,
+  64.0537109,
+  64.0544434,
+  64.0549316,
+  64.0551758,
+  64.0554199,
+  64.0554199,
+  64.0561523,
+  64.0571289,
+  64.057373
+ ],
+ "detail": {
+  "variant": "lds",
+  "a": 4,
+  "w": 2,
+  "L": 16,
+  "threads": 256,
+  "instr_per_iter_per_warp": 4,
+  "issue_bound_fraction": 0.1249,
+  "sm_clock_mhz": 2541.4
+ },
+ "value": 64.0554199,
+ "ci95": 5.717705083672602e-06,
+ "n": 30,
+ "repeat_policy": "to_ci",
+ "method": "dependency chains vs ILP vs TLP on one scheduler: loads-then-FFMA iterations over (a, w, L); FFMA and LDS latency references (B27_plus.md)",
+ "benchmark": "b27_dependency_ilp",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 4.18,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 50.0,
+   "power_w": 34.78,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T20:38:51Z",
+ "arch": "sm_121"
+}

@@ -109,6 +109,277 @@ unified_memory_penalty:
   managed_cpu_first_pass1: 1.455
 coherent_access_bytes_per_s: 200038414500.0
 suite_level: full+micro
+scoreboard_latency_cycles:
+  lds: 27.0324707
+  fma: 4.2043457
+issue_bound_fraction:
+  a=1,w=1,L=4: 0.0603
+  a=1,w=2,L=4: 0.1206
+  a=1,w=4,L=4: 0.2346
+  a=1,w=8,L=4: 0.2493
+  a=1,w=1,L=8: 0.0604
+  a=1,w=2,L=8: 0.1207
+  a=1,w=4,L=8: 0.2351
+  a=1,w=8,L=8: 0.2493
+  a=1,w=1,L=16: 0.0604
+  a=1,w=2,L=16: 0.1207
+  a=1,w=4,L=16: 0.2342
+  a=1,w=8,L=16: 0.2495
+  a=1,w=1,L=32: 0.0604
+  a=1,w=2,L=32: 0.1208
+  a=1,w=4,L=32: 0.2344
+  a=1,w=8,L=32: 0.2495
+  a=1,w=1,L=64: 0.0604
+  a=1,w=2,L=64: 0.1208
+  a=1,w=4,L=64: 0.2344
+  a=1,w=8,L=64: 0.2495
+  a=2,w=1,L=4: 0.1017
+  a=2,w=2,L=4: 0.2033
+  a=2,w=4,L=4: 0.2496
+  a=2,w=8,L=4: 0.2495
+  a=2,w=1,L=8: 0.1014
+  a=2,w=2,L=8: 0.2028
+  a=2,w=4,L=8: 0.2497
+  a=2,w=8,L=8: 0.2494
+  a=2,w=1,L=16: 0.1014
+  a=2,w=2,L=16: 0.2028
+  a=2,w=4,L=16: 0.2497
+  a=2,w=8,L=16: 0.2494
+  a=2,w=1,L=32: 0.1015
+  a=2,w=2,L=32: 0.2029
+  a=2,w=4,L=32: 0.2497
+  a=2,w=8,L=32: 0.2494
+  a=2,w=1,L=64: 0.1018
+  a=2,w=2,L=64: 0.2035
+  a=2,w=4,L=64: 0.2497
+  a=2,w=8,L=64: 0.2495
+  a=4,w=1,L=4: 0.1954
+  a=4,w=2,L=4: 0.2498
+  a=4,w=4,L=4: 0.2498
+  a=4,w=8,L=4: 0.2498
+  a=4,w=1,L=8: 0.1988
+  a=4,w=2,L=8: 0.2498
+  a=4,w=4,L=8: 0.2498
+  a=4,w=8,L=8: 0.2498
+  a=4,w=1,L=16: 0.1955
+  a=4,w=2,L=16: 0.2498
+  a=4,w=4,L=16: 0.2498
+  a=4,w=8,L=16: 0.2498
+  a=4,w=1,L=32: 0.1989
+  a=4,w=2,L=32: 0.2498
+  a=4,w=4,L=32: 0.2498
+  a=4,w=8,L=32: 0.2499
+  a=4,w=1,L=64: 0.1993
+  a=4,w=2,L=64: 0.2497
+  a=4,w=4,L=64: 0.2499
+  a=4,w=8,L=64: 0.2499
+  a=8,w=1,L=4: 0.2418
+  a=8,w=2,L=4: 0.2497
+  a=8,w=4,L=4: 0.2499
+  a=8,w=8,L=4: 0.2499
+  a=8,w=1,L=8: 0.2418
+  a=8,w=2,L=8: 0.2497
+  a=8,w=4,L=8: 0.2499
+  a=8,w=8,L=8: 0.2499
+  a=8,w=1,L=16: 0.2418
+  a=8,w=2,L=16: 0.2497
+  a=8,w=4,L=16: 0.2499
+  a=8,w=8,L=16: 0.2499
+  a=8,w=1,L=32: 0.245
+  a=8,w=2,L=32: 0.2498
+  a=8,w=4,L=32: 0.2499
+  a=8,w=8,L=32: 0.25
+  a=8,w=1,L=64: 0.2474
+  a=8,w=2,L=64: 0.2498
+  a=8,w=4,L=64: 0.2499
+  a=8,w=8,L=64: 0.25
+  a=16,w=1,L=4: 0.241
+  a=16,w=2,L=4: 0.2499
+  a=16,w=4,L=4: 0.25
+  a=16,w=8,L=4: 0.25
+  a=16,w=1,L=8: 0.241
+  a=16,w=2,L=8: 0.2499
+  a=16,w=4,L=8: 0.25
+  a=16,w=8,L=8: 0.25
+  a=16,w=1,L=16: 0.2446
+  a=16,w=2,L=16: 0.2499
+  a=16,w=4,L=16: 0.25
+  a=16,w=8,L=16: 0.25
+  a=16,w=1,L=32: 0.2472
+  a=16,w=2,L=32: 0.2499
+  a=16,w=4,L=32: 0.25
+  a=16,w=8,L=32: 0.25
+  a=16,w=1,L=64: 0.2486
+  a=16,w=2,L=64: 0.2499
+  a=16,w=4,L=64: 0.25
+  a=16,w=8,L=64: 0.25
+dependency_cycles_per_iter:
+  a=1,w=1,L=4: 33.2
+  a=1,w=2,L=4: 33.2
+  a=1,w=4,L=4: 34.1
+  a=1,w=8,L=4: 64.2
+  a=1,w=1,L=8: 33.1
+  a=1,w=2,L=8: 33.1
+  a=1,w=4,L=8: 34.0
+  a=1,w=8,L=8: 64.2
+  a=1,w=1,L=16: 33.1
+  a=1,w=2,L=16: 33.2
+  a=1,w=4,L=16: 34.2
+  a=1,w=8,L=16: 64.1
+  a=1,w=1,L=32: 33.1
+  a=1,w=2,L=32: 33.1
+  a=1,w=4,L=32: 34.1
+  a=1,w=8,L=32: 64.1
+  a=1,w=1,L=64: 33.1
+  a=1,w=2,L=64: 33.1
+  a=1,w=4,L=64: 34.1
+  a=1,w=8,L=64: 64.1
+  a=2,w=1,L=4: 39.3
+  a=2,w=2,L=4: 39.3
+  a=2,w=4,L=4: 64.1
+  a=2,w=8,L=4: 128.3
+  a=2,w=1,L=8: 39.4
+  a=2,w=2,L=8: 39.4
+  a=2,w=4,L=8: 64.1
+  a=2,w=8,L=8: 128.3
+  a=2,w=1,L=16: 39.4
+  a=2,w=2,L=16: 39.4
+  a=2,w=4,L=16: 64.1
+  a=2,w=8,L=16: 128.3
+  a=2,w=1,L=32: 39.4
+  a=2,w=2,L=32: 39.4
+  a=2,w=4,L=32: 64.1
+  a=2,w=8,L=32: 128.3
+  a=2,w=1,L=64: 39.3
+  a=2,w=2,L=64: 39.3
+  a=2,w=4,L=64: 64.1
+  a=2,w=8,L=64: 128.2
+  a=4,w=1,L=4: 40.9
+  a=4,w=2,L=4: 64.1
+  a=4,w=4,L=4: 128.1
+  a=4,w=8,L=4: 256.2
+  a=4,w=1,L=8: 40.2
+  a=4,w=2,L=8: 64.1
+  a=4,w=4,L=8: 128.1
+  a=4,w=8,L=8: 256.2
+  a=4,w=1,L=16: 40.9
+  a=4,w=2,L=16: 64.1
+  a=4,w=4,L=16: 128.1
+  a=4,w=8,L=16: 256.2
+  a=4,w=1,L=32: 40.2
+  a=4,w=2,L=32: 64.1
+  a=4,w=4,L=32: 128.1
+  a=4,w=8,L=32: 256.2
+  a=4,w=1,L=64: 40.1
+  a=4,w=2,L=64: 64.1
+  a=4,w=4,L=64: 128.1
+  a=4,w=8,L=64: 256.1
+  a=8,w=1,L=4: 66.2
+  a=8,w=2,L=4: 128.2
+  a=8,w=4,L=4: 256.1
+  a=8,w=8,L=4: 512.1
+  a=8,w=1,L=8: 66.2
+  a=8,w=2,L=8: 128.2
+  a=8,w=4,L=8: 256.1
+  a=8,w=8,L=8: 512.1
+  a=8,w=1,L=16: 66.2
+  a=8,w=2,L=16: 128.2
+  a=8,w=4,L=16: 256.1
+  a=8,w=8,L=16: 512.1
+  a=8,w=1,L=32: 65.3
+  a=8,w=2,L=32: 128.1
+  a=8,w=4,L=32: 256.1
+  a=8,w=8,L=32: 512.1
+  a=8,w=1,L=64: 64.7
+  a=8,w=2,L=64: 128.1
+  a=8,w=4,L=64: 256.1
+  a=8,w=8,L=64: 512.1
+  a=16,w=1,L=4: 132.8
+  a=16,w=2,L=4: 256.1
+  a=16,w=4,L=4: 512.1
+  a=16,w=8,L=4: 1024.1
+  a=16,w=1,L=8: 132.8
+  a=16,w=2,L=8: 256.1
+  a=16,w=4,L=8: 512.1
+  a=16,w=8,L=8: 1024.1
+  a=16,w=1,L=16: 130.8
+  a=16,w=2,L=16: 256.1
+  a=16,w=4,L=16: 512.1
+  a=16,w=8,L=16: 1024.1
+  a=16,w=1,L=32: 129.4
+  a=16,w=2,L=32: 256.1
+  a=16,w=4,L=32: 512.1
+  a=16,w=8,L=32: 1024.1
+  a=16,w=1,L=64: 128.7
+  a=16,w=2,L=64: 256.1
+  a=16,w=4,L=64: 512.1
+  a=16,w=8,L=64: 1024.1
+ilp_to_hide_lds: null
+lds_rate_by_residency:
+  '1':
+    cycles_per_step_per_block: 206.3
+    smem_bytes_per_cycle_per_sm: 119.2
+    per_block_time_cv: 0.001
+  '2':
+    cycles_per_step_per_block: 396.1
+    smem_bytes_per_cycle_per_sm: 124.1
+    per_block_time_cv: 0.294
+  '3':
+    cycles_per_step_per_block: 407.0
+    smem_bytes_per_cycle_per_sm: 181.2
+    per_block_time_cv: 0.374
+  '4':
+    cycles_per_step_per_block: 475.3
+    smem_bytes_per_cycle_per_sm: 207.0
+    per_block_time_cv: 0.328
+  '6':
+    cycles_per_step_per_block: 562.6
+    smem_bytes_per_cycle_per_sm: 262.1
+    per_block_time_cv: 0.299
+smem_port_bytes_per_cycle_per_sm: 262.1
+smem_port_plateau_from_blocks: 6
+lsu_instr_per_cycle_per_sm: 1.024
+lsu_instr_per_cycle_per_sm_by_residency:
+  '1': 0.465
+  '2': 0.485
+  '3': 0.708
+  '4': 0.808
+  '6': 1.024
+smem_arbiter: unequal
+copy_bytes_per_s_per_sm_by_residency:
+  '1': 19610000000.0
+  '2': 19570000000.0
+  '3': 19450000000.0
+  '4': 26360000000.0
+  '6': 24450000000.0
+lsu_shared_by_copies: false
+lsu_copy_share_of_smem_rate:
+  '1': 0.939
+  '2': 0.937
+  '3': 0.921
+  '4': 0.867
+  '6': 0.87
+lsu_mixed_by_residency:
+  '1':
+    smem_bytes_per_cycle_per_sm: 111.9
+    copy_bytes_per_s_per_sm: 5924000000.0
+    cycles_per_step_per_block: 219.7
+  '2':
+    smem_bytes_per_cycle_per_sm: 116.3
+    copy_bytes_per_s_per_sm: 6158000000.0
+    cycles_per_step_per_block: 422.7
+  '3':
+    smem_bytes_per_cycle_per_sm: 166.9
+    copy_bytes_per_s_per_sm: 8837000000.0
+    cycles_per_step_per_block: 441.8
+  '4':
+    smem_bytes_per_cycle_per_sm: 179.4
+    copy_bytes_per_s_per_sm: 9501000000.0
+    cycles_per_step_per_block: 547.9
+  '6':
+    smem_bytes_per_cycle_per_sm: 228.1
+    copy_bytes_per_s_per_sm: 12070000000.0
+    cycles_per_step_per_block: 646.9
 l2_sector_bytes: 32
 l2_line_bytes: 128
 l2_ways: null
@@ -2152,6 +2423,841 @@ counter_crosscheck:
     '32':
       wavefronts_per_instruction: 32.008
       bank_conflicts_per_instruction: 31.0
+  inner_loop_ground_truth:
+    square_32x64x32_S2_P1:
+      stripped:
+        '6':
+          cycles_per_step_per_block: 452.8
+          issue_active_fraction: 0.3821334436604555
+          inst_issued_per_active_cycle_per_sm: 1.528533782762231
+          fma_pipe_active_fraction: 0.2293655068030978
+          lsu_wavefronts_per_active_cycle_per_sm: 0.5330015819490198
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 2.0
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.01
+            mio_throttle: 7.42
+            no_instruction: 0.07
+            not_selected: 2.62
+            short_scoreboard: 0.74
+            wait: 0.89
+        '4':
+          cycles_per_step_per_block: 307.4
+          issue_active_fraction: 0.3730395573624975
+          inst_issued_per_active_cycle_per_sm: 1.49215822944999
+          fma_pipe_active_fraction: 0.2238259688862699
+          lsu_wavefronts_per_active_cycle_per_sm: 0.5203083240041206
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 1.58
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.01
+            mio_throttle: 6.64
+            no_instruction: 0.07
+            not_selected: 2.31
+            short_scoreboard: 0.75
+            wait: 0.89
+        '2':
+          cycles_per_step_per_block: 160.6
+          issue_active_fraction: 0.34277906811123604
+          inst_issued_per_active_cycle_per_sm: 1.371116301581428
+          fma_pipe_active_fraction: 0.20492253370191568
+          lsu_wavefronts_per_active_cycle_per_sm: 0.4778745246218802
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 0.31
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.0
+            mio_throttle: 3.16
+            no_instruction: 0.07
+            not_selected: 0.78
+            short_scoreboard: 0.82
+            wait: 0.87
+        '1':
+          cycles_per_step_per_block: 92.1
+          issue_active_fraction: 0.31692444873071013
+          inst_issued_per_active_cycle_per_sm: 1.2676977949228405
+          fma_pipe_active_fraction: 0.18904564177025765
+          lsu_wavefronts_per_active_cycle_per_sm: 0.44173469841316876
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 0.13
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.0
+            mio_throttle: 2.5
+            no_instruction: 0.07
+            not_selected: 0.45
+            short_scoreboard: 0.9
+            wait: 0.86
+      real:
+        '1':
+          cycles_per_step_per_block: 145.0
+          issue_active_fraction: 0.19657720661025285
+          inst_issued_per_active_cycle_per_sm: 0.7863088264410114
+          fma_pipe_active_fraction: 0.09447883942377323
+          lsu_wavefronts_per_active_cycle_per_sm: 0.21312135639846436
+          dominant_stall: barrier
+          stalls_per_issue_active:
+            barrier: 2.46
+            lg_throttle: 0.0
+            long_scoreboard: 1.09
+            math_pipe_throttle: 0.02
+            mio_throttle: 1.0
+            no_instruction: 0.06
+            not_selected: 0.22
+            short_scoreboard: 1.29
+            wait: 1.2
+        '2':
+          cycles_per_step_per_block: 194.4
+          issue_active_fraction: 0.24192415729540082
+          inst_issued_per_active_cycle_per_sm: 0.9676966140492377
+          fma_pipe_active_fraction: 0.11658268742911952
+          lsu_wavefronts_per_active_cycle_per_sm: 0.26228749401618984
+          dominant_stall: barrier
+          stalls_per_issue_active:
+            barrier: 2.28
+            lg_throttle: 0.0
+            long_scoreboard: 1.07
+            math_pipe_throttle: 0.04
+            mio_throttle: 1.72
+            no_instruction: 0.06
+            not_selected: 0.47
+            short_scoreboard: 1.24
+            wait: 1.22
+        '4':
+          cycles_per_step_per_block: 399.5
+          issue_active_fraction: 0.36284018309775534
+          inst_issued_per_active_cycle_per_sm: 1.4513607323910214
+          fma_pipe_active_fraction: 0.17570987496116772
+          lsu_wavefronts_per_active_cycle_per_sm: 0.3934071342742897
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 3.04
+            lg_throttle: 0.0
+            long_scoreboard: 3.17
+            math_pipe_throttle: 0.07
+            mio_throttle: 4.34
+            no_instruction: 0.06
+            not_selected: 1.43
+            short_scoreboard: 1.16
+            wait: 1.24
+        '6':
+          cycles_per_step_per_block: 601.8
+          issue_active_fraction: 0.36620631536070547
+          inst_issued_per_active_cycle_per_sm: 1.4648252557162669
+          fma_pipe_active_fraction: 0.17727076942542805
+          lsu_wavefronts_per_active_cycle_per_sm: 0.39703634069591487
+          dominant_stall: barrier
+          stalls_per_issue_active:
+            barrier: 4.21
+            lg_throttle: 0.0
+            long_scoreboard: 3.51
+            math_pipe_throttle: 0.07
+            mio_throttle: 4.15
+            no_instruction: 0.06
+            not_selected: 1.33
+            short_scoreboard: 1.17
+            wait: 1.24
+    T1_128x256x16_S2_P1:
+      stripped:
+        '6':
+          cycles_per_step_per_block: 2775.0
+          issue_active_fraction: 0.6487285130925351
+          inst_issued_per_active_cycle_per_sm: 2.5949140523701404
+          fma_pipe_active_fraction: 0.5863660798628256
+          lsu_wavefronts_per_active_cycle_per_sm: 0.3480849795765295
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.03
+            lg_throttle: 0.01
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.0
+            mio_throttle: 0.37
+            no_instruction: 0.06
+            not_selected: 0.9
+            short_scoreboard: 0.04
+            wait: 0.13
+        '4':
+          cycles_per_step_per_block: 1864.1
+          issue_active_fraction: 0.6466302246607122
+          inst_issued_per_active_cycle_per_sm: 2.5865208986428487
+          fma_pipe_active_fraction: 0.5844596534388182
+          lsu_wavefronts_per_active_cycle_per_sm: 0.3469591115574795
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.03
+            lg_throttle: 0.02
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.0
+            mio_throttle: 0.37
+            no_instruction: 0.06
+            not_selected: 0.9
+            short_scoreboard: 0.04
+            wait: 0.13
+        '2':
+          cycles_per_step_per_block: 934.3
+          issue_active_fraction: 0.6475820605351762
+          inst_issued_per_active_cycle_per_sm: 2.590328242140705
+          fma_pipe_active_fraction: 0.5853272016518382
+          lsu_wavefronts_per_active_cycle_per_sm: 0.34746983332203335
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.03
+            lg_throttle: 0.02
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.0
+            mio_throttle: 0.37
+            no_instruction: 0.06
+            not_selected: 0.9
+            short_scoreboard: 0.04
+            wait: 0.13
+        '1':
+          cycles_per_step_per_block: 460.9
+          issue_active_fraction: 0.6488780266624196
+          inst_issued_per_active_cycle_per_sm: 2.5955121066496782
+          fma_pipe_active_fraction: 0.5864774785571086
+          lsu_wavefronts_per_active_cycle_per_sm: 0.34816520331707634
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.03
+            lg_throttle: 0.01
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.0
+            mio_throttle: 0.37
+            no_instruction: 0.06
+            not_selected: 0.9
+            short_scoreboard: 0.05
+            wait: 0.13
+      real:
+        '2':
+          cycles_per_step_per_block: 1132.2
+          issue_active_fraction: 0.574977623410871
+          inst_issued_per_active_cycle_per_sm: 2.299910493643484
+          fma_pipe_active_fraction: 0.4804865327499385
+          lsu_wavefronts_per_active_cycle_per_sm: 0.298075711986329
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.09
+            lg_throttle: 0.01
+            long_scoreboard: 0.13
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.44
+            no_instruction: 0.07
+            not_selected: 0.81
+            short_scoreboard: 0.14
+            wait: 0.34
+        '6':
+          cycles_per_step_per_block: 3482.8
+          issue_active_fraction: 0.5849738567825765
+          inst_issued_per_active_cycle_per_sm: 2.339895427130306
+          fma_pipe_active_fraction: 0.48884270530275403
+          lsu_wavefronts_per_active_cycle_per_sm: 0.30325788648866336
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.07
+            lg_throttle: 0.01
+            long_scoreboard: 0.21
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.44
+            no_instruction: 0.07
+            not_selected: 0.81
+            short_scoreboard: 0.14
+            wait: 0.34
+        '4':
+          cycles_per_step_per_block: 2264.0
+          issue_active_fraction: 0.5767975779483744
+          inst_issued_per_active_cycle_per_sm: 2.3071903117934975
+          fma_pipe_active_fraction: 0.4820126738277713
+          lsu_wavefronts_per_active_cycle_per_sm: 0.299019199562995
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.08
+            lg_throttle: 0.01
+            long_scoreboard: 0.09
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.44
+            no_instruction: 0.07
+            not_selected: 0.81
+            short_scoreboard: 0.14
+            wait: 0.34
+        '1':
+          cycles_per_step_per_block: 567.4
+          issue_active_fraction: 0.5420609814788624
+          inst_issued_per_active_cycle_per_sm: 2.1682439259154496
+          fma_pipe_active_fraction: 0.45298440432401105
+          lsu_wavefronts_per_active_cycle_per_sm: 0.2810113062067127
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.13
+            lg_throttle: 0.01
+            long_scoreboard: 0.22
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.44
+            no_instruction: 0.07
+            not_selected: 0.81
+            short_scoreboard: 0.14
+            wait: 0.34
+    T5_128x128x32_S3_P1:
+      real:
+        '1':
+          cycles_per_step_per_block: 310.6
+          issue_active_fraction: 0.47575621687226316
+          inst_issued_per_active_cycle_per_sm: 1.9030248674890526
+          fma_pipe_active_fraction: 0.39302935455245
+          lsu_wavefronts_per_active_cycle_per_sm: 0.2875916771394516
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.19
+            lg_throttle: 0.03
+            long_scoreboard: 0.38
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.4
+            no_instruction: 0.08
+            not_selected: 0.8
+            short_scoreboard: 0.19
+            wait: 0.37
+        '2':
+          cycles_per_step_per_block: 607.8
+          issue_active_fraction: 0.49123603898405543
+          inst_issued_per_active_cycle_per_sm: 1.9649441748102385
+          fma_pipe_active_fraction: 0.4058108358354617
+          lsu_wavefronts_per_active_cycle_per_sm: 0.3015990343165865
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.14
+            lg_throttle: 0.01
+            long_scoreboard: 0.4
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.39
+            no_instruction: 0.07
+            not_selected: 0.8
+            short_scoreboard: 0.18
+            wait: 0.37
+        '4':
+          cycles_per_step_per_block: 1198.3
+          issue_active_fraction: 0.5090913780013021
+          inst_issued_per_active_cycle_per_sm: 2.0363655217852887
+          fma_pipe_active_fraction: 0.42055539528041547
+          lsu_wavefronts_per_active_cycle_per_sm: 0.31690273310919687
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.16
+            lg_throttle: 0.02
+            long_scoreboard: 0.22
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.35
+            no_instruction: 0.07
+            not_selected: 0.8
+            short_scoreboard: 0.18
+            wait: 0.37
+        '6':
+          cycles_per_step_per_block: 1788.2
+          issue_active_fraction: 0.5363057480959408
+          inst_issued_per_active_cycle_per_sm: 2.145222999252371
+          fma_pipe_active_fraction: 0.44303175018431007
+          lsu_wavefronts_per_active_cycle_per_sm: 0.3353612258293111
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.14
+            lg_throttle: 0.01
+            long_scoreboard: 0.12
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.34
+            no_instruction: 0.07
+            not_selected: 0.8
+            short_scoreboard: 0.18
+            wait: 0.37
+      stripped:
+        '1':
+          cycles_per_step_per_block: 253.4
+          issue_active_fraction: 0.6112973575888724
+          inst_issued_per_active_cycle_per_sm: 2.4451894303554895
+          fma_pipe_active_fraction: 0.5462098488892085
+          lsu_wavefronts_per_active_cycle_per_sm: 0.38447286144623644
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.07
+            lg_throttle: 0.1
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.0
+            mio_throttle: 0.24
+            no_instruction: 0.06
+            not_selected: 0.84
+            short_scoreboard: 0.11
+            wait: 0.22
+        '6':
+          cycles_per_step_per_block: 1445.9
+          issue_active_fraction: 0.6348235991756551
+          inst_issued_per_active_cycle_per_sm: 2.5392944057234477
+          fma_pipe_active_fraction: 0.5672599486278348
+          lsu_wavefronts_per_active_cycle_per_sm: 0.4008549981343126
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.06
+            lg_throttle: 0.01
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.0
+            mio_throttle: 0.24
+            no_instruction: 0.05
+            not_selected: 0.85
+            short_scoreboard: 0.1
+            wait: 0.22
+        '4':
+          cycles_per_step_per_block: 969.0
+          issue_active_fraction: 0.6307555071410158
+          inst_issued_per_active_cycle_per_sm: 2.523022042008563
+          fma_pipe_active_fraction: 0.563606796591892
+          lsu_wavefronts_per_active_cycle_per_sm: 0.3980678146481307
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.06
+            lg_throttle: 0.01
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.0
+            mio_throttle: 0.24
+            no_instruction: 0.06
+            not_selected: 0.85
+            short_scoreboard: 0.1
+            wait: 0.22
+        '2':
+          cycles_per_step_per_block: 491.8
+          issue_active_fraction: 0.6228613466930698
+          inst_issued_per_active_cycle_per_sm: 2.4914454133245783
+          fma_pipe_active_fraction: 0.5565470159311009
+          lsu_wavefronts_per_active_cycle_per_sm: 0.39243829906075356
+          dominant_stall: not_selected
+          stalls_per_issue_active:
+            barrier: 0.06
+            lg_throttle: 0.05
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.0
+            mio_throttle: 0.24
+            no_instruction: 0.06
+            not_selected: 0.85
+            short_scoreboard: 0.11
+            wait: 0.22
+    ragged_256x16x32_S2_P0:
+      stripped:
+        '2':
+          cycles_per_step_per_block: 199.2
+          issue_active_fraction: 0.46113496139896903
+          inst_issued_per_active_cycle_per_sm: 1.8445399943116227
+          fma_pipe_active_fraction: 0.32895437029105534
+          lsu_wavefronts_per_active_cycle_per_sm: 0.720018130928104
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 0.11
+            lg_throttle: 0.0
+            long_scoreboard: 0.01
+            math_pipe_throttle: 0.0
+            mio_throttle: 0.91
+            no_instruction: 0.05
+            not_selected: 0.43
+            short_scoreboard: 0.75
+            wait: 0.68
+        '4':
+          cycles_per_step_per_block: 388.5
+          issue_active_fraction: 0.4723290745571444
+          inst_issued_per_active_cycle_per_sm: 1.8893162474533025
+          fma_pipe_active_fraction: 0.33694850117735164
+          lsu_wavefronts_per_active_cycle_per_sm: 0.7374967472089466
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 0.11
+            lg_throttle: 0.0
+            long_scoreboard: 0.01
+            math_pipe_throttle: 0.0
+            mio_throttle: 0.91
+            no_instruction: 0.03
+            not_selected: 0.43
+            short_scoreboard: 0.75
+            wait: 0.68
+        '6':
+          cycles_per_step_per_block: 575.6
+          issue_active_fraction: 0.4770716671912239
+          inst_issued_per_active_cycle_per_sm: 1.908286707231574
+          fma_pipe_active_fraction: 0.3403413137778486
+          lsu_wavefronts_per_active_cycle_per_sm: 0.7449660453349292
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 0.11
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.0
+            mio_throttle: 0.91
+            no_instruction: 0.03
+            not_selected: 0.43
+            short_scoreboard: 0.75
+            wait: 0.68
+        '1':
+          cycles_per_step_per_block: 104.4
+          issue_active_fraction: 0.4530145312680217
+          inst_issued_per_active_cycle_per_sm: 1.8120581250720869
+          fma_pipe_active_fraction: 0.3231738552802175
+          lsu_wavefronts_per_active_cycle_per_sm: 0.7073382473665155
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 0.11
+            lg_throttle: 0.0
+            long_scoreboard: 0.01
+            math_pipe_throttle: 0.0
+            mio_throttle: 0.92
+            no_instruction: 0.05
+            not_selected: 0.43
+            short_scoreboard: 0.75
+            wait: 0.68
+      real:
+        '4':
+          cycles_per_step_per_block: 641.6
+          issue_active_fraction: 0.28350749691672883
+          inst_issued_per_active_cycle_per_sm: 1.1340299876669153
+          fma_pipe_active_fraction: 0.17834970658397117
+          lsu_wavefronts_per_active_cycle_per_sm: 0.33890013640136635
+          dominant_stall: long_scoreboard
+          stalls_per_issue_active:
+            barrier: 0.65
+            lg_throttle: 0.0
+            long_scoreboard: 2.53
+            math_pipe_throttle: 0.05
+            mio_throttle: 0.34
+            no_instruction: 0.07
+            not_selected: 0.38
+            short_scoreboard: 0.65
+            wait: 1.01
+        '6':
+          cycles_per_step_per_block: 931.3
+          issue_active_fraction: 0.310308370986384
+          inst_issued_per_active_cycle_per_sm: 1.2412335025463328
+          fma_pipe_active_fraction: 0.1952269599485316
+          lsu_wavefronts_per_active_cycle_per_sm: 0.3728191437541663
+          dominant_stall: long_scoreboard
+          stalls_per_issue_active:
+            barrier: 0.43
+            lg_throttle: 0.0
+            long_scoreboard: 2.32
+            math_pipe_throttle: 0.05
+            mio_throttle: 0.33
+            no_instruction: 0.07
+            not_selected: 0.38
+            short_scoreboard: 0.65
+            wait: 1.01
+        '2':
+          cycles_per_step_per_block: 317.0
+          issue_active_fraction: 0.2099753775490308
+          inst_issued_per_active_cycle_per_sm: 0.8399015101961232
+          fma_pipe_active_fraction: 0.13209079479080782
+          lsu_wavefronts_per_active_cycle_per_sm: 0.25100125880302504
+          dominant_stall: long_scoreboard
+          stalls_per_issue_active:
+            barrier: 1.64
+            lg_throttle: 0.0
+            long_scoreboard: 3.07
+            math_pipe_throttle: 0.05
+            mio_throttle: 0.33
+            no_instruction: 0.09
+            not_selected: 0.38
+            short_scoreboard: 0.65
+            wait: 1.01
+        '1':
+          cycles_per_step_per_block: 175.9
+          issue_active_fraction: 0.21357514769738328
+          inst_issued_per_active_cycle_per_sm: 0.8543005907895331
+          fma_pipe_active_fraction: 0.134369905596263
+          lsu_wavefronts_per_active_cycle_per_sm: 0.2552769672060193
+          dominant_stall: long_scoreboard
+          stalls_per_issue_active:
+            barrier: 1.35
+            lg_throttle: 0.0
+            long_scoreboard: 3.12
+            math_pipe_throttle: 0.05
+            mio_throttle: 0.34
+            no_instruction: 0.09
+            not_selected: 0.38
+            short_scoreboard: 0.65
+            wait: 1.01
+    square_32x128x32_S3_P0:
+      stripped:
+        '1':
+          cycles_per_step_per_block: 146.8
+          issue_active_fraction: 0.3555072914179179
+          inst_issued_per_active_cycle_per_sm: 1.4220291656716717
+          fma_pipe_active_fraction: 0.22040567253952978
+          lsu_wavefronts_per_active_cycle_per_sm: 0.4816113888608744
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 0.12
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.01
+            mio_throttle: 2.52
+            no_instruction: 0.04
+            not_selected: 0.36
+            short_scoreboard: 0.61
+            wait: 0.65
+        '6':
+          cycles_per_step_per_block: 872.2
+          issue_active_fraction: 0.3659599623058696
+          inst_issued_per_active_cycle_per_sm: 1.4638398492234783
+          fma_pipe_active_fraction: 0.2269264299197079
+          lsu_wavefronts_per_active_cycle_per_sm: 0.49577178856343385
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 0.14
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.01
+            mio_throttle: 2.44
+            no_instruction: 0.03
+            not_selected: 0.37
+            short_scoreboard: 0.61
+            wait: 0.65
+        '4':
+          cycles_per_step_per_block: 583.6
+          issue_active_fraction: 0.3654055744508363
+          inst_issued_per_active_cycle_per_sm: 1.4616222978033453
+          fma_pipe_active_fraction: 0.2265825885277273
+          lsu_wavefronts_per_active_cycle_per_sm: 0.4950207505080251
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 0.14
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.01
+            mio_throttle: 2.45
+            no_instruction: 0.03
+            not_selected: 0.37
+            short_scoreboard: 0.61
+            wait: 0.65
+        '2':
+          cycles_per_step_per_block: 292.9
+          issue_active_fraction: 0.36373501418054505
+          inst_issued_per_active_cycle_per_sm: 1.4549400567221802
+          fma_pipe_active_fraction: 0.2255460010458755
+          lsu_wavefronts_per_active_cycle_per_sm: 0.49275761590748884
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 0.14
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.01
+            mio_throttle: 2.47
+            no_instruction: 0.03
+            not_selected: 0.37
+            short_scoreboard: 0.62
+            wait: 0.65
+      real:
+        '1':
+          cycles_per_step_per_block: 264.1
+          issue_active_fraction: 0.18128276723203324
+          inst_issued_per_active_cycle_per_sm: 0.7251310553218909
+          fma_pipe_active_fraction: 0.09650727685627236
+          lsu_wavefronts_per_active_cycle_per_sm: 0.21127228158172015
+          dominant_stall: long_scoreboard
+          stalls_per_issue_active:
+            barrier: 1.59
+            lg_throttle: 0.0
+            long_scoreboard: 3.2
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.85
+            no_instruction: 0.05
+            not_selected: 0.14
+            short_scoreboard: 2.17
+            wait: 0.86
+        '2':
+          cycles_per_step_per_block: 513.7
+          issue_active_fraction: 0.2184623967695079
+          inst_issued_per_active_cycle_per_sm: 0.8738495870780316
+          fma_pipe_active_fraction: 0.11636964647943876
+          lsu_wavefronts_per_active_cycle_per_sm: 0.25460252276640605
+          dominant_stall: long_scoreboard
+          stalls_per_issue_active:
+            barrier: 0.89
+            lg_throttle: 0.0
+            long_scoreboard: 2.47
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.86
+            no_instruction: 0.05
+            not_selected: 0.14
+            short_scoreboard: 2.16
+            wait: 0.86
+        '4':
+          cycles_per_step_per_block: 1001.5
+          issue_active_fraction: 0.2419375867668611
+          inst_issued_per_active_cycle_per_sm: 0.9677503470674444
+          fma_pipe_active_fraction: 0.12891920851017802
+          lsu_wavefronts_per_active_cycle_per_sm: 0.2819612018074164
+          dominant_stall: short_scoreboard
+          stalls_per_issue_active:
+            barrier: 0.7
+            lg_throttle: 0.0
+            long_scoreboard: 2.0
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.86
+            no_instruction: 0.05
+            not_selected: 0.14
+            short_scoreboard: 2.16
+            wait: 0.86
+        '6':
+          cycles_per_step_per_block: 1514.3
+          issue_active_fraction: 0.26602594151764053
+          inst_issued_per_active_cycle_per_sm: 1.0641037660705621
+          fma_pipe_active_fraction: 0.14178045518579024
+          lsu_wavefronts_per_active_cycle_per_sm: 0.3100344811430416
+          dominant_stall: short_scoreboard
+          stalls_per_issue_active:
+            barrier: 0.45
+            lg_throttle: 0.0
+            long_scoreboard: 1.78
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.86
+            no_instruction: 0.05
+            not_selected: 0.14
+            short_scoreboard: 2.16
+            wait: 0.86
+    skinny_16x32x8_S2_P0:
+      stripped:
+        '6':
+          cycles_per_step_per_block: 239.2
+          issue_active_fraction: 0.3640098951419493
+          inst_issued_per_active_cycle_per_sm: 1.4560395652681215
+          fma_pipe_active_fraction: 0.11304462710855114
+          lsu_wavefronts_per_active_cycle_per_sm: 0.5066961279140122
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 1.6
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.01
+            mio_throttle: 9.97
+            no_instruction: 0.2
+            not_selected: 1.85
+            short_scoreboard: 1.99
+            wait: 2.13
+        '4':
+          cycles_per_step_per_block: 130.3
+          issue_active_fraction: 0.3335557412179115
+          inst_issued_per_active_cycle_per_sm: 1.334222992910966
+          fma_pipe_active_fraction: 0.10353809127223387
+          lsu_wavefronts_per_active_cycle_per_sm: 0.46314069135976
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 1.47
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.01
+            mio_throttle: 4.94
+            no_instruction: 0.2
+            not_selected: 0.8
+            short_scoreboard: 2.02
+            wait: 2.12
+        '2':
+          cycles_per_step_per_block: 93.3
+          issue_active_fraction: 0.31891551567145643
+          inst_issued_per_active_cycle_per_sm: 1.2756620626858257
+          fma_pipe_active_fraction: 0.09895399410451318
+          lsu_wavefronts_per_active_cycle_per_sm: 0.44271907424065987
+          dominant_stall: mio_throttle
+          stalls_per_issue_active:
+            barrier: 1.3
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.01
+            mio_throttle: 3.29
+            no_instruction: 0.2
+            not_selected: 0.49
+            short_scoreboard: 2.03
+            wait: 2.11
+        '1':
+          cycles_per_step_per_block: 61.9
+          issue_active_fraction: 0.24240695269437285
+          inst_issued_per_active_cycle_per_sm: 0.9696278107774914
+          fma_pipe_active_fraction: 0.07516823910584927
+          lsu_wavefronts_per_active_cycle_per_sm: 0.3359830461848822
+          dominant_stall: wait
+          stalls_per_issue_active:
+            barrier: 0.87
+            lg_throttle: 0.0
+            long_scoreboard: 0.0
+            math_pipe_throttle: 0.01
+            mio_throttle: 1.44
+            no_instruction: 0.2
+            not_selected: 0.2
+            short_scoreboard: 2.01
+            wait: 2.1
+      real:
+        '1':
+          cycles_per_step_per_block: 226.9
+          issue_active_fraction: 0.06461812438385509
+          inst_issued_per_active_cycle_per_sm: 0.25847249753542034
+          fma_pipe_active_fraction: 0.015832444284202524
+          lsu_wavefronts_per_active_cycle_per_sm: 0.057493780825631044
+          dominant_stall: barrier
+          stalls_per_issue_active:
+            barrier: 19.57
+            lg_throttle: 0.0
+            long_scoreboard: 4.26
+            math_pipe_throttle: 0.01
+            mio_throttle: 0.69
+            no_instruction: 0.19
+            not_selected: 0.12
+            short_scoreboard: 1.61
+            wait: 2.07
+        '6':
+          cycles_per_step_per_block: 479.8
+          issue_active_fraction: 0.310966669946455
+          inst_issued_per_active_cycle_per_sm: 1.2438666876855933
+          fma_pipe_active_fraction: 0.07599357605058625
+          lsu_wavefronts_per_active_cycle_per_sm: 0.27643394900590945
+          dominant_stall: barrier
+          stalls_per_issue_active:
+            barrier: 14.84
+            lg_throttle: 0.0
+            long_scoreboard: 3.92
+            math_pipe_throttle: 0.04
+            mio_throttle: 2.62
+            no_instruction: 0.21
+            not_selected: 0.92
+            short_scoreboard: 1.57
+            wait: 2.09
+        '4':
+          cycles_per_step_per_block: 274.4
+          issue_active_fraction: 0.16729930274136165
+          inst_issued_per_active_cycle_per_sm: 0.6691972024653298
+          fma_pipe_active_fraction: 0.04083577386564432
+          lsu_wavefronts_per_active_cycle_per_sm: 0.14867963519300337
+          dominant_stall: barrier
+          stalls_per_issue_active:
+            barrier: 19.77
+            lg_throttle: 0.0
+            long_scoreboard: 4.52
+            math_pipe_throttle: 0.02
+            mio_throttle: 1.2
+            no_instruction: 0.2
+            not_selected: 0.36
+            short_scoreboard: 1.6
+            wait: 2.08
+        '2':
+          cycles_per_step_per_block: 258.7
+          issue_active_fraction: 0.1504113278300099
+          inst_issued_per_active_cycle_per_sm: 0.6016453113200396
+          fma_pipe_active_fraction: 0.036695067077017585
+          lsu_wavefronts_per_active_cycle_per_sm: 0.1336782236346272
+          dominant_stall: barrier
+          stalls_per_issue_active:
+            barrier: 15.88
+            lg_throttle: 0.0
+            long_scoreboard: 4.22
+            math_pipe_throttle: 0.02
+            mio_throttle: 0.94
+            no_instruction: 0.19
+            not_selected: 0.26
+            short_scoreboard: 1.61
+            wait: 2.08
   l1_hit_rate_pct:
     footprint_kib=16,smem=0: 99.36
     footprint_kib=16,smem=16384: 99.36
@@ -2180,6 +3286,7 @@ counter_crosscheck:
     '49152': 32768
     '65536': 16384
     '98304': 16384
+l2_capacity_bytes: 25165824
 l1_bytes_by_carveout_counters: *id001
 functional:
   cp_async_chunk_order: in-order
@@ -2221,6 +3328,8 @@ functional:
     128-bit per quarter-warp (max 8-way)
   independent_thread_scheduling: false
 micro_benchmarks:
+- b27_dependency_ilp
+- b28_lsu_port_contention
 - b13_l2_structure
 - b14_l1_carveout
 - b15_copy_queue
@@ -2236,7 +3345,7 @@ micro_benchmarks:
 - b25_multi_kernel
 - b26_functional_probes
 provenance:
-  suite_commit: 56dbedaffaf580c6164613d4e91cfb635efb9752
+  suite_commit: 58022330e0195b473008baa51134762588056259
   host: spark-6951
   driver: 580.159.03
   toolkit: Build cuda_13.0.r13.0/compiler.36424714_0
@@ -2249,9 +3358,9 @@ provenance:
     variance_source: B11 sustained load
     sampled_sm_mhz:
       min: 208.0
-      max: 2522.0
+      max: 2535.0
     max_sm_mhz: 3003.0
-  date: '2026-10-14T19:03:40Z'
+  date: '2026-10-14T20:38:51Z'
   raw: calibration/spark-6951/raw
   ci_target: 0.04
   max_reps: 50
@@ -2376,6 +3485,596 @@ provenance:
       note: penalty = device read bandwidth / this allocation's read bandwidth, 1
         GiB working set
       method: 'B12: GPU streaming read bandwidth by allocation kind, 1 GiB'
+    scoreboard_latency_cycles:
+      from:
+      - scoreboard_latency_cycles[lds]
+      - scoreboard_latency_cycles[fma]
+      method: 'B27: fma variant a=1 w=1 (one dependent FFMA chain) and lds variant
+        a=1 w=1 (one shared-memory chase), cycles per instruction; confirms B17.5'
+      ci95:
+        lds: 0.0
+        fma: 0.0
+    issue_bound_fraction:
+      from: issue_bound_fraction_grid
+      method: 'B27 dep variant: per iteration a ld.shared then a dependent FFMA per
+        warp, L iterations unrolled, 4w warps per SM (w per scheduler); fraction =
+        warp-instructions issued per scheduler cycle (bound 1). The grid is a prediction
+        target of the warp model, not an input'
+      inferred_from:
+      - - 1
+        - 1
+        - 4
+        - 33.2
+        - 0.0603
+      - - 1
+        - 2
+        - 4
+        - 33.2
+        - 0.1206
+      - - 1
+        - 4
+        - 4
+        - 34.1
+        - 0.2346
+      - - 1
+        - 8
+        - 4
+        - 64.2
+        - 0.2493
+      - - 1
+        - 1
+        - 8
+        - 33.1
+        - 0.0604
+      - - 1
+        - 2
+        - 8
+        - 33.1
+        - 0.1207
+      - - 1
+        - 4
+        - 8
+        - 34.0
+        - 0.2351
+      - - 1
+        - 8
+        - 8
+        - 64.2
+        - 0.2493
+      - - 1
+        - 1
+        - 16
+        - 33.1
+        - 0.0604
+      - - 1
+        - 2
+        - 16
+        - 33.2
+        - 0.1207
+      - - 1
+        - 4
+        - 16
+        - 34.2
+        - 0.2342
+      - - 1
+        - 8
+        - 16
+        - 64.1
+        - 0.2495
+      - - 1
+        - 1
+        - 32
+        - 33.1
+        - 0.0604
+      - - 1
+        - 2
+        - 32
+        - 33.1
+        - 0.1208
+      - - 1
+        - 4
+        - 32
+        - 34.1
+        - 0.2344
+      - - 1
+        - 8
+        - 32
+        - 64.1
+        - 0.2495
+      - - 1
+        - 1
+        - 64
+        - 33.1
+        - 0.0604
+      - - 1
+        - 2
+        - 64
+        - 33.1
+        - 0.1208
+      - - 1
+        - 4
+        - 64
+        - 34.1
+        - 0.2344
+      - - 1
+        - 8
+        - 64
+        - 64.1
+        - 0.2495
+      - - 2
+        - 1
+        - 4
+        - 39.3
+        - 0.1017
+      - - 2
+        - 2
+        - 4
+        - 39.3
+        - 0.2033
+      - - 2
+        - 4
+        - 4
+        - 64.1
+        - 0.2496
+      - - 2
+        - 8
+        - 4
+        - 128.3
+        - 0.2495
+      - - 2
+        - 1
+        - 8
+        - 39.4
+        - 0.1014
+      - - 2
+        - 2
+        - 8
+        - 39.4
+        - 0.2028
+      - - 2
+        - 4
+        - 8
+        - 64.1
+        - 0.2497
+      - - 2
+        - 8
+        - 8
+        - 128.3
+        - 0.2494
+      - - 2
+        - 1
+        - 16
+        - 39.4
+        - 0.1014
+      - - 2
+        - 2
+        - 16
+        - 39.4
+        - 0.2028
+      - - 2
+        - 4
+        - 16
+        - 64.1
+        - 0.2497
+      - - 2
+        - 8
+        - 16
+        - 128.3
+        - 0.2494
+      - - 2
+        - 1
+        - 32
+        - 39.4
+        - 0.1015
+      - - 2
+        - 2
+        - 32
+        - 39.4
+        - 0.2029
+      - - 2
+        - 4
+        - 32
+        - 64.1
+        - 0.2497
+      - - 2
+        - 8
+        - 32
+        - 128.3
+        - 0.2494
+      - - 2
+        - 1
+        - 64
+        - 39.3
+        - 0.1018
+      - - 2
+        - 2
+        - 64
+        - 39.3
+        - 0.2035
+      - - 2
+        - 4
+        - 64
+        - 64.1
+        - 0.2497
+      - - 2
+        - 8
+        - 64
+        - 128.2
+        - 0.2495
+      - - 4
+        - 1
+        - 4
+        - 40.9
+        - 0.1954
+      - - 4
+        - 2
+        - 4
+        - 64.1
+        - 0.2498
+      - - 4
+        - 4
+        - 4
+        - 128.1
+        - 0.2498
+      - - 4
+        - 8
+        - 4
+        - 256.2
+        - 0.2498
+      - - 4
+        - 1
+        - 8
+        - 40.2
+        - 0.1988
+      - - 4
+        - 2
+        - 8
+        - 64.1
+        - 0.2498
+      - - 4
+        - 4
+        - 8
+        - 128.1
+        - 0.2498
+      - - 4
+        - 8
+        - 8
+        - 256.2
+        - 0.2498
+      - - 4
+        - 1
+        - 16
+        - 40.9
+        - 0.1955
+      - - 4
+        - 2
+        - 16
+        - 64.1
+        - 0.2498
+      - - 4
+        - 4
+        - 16
+        - 128.1
+        - 0.2498
+      - - 4
+        - 8
+        - 16
+        - 256.2
+        - 0.2498
+      - - 4
+        - 1
+        - 32
+        - 40.2
+        - 0.1989
+      - - 4
+        - 2
+        - 32
+        - 64.1
+        - 0.2498
+      - - 4
+        - 4
+        - 32
+        - 128.1
+        - 0.2498
+      - - 4
+        - 8
+        - 32
+        - 256.2
+        - 0.2499
+      - - 4
+        - 1
+        - 64
+        - 40.1
+        - 0.1993
+      - - 4
+        - 2
+        - 64
+        - 64.1
+        - 0.2497
+      - - 4
+        - 4
+        - 64
+        - 128.1
+        - 0.2499
+      - - 4
+        - 8
+        - 64
+        - 256.1
+        - 0.2499
+      - - 8
+        - 1
+        - 4
+        - 66.2
+        - 0.2418
+      - - 8
+        - 2
+        - 4
+        - 128.2
+        - 0.2497
+      - - 8
+        - 4
+        - 4
+        - 256.1
+        - 0.2499
+      - - 8
+        - 8
+        - 4
+        - 512.1
+        - 0.2499
+      - - 8
+        - 1
+        - 8
+        - 66.2
+        - 0.2418
+      - - 8
+        - 2
+        - 8
+        - 128.2
+        - 0.2497
+      - - 8
+        - 4
+        - 8
+        - 256.1
+        - 0.2499
+      - - 8
+        - 8
+        - 8
+        - 512.1
+        - 0.2499
+      - - 8
+        - 1
+        - 16
+        - 66.2
+        - 0.2418
+      - - 8
+        - 2
+        - 16
+        - 128.2
+        - 0.2497
+      - - 8
+        - 4
+        - 16
+        - 256.1
+        - 0.2499
+      - - 8
+        - 8
+        - 16
+        - 512.1
+        - 0.2499
+      - - 8
+        - 1
+        - 32
+        - 65.3
+        - 0.245
+      - - 8
+        - 2
+        - 32
+        - 128.1
+        - 0.2498
+      - - 8
+        - 4
+        - 32
+        - 256.1
+        - 0.2499
+      - - 8
+        - 8
+        - 32
+        - 512.1
+        - 0.25
+      - - 8
+        - 1
+        - 64
+        - 64.7
+        - 0.2474
+      - - 8
+        - 2
+        - 64
+        - 128.1
+        - 0.2498
+      - - 8
+        - 4
+        - 64
+        - 256.1
+        - 0.2499
+      - - 8
+        - 8
+        - 64
+        - 512.1
+        - 0.25
+      - - 16
+        - 1
+        - 4
+        - 132.8
+        - 0.241
+      - - 16
+        - 2
+        - 4
+        - 256.1
+        - 0.2499
+      - - 16
+        - 4
+        - 4
+        - 512.1
+        - 0.25
+      - - 16
+        - 8
+        - 4
+        - 1024.1
+        - 0.25
+      - - 16
+        - 1
+        - 8
+        - 132.8
+        - 0.241
+      - - 16
+        - 2
+        - 8
+        - 256.1
+        - 0.2499
+      - - 16
+        - 4
+        - 8
+        - 512.1
+        - 0.25
+      - - 16
+        - 8
+        - 8
+        - 1024.1
+        - 0.25
+      - - 16
+        - 1
+        - 16
+        - 130.8
+        - 0.2446
+      - - 16
+        - 2
+        - 16
+        - 256.1
+        - 0.2499
+      - - 16
+        - 4
+        - 16
+        - 512.1
+        - 0.25
+      - - 16
+        - 8
+        - 16
+        - 1024.1
+        - 0.25
+      - - 16
+        - 1
+        - 32
+        - 129.4
+        - 0.2472
+      - - 16
+        - 2
+        - 32
+        - 256.1
+        - 0.2499
+      - - 16
+        - 4
+        - 32
+        - 512.1
+        - 0.25
+      - - 16
+        - 8
+        - 32
+        - 1024.1
+        - 0.25
+      - - 16
+        - 1
+        - 64
+        - 128.7
+        - 0.2486
+      - - 16
+        - 2
+        - 64
+        - 256.1
+        - 0.2499
+      - - 16
+        - 4
+        - 64
+        - 512.1
+        - 0.25
+      - - 16
+        - 8
+        - 64
+        - 1024.1
+        - 0.25
+    ilp_to_hide_lds:
+      from: issue_bound_fraction_grid
+      method: 'B27: smallest a x w at L=16 with fraction >= 0.9'
+    lsu_instr_per_cycle_per_sm:
+      from:
+      - lsu_contention[mix=lds,b=2]
+      - lsu_contention[mix=lds,b=6]
+      - lsu_contention[mix=lds,b=4]
+      - lsu_contention[mix=lds,b=3]
+      - lsu_contention[mix=lds,b=1]
+      method: 'B28 lds mix at the highest residency: ld.shared warp-instructions (4
+        x 128-bit + 8 x 32-bit per thread per step) accepted per SM cycle; the per-residency
+        table shows the rate rising with occupancy (0.47 at one block to 1.02 at six)'
+    smem_port_bytes_per_cycle_per_sm:
+      from:
+      - lsu_contention[mix=copy,b=2]
+      - lsu_contention[mix=lds,b=2]
+      - lsu_contention[mix=both,b=2]
+      - lsu_contention[mix=both,b=6]
+      - lsu_contention[mix=copy,b=4]
+      - lsu_contention[mix=lds,b=6]
+      - lsu_contention[mix=lds,b=4]
+      - lsu_contention[mix=copy,b=6]
+      - lsu_contention[mix=both,b=4]
+      - lsu_contention[mix=lds,b=3]
+      - lsu_contention[mix=copy,b=1]
+      - lsu_contention[mix=both,b=3]
+      - lsu_contention[mix=both,b=1]
+      - lsu_contention[mix=copy,b=3]
+      - lsu_contention[mix=lds,b=1]
+      method: 'B28 lds mix: aggregate shared-memory bytes per SM cycle (b blocks x
+        per-block bytes over the median block''s time), plateau over b = 1..6'
+      inferred_from:
+        '1': 119.2
+        '2': 124.1
+        '3': 181.2
+        '4': 207.0
+        '6': 262.1
+    smem_arbiter:
+      from:
+      - lsu_contention[mix=lds,b=2]
+      - lsu_contention[mix=lds,b=6]
+      - lsu_contention[mix=lds,b=4]
+      - lsu_contention[mix=lds,b=3]
+      - lsu_contention[mix=lds,b=1]
+      method: 'B28: spread (cv) of per-block times at b >= 2; <= 10 % = fair share'
+    lds_rate_by_residency:
+      from:
+      - lsu_contention[mix=lds,b=2]
+      - lsu_contention[mix=lds,b=6]
+      - lsu_contention[mix=lds,b=4]
+      - lsu_contention[mix=lds,b=3]
+      - lsu_contention[mix=lds,b=1]
+      method: B28 lds mix per residency
+    copy_bytes_per_s_per_sm_by_residency:
+      from:
+      - lsu_contention[mix=copy,b=2]
+      - lsu_contention[mix=copy,b=4]
+      - lsu_contention[mix=copy,b=6]
+      - lsu_contention[mix=copy,b=1]
+      - lsu_contention[mix=copy,b=3]
+      method: 'B28 copy mix: 16 B cp.async per thread per phase, aggregate bytes per
+        second per SM by residency'
+    lsu_shared_by_copies:
+      from:
+      - lsu_contention[mix=both,b=2]
+      - lsu_contention[mix=both,b=6]
+      - lsu_contention[mix=both,b=4]
+      - lsu_contention[mix=both,b=3]
+      - lsu_contention[mix=both,b=1]
+      method: 'B28 both mix vs the lds mix at the same residency: shared when the
+        shared-memory rate falls below 85 % of its lds-only value in at least half
+        the residencies (the copy rate in the mixed run is confounded by the longer
+        phase and is not used)'
     l2_sector_bytes:
       from: l2_sector_bytes
       method: 'ncu: L2-miss bytes per request for a strided read at >= 128 B strides
@@ -3952,7 +5651,7 @@ provenance:
         for a strided 4 B read over 1 GiB; at strides >= 128 B every request is its
         own line, so miss bytes per request is the DRAM fill granularity'
     counter_crosscheck.l2_hit_rate:
-      from:
+      from: &id002
       - counter_l2_hit_rate[a=16,b=0]
       - counter_l2_hit_rate[a=4,b=0]
       - counter_l2_hit_rate[a=28,b=0]
@@ -3995,7 +5694,61 @@ provenance:
       method: 'ncu: shared-memory wavefronts and bank conflicts per 4 B ld.shared
         warp instruction at word stride s; compare bank_conflict_penalty (B6) and
         functional.smem_bank_map (B26)'
-    counter_crosscheck.l1_capacity: &id002
+    counter_crosscheck.inner_loop_ground_truth:
+      from:
+      - inner_loop_ground_truth[kernel=square_32x64x32_S2_P1,variant=stripped,b=6]
+      - inner_loop_ground_truth[kernel=T1_128x256x16_S2_P1,variant=stripped,b=6]
+      - inner_loop_ground_truth[kernel=T5_128x128x32_S3_P1,variant=real,b=1]
+      - inner_loop_ground_truth[kernel=ragged_256x16x32_S2_P0,variant=stripped,b=2]
+      - inner_loop_ground_truth[kernel=T1_128x256x16_S2_P1,variant=stripped,b=4]
+      - inner_loop_ground_truth[kernel=square_32x64x32_S2_P1,variant=stripped,b=4]
+      - inner_loop_ground_truth[kernel=ragged_256x16x32_S2_P0,variant=stripped,b=4]
+      - inner_loop_ground_truth[kernel=T1_128x256x16_S2_P1,variant=stripped,b=2]
+      - inner_loop_ground_truth[kernel=ragged_256x16x32_S2_P0,variant=stripped,b=6]
+      - inner_loop_ground_truth[kernel=T5_128x128x32_S3_P1,variant=stripped,b=1]
+      - inner_loop_ground_truth[kernel=square_32x128x32_S3_P0,variant=stripped,b=1]
+      - inner_loop_ground_truth[kernel=square_32x64x32_S2_P1,variant=stripped,b=2]
+      - inner_loop_ground_truth[kernel=T5_128x128x32_S3_P1,variant=real,b=2]
+      - inner_loop_ground_truth[kernel=ragged_256x16x32_S2_P0,variant=stripped,b=1]
+      - inner_loop_ground_truth[kernel=T5_128x128x32_S3_P1,variant=stripped,b=6]
+      - inner_loop_ground_truth[kernel=square_32x128x32_S3_P0,variant=stripped,b=6]
+      - inner_loop_ground_truth[kernel=square_32x128x32_S3_P0,variant=stripped,b=4]
+      - inner_loop_ground_truth[kernel=T5_128x128x32_S3_P1,variant=stripped,b=4]
+      - inner_loop_ground_truth[kernel=T5_128x128x32_S3_P1,variant=real,b=4]
+      - inner_loop_ground_truth[kernel=square_32x64x32_S2_P1,variant=stripped,b=1]
+      - inner_loop_ground_truth[kernel=square_32x128x32_S3_P0,variant=stripped,b=2]
+      - inner_loop_ground_truth[kernel=T1_128x256x16_S2_P1,variant=stripped,b=1]
+      - inner_loop_ground_truth[kernel=T5_128x128x32_S3_P1,variant=real,b=6]
+      - inner_loop_ground_truth[kernel=T5_128x128x32_S3_P1,variant=stripped,b=2]
+      - inner_loop_ground_truth[kernel=ragged_256x16x32_S2_P0,variant=real,b=4]
+      - inner_loop_ground_truth[kernel=square_32x64x32_S2_P1,variant=real,b=1]
+      - inner_loop_ground_truth[kernel=skinny_16x32x8_S2_P0,variant=stripped,b=6]
+      - inner_loop_ground_truth[kernel=square_32x128x32_S3_P0,variant=real,b=1]
+      - inner_loop_ground_truth[kernel=ragged_256x16x32_S2_P0,variant=real,b=6]
+      - inner_loop_ground_truth[kernel=skinny_16x32x8_S2_P0,variant=stripped,b=4]
+      - inner_loop_ground_truth[kernel=T1_128x256x16_S2_P1,variant=real,b=2]
+      - inner_loop_ground_truth[kernel=ragged_256x16x32_S2_P0,variant=real,b=2]
+      - inner_loop_ground_truth[kernel=T1_128x256x16_S2_P1,variant=real,b=6]
+      - inner_loop_ground_truth[kernel=skinny_16x32x8_S2_P0,variant=real,b=1]
+      - inner_loop_ground_truth[kernel=T1_128x256x16_S2_P1,variant=real,b=4]
+      - inner_loop_ground_truth[kernel=skinny_16x32x8_S2_P0,variant=stripped,b=2]
+      - inner_loop_ground_truth[kernel=square_32x128x32_S3_P0,variant=real,b=2]
+      - inner_loop_ground_truth[kernel=skinny_16x32x8_S2_P0,variant=real,b=6]
+      - inner_loop_ground_truth[kernel=square_32x64x32_S2_P1,variant=real,b=2]
+      - inner_loop_ground_truth[kernel=T1_128x256x16_S2_P1,variant=real,b=1]
+      - inner_loop_ground_truth[kernel=skinny_16x32x8_S2_P0,variant=real,b=4]
+      - inner_loop_ground_truth[kernel=square_32x128x32_S3_P0,variant=real,b=4]
+      - inner_loop_ground_truth[kernel=ragged_256x16x32_S2_P0,variant=real,b=1]
+      - inner_loop_ground_truth[kernel=square_32x64x32_S2_P1,variant=real,b=4]
+      - inner_loop_ground_truth[kernel=square_32x64x32_S2_P1,variant=real,b=6]
+      - inner_loop_ground_truth[kernel=skinny_16x32x8_S2_P0,variant=stripped,b=1]
+      - inner_loop_ground_truth[kernel=skinny_16x32x8_S2_P0,variant=real,b=2]
+      - inner_loop_ground_truth[kernel=square_32x128x32_S3_P0,variant=real,b=6]
+      method: 'B29: codegen kernels of the four worst G4 designs and the two spark-001
+        references, stripped (global loads removed) and real, one wave of 48 x b blocks
+        (b beyond the register-limited residency runs serialized), cycles per k-step
+        per block from the wall time at the in-run clock, ncu issue and stall breakdown'
+    counter_crosscheck.l1_capacity: &id003
       from:
       - counter_l1_hit[a=32,b=98304]
       - counter_l1_hit[a=160,b=0]
@@ -4046,7 +5799,12 @@ provenance:
       - counter_l1_hit[a=32,b=65536]
       method: 'ncu: L1 sector hit rate of a single-thread 128 B-stride chase (ld.global.ca)
         by footprint and shared-memory request; compare l1_bytes_by_carveout (B14)'
-    l1_bytes_by_carveout_counters: *id002
+    l2_capacity_bytes:
+      from: *id002
+      method: 'ncu: L2 capacity from the per-block cyclic-stream hit-rate curve (counter);
+        B13''s single-warp chase (l2_chase_capacity_bytes) varies between 16 and 24
+        MiB run to run and is secondary'
+    l1_bytes_by_carveout_counters: *id003
     dram_bytes_per_s_write:
       from:
       - bandwidth_write[1073741824]

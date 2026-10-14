@@ -551,6 +551,17 @@ def fit_counters(recs):
             tab[str(st)] = {"wavefronts_per_instruction": round(wf / ins, 3) if wf and ins else None, "bank_conflicts_per_instruction": round(conf / ins, 3) if ins and conf is not None else None}
         cc["smem_wavefronts_by_stride"] = tab
         s["counter_crosscheck.smem_banks"] = {"from": [f"counter_smem_banks[a={a},b={b}]" for (a, b) in sb], "method": "ncu: shared-memory wavefronts and bank conflicts per 4 B ld.shared warp instruction at word stride s; compare bank_conflict_penalty (B6) and functional.smem_bank_map (B26)"}
+    # B29: the generated kernels at the bad corners (stripped of global loads, and real), cycles per k-step per block and the stall breakdown
+    gt = {}
+    for q, r in recs.items():
+        m = re.fullmatch(r"inner_loop_ground_truth\[kernel=([^,]+),variant=(\w+),b=(\d+)\]", q)
+        if m and r.get("detail", {}).get("measured"):
+            d = r["detail"]; n = d["ncu"]
+            gt.setdefault(m.group(1), {}).setdefault(m.group(2), {})[m.group(3)] = {"cycles_per_step_per_block": r["value"], "issue_active_fraction": n.get("issue_active_fraction"), "inst_issued_per_active_cycle_per_sm": n.get("inst_issued_per_active_cycle_per_sm"),
+                                                                                    "fma_pipe_active_fraction": n.get("fma_pipe_active_fraction"), "lsu_wavefronts_per_active_cycle_per_sm": n.get("lsu_wavefronts_per_active_cycle_per_sm"), "dominant_stall": n.get("dominant_stall"), "stalls_per_issue_active": n.get("stalls_per_issue_active")}
+    if gt:
+        cc["inner_loop_ground_truth"] = gt
+        s["counter_crosscheck.inner_loop_ground_truth"] = {"from": [q for q in recs if q.startswith("inner_loop_ground_truth[")], "method": "B29: codegen kernels of the four worst G4 designs and the two spark-001 references, stripped (global loads removed) and real, one wave of 48 x b blocks (b beyond the register-limited residency runs serialized), cycles per k-step per block from the wall time at the in-run clock, ncu issue and stall breakdown"}
     l1 = rows.get("l1_hit")
     if l1:
         cc["l1_hit_rate_pct"] = {f"footprint_kib={a},smem={b}": g(mt, "l1tex__t_sector_hit_rate.pct") for (a, b), mt in sorted(l1.items())}
@@ -565,7 +576,67 @@ def fit_counters(recs):
     return ({"counter_crosscheck": cc} if cc else {}), s
 
 
-FITTERS = [("b13_l2_structure", fit_b13), ("b14_l1_carveout", fit_b14), ("b15_copy_queue", fit_b15), ("b16_block_scheduler", fit_b16),
+# ---------------------------------------------------------------- B27 dependency / ILP / TLP
+def fit_b27(recs):
+    f, s = {}, {}
+    sb = keyed(recs, "scoreboard_latency_cycles")
+    if sb:
+        f["scoreboard_latency_cycles"] = {k: r["value"] for k, r in sb.items()}
+        s["scoreboard_latency_cycles"] = {"from": [r["quantity"] for r in sb.values()], "method": "B27: fma variant a=1 w=1 (one dependent FFMA chain) and lds variant a=1 w=1 (one shared-memory chase), cycles per instruction; confirms B17.5", "ci95": {k: r.get("ci95") for k, r in sb.items()}}
+    g = recs.get("issue_bound_fraction_grid")
+    if g:
+        grid = g["detail"].get("grid_a_w_L_cyclesPerIter_fraction") or []
+        f["issue_bound_fraction"] = {f"a={a},w={w},L={L}": frac for a, w, L, cyc, frac in grid}
+        f["dependency_cycles_per_iter"] = {f"a={a},w={w},L={L}": cyc for a, w, L, cyc, frac in grid}
+        # the headline: the smallest a*w whose dep loop at L=16 reaches 90 % of the issue bound
+        hit = sorted((a * w, a, w) for a, w, L, cyc, frac in grid if L == 16 and frac >= 0.9)
+        f["ilp_to_hide_lds"] = {"instructions_in_flight": hit[0][0], "a": hit[0][1], "w": hit[0][2]} if hit else None
+        s["issue_bound_fraction"] = {"from": "issue_bound_fraction_grid", "method": "B27 dep variant: per iteration a ld.shared then a dependent FFMA per warp, L iterations unrolled, 4w warps per SM (w per scheduler); fraction = warp-instructions issued per scheduler cycle (bound 1). The grid is a prediction target of the warp model, not an input", "inferred_from": grid}
+        s["ilp_to_hide_lds"] = {"from": "issue_bound_fraction_grid", "method": "B27: smallest a x w at L=16 with fraction >= 0.9"}
+    return f, s
+
+
+# ---------------------------------------------------------------- B28 LSU / shared-memory port contention
+def fit_b28(recs):
+    f, s = {}, {}
+    t = recs.get("smem_port_contention_table")
+    rows = keyed(recs, "lsu_contention")
+    if not rows:
+        return f, s
+    by = {}
+    for k, r in rows.items():
+        d = r["detail"]; by.setdefault(d["mix"], {})[int(d["blocks_per_sm"])] = d
+    lds = by.get("lds", {}); copy = by.get("copy", {}); both = by.get("both", {})
+    if lds:
+        agg = {str(b): d["smem_bytes_per_cycle_per_sm"] for b, d in sorted(lds.items())}
+        f["lds_rate_by_residency"] = {str(b): {"cycles_per_step_per_block": d["cycles_per_step_per_block"], "smem_bytes_per_cycle_per_sm": d["smem_bytes_per_cycle_per_sm"], "per_block_time_cv": d["per_block_time_cv"]} for b, d in sorted(lds.items())}
+        plateau = max(agg.values()); bstar = min(int(b) for b, v in agg.items() if v >= 0.95 * plateau)
+        f["smem_port_bytes_per_cycle_per_sm"] = round(plateau, 1); f["smem_port_plateau_from_blocks"] = bstar
+        bmax = max(lds); f["lsu_instr_per_cycle_per_sm"] = round(bmax * 8 * 12 / lds[bmax]["cycles_per_step_per_block"], 3)     # 8 warps x 12 ld.shared per step per block
+        f["lsu_instr_per_cycle_per_sm_by_residency"] = {str(b): round(b * 8 * 12 / d["cycles_per_step_per_block"], 3) for b, d in sorted(lds.items())}
+        s["lsu_instr_per_cycle_per_sm"] = {"from": [r["quantity"] for k, r in rows.items() if "lds" in k], "method": "B28 lds mix at the highest residency: ld.shared warp-instructions (4 x 128-bit + 8 x 32-bit per thread per step) accepted per SM cycle; the per-residency table shows the rate rising with occupancy (0.47 at one block to 1.02 at six)"}
+        cvs = [d["per_block_time_cv"] for b, d in lds.items() if b >= 2]
+        f["smem_arbiter"] = ("fair-share" if cvs and max(cvs) <= 0.10 else "unequal") if cvs else None
+        s["smem_port_bytes_per_cycle_per_sm"] = {"from": [r["quantity"] for r in rows.values()], "method": "B28 lds mix: aggregate shared-memory bytes per SM cycle (b blocks x per-block bytes over the median block's time), plateau over b = 1..6", "inferred_from": agg}
+        s["smem_arbiter"] = {"from": [r["quantity"] for k, r in rows.items() if "lds" in k], "method": "B28: spread (cv) of per-block times at b >= 2; <= 10 % = fair share"}
+        s["lds_rate_by_residency"] = {"from": [r["quantity"] for k, r in rows.items() if "lds" in k], "method": "B28 lds mix per residency"}
+    if copy:
+        f["copy_bytes_per_s_per_sm_by_residency"] = {str(b): d["copy_bytes_per_s_per_sm"] for b, d in sorted(copy.items())}
+        s["copy_bytes_per_s_per_sm_by_residency"] = {"from": [r["quantity"] for k, r in rows.items() if "copy" in k], "method": "B28 copy mix: 16 B cp.async per thread per phase, aggregate bytes per second per SM by residency"}
+    if both and lds and copy:
+        # shared path: in the mixed run the lds and copy rates both drop against their pure runs at the same residency
+        shared = []
+        for b in both:
+            if b in lds and b in copy:
+                shared.append(both[b]["smem_bytes_per_cycle_per_sm"] < 0.85 * lds[b]["smem_bytes_per_cycle_per_sm"])
+        f["lsu_shared_by_copies"] = bool(shared and sum(shared) >= len(shared) / 2)
+        f["lsu_copy_share_of_smem_rate"] = {str(b): round(both[b]["smem_bytes_per_cycle_per_sm"] / lds[b]["smem_bytes_per_cycle_per_sm"], 3) for b in sorted(both) if b in lds}
+        f["lsu_mixed_by_residency"] = {str(b): {"smem_bytes_per_cycle_per_sm": d["smem_bytes_per_cycle_per_sm"], "copy_bytes_per_s_per_sm": d["copy_bytes_per_s_per_sm"], "cycles_per_step_per_block": d["cycles_per_step_per_block"]} for b, d in sorted(both.items())}
+        s["lsu_shared_by_copies"] = {"from": [r["quantity"] for k, r in rows.items() if "both" in k], "method": "B28 both mix vs the lds mix at the same residency: shared when the shared-memory rate falls below 85 % of its lds-only value in at least half the residencies (the copy rate in the mixed run is confounded by the longer phase and is not used)"}
+    return f, s
+
+
+FITTERS = [("b27_dependency_ilp", fit_b27), ("b28_lsu_port_contention", fit_b28), ("b13_l2_structure", fit_b13), ("b14_l1_carveout", fit_b14), ("b15_copy_queue", fit_b15), ("b16_block_scheduler", fit_b16),
            ("b17_latency_hiding", None), ("b18_dram", fit_b18), ("b19_registers_local", fit_b19), ("b20_tensor_detail", fit_b20),
            ("b21_compute_block", fit_b21), ("b22_clock_governor", fit_b22), ("b23_unified_mechanics", fit_b23), ("b24_atomics_reductions", fit_b24),
            ("b25_multi_kernel", fit_b25), ("b26_functional_probes", fit_b26)]
@@ -586,6 +657,10 @@ def fit_micro(recs, contract):
             sources["l2_sector_bytes"] = dict(sources.get("l2_sector_bytes", {}), superseded_timing_inference=fields["l2_sector_bytes"],
                                               method="ncu: L2-miss bytes per request for a strided read at >= 128 B strides (counter); B13.1's timing inference gave " + str(fields["l2_sector_bytes"]) + " B and is kept in inferred_from")
             fields["l2_sector_bytes"] = int(fill)
+        cap = cc.get("l2_capacity_mib_from_counters")
+        if cap:
+            fields["l2_capacity_bytes"] = int(cap) << 20
+            sources["l2_capacity_bytes"] = {"from": sources.get("counter_crosscheck.l2_hit_rate", {}).get("from"), "method": "ncu: L2 capacity from the per-block cyclic-stream hit-rate curve (counter); B13's single-warp chase (l2_chase_capacity_bytes) varies between 16 and 24 MiB run to run and is secondary"}
         caps = cc.get("l1_capacity_bytes_from_counters_by_smem")
         if caps:
             fields["l1_bytes_by_carveout_counters"] = caps

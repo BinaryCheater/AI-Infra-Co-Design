@@ -1,0 +1,70 @@
+{
+ "quantity": "lsu_contention[mix=both,b=3]",
+ "unit": "cycles",
+ "samples": [
+  441.365234,
+  441.369141,
+  441.597656,
+  441.708984,
+  441.720703,
+  441.777344,
+  441.927734,
+  441.933594,
+  442.035156,
+  442.083984,
+  441.455078,
+  441.619141,
+  441.666016,
+  441.669922,
+  441.701172,
+  441.716797,
+  441.746094,
+  441.880859,
+  441.931641,
+  442.128906,
+  441.529297,
+  441.583984,
+  441.671875,
+  441.6875,
+  441.710938,
+  441.734375,
+  441.802734,
+  441.875,
+  441.898438,
+  441.947266
+ ],
+ "detail": {
+  "mix": "both",
+  "blocks_per_sm": 3,
+  "smem_bytes": 32768,
+  "cycles_per_step_per_block": 441.8,
+  "smem_bytes_per_cycle_per_sm": 166.9,
+  "copy_bytes_per_s_per_sm": 8837000000.0,
+  "per_block_time_cv": 0.361,
+  "sm_clock_mhz": 2541.4
+ },
+ "value": 441.71875,
+ "ci95": 0.00019013059780683094,
+ "n": 30,
+ "repeat_policy": "to_ci",
+ "method": "LSU and shared-memory port sharing across resident blocks: T5-width ld.shared + cp.async pattern at 1-6 blocks per SM (B27_plus.md)",
+ "benchmark": "b28_lsu_port_contention",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 42.0,
+   "power_w": 10.91,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2535.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 19.88,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T20:31:30Z",
+ "arch": "sm_121"
+}
