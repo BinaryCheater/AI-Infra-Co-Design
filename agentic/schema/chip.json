@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agentic/chip",
+  "title": "Hardware contract: illustrative (the paper's Listing 1 parameters), measured (calibration suite), or ventus",
+  "type": "object",
+  "required": ["name", "sms", "smem_bytes_per_block", "dram_bytes_per_s", "fp32_flops_per_s_per_sm", "barrier_s", "bytes_per_element"],
+  "properties": {
+    "name": {"type": "string"},
+    "kind": {"type": "string", "enum": ["illustrative", "measured", "ventus"]},
+    "sms": {"type": "integer", "minimum": 1},
+    "smem_bytes_per_block": {"type": "integer", "minimum": 1},
+    "dram_bytes_per_s": {"type": "number", "exclusiveMinimum": 0},
+    "fp32_flops_per_s_per_sm": {"type": "number", "exclusiveMinimum": 0},
+    "barrier_s": {"oneOf": [{"type": "number", "exclusiveMinimum": 0},
+                            {"type": "object", "minProperties": 1, "additionalProperties": {"type": "number", "exclusiveMinimum": 0}}]},
+    "bytes_per_element": {"type": "integer", "minimum": 1},
+    "threads_per_block": {"type": "integer"},
+    "max_accumulators_per_thread": {"type": "integer"},
+    "latency_ns": {"type": "object", "additionalProperties": {"type": ["number", "null"]}},
+    "tensor_flops_per_s_per_sm": {"type": "object"},
+    "fixed": {"type": "array", "items": {"type": "string"}},
+    "provenance": {"type": "object", "required": ["host", "date", "clocks", "raw"],
+                   "properties": {"clocks": {"type": "object", "required": ["locked"]}}}
+  },
+  "if": {"properties": {"kind": {"const": "measured"}}, "required": ["kind"]},
+  "then": {"required": ["kind", "provenance", "fixed", "latency_ns", "compute_capability", "gpu"]}
+}

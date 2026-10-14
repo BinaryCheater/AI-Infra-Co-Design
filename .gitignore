@@ -8,5 +8,6 @@
 .DS_Store
 .pytest_cache/
 __pycache__/
+calibration/suite/build/
 runs/*.db
 runs/*.db-journal

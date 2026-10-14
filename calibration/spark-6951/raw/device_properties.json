@@ -1,0 +1,51 @@
+{
+ "quantity": "device_properties",
+ "unit": "",
+ "samples": [],
+ "detail": {
+  "name": "NVIDIA GB10",
+  "cc": "12.1",
+  "sms": 48,
+  "warp_size": 32,
+  "smem_bytes_per_block": 49152,
+  "smem_bytes_per_block_optin": 101376,
+  "smem_bytes_per_sm": 102400,
+  "regs_per_sm": 65536,
+  "regs_per_block": 65536,
+  "l2_bytes": 25165824,
+  "max_threads_per_block": 1024,
+  "max_blocks_per_sm": 24,
+  "clock_khz": 2418000,
+  "mem_clock_khz": 8533000,
+  "bus_width_bits": 256,
+  "total_mem_bytes": 128520015872,
+  "managed": 1,
+  "pageable_access": 1,
+  "integrated": 1,
+  "driver_version": 13000,
+  "runtime_version": 13000
+ },
+ "value": null,
+ "ci95": null,
+ "n": 0,
+ "method": "cudaGetDeviceProperties / cudaDeviceGetAttribute (declared values)",
+ "benchmark": "b1_props",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 39.0,
+   "power_w": 4.08,
+   "sw_power_cap": "Active"
+  },
+  "after": {
+   "sm_mhz": 227.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 40.0,
+   "power_w": 4.18,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T14:54:20Z",
+ "arch": "sm_121"
+}

@@ -11,7 +11,7 @@ from pathlib import Path
 import jsonschema
 
 HERE = Path(__file__).resolve().parent
-KINDS = ("contract", "assignment", "verdict", "measurement", "diagnosis", "event")
+KINDS = ("contract", "assignment", "verdict", "measurement", "diagnosis", "event", "chip")
 
 
 @lru_cache(maxsize=None)
@@ -57,3 +57,8 @@ def with_id(kind: str, body: dict, prefix: str | None = None) -> dict:
     out = dict(body)
     out["id"] = content_id(kind, body, prefix)
     return validate(kind, out)
+
+
+def validate_chip(chip: dict) -> dict:
+    """A hardware contract: the illustrative one, a measured one from the calibration suite, or ventus."""
+    return validate("chip", chip)

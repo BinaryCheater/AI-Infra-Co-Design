@@ -1,0 +1,44 @@
+{
+ "quantity": "barrier_s[256]",
+ "unit": "s",
+ "samples": [
+  1.51523197e-08,
+  1.51561606e-08,
+  1.51504004e-08,
+  1.51897597e-08,
+  1.51417601e-08,
+  1.51391995e-08,
+  1.51574397e-08,
+  1.51391995e-08,
+  1.51571202e-08,
+  1.51574397e-08
+ ],
+ "detail": {
+  "threads": 256,
+  "blocks": 48,
+  "iters": 100000
+ },
+ "value": 1.515424015e-08,
+ "ci95": 0.0005173337575755005,
+ "n": 10,
+ "method": "__syncthreads loop, one block per SM, block sizes 128..1024",
+ "benchmark": "b7_barrier",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2496.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 47.0,
+   "power_w": 17.03,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2437.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 48.0,
+   "power_w": 18.96,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T14:54:59Z",
+ "arch": "sm_121"
+}

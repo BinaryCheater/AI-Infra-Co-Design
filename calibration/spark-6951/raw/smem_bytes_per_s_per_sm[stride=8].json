@@ -1,0 +1,45 @@
+{
+ "quantity": "smem_bytes_per_s_per_sm[stride=8]",
+ "unit": "byte/s",
+ "samples": [
+  40021761000.0,
+  40016130500.0,
+  40018632300.0,
+  40018009600.0,
+  40019508600.0,
+  40017882800.0,
+  40026766400.0,
+  40280199400.0,
+  40333001000.0,
+  40333762300.0
+ ],
+ "detail": {
+  "stride_words": 8,
+  "blocks": 192,
+  "threads": 256,
+  "iters": 100000
+ },
+ "value": 40020634800.0,
+ "ci95": 0.003605522519098073,
+ "n": 10,
+ "method": "ld.shared throughput at word strides 1..32, 4 blocks per SM (Jia et al. 2018; Luo et al. 2024)",
+ "benchmark": "b6_smem",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 46.0,
+   "power_w": 13.19,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2509.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 48.0,
+   "power_w": 35.89,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T14:54:58Z",
+ "arch": "sm_121"
+}

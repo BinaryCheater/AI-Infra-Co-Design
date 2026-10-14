@@ -1,0 +1,124 @@
+# Measured hardware contract, written by calibration/suite/fit.py. Do not edit by hand.
+name: spark-6951-gb10
+kind: measured
+gpu: NVIDIA GB10
+compute_capability: '12.1'
+sms: 48
+warp_size: 32
+smem_bytes_per_block: 101376
+smem_bytes_per_block_default: 49152
+smem_bytes_per_sm: 102400
+regs_per_sm: 65536
+l2_bytes: 25165824
+max_threads_per_block: 1024
+max_blocks_per_sm: 24
+bytes_per_element: 4
+threads_per_block: 256
+max_accumulators_per_thread: 128
+fp32_flops_per_s_per_sm: 589725877000.0
+dram_bytes_per_s: 235358003500.0
+dram_bytes_per_s_write: 198358553000.0
+dram_bytes_per_s_copy: 217335527000.0
+l2_bytes_effective: 16777216
+l2_bytes_per_s: 1021754980000.0
+latency_ns:
+  l1: 17.1785605
+  l2: 135.5118415
+  dram: 299.823761
+smem_bytes_per_s_per_sm: 154051677000.0
+bank_conflict_penalty:
+  '1': 1.0
+  '2': 1.009
+  '4': 1.926
+  '8': 3.849
+  '16': 7.637
+  '32': 15.273
+barrier_s:
+  '128': 1.1082239749999999e-08
+  '256': 1.515424015e-08
+  '512': 2.3329600099999998e-08
+  '1024': 3.95913601e-08
+datasheet:
+  dram_bytes_per_s: 273000000000.0
+fixed:
+- sms
+- smem_bytes_per_block
+- smem_bytes_per_sm
+- regs_per_sm
+- l2_bytes
+- dram_bytes_per_s
+- fp32_flops_per_s_per_sm
+- warp_size
+- max_threads_per_block
+provenance:
+  suite_commit: ac8679f844870d69765c1c3c0de4d48a5cd79017
+  host: spark-6951
+  driver: 580.159.03
+  toolkit: Build cuda_13.0.r13.0/compiler.36424714_0
+  arch: sm_121
+  ncu_available: true
+  clocks:
+    locked: false
+    sampled_sm_mhz:
+      min: 227.0
+      max: 2509.0
+    max_sm_mhz: 3003.0
+    variance: 0.9095257074531686
+  date: '2026-10-14T14:54:59Z'
+  raw: calibration/spark-6951/raw
+  ci_target: 0.04
+  max_reps: 50
+  sources:
+    fp32_flops_per_s_per_sm:
+      from: fp32_flops_per_s_per_sm
+      ci95: 9.644480972979248e-05
+      n: 10
+      method: dependent-FMA chains, ILP 8, 8 blocks per SM x 256 threads, cudaEvent
+        timing (Jia et al. 2018)
+    dram_bytes_per_s:
+      from:
+      - bandwidth_read[1073741824]
+      - bandwidth_read[4294967296]
+      - bandwidth_read[8589934592]
+      - bandwidth_read[2147483648]
+      note: median of the read plateau at >= 1 GiB working sets
+      ci95: 0.0008725952313826453
+    l2_bytes_per_s:
+      from:
+      - bandwidth_read[1048576]
+      - bandwidth_read[4194304]
+      note: median of the read plateau at <= 8 MiB
+    l2_bytes_effective:
+      from: bandwidth_read[*]
+      note: largest working set still above 60 % of the way from the DRAM plateau
+        to the L2 plateau
+    latency_ns:
+      from:
+      - latency[4096]
+      - latency[16384]
+      - latency[65536]
+      - latency[131072]
+      - latency[262144]
+      - latency[1048576]
+      - latency[4194304]
+      - latency[8388608]
+      - latency[16777216]
+      - latency[33554432]
+      - latency[67108864]
+      - latency[268435456]
+      - latency[1073741824]
+      note: l1 = smallest set; l2 = min over 1-8 MiB; dram = max over >= 256 MiB
+    smem_bytes_per_s_per_sm:
+      from: smem_bytes_per_s_per_sm[stride=1]
+      ci95: 0.00022857914101123353
+    barrier_s:
+      from:
+      - barrier_s[512]
+      - barrier_s[128]
+      - barrier_s[1024]
+      - barrier_s[256]
+      ci95:
+        '512': 0.00021606885580515475
+        '128': 0.00033206283955372254
+        '1024': 0.0009113219376365877
+        '256': 0.0005173337575755005

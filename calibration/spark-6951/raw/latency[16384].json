@@ -1,0 +1,44 @@
+{
+ "quantity": "latency[16384]",
+ "unit": "ns",
+ "samples": [
+  17.2951996,
+  17.2950399,
+  17.2971201,
+  17.2953606,
+  17.3383999,
+  17.3520005,
+  17.4489605,
+  17.2971201,
+  17.2958398,
+  17.2959995
+ ],
+ "detail": {
+  "working_set_bytes": 16384,
+  "steps": 200000,
+  "line_bytes": 64
+ },
+ "value": 17.2965598,
+ "ci95": 0.0014407373655887944,
+ "n": 10,
+ "method": "single-thread pointer chase over a random cyclic permutation of 64 B lines (Mei & Chu 2017; Jia et al. 2018)",
+ "benchmark": "b5_latency",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 46.0,
+   "power_w": 11.62,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2470.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 47.0,
+   "power_w": 16.97,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T14:54:56Z",
+ "arch": "sm_121"
+}

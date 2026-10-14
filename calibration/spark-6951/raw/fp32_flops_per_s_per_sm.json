@@ -1,0 +1,46 @@
+{
+ "quantity": "fp32_flops_per_s_per_sm",
+ "unit": "flop/s",
+ "samples": [
+  591827098000.0,
+  589630800000.0,
+  589630800000.0,
+  589717375000.0,
+  589639299000.0,
+  589736049000.0,
+  589734379000.0,
+  589734379000.0,
+  589574800000.0,
+  589754725000.0
+ ],
+ "detail": {
+  "sms": 48,
+  "blocks": 384,
+  "threads": 256,
+  "iters": 200000,
+  "ilp": 8
+ },
+ "value": 589725877000.0,
+ "ci95": 9.644480972979248e-05,
+ "n": 10,
+ "method": "dependent-FMA chains, ILP 8, 8 blocks per SM x 256 threads, cudaEvent timing (Jia et al. 2018)",
+ "benchmark": "b2_fma",
+ "clocks": {
+  "before": {
+   "sm_mhz": 884.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 40.0,
+   "power_w": 4.68,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2476.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 42.0,
+   "power_w": 18.1,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T14:54:21Z",
+ "arch": "sm_121"
+}
