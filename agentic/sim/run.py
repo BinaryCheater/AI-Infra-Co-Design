@@ -136,9 +136,10 @@ class Block:
 
 
 class Simulator:
-    def __init__(self, cfg: SimConfig, memory: Memory | None = None, smem=None, amplify: tuple | None = None):
+    def __init__(self, cfg: SimConfig, memory: Memory | None = None, smem=None, amplify: tuple | None = None, issue=None):
         self.cfg = cfg
         self.amplify = amplify                               # (warp, cycles): delay that warp before every compute
+        self.issue = issue                                   # M7 issue model (G4); None = FMA rate + smem pipe (G3)
         self.engine = Engine()
         self.memory = memory or Memory(cfg.contract, cfg.structural, cfg.fixed)
         self.smem = smem                                     # M3 (G3); None = no bank model
@@ -233,6 +234,16 @@ class Simulator:
         elif isinstance(e, Compute):
             if self.amplify and w == self.amplify[0]:
                 now += self.amplify[1] / self.cfg.clock_hz           # the race amplifier: this warp spins before its compute
+            if self.issue is not None and e.k_steps:
+                # G4: the phase is k_steps of instruction issue shared with every warp resident on this SM; no separate
+                # FMA or shared-memory pipe (their occupancy is inside the per-instruction costs)
+                resident = sum(len(self.blocks[i].program.warps) for i in self.sm_blocks[b.sm])
+                cycles = self.issue.phase_cycles(resident, e.k_steps, e.ffma_per_step, e.lds32_per_step, e.lds128_per_step, e.other_per_phase, e.smem_stride)
+                service = cycles / self.cfg.clock_hz
+                self.compute[b.sm].busy += service / max(1, resident // len(b.program.warps))
+                self._account(b, w, "compute", service, e.phase)
+                self._advance(b, w, now + service, "compute", e)
+                return
             service = self._compute_service(b, e)
             start, end = self.compute[b.sm].serve(now, service)
             end_smem = start
@@ -301,7 +312,7 @@ class Simulator:
                 "blocks": len(self.blocks), "sms": len(self.compute),
                 "waves": None, "waits_s": dict(self.waits), "critical_path": critical, "critical_counts": dict(counts),
                 "dram_bytes": self.memory.dram_bytes, "l2_bytes": self.memory.l2_bytes,
-                "compute_busy_s": sum(c.busy for c in self.compute),
+                "compute_busy_s": sum(c.busy for c in self.compute), "issue_model": self.issue is not None,
                 "smem_busy_s": self.smem.busy() if self.smem is not None else 0.0,
                 "memory": self.memory.stats() if hasattr(self.memory, "stats") else {},
                 "trace": self.trace if self.record else None}

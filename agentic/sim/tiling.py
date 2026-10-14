@@ -36,9 +36,9 @@ def design_programs(d: TilingDesign, w: Workload, threads: int = 256) -> tuple[l
 
 
 def simulate_design(d: TilingDesign, w: Workload, cfg: SimConfig, memory: Memory | None = None, smem=None,
-                    record_trace: bool = False, amplify: tuple | None = None) -> dict:
+                    record_trace: bool = False, amplify: tuple | None = None, issue=None) -> dict:
     progs, meta = design_programs(d, w)
-    sim = Simulator(cfg, memory, smem, amplify)
+    sim = Simulator(cfg, memory, smem, amplify, issue)
     if memory is not None and hasattr(memory, "bind"):
         memory.bind(d, w, meta)
     r = sim.launch(progs, meta["threads"], meta["smem_bytes"], record_trace)

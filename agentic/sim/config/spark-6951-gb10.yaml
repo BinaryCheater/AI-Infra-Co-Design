@@ -9,7 +9,7 @@ kinds:
              smem_bytes_per_s_per_sm, bank_conflict_penalty, barrier_s, async_copy_latency_s, async_copy_bytes_per_s,
              launch_s, clock_hz_sustained, max_blocks_per_sm_measured]
   structural: [sms, smem_bytes_per_sm, banks, bank_bytes, ports, l2_region_bytes, l2_policy, copy_queue_depth, copy_chunk_bytes,
-               scheduler, issue_cycles]
+               scheduler, issue_cycles, issue_model]
   fixed: [line_bytes, warp_size, bytes_per_element]
 
 structural:
@@ -29,6 +29,15 @@ structural:
                                        #     plateaus and places the knee at the effective capacity. Set/slice structure unknown (§9.2).
   l2_region_bytes: 1024                # granularity of the LRU (a tile row); line_bytes stays 128 for sector traffic
   l2_justified_by: B4
+  issue_model: occupancy               # M7 (G4): a phase's inner loop is instruction-issue occupancy on the SM's schedulers, additive per
+                                       #     warp-instruction (FFMA 1 / B2 rate, ld.shared.32 and .128 at B21's issue rates, B6's conflict
+                                       #     penalty), shared round-robin by every warp resident on the SM. B21 at 1-4 blocks per SM: per-block
+                                       #     step time doubles with the warps (additive), all loops within 10 %; ncu: not_selected dominant.
+  issue_model_justified_by: [B17, B21, counter_crosscheck.inner_loop]
+  issue_overhead_per_chunk: 40         # M7 (G4): instructions per cp.async chunk (16 B per thread) issued per phase outside the k-loop
+  issue_overhead_per_phase: 180        #     (address, guard, wait, barrier, loop control); from the SASS of the six spark-001 kernels:
+                                       #     per-phase non-loop instructions 663/391/301/467/280/354 at 12/6/5/6/3/3 chunks per thread
+  issue_overhead_justified_by: SASS of the spark-001 kernels (cuobjdump), notes/sim_gaps.md #6
   issue_cycles:                        # M1: per-operation issue cost in SM cycles (warp-level); structural, small, from B2/B7 fits of 0 (no fit: taken as 1 cycle)
     IssueCopy: 1
     Wait: 1

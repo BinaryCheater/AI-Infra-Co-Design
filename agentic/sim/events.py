@@ -67,6 +67,11 @@ class Compute(Event):
     phase: int | None = None
     smem_wavefronts: int = 0    # warp-level ld.shared instructions this step issues (each a wavefront when conflict-free)
     smem_stride: int = 1        # word stride of those accesses across the warp (bank-conflict degree, M3)
+    k_steps: int = 0            # G4 issue model (M7): inner-loop k-steps in this phase; 0 = use the rate model
+    ffma_per_step: int = 0      # per warp per k-step: FFMA, ld.shared.32 and ld.shared.128 warp-instructions
+    lds32_per_step: int = 0
+    lds128_per_step: int = 0
+    other_per_phase: int = 0    # per warp per phase: copy-issue, guard, address and loop instructions outside the k-loop
 
 
 @dataclass

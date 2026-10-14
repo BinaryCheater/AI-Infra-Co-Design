@@ -1,0 +1,92 @@
+{
+ "quantity": "compute_block_efficiency[T3_64x256x16,bps=3]",
+ "unit": "fraction",
+ "samples": [
+  0.195128438,
+  0.195223968,
+  0.195052555
+ ],
+ "detail": {
+  "TM": 64,
+  "TN": 256,
+  "TK": 16,
+  "R": [
+   4,
+   16
+  ],
+  "blocks_per_sm": 3,
+  "warps_per_sm": 24,
+  "cycles_per_phase": 8495,
+  "fma_bound_cycles": 1658,
+  "efficiency": 0.195,
+  "lds_per_thread_per_phase": 320,
+  "ffma_per_thread_per_phase": 1024,
+  "method": "bps blocks per SM, 256 threads each, smem tile pre-filled, cycles per full TK step of one block (median block) vs TM*TN*TK FMAs at the measured FFMA rate; SASS mix via cuobjdump by the driver",
+  "sm_clock_mhz": 2541.4,
+  "sass_mix": {
+   "LDC": 4,
+   "S2R": 8,
+   "LDCU": 4,
+   "BSSY": 4,
+   "I2F": 2,
+   "ISETP": 13,
+   "IADD3": 26,
+   "MUFU": 2,
+   "VIMNMX": 1,
+   "LOP3": 11,
+   "SEL": 1,
+   "MOV": 36,
+   "F2I": 2,
+   "HFMA2": 27,
+   "IMAD": 7,
+   "BRA": 11,
+   "LEA": 14,
+   "I2FP": 11,
+   "FMUL": 13,
+   "STS": 10,
+   "BSYNC": 4,
+   "CALL": 1,
+   "BAR": 2,
+   "CS2UR": 1,
+   "CS2R": 10,
+   "UISETP": 3,
+   "UMOV": 2,
+   "SHF": 1,
+   "UIADD3": 2,
+   "LDS": 68,
+   "FFMA": 256,
+   "FADD": 64,
+   "STG": 2,
+   "EXIT": 2,
+   "IADD": 1,
+   "FSETP": 2,
+   "FSEL": 2,
+   "RET": 1,
+   "NOP": 9
+  }
+ },
+ "value": 0.195128438,
+ "ci95": 0.00043923121036824257,
+ "n": 3,
+ "repeat_policy": "to_ci",
+ "method": "per-opcode throughput (B2 pattern); the generated inner loop's cycles per MAC step with its SASS mix",
+ "benchmark": "b21_compute_block",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 4.32,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 45.0,
+   "power_w": 36.34,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T18:22:47Z",
+ "arch": "sm_121"
+}

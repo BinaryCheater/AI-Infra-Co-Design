@@ -6,93 +6,14 @@
  "nvcc": "Build cuda_13.0.r13.0/compiler.36424714_0",
  "driver": "580.159.03",
  "ncu": "/usr/local/cuda/bin/ncu",
- "started": "2026-10-14T18:05:00Z",
+ "started": "2026-10-14T18:22:42Z",
  "benchmarks": {
-  "b13_l2_structure": {
-   "quantities": 4,
-   "seconds": 3.7,
-   "reps": 3,
-   "worst_ci95": 1.0
-  },
-  "b14_l1_carveout": {
-   "quantities": 11,
-   "seconds": 2.0,
-   "reps": 30,
-   "worst_ci95": 0.004441233970122157
-  },
-  "b15_copy_queue": {
-   "quantities": 15,
-   "seconds": 1.8,
-   "reps": 30,
-   "worst_ci95": 0.029243119266055047
-  },
-  "b16_block_scheduler": {
-   "quantities": 90,
-   "seconds": 0.5,
-   "reps": 3,
-   "worst_ci95": 1.0
-  },
-  "b17_latency_hiding": {
-   "quantities": 25,
-   "seconds": 5.1,
-   "reps": 40,
-   "worst_ci95": 0.03883466166384551
-  },
-  "b18_dram": {
-   "quantities": 10,
-   "seconds": 63.8,
-   "reps": 3,
-   "worst_ci95": 1.0
-  },
-  "b19_registers_local": {
-   "quantities": 9,
-   "seconds": 23.3,
-   "reps": 10,
-   "worst_ci95": 0.01794801091738627
-  },
-  "b20_tensor_detail": {
-   "quantities": 10,
-   "seconds": 2.5,
-   "reps": 30,
-   "worst_ci95": 0.03381213358951948
-  },
   "b21_compute_block": {
-   "quantities": 18,
-   "seconds": 3.2,
+   "quantities": 32,
+   "seconds": 3.7,
    "reps": 30,
-   "worst_ci95": 0.002287959471643164
-  },
-  "b22_clock_governor": {
-   "quantities": 7,
-   "seconds": 193.2,
-   "reps": 3,
-   "worst_ci95": 1.0
-  },
-  "b23_unified_mechanics": {
-   "quantities": 7,
-   "seconds": 8.6,
-   "reps": 3,
-   "worst_ci95": 1.0
-  },
-  "b24_atomics_reductions": {
-   "quantities": 18,
-   "seconds": 1.7,
-   "reps": 10,
-   "worst_ci95": 0.030347101286147406
-  },
-  "b25_multi_kernel": {
-   "quantities": 6,
-   "seconds": 1.7,
-   "reps": 9,
-   "worst_ci95": 9.553665152617825e-05
-  },
-  "b26_functional_probes": {
-   "quantities": 9,
-   "seconds": 0.7,
-   "reps": 3,
-   "worst_ci95": 1.0
+   "worst_ci95": 0.0026569884918448937
   }
  },
- "crosscheck": "ok",
- "finished": "2026-10-14T18:12:05Z"
+ "finished": "2026-10-14T18:22:47Z"
 }

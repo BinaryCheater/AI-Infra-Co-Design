@@ -29,6 +29,13 @@ def warp_programs(design: TilingDesign, warps: int, phases: int, tile_bytes: int
     # (16 consecutive words: one wavefront each), so (RM + RN) * Tk ld.shared wavefronts per warp per phase
     rm, rn = max(1, design.tm // 16), max(1, design.tn // 16)
     smem_wf = (rm + rn) * design.tk if tile_bytes else 0
+    # G4 issue model: per warp per k-step RM x RN FFMA, RN ld.shared.32 (the B row) and ceil(RM / 4) ld.shared.128
+    # (the A column, four k-steps per instruction under the compiler's unroll); B21's SASS mix confirms the counts
+    ffma, lds32, lds128 = rm * rn, rn, -(-rm // 4)
+    # outside the k-loop each phase issues the next tile's cp.async chunks (16 B per thread each) with their bounds guards and
+    # addresses, the wait and the barriers: SASS of the six spark-001 kernels gives 40 instructions per chunk + 180 per phase
+    chunks = (tile_bytes // 32 // 16) if tile_bytes else 0          # tile_bytes here is one warp's share
+    other = (40 * chunks + 180) if tile_bytes else 0
     progs = []
     for w in range(warps):
         seq = []
@@ -42,7 +49,8 @@ def warp_programs(design: TilingDesign, warps: int, phases: int, tile_bytes: int
             seq.append(Wait(w, group=p))
             if design.leading_barrier:
                 seq.append(BarrierArrive(w, f"A{p}", p, "leading"))
-            seq.append(Compute(w, (p % S,), flops_per_phase, "fp32", tile=p, phase=p, smem_wavefronts=smem_wf, smem_stride=1))
+            seq.append(Compute(w, (p % S,), flops_per_phase, "fp32", tile=p, phase=p, smem_wavefronts=smem_wf, smem_stride=1,
+                               k_steps=design.tk if tile_bytes else 0, ffma_per_step=ffma, lds32_per_step=lds32, lds128_per_step=lds128, other_per_phase=other))
             if design.trailing_barrier:
                 seq.append(BarrierArrive(w, f"B{p}", p, "trailing"))
         if store_bytes:
