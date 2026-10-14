@@ -1,0 +1,42 @@
+{
+ "quantity": "dram_page_bytes_effective",
+ "unit": "bytes",
+ "samples": [
+  128
+ ],
+ "detail": {
+  "seq_random_ratio_128B": 0.995,
+  "ratios_512B_4KB_16KB": [
+   1.231,
+   1.251,
+   1.262
+  ],
+  "inferred_effective_page_bytes": 128,
+  "method": "random chunk size at which bandwidth reaches 90 % of sequential",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 128,
+ "ci95": 0.0,
+ "n": 1,
+ "method": "bandwidth vs power-of-two stride (interleave bits, channels), sequential vs random (page locality), read/write mix, CPU contention, 60 s drift",
+ "benchmark": "b18_dram",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2502.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 53.0,
+   "power_w": 12.94,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2502.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 61.0,
+   "power_w": 23.69,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:18:49Z",
+ "arch": "sm_121",
+ "repeat_policy": "once"
+}

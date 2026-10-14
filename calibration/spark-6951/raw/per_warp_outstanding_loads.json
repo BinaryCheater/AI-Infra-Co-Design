@@ -1,0 +1,66 @@
+{
+ "quantity": "per_warp_outstanding_loads",
+ "unit": "loads",
+ "samples": [
+  4,
+  2,
+  2,
+  2,
+  2
+ ],
+ "detail": {
+  "table_u_cyclesPerIteration": [
+   [
+    1,
+    1178.0
+   ],
+   [
+    2,
+    1203.0
+   ],
+   [
+    4,
+    1523.0
+   ],
+   [
+    8,
+    2825.0
+   ],
+   [
+    16,
+    5495.0
+   ],
+   [
+    32,
+    10523.0
+   ]
+  ],
+  "inferred_per_warp_outstanding_loads": 4,
+  "method": "one warp per SM; each iteration issues U independent 128-bit L2-missing loads and the next iteration depends on their data; cycles per iteration stay at the latency while all U overlap and grow once U exceeds the per-warp outstanding limit (largest U within 1.3x the U=1 cycles)",
+  "sm_clock_mhz": 2521.8
+ },
+ "value": 2,
+ "ci95": 0.5,
+ "n": 5,
+ "repeat_policy": "structural",
+ "method": "bandwidth vs resident warps (DRAM and L2), per-warp MLP, per-SM outstanding requests, issue width, dependent-chain latencies (Volkov 2016; Jia et al. 2018)",
+ "benchmark": "b17_latency_hiding",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 4.25,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2522.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 48.0,
+   "power_w": 20.01,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:32:38Z",
+ "arch": "sm_121"
+}

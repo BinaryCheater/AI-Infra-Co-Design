@@ -1,0 +1,45 @@
+{
+ "quantity": "local_mem_latency_ns",
+ "unit": "ns",
+ "samples": [
+  15.4672953,
+  15.4671754,
+  15.5142498,
+  15.4788441,
+  15.4669756,
+  15.5154087,
+  15.5979687,
+  15.6553531,
+  15.6581903,
+  15.5270374
+ ],
+ "detail": {
+  "local_bytes_per_thread": 1024,
+  "method": "single-thread dependent chase over a 1 KB local array (dynamic index)",
+  "sm_clock_mhz": 2502.4
+ },
+ "value": 15.51482925,
+ "ci95": 0.005135912146761113,
+ "n": 10,
+ "method": "FMA kernel under -maxrregcount (spill curve from ptxas -v); local-memory chase and stream; allocation granularity from B9",
+ "benchmark": "b19_registers_local",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 57.0,
+   "power_w": 4.69,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2483.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 65.0,
+   "power_w": 35.15,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:19:18Z",
+ "arch": "sm_121",
+ "repeat_policy": "to_ci"
+}

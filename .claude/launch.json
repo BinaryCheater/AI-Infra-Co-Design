@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {"name": "console", "runtimeExecutable": "/Users/lishang/work/research/.venv/bin/python", "runtimeArgs": ["-m", "agentic.cli.main", "serve", "--ledger", "runs/spark-001.db", "--port", "8787"], "port": 8787, "env": {"PYTHONPATH": "."}}
+  ]
+}

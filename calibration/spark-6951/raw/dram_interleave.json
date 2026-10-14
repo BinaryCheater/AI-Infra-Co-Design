@@ -1,0 +1,134 @@
+{
+ "quantity": "dram_interleave",
+ "unit": "channels",
+ "samples": [
+  1
+ ],
+ "detail": {
+  "top_bytes_per_s": 228678348479.22977,
+  "table_forcedBit_bytesPerS": [
+   [
+    7,
+    234200000000.0
+   ],
+   [
+    8,
+    227700000000.0
+   ],
+   [
+    9,
+    224000000000.0
+   ],
+   [
+    10,
+    232900000000.0
+   ],
+   [
+    11,
+    230200000000.0
+   ],
+   [
+    12,
+    234300000000.0
+   ],
+   [
+    13,
+    234500000000.0
+   ],
+   [
+    14,
+    234600000000.0
+   ],
+   [
+    15,
+    216400000000.0
+   ],
+   [
+    16,
+    234300000000.0
+   ],
+   [
+    17,
+    233900000000.0
+   ],
+   [
+    18,
+    234200000000.0
+   ],
+   [
+    19,
+    229200000000.0
+   ],
+   [
+    20,
+    234700000000.0
+   ],
+   [
+    21,
+    235200000000.0
+   ],
+   [
+    22,
+    234500000000.0
+   ],
+   [
+    23,
+    234400000000.0
+   ],
+   [
+    24,
+    234200000000.0
+   ],
+   [
+    25,
+    234700000000.0
+   ],
+   [
+    26,
+    234700000000.0
+   ],
+   [
+    27,
+    234300000000.0
+   ],
+   [
+    28,
+    221900000000.0
+   ],
+   [
+    29,
+    235000000000.0
+   ]
+  ],
+  "inferred_interleave_bits": [],
+  "floor_bytes_per_s_all_bits_forced": 228678348479.22977,
+  "top_over_floor": 1.0,
+  "inferred_channels": 1,
+  "method": "random 128 B requests (ld.cg, 4M per pass) over 1 GiB with one address bit forced to 0: a bit whose forcing drops the bandwidth below 70 % of the unmasked value selects a channel (or a bank group); channels = 2^(bits found), cross-checked by the unmasked / all-forced ratio. XOR-hashed channel functions can hide a bit from single-bit forcing; the table shows every bit",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 1,
+ "ci95": 0.0,
+ "n": 1,
+ "method": "bandwidth vs power-of-two stride (interleave bits, channels), sequential vs random (page locality), read/write mix, CPU contention, 60 s drift",
+ "benchmark": "b18_dram",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2502.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 53.0,
+   "power_w": 12.94,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2502.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 61.0,
+   "power_w": 23.69,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:18:49Z",
+ "arch": "sm_121",
+ "repeat_policy": "once"
+}

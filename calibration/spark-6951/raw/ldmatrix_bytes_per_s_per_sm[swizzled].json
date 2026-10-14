@@ -1,0 +1,54 @@
+{
+ "quantity": "ldmatrix_bytes_per_s_per_sm[swizzled]",
+ "unit": "byte/s",
+ "samples": [
+  348552462000.0,
+  348707531000.0,
+  348514537000.0,
+  348597265000.0,
+  348726663000.0,
+  349022577000.0,
+  348918097000.0,
+  348918097000.0,
+  348880691000.0,
+  348880691000.0,
+  348760070000.0,
+  348968894000.0,
+  348992245000.0,
+  349112643000.0,
+  348895867000.0,
+  348895867000.0,
+  348933274000.0,
+  348895867000.0,
+  348563143000.0,
+  348391201000.0
+ ],
+ "detail": {
+  "method": "ldmatrix.x4 (512 B per warp instruction) from a 16 KB tile, 4 warps x 4 blocks per SM",
+  "sm_clock_mhz": 2482.8
+ },
+ "value": 348888279000.0,
+ "ci95": 0.00028805782839153504,
+ "n": 20,
+ "method": "cublasLt FP8; mma.sync shapes per precision; dependent mma chain latency; ldmatrix feed; ISA probes",
+ "benchmark": "b20_tensor_detail",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2392.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 64.0,
+   "power_w": 13.5,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2450.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 65.0,
+   "power_w": 30.97,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:08:41Z",
+ "arch": "sm_121",
+ "repeat_policy": "to_ci"
+}

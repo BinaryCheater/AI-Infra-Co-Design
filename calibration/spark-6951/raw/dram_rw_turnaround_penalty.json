@@ -1,0 +1,58 @@
+{
+ "quantity": "dram_rw_turnaround_penalty",
+ "unit": "fraction",
+ "samples": [
+  0.0385997023
+ ],
+ "detail": {
+  "table_readFraction_bytesPerS": [
+   [
+    1.0,
+    239700000000.0
+   ],
+   [
+    0.75,
+    220100000000.0
+   ],
+   [
+    0.5,
+    214700000000.0
+   ],
+   [
+    0.25,
+    208900000000.0
+   ],
+   [
+    0.0,
+    196900000000.0
+   ]
+  ],
+  "worst_dip_below_linear": 0.0386,
+  "method": "4 KB runs of reads and writes interleaved in the stated fraction over 1 GiB; dip below the linear interpolation of the pure cases is the turnaround cost",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 0.0385997023,
+ "ci95": 0.0,
+ "n": 1,
+ "method": "bandwidth vs power-of-two stride (interleave bits, channels), sequential vs random (page locality), read/write mix, CPU contention, 60 s drift",
+ "benchmark": "b18_dram",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2502.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 53.0,
+   "power_w": 12.94,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2502.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 61.0,
+   "power_w": 23.69,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:18:49Z",
+ "arch": "sm_121",
+ "repeat_policy": "once"
+}

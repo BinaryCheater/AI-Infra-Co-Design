@@ -1,0 +1,45 @@
+{
+ "quantity": "kernel_gap_s",
+ "unit": "s",
+ "samples": [
+  2.464e-06,
+  2.464e-06,
+  2.464e-06,
+  2.464e-06,
+  2.464e-06,
+  2.464e-06,
+  2.464e-06,
+  2.464e-06,
+  2.464e-06
+ ],
+ "detail": {
+  "kernels": 1000,
+  "kernel_us": 20,
+  "method": "globaltimer at exit of kernel i and entry of i+1 on one stream, median gap",
+  "sm_clock_mhz": 2502.4
+ },
+ "value": 2.464e-06,
+ "ci95": 0.0,
+ "n": 9,
+ "repeat_policy": "to_ci",
+ "method": "kernel-to-kernel gap, CUDA graph gap, two-stream concurrency, L2 persistence across kernels",
+ "benchmark": "b25_multi_kernel",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 54.0,
+   "power_w": 9.5,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2463.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 55.0,
+   "power_w": 16.74,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:20:13Z",
+ "arch": "sm_121"
+}

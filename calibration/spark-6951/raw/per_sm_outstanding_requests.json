@@ -1,0 +1,39 @@
+{
+ "quantity": "per_sm_outstanding_requests",
+ "unit": "requests",
+ "samples": [
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "detail": {
+  "note": "derived by fit.py: plateau bandwidth per SM x latency / 32 B sectors, for dram and l2, from bandwidth_vs_warps and B5",
+  "sm_clock_mhz": 2521.8
+ },
+ "value": 0,
+ "ci95": 0.0,
+ "n": 5,
+ "repeat_policy": "to_ci",
+ "method": "bandwidth vs resident warps (DRAM and L2), per-warp MLP, per-SM outstanding requests, issue width, dependent-chain latencies (Volkov 2016; Jia et al. 2018)",
+ "benchmark": "b17_latency_hiding",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 4.25,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2522.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 48.0,
+   "power_w": 20.01,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:32:38Z",
+ "arch": "sm_121"
+}

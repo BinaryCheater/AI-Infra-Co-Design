@@ -1,0 +1,40 @@
+{
+ "quantity": "l1_bytes_by_carveout[smem=16384]",
+ "unit": "bytes",
+ "samples": [
+  32768,
+  32768,
+  32768,
+  32768,
+  32768
+ ],
+ "detail": {
+  "dynamic_smem_bytes": 16384,
+  "carveout_pct": 16,
+  "sm_clock_mhz": 2518.5
+ },
+ "value": 32768,
+ "ci95": 0.0,
+ "n": 5,
+ "method": "pointer chase vs footprint per shared-memory carve-out; L1 allocation after cp.async.cg / .ca / TMA",
+ "benchmark": "b14_l1_carveout",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 50.0,
+   "power_w": 10.69,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2522.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 51.0,
+   "power_w": 17.17,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:14:27Z",
+ "arch": "sm_121",
+ "repeat_policy": "to_ci"
+}

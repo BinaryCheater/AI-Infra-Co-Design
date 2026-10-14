@@ -1,0 +1,57 @@
+{
+ "quantity": "tensor_flops_per_s_chip[fp8_e5m2]",
+ "unit": "flop/s",
+ "samples": [
+  206343721000000.0,
+  205732146000000.0,
+  202987769000000.0,
+  205530338000000.0,
+  205400093000000.0,
+  201168252000000.0,
+  186481289000000.0,
+  190234294000000.0,
+  200425460000000.0,
+  200200076000000.0,
+  203755742000000.0,
+  206049217000000.0,
+  189773039000000.0,
+  187451854000000.0,
+  200201240000000.0,
+  200803793000000.0,
+  204473559000000.0,
+  197689042000000.0,
+  203183413000000.0,
+  202469827000000.0
+ ],
+ "detail": {
+  "n": 8192,
+  "api": "cublasLtMatmul",
+  "inputs": "fp8_e5m2 (B e4m3 when A is e5m2)",
+  "accumulate": "fp32",
+  "sm_clock_mhz": 2482.8
+ },
+ "value": 201819039500000.0,
+ "ci95": 0.009695345170840534,
+ "n": 20,
+ "method": "cublasLt FP8; mma.sync shapes per precision; dependent mma chain latency; ldmatrix feed; ISA probes",
+ "benchmark": "b20_tensor_detail",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2392.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 64.0,
+   "power_w": 13.5,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2450.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 65.0,
+   "power_w": 30.97,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:08:41Z",
+ "arch": "sm_121",
+ "repeat_policy": "to_ci"
+}

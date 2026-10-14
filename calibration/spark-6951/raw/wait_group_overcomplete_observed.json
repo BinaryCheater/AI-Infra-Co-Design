@@ -1,0 +1,39 @@
+{
+ "quantity": "wait_group_overcomplete_observed",
+ "unit": "count",
+ "samples": [
+  152
+ ],
+ "detail": {
+  "trials": 157,
+  "group0_complete": 157,
+  "group1_complete": 157,
+  "group2_already_complete": 152,
+  "method": "three 4 KB groups, wait_group 1: groups 0 and 1 must be complete; group 2 may be",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 152,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "in-flight cp.async visibility and chunk order, wait_group semantics, barrier/fence visibility, TMA early bytes, FP32 contraction/ftz/tensor rounding, bank map, independent thread scheduling",
+ "benchmark": "b26_functional_probes",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 48.0,
+   "power_w": 4.43,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2463.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 9.18,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:26:56Z",
+ "arch": "sm_121"
+}

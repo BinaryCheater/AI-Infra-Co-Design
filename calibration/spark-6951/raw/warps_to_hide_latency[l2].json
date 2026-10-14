@@ -1,0 +1,76 @@
+{
+ "quantity": "warps_to_hide_latency[l2]",
+ "unit": "warps",
+ "samples": [
+  24,
+  24,
+  24,
+  24,
+  24
+ ],
+ "detail": {
+  "level": "l2",
+  "table_warps_bandwidth": [
+   [
+    1,
+    152000000000.0
+   ],
+   [
+    2,
+    292400000000.0
+   ],
+   [
+    4,
+    512300000000.0
+   ],
+   [
+    8,
+    823900000000.0
+   ],
+   [
+    16,
+    1039000000000.0
+   ],
+   [
+    24,
+    1290000000000.0
+   ],
+   [
+    32,
+    1362000000000.0
+   ],
+   [
+    48,
+    1361000000000.0
+   ]
+  ],
+  "plateau_bytes_per_s": 1362118702493.9653,
+  "per_warp_bytes_per_s": 3167625745.953907,
+  "method": "grid-stride float4 reads with resident warps per SM set by dynamic smem; knee = first warp count within 90 % of the plateau",
+  "sm_clock_mhz": 2521.8
+ },
+ "value": 24,
+ "ci95": 0.0,
+ "n": 5,
+ "repeat_policy": "structural",
+ "method": "bandwidth vs resident warps (DRAM and L2), per-warp MLP, per-SM outstanding requests, issue width, dependent-chain latencies (Volkov 2016; Jia et al. 2018)",
+ "benchmark": "b17_latency_hiding",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 4.25,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2522.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 48.0,
+   "power_w": 20.01,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:32:38Z",
+ "arch": "sm_121"
+}

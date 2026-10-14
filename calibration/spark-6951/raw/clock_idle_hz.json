@@ -1,0 +1,35 @@
+{
+ "quantity": "clock_idle_hz",
+ "unit": "Hz",
+ "samples": [
+  2482793000.0,
+  2478905000.0
+ ],
+ "detail": {
+  "method": "clock probe at idle, twice"
+ },
+ "value": 2480849000.0,
+ "ci95": 1.0,
+ "n": 2,
+ "method": "in-kernel clock64/globaltimer sampling: step response, clock by load type, power cap, clock after idle gaps",
+ "benchmark": "b22_clock_governor",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2444.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 70.0,
+   "power_w": 52.87,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2392.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 64.0,
+   "power_w": 14.89,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:06:56Z",
+ "arch": "sm_121",
+ "repeat_policy": "once"
+}

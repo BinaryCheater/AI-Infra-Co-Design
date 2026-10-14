@@ -14,6 +14,8 @@
   .cal a { color: var(--teal); }
   .prov { font-size: 13px; color: var(--muted); }
   h2 { margin-top: 18px; }
+  h3 { margin: 16px 0 4px; font-size: 15px; color: var(--muted); font-weight: 500; }
+  details summary { cursor: pointer; color: var(--teal); }
 </style>
 </head>
 <body>
@@ -31,17 +33,46 @@
   for (const h of hosts) {
     const c = h.contract, p = c.provenance || {}, src = p.sources || {};
     const rawLink = q => { const names = Array.isArray(q) ? q : [q]; return names.map(n => { const fn = String(n).replace(/[^A-Za-z0-9_.=\[\]-]/g, "_") + ".json"; return h.raw_files.includes(fn) ? `<a href="/calibration-files/${h.host}/raw/${encodeURIComponent(fn)}">${esc(n)}</a>` : esc(n); }).join(", "); };
-    const rows = [];
-    const skip = new Set(["provenance", "fixed", "datasheet", "name", "kind", "gpu", "compute_capability", "suite_level"]);
-    for (const [k, v] of Object.entries(c)) {
-      if (skip.has(k)) continue;
+    // rows grouped by mechanism (notes/mechanistic_simulator_design.md M1-M12); fields not listed fall into "chip (B1-B12)"
+    const MECH = [
+      ["M1 warps and latency hiding", ["bandwidth_vs_warps", "warps_to_hide_dram_latency", "warps_to_hide_l2_latency", "per_warp_outstanding_loads", "per_sm_outstanding_requests", "schedulers_per_sm", "issue_width_per_scheduler"]],
+      ["M2 registers and occupancy", ["regs_per_sm", "max_blocks_per_sm", "max_blocks_per_sm_measured", "spill_penalty_curve", "local_mem_latency_ns", "local_mem_bytes_per_s_per_sm", "reg_alloc_granularity", "reg_bank_conflict_penalty"]],
+      ["M3 shared memory and L1", ["smem_bytes_per_block", "smem_bytes_per_block_default", "smem_bytes_per_sm", "smem_bytes_per_s_per_sm", "bank_conflict_penalty", "ld_shared_bytes_per_s_per_sm", "l1_bytes_by_carveout", "l1_line_bytes", "l1_latency_ns", "l1_smem_pool_bytes"]],
+      ["M4 asynchronous copies", ["async_copy_latency_s", "async_copy_bytes_per_s", "tma_supported", "tma_bulk_latency_s", "cp_async_groups_in_flight", "cp_async_issue_cycles_per_16B", "cp_async_latency_dist", "copy_throughput_bytes_per_s", "tma_cp_async_shared_path", "tma_2d_latency_s", "mbarrier_s", "cp_async_cg_allocates_l1", "cp_async_ca_allocates_l1", "tma_allocates_l1"]],
+      ["M5 memory hierarchy (L2, DRAM)", ["l2_bytes", "l2_bytes_effective", "l2_bytes_per_s", "latency_ns", "dram_bytes_per_s", "dram_bytes_per_s_write", "dram_bytes_per_s_copy", "l2_line_bytes", "l2_sector_bytes", "l2_sets", "l2_ways", "l2_slices", "l2_slice_hash_bits", "l2_latency_near_far_ns", "l2_replacement", "l2_structure_confirmed", "dram_channels", "dram_interleave_bits", "dram_locality_bytes_per_s", "dram_page_bytes_effective", "dram_seq_random_ratio", "dram_rw_turnaround_penalty", "dram_drift_60s"]],
+      ["M6 barriers", ["barrier_s"]],
+      ["M7 compute", ["fp32_flops_per_s_per_sm", "sustained_fp32_flops_per_s_per_sm", "tensor_flops_per_s_per_sm", "tensor_shapes", "tensor_flops_per_s_chip", "tensor_flops_per_s_per_sm_by_shape", "tensor_shapes_supported", "tensor_shapes_unsupported", "tensor_op_latency_cycles", "ldmatrix_bytes_per_s_per_sm", "tensor_flops_per_s_chip_fp8", "isa_features", "inst_throughput_per_sm", "compute_block_efficiency", "op_latency_cycles", "max_accumulators_per_thread"]],
+      ["M8 block scheduler", ["block_dispatch_order", "block_dispatch_rate_per_s", "block_refill_latency_s", "block_dispatch_deterministic", "wave_staircase"]],
+      ["M9 launch and kernel boundaries", ["launch_s", "launch_host_s", "kernel_gap_s", "graph_kernel_gap_s", "concurrent_kernels", "l2_persists_across_kernels", "l2_persisting_window_supported"]],
+      ["M10 clocks and power", ["clock_hz_sustained", "clock_variance_sustained", "power_w_sustained", "clock_warmup_s", "clock_idle_hz", "clock_hz_sustained_by_load", "clock_governor_limit", "clock_after_gap_hz"]],
+      ["M11 unified memory", ["unified_memory", "unified_memory_penalty", "coherent_access_bytes_per_s", "um_first_touch_s", "um_prefetched_bytes_per_s", "um_translation_overhead", "um_host_resident_bytes_per_s", "um_max_alloc_bytes", "dram_bytes_per_s_under_cpu_load"]],
+      ["M12 atomics", ["atomic_throughput_per_s", "atomic_contention_curve", "atomic_latency_ns"]],
+    ];
+    const placed = new Set(); for (const [, ks] of MECH) ks.forEach(k => placed.add(k));
+    const skip = new Set(["provenance", "fixed", "datasheet", "name", "kind", "gpu", "compute_capability", "suite_level", "functional", "micro_benchmarks"]);
+    const row = (k, v) => {
       const s = src[k] || {};
-      rows.push(`<tr><td><b>${esc(k)}</b></td><td>${esc(fmt(v))}</td><td>${s.ci95 != null && typeof s.ci95 === "number" ? (s.ci95 * 100).toFixed(1) + " %" : (s.ci95 && typeof s.ci95 === "object" ? Object.entries(s.ci95).map(([kk, vv]) => vv == null ? `${esc(kk)}: –` : `${esc(kk)}: ${(vv * 100).toFixed(1)} %`).join(", ") : "–")}</td><td>${esc(s.method || s.note || (k in src ? "" : "declared (B1)"))}</td><td>${s.from ? rawLink(s.from) : (h.raw_files.includes("device_properties.json") ? `<a href="/calibration-files/${h.host}/raw/device_properties.json">device_properties</a>` : "–")}</td></tr>`);
+      const shown = v != null && typeof v === "object" ? JSON.stringify(v, (kk, vv) => kk === "sass_mix" || kk === "first_wave_sm_sequence" || kk === "entry_ns_first_wave" ? undefined : vv) : fmt(v);
+      const cell = shown.length > 240 ? `<details><summary>${esc(shown.slice(0, 120))}…</summary><pre style="white-space:pre-wrap;max-width:520px">${esc(JSON.stringify(v, null, 1))}</pre></details>` : esc(shown);
+      return `<tr><td><b>${esc(k)}</b></td><td>${cell}</td><td>${s.ci95 != null && typeof s.ci95 === "number" ? (s.ci95 * 100).toFixed(1) + " %" : (s.ci95 && typeof s.ci95 === "object" ? Object.entries(s.ci95).map(([kk, vv]) => vv == null ? `${esc(kk)}: –` : `${esc(kk)}: ${(vv * 100).toFixed(1)} %`).join(", ") : "–")}</td><td>${esc(s.method || s.note || (k in src ? "" : "declared (B1)"))}${s.inferred_from ? ` <details><summary>inferred from</summary><pre style="white-space:pre-wrap;max-width:520px">${esc(JSON.stringify(s.inferred_from, null, 1))}</pre></details>` : ""}</td><td>${s.from ? rawLink(s.from) : (h.raw_files.includes("device_properties.json") ? `<a href="/calibration-files/${h.host}/raw/device_properties.json">device_properties</a>` : "–")}</td></tr>`;
+    };
+    const groups = [];
+    const header = `<tr><th>quantity</th><th>value</th><th>interval (95 %)</th><th>method</th><th>raw</th></tr>`;
+    const chipRows = Object.entries(c).filter(([k]) => !skip.has(k) && !placed.has(k)).map(([k, v]) => row(k, v));
+    if (chipRows.length) groups.push(`<h3>chip (B1)</h3><table class="cal">${header}${chipRows.join("")}</table>`);
+    for (const [title, ks] of MECH) {
+      const rs = ks.filter(k => k in c).map(k => row(k, c[k]));
+      if (rs.length) groups.push(`<h3>${esc(title)}</h3><table class="cal">${header}${rs.join("")}</table>`);
+    }
+    if (c.functional) {
+      const fr = Object.entries(c.functional).map(([k, v]) => { const s = src[k] || {}; const yn = typeof v === "boolean" ? (v ? "yes" : "no") : (v == null ? "–" : (typeof v === "object" ? JSON.stringify(v) : String(v)));
+        return `<tr><td><b>${esc(k)}</b></td><td>${esc(yn)}</td><td>${esc(s.method || "")}</td><td>${s.from ? rawLink(s.from) : "–"}</td></tr>`; });
+      groups.push(`<h3>functional (B26: what the event model assumes)</h3><table class="cal"><tr><th>question</th><th>answer</th><th>method</th><th>raw</th></tr>${fr.join("")}</table>`);
     }
     const links = [h.preflight ? `<a href="/calibration-files/${h.host}/preflight.md">preflight.md</a>` : "", `<a href="/calibration-files/${h.host}/contract.yaml">contract.yaml</a>`, h.f3 ? `<a href="/calibration-files/${h.host}/f3_results.json">f3_results.json</a>` : "", h.f4 ? `<a href="/calibration-files/${h.host}/f4_run.json">f4_run.json</a>` : ""].filter(Boolean).join(" · ");
     box.insertAdjacentHTML("beforeend", `<h2>${esc(c.name)} <span class="muted">· ${esc(c.gpu || "")} · cc ${esc(c.compute_capability || "")} · ${esc(c.kind)} · suite ${esc(c.suite_level || "")}</span></h2>
       <div class="prov">host ${esc(p.host)} · ${esc(p.date)} · driver ${esc(p.driver)} · ${esc(p.toolkit)} · arch ${esc(p.arch)} · clocks ${p.clocks && p.clocks.locked ? "locked" : "not locked"}${p.clocks && p.clocks.variance != null ? ", variance " + (p.clocks.variance * 100).toFixed(1) + " % (" + esc(p.clocks.variance_source || "") + ")" : ""} · suite commit ${esc((p.suite_commit || "").slice(0, 10))} · fixed: ${esc((c.fixed || []).join(", "))} · ${links}</div>
-      <table class="cal"><tr><th>quantity</th><th>value</th><th>interval (95 %)</th><th>method</th><th>raw</th></tr>${rows.join("")}</table>`);
+      ${groups.join("")}`);
   }
   if (!hosts.length) box.textContent = "no calibration records in this checkout";
 })();

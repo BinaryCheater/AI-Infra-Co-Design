@@ -61,6 +61,8 @@ tensor_shapes:
   fp16: m16n16k16
 tensor_flops_per_s_chip:
   bf16: 95036924500000.0
+  fp8_e5m2: 201819039500000.0
+  fp8_e4m3: 195509443000000.0
   tf32: 40102098250000.0
   fp32: 21564979550000.0
   fp16: 91931818450000.0
@@ -106,9 +108,1275 @@ unified_memory_penalty:
   managed_cpu_first_steady: 1.461
   managed_cpu_first_pass1: 1.455
 coherent_access_bytes_per_s: 200038414500.0
-suite_level: full
+suite_level: full+micro
+l2_sector_bytes: 64
+l2_line_bytes: 128
+l2_ways: null
+l2_sets: null
+l2_set_conflicts_observed: false
+l2_ways_lower_bound: 64
+l2_structure_confirmed: false
+l2_slice_hash_bits: []
+l2_slices: null
+l2_slice_latency_spread_ns: 5.1
+l2_latency_near_far_ns:
+- 132.145939
+- 137.2411
+l2_replacement: lru-like (a cyclic chase larger than the cache misses entirely in
+  both orders)
+l2_chase_capacity_bytes: 25165824
+l1_bytes_by_carveout:
+  '0': 32768
+  '16384': 32768
+  '32768': 32768
+  '49152': 32768
+  '65536': 16384
+  '98304': 16384
+l1_latency_ns: 17.0534941
+l1_line_bytes: null
+cp_async_cg_allocates_l1: false
+cp_async_ca_allocates_l1: false
+tma_allocates_l1: false
+l1_smem_pool_bytes: 114688
+cp_async_groups_in_flight:
+  per_warp: null
+  note: per warp = per block here (one block of 256 threads per SM, each group 4 KB);
+    -1/null = no issue stall within 22 pending groups
+cp_async_issue_cycles_per_16B: 127.0
+cp_async_latency_dist:
+  tile=16384,resident=1:
+    p1_cycles: 770
+    p50_cycles: 961
+    p99_cycles: 1278
+    max_cycles: 2290
+    p1_s: 3.126e-07
+    p50_s: 3.901e-07
+    p99_s: 5.188e-07
+    max_s: 9.296e-07
+  tile=16384,resident=6:
+    p1_cycles: 1341
+    p50_cycles: 4592
+    p99_cycles: 6540
+    max_cycles: 6200431
+    p1_s: 5.444e-07
+    p50_s: 1.864e-06
+    p99_s: 2.655e-06
+    max_s: 0.002517
+  tile=32768,resident=1:
+    p1_cycles: 1617
+    p50_cycles: 1830
+    p99_cycles: 2415
+    max_cycles: 40235
+    p1_s: 6.564e-07
+    p50_s: 7.429e-07
+    p99_s: 9.804e-07
+    max_s: 1.633e-05
+  tile=4096,resident=1:
+    p1_cycles: 465
+    p50_cycles: 536
+    p99_cycles: 1091
+    max_cycles: 2011
+    p1_s: 1.888e-07
+    p50_s: 2.176e-07
+    p99_s: 4.429e-07
+    max_s: 8.164e-07
+  tile=4096,resident=6:
+    p1_cycles: 483
+    p50_cycles: 901
+    p99_cycles: 2273
+    max_cycles: 11050
+    p1_s: 1.961e-07
+    p50_s: 3.658e-07
+    p99_s: 9.227e-07
+    max_s: 4.486e-06
+  tile=49152,resident=1:
+    p1_cycles: 2416
+    p50_cycles: 2837
+    p99_cycles: 3640
+    max_cycles: 5802459
+    p1_s: 9.808e-07
+    p50_s: 1.152e-06
+    p99_s: 1.478e-06
+    max_s: 0.002355
+  tile=8192,resident=1:
+    p1_cycles: 558
+    p50_cycles: 646
+    p99_cycles: 1078
+    max_cycles: 6965
+    p1_s: 2.265e-07
+    p50_s: 2.622e-07
+    p99_s: 4.376e-07
+    max_s: 2.827e-06
+  tile=8192,resident=6:
+    p1_cycles: 614
+    p50_cycles: 2058
+    p99_cycles: 3834
+    max_cycles: 5730850
+    p1_s: 2.493e-07
+    p50_s: 8.354e-07
+    p99_s: 1.556e-06
+    max_s: 0.002326
+copy_throughput_bytes_per_s:
+  mixed_half_half: 1620173060000.0
+  cp_async: 1892736520000.0
+  tma_bulk: 1854355060000.0
+tma_cp_async_shared_path: true
+mbarrier_s: 4.505979255e-08
+tma_2d_latency_s: 4.66026354e-07
+block_dispatch_order:
+  grid=1,threads=128,smem=0:
+    class: unclassified
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=1,threads=128,smem=61440:
+    class: unclassified
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=1,threads=256,smem=0:
+    class: unclassified
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=1,threads=256,smem=61440:
+    class: unclassified
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=144,threads=128,smem=0:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 48
+  grid=144,threads=128,smem=61440:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 0.1
+    sms_with_two_blocks_median: 48
+  grid=144,threads=256,smem=0:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 48
+  grid=144,threads=256,smem=61440:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 0.1
+    sms_with_two_blocks_median: 48
+  grid=192,threads=128,smem=0:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 48
+    sm_sequence:
+    - 0
+    - 1
+    - 8
+    - 9
+    - 16
+    - 17
+    - 24
+    - 25
+    - 32
+    - 33
+    - 40
+    - 41
+    - 2
+    - 3
+    - 10
+    - 11
+    - 18
+    - 19
+    - 26
+    - 27
+    - 34
+    - 35
+    - 42
+    - 43
+    - 4
+    - 5
+    - 12
+    - 13
+    - 20
+    - 21
+    - 28
+    - 29
+    - 36
+    - 37
+    - 44
+    - 45
+    - 6
+    - 7
+    - 14
+    - 15
+    - 22
+    - 23
+    - 30
+    - 31
+    - 38
+    - 39
+    - 46
+    - 47
+    - 0
+    - 1
+    - 8
+    - 9
+    - 16
+    - 17
+    - 24
+    - 25
+    - 32
+    - 33
+    - 40
+    - 41
+    - 2
+    - 3
+    - 10
+    - 11
+    - 18
+    - 19
+    - 26
+    - 27
+    - 34
+    - 35
+    - 42
+    - 43
+    - 4
+    - 5
+    - 12
+    - 13
+    - 20
+    - 21
+    - 28
+    - 29
+    - 36
+    - 37
+    - 44
+    - 45
+    - 6
+    - 7
+    - 14
+    - 15
+    - 22
+    - 23
+    - 30
+    - 31
+    - 38
+    - 39
+    - 46
+    - 47
+    entry_ns:
+    - 0
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - 0
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - -32
+    - 0
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+    - -32
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+    - 0
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+    - -32
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+    - 0
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+    - -32
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+    - 0
+    - 0
+    - -32
+    - 0
+    - -32
+    - 0
+    - 0
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+  grid=192,threads=128,smem=61440:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 0.1
+    sms_with_two_blocks_median: 48
+  grid=192,threads=256,smem=0:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 48
+  grid=192,threads=256,smem=61440:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 0.1
+    sms_with_two_blocks_median: 48
+  grid=24,threads=128,smem=0:
+    class: sm-pairs round-robin over 3 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=24,threads=128,smem=61440:
+    class: sm-pairs round-robin over 3 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=24,threads=256,smem=0:
+    class: sm-pairs round-robin over 3 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=24,threads=256,smem=61440:
+    class: sm-pairs round-robin over 3 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=32,threads=128,smem=0:
+    class: sm-pairs round-robin over 4 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=32,threads=128,smem=61440:
+    class: sm-pairs round-robin over 4 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=32,threads=256,smem=0:
+    class: sm-pairs round-robin over 4 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=32,threads=256,smem=61440:
+    class: sm-pairs round-robin over 4 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=47,threads=128,smem=0:
+    class: sm-pairs with pair stride 8
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=47,threads=128,smem=61440:
+    class: sm-pairs with pair stride 8
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=47,threads=256,smem=0:
+    class: sm-pairs with pair stride 8
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=47,threads=256,smem=61440:
+    class: sm-pairs with pair stride 8
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=48,threads=128,smem=0:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=48,threads=128,smem=61440:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=48,threads=256,smem=0:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+    sm_sequence:
+    - 0
+    - 1
+    - 8
+    - 9
+    - 16
+    - 17
+    - 24
+    - 25
+    - 32
+    - 33
+    - 40
+    - 41
+    - 2
+    - 3
+    - 10
+    - 11
+    - 18
+    - 19
+    - 26
+    - 27
+    - 34
+    - 35
+    - 42
+    - 43
+    - 4
+    - 5
+    - 12
+    - 13
+    - 20
+    - 21
+    - 28
+    - 29
+    - 36
+    - 37
+    - 44
+    - 45
+    - 6
+    - 7
+    - 14
+    - 15
+    - 22
+    - 23
+    - 30
+    - 31
+    - 38
+    - 39
+    - 46
+    - 47
+    entry_ns:
+    - 0
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+    - 0
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+    - 0
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+    - 0
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+    - 0
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+    - 0
+    - 0
+    - -32
+    - 0
+    - -32
+    - -32
+    - 0
+    - 0
+    - 0
+    - 0
+    - -32
+    - 0
+    - 0
+    - 0
+    - -32
+    - 0
+    - -32
+    - 0
+  grid=48,threads=256,smem=61440:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=49,threads=128,smem=0:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 1
+  grid=49,threads=128,smem=61440:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 0.6
+    sms_with_two_blocks_median: 1
+  grid=49,threads=256,smem=0:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 1
+  grid=49,threads=256,smem=61440:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 0.2
+    sms_with_two_blocks_median: 1
+  grid=8,threads=128,smem=0:
+    class: ascending-sm-id
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=8,threads=128,smem=61440:
+    class: ascending-sm-id
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=8,threads=256,smem=0:
+    class: ascending-sm-id
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=8,threads=256,smem=61440:
+    class: ascending-sm-id
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 0
+  grid=96,threads=128,smem=0:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 48
+  grid=96,threads=128,smem=61440:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 0.1
+    sms_with_two_blocks_median: 48
+  grid=96,threads=256,smem=0:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 1.0
+    sms_with_two_blocks_median: 48
+  grid=96,threads=256,smem=61440:
+    class: sm-pairs round-robin over 6 groups of 8 SMs
+    identical_orderings_fraction: 0.1
+    sms_with_two_blocks_median: 48
+    sm_sequence:
+    - 0
+    - 1
+    - 8
+    - 9
+    - 16
+    - 17
+    - 24
+    - 25
+    - 32
+    - 33
+    - 40
+    - 41
+    - 2
+    - 3
+    - 10
+    - 11
+    - 18
+    - 19
+    - 26
+    - 27
+    - 34
+    - 35
+    - 42
+    - 43
+    - 4
+    - 5
+    - 12
+    - 13
+    - 20
+    - 21
+    - 28
+    - 29
+    - 36
+    - 37
+    - 44
+    - 45
+    - 6
+    - 7
+    - 14
+    - 15
+    - 22
+    - 23
+    - 30
+    - 31
+    - 38
+    - 39
+    - 46
+    - 47
+    - 42
+    - 46
+    - 0
+    - 8
+    - 16
+    - 17
+    - 32
+    - 40
+    - 41
+    - 10
+    - 18
+    - 19
+    - 26
+    - 34
+    - 43
+    - 12
+    - 20
+    - 21
+    - 28
+    - 36
+    - 44
+    - 45
+    - 14
+    - 22
+    - 23
+    - 30
+    - 38
+    - 47
+    - 24
+    - 1
+    - 9
+    - 25
+    - 33
+    - 2
+    - 11
+    - 27
+    - 35
+    - 4
+    - 13
+    - 29
+    - 37
+    - 6
+    - 15
+    - 31
+    - 39
+    - 3
+    - 5
+    - 7
+    entry_ns:
+    - 0
+    - 32
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 32
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 32
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 32
+    - 0
+    - 32
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 0
+    - 20160
+    - 20160
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20192
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+    - 20224
+block_dispatch_deterministic: 0.1
+block_dispatch_rate_per_s: 1973478790.0
+block_refill_latency_s: 1.92e-07
+wave_staircase:
+  '0': 0.000103487998
+  '1': 0.000154047996
+  '8': 0.000154016003
+  '16': 0.000154111996
+  '24': 0.000153952003
+  '32': 0.000154144004
+  '40': 0.000154047996
+  '47': 0.000154047996
+bandwidth_vs_warps:
+  l2:
+    '1': 152015037500.0
+    '2': 292380229500.0
+    '4': 512297033000.0
+    '8': 826443483000.0
+    '16': 1053616290000.0
+    '24': 1344600525000.0
+    '32': 1363114760000.0
+    '48': 1363225440000.0
+  dram:
+    '1': 55150112100.0
+    '2': 107133688000.0
+    '4': 187520401000.0
+    '8': 234016335000.0
+    '16': 242933291000.0
+    '24': 242851535000.0
+    '32': 241392736000.0
+    '48': 239483785000.0
+warps_to_hide_dram_latency: 8
+warps_to_hide_l2_latency: 24
+per_warp_outstanding_loads: 2
+per_sm_outstanding_requests:
+  dram: 11.9
+  l2: 30.1
+issue_rate_warp_instr_per_cycle_per_sm: 3.12096926
+schedulers_per_sm: 4
+issue_width_per_scheduler: 1
+op_latency_cycles:
+  fma: 4.0
+  ld_shared: 33.0
+  imad: 4.0
+  ld_l1hit: 44.0
+dram_channels: null
+dram_interleave_bits: []
+dram_channel_select: 'no single address bit selects a channel (every forced bit keeps
+  >= 95 % of the unmasked bandwidth): the channel function hashes several bits; the
+  count is not inferable from user space by this probe'
+dram_locality_bytes_per_s:
+  rand_128B: 186670694000.0
+  seq_128B: 185735577000.0
+  rand_16KB: 234310475000.0
+  rand_4KB: 232424538000.0
+  rand_512B: 228728243000.0
+dram_seq_random_ratio: 0.995
+dram_page_bytes_effective: 128
+dram_rw_turnaround_penalty: 0.0385997023
+dram_bytes_per_s_under_cpu_load: 161711222000.0
+dram_drift_60s: 0.0661309553
+spill_penalty_curve:
+  '255':
+    flops_per_s_per_sm: 615588098000.0
+    regs_used: 71
+    spill_bytes: 0
+    local_bytes: 0
+  '128':
+    flops_per_s_per_sm: 615457433500.0
+    regs_used: 71
+    spill_bytes: 0
+    local_bytes: 0
+  '96':
+    flops_per_s_per_sm: 615470146500.0
+    regs_used: 71
+    spill_bytes: 0
+    local_bytes: 0
+  '64':
+    flops_per_s_per_sm: 87434309150.0
+    regs_used: 64
+    spill_bytes: 216
+    local_bytes: 40
+  '48':
+    flops_per_s_per_sm: 16799064200.0
+    regs_used: 48
+    spill_bytes: 1064
+    local_bytes: 216
+  '32':
+    flops_per_s_per_sm: 3516633740.0
+    regs_used: 32
+    spill_bytes: 1960
+    local_bytes: 344
+local_mem_latency_ns: 15.51482925
+local_mem_bytes_per_s_per_sm: 11306591100.0
+reg_alloc_granularity:
+  regs_per_thread_steps_tested:
+  - 20
+  blocks_per_sm:
+    '20': 6
+  note: from B9's __launch_bounds__ variants; the hardware rounds per warp to 256-register
+    units (derived, not independently measured)
+reg_bank_conflict_penalty:
+  measured: false
+  reason: needs operand-register control at the SASS level (register pinning is not
+    available from CUDA C++ or PTX; would require patching cubins), lowest priority
+    per B13_plus.md
+tensor_flops_per_s_per_sm_by_shape:
+  bf16_m16n8k16: 2546155295000.0
+  fp8_e4m3_m16n8k32: 5092363375000.0
+  tf32_m16n8k8: 1273085860000.0
+  fp16_m16n8k16: 2546181190000.0
+  int8_m16n8k32: 2876064020000.0
+tensor_shapes_supported:
+- bf16_m16n8k16
+- fp16_m16n8k16
+- fp8_e4m3_m16n8k32
+- int8_m16n8k32
+- tf32_m16n8k8
+tensor_op_latency_cycles:
+  fp16_m16n8k16: 29.0
+ldmatrix_bytes_per_s_per_sm:
+  unswizzled: 43851615350.0
+  swizzled: 348888279000.0
+tensor_flops_per_s_chip_fp8:
+  fp8_e5m2: 201819039500000.0
+  fp8_e4m3: 195509443000000.0
+inst_throughput_per_sm:
+  lop3: 150149237500.0
+  mufu_rsqrt: 59922868700.0
+  iadd3: 109108258000.0
+  ffma: 395517811500.0
+  fadd: 376001996000.0
+  fmul: 366862957000.0
+  imad: 226331846000.0
+  shf: 183528332000.0
+  i2f_f2i: 120323665500.0
+ld_shared_bytes_per_s_per_sm:
+  lds_64: 619219823200.0
+  sts_32: 284309519000.0
+  lds_128: 615666338400.0
+  lds_32: 328792188200.0
+compute_block_efficiency:
+  T3_64x256x16:
+    TM: 64
+    TN: 256
+    TK: 16
+    R:
+    - 4
+    - 16
+    cycles_per_phase: 4867
+    fma_bound_cycles: 1656
+    efficiency: 0.34
+    lds_per_thread_per_phase: 320
+    ffma_per_thread_per_phase: 1024
+    sass_mix:
+      LDC: 4
+      S2R: 8
+      LDCU: 4
+      BSSY: 4
+      I2F: 2
+      ISETP: 13
+      IADD3: 26
+      MUFU: 2
+      VIMNMX: 1
+      LOP3: 11
+      SEL: 1
+      MOV: 36
+      F2I: 2
+      HFMA2: 27
+      IMAD: 7
+      BRA: 11
+      LEA: 14
+      I2FP: 11
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      CALL: 1
+      BAR: 2
+      CS2UR: 1
+      CS2R: 10
+      UISETP: 3
+      UMOV: 2
+      SHF: 1
+      UIADD3: 2
+      LDS: 68
+      FFMA: 256
+      FADD: 64
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      FSETP: 2
+      FSEL: 2
+      RET: 1
+      NOP: 9
+  T5_128x128x32:
+    TM: 128
+    TN: 128
+    TK: 32
+    R:
+    - 8
+    - 8
+    cycles_per_phase: 7361
+    fma_bound_cycles: 3312
+    efficiency: 0.45
+    lds_per_thread_per_phase: 512
+    ffma_per_thread_per_phase: 2048
+    sass_mix:
+      LDC: 4
+      S2R: 6
+      MOV: 24
+      LDCU: 4
+      LOP3: 9
+      IADD3: 17
+      CALL: 1
+      BSSY: 4
+      ISETP: 8
+      BRA: 10
+      HFMA2: 18
+      LEA: 12
+      I2FP: 11
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      CS2UR: 1
+      CS2R: 19
+      UISETP: 3
+      UMOV: 2
+      SHF: 2
+      UIADD3: 2
+      LDS: 40
+      FFMA: 256
+      FADD: 64
+      IMAD: 3
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      I2F: 1
+      FSETP: 2
+      FSEL: 2
+      MUFU: 1
+      F2I: 1
+      RET: 1
+      NOP: 14
+  T1_128x256x16:
+    TM: 128
+    TN: 256
+    TK: 16
+    R:
+    - 8
+    - 16
+    cycles_per_phase: 7174
+    fma_bound_cycles: 3312
+    efficiency: 0.462
+    lds_per_thread_per_phase: 384
+    ffma_per_thread_per_phase: 2048
+    sass_mix:
+      LDC: 4
+      S2R: 9
+      LDCU: 4
+      LOP3: 13
+      IADD3: 19
+      PRMT: 1
+      MOV: 62
+      CALL: 2
+      BSSY: 4
+      ISETP: 9
+      BRA: 11
+      HFMA2: 52
+      LEA: 15
+      I2FP: 10
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      CS2UR: 1
+      CS2R: 17
+      UISETP: 3
+      UMOV: 2
+      SHF: 1
+      UIADD3: 2
+      LDS: 72
+      FFMA: 512
+      FADD: 128
+      IMAD: 3
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      I2F: 2
+      FSETP: 2
+      FSEL: 2
+      MUFU: 1
+      F2I: 1
+      RET: 1
+      NOP: 9
+  R4_64x64x32:
+    TM: 64
+    TN: 64
+    TK: 32
+    R:
+    - 4
+    - 4
+    cycles_per_phase: 2831
+    fma_bound_cycles: 828
+    efficiency: 0.292
+    lds_per_thread_per_phase: 256
+    ffma_per_thread_per_phase: 512
+    sass_mix:
+      LDC: 4
+      S2R: 8
+      LDCU: 3
+      LOP3: 10
+      IADD3: 19
+      PRMT: 1
+      MOV: 17
+      CALL: 1
+      BSSY: 4
+      ISETP: 10
+      BRA: 12
+      HFMA2: 8
+      LEA: 15
+      I2FP: 11
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      CS2UR: 1
+      CS2R: 6
+      UISETP: 3
+      SHF: 2
+      UMOV: 2
+      UIADD3: 2
+      LDS: 20
+      FFMA: 64
+      FADD: 16
+      IMAD: 3
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      I2F: 1
+      FSETP: 2
+      FSEL: 2
+      MUFU: 1
+      F2I: 1
+      RET: 1
+      NOP: 12
+  R2_32x32x32:
+    TM: 32
+    TN: 32
+    TK: 32
+    R:
+    - 2
+    - 2
+    cycles_per_phase: 1442
+    fma_bound_cycles: 207
+    efficiency: 0.144
+    lds_per_thread_per_phase: 128
+    ffma_per_thread_per_phase: 128
+    sass_mix:
+      LDC: 4
+      S2R: 7
+      BSSY: 4
+      I2F: 1
+      ISETP: 11
+      IADD3: 25
+      MUFU: 1
+      VIMNMX: 1
+      SEL: 1
+      F2I: 1
+      HFMA2: 4
+      IMAD: 19
+      MOV: 17
+      LOP3: 5
+      BRA: 12
+      LEA: 5
+      I2FP: 10
+      FMUL: 10
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      LDCU: 3
+      CS2UR: 1
+      UISETP: 3
+      UMOV: 2
+      UIADD3: 2
+      LDS: 10
+      FFMA: 16
+      FADD: 4
+      CS2R: 1
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      NOP: 15
+clock_warmup_s: 0
+clock_idle_hz: 2480849000.0
+clock_hz_sustained_by_load:
+  fma: 2457000000.0
+  gemm_inner_loop: 2437000000.0
+  dram_stream: 2483000000.0
+  tensor_bf16: 2457000000.0
+clock_governor_limit:
+  fma: none
+  gemm_inner_loop: none
+  dram_stream: none
+  tensor_bf16: none
+clock_after_gap_hz:
+  '0': 2443670000
+  '1': 2451986000
+  '10': 2463461000
+  '100': 2482874000
+  '1000': 2482901000
+um_first_touch_s:
+  '2097152': 0.002039808
+  '4096': 0.000230784
+  '65536': 0.000439104
+um_prefetched_bytes_per_s: 162916833000.0
+um_host_resident_bytes_per_s: 163159641000.0
+um_translation_overhead: 1.43181364
+um_max_alloc_bytes: 116088435000.0
+atomic_throughput_per_s:
+  global_per_warp_red: 26787506200.0
+  global_per_thread_atom: 28751742600.0
+  global_per_warp_atom: 26701195250.0
+  global_per_thread_red: 27493380100.0
+  global_same_address_red: 752405103.0
+  shared_same_address: 2531843525.0
+  shared_per_warp: 9987388895.0
+  shared_per_thread: 40342347350.0
+  global_same_address_atom: 752684390.0
+atomic_contention_curve:
+  '32': 752698616.0
+  '8': 753413167.0
+  '16': 753444106.5
+  '48': 754447534.0
+  '2': 755897023.5
+  '4': 753794402.5
+  '1': 755846610.0
+atomic_latency_ns:
+  shared: 53.135911
+  global: 157.028513
+kernel_gap_s: 2.464e-06
+graph_kernel_gap_s: 5.12e-07
+concurrent_kernels:
+  '48':
+    concurrent: true
+    ratio_two_streams_over_one: 1.00074924
+  '24':
+    concurrent: true
+    ratio_two_streams_over_one: 1.00092476
+l2_persists_across_kernels: true
+l2_persisting_window_supported: true
+functional:
+  cp_async_chunk_order: in-order
+  cp_async_window_cycles:
+    p1: 13357
+    p50: 13357
+    p99: 13358
+    first_chunk_p50: 961
+    note: 'upper bound: one polling warp sweeps all chunks in order, so the window
+      includes the sweep time'
+  cp_async_torn_chunks_observed: 0
+  wait_group_overcomplete_observed: 152
+  threadfence_visibility_cycles:
+    trials: 2000
+    syncthreads_visible: 2000
+    named_barrier_arrive_only_visible: 2000
+    fence_no_barrier_visible: 2000
+    fence_visibility_cycles_p50: 243
+    fence_visibility_cycles_p99: 243
+    method: warp 0 stores, warp 1 reads after __syncthreads / after bar.sync paired
+      with warp 0's bar.arrive / after polling with only __threadfence_block on the
+      writer
+    sm_clock_mhz: 2521.9
+  tma_early_bytes_observed: 58005
+  fma_contraction_default: true
+  ftz_default: false
+  tensor_accumulate_ulp_bound:
+    bf16_max_ulp: 1.039
+    fp16_max_ulp: 1.039
+    tf32_max_ulp: 1.512
+    method: wmma 16x16x16 (bf16, fp16) and 16x16x8 (tf32) with FP32 accumulate against
+      an FP64 sum of the rounded inputs' exact products; error in FP32 ulps of the
+      result; the inputs alternate ~1 and ~2^-18 terms so the exact sum needs more
+      than 24 bits and the accumulate must round. A row-major (A[r*16+k]), B col-major
+      (B[col*16+k]) loaded with load_matrix_sync, so host and device use the same
+      elements
+    sm_clock_mhz: 2521.9
+  smem_bank_map: 32 banks x 4 B; 64-bit accesses served per half-warp (max 16-way),
+    128-bit per quarter-warp (max 8-way)
+  independent_thread_scheduling: false
+micro_benchmarks:
+- b13_l2_structure
+- b14_l1_carveout
+- b15_copy_queue
+- b16_block_scheduler
+- b17_latency_hiding
+- b18_dram
+- b19_registers_local
+- b20_tensor_detail
+- b21_compute_block
+- b22_clock_governor
+- b23_unified_mechanics
+- b24_atomics_reductions
+- b25_multi_kernel
+- b26_functional_probes
 provenance:
-  suite_commit: 8fc1559914bf1c1927bf208a03add16080600cc1
+  suite_commit: 28eaf87b1dba021cfaf2d7af5b70241df146849c
   host: spark-6951
   driver: 580.159.03
   toolkit: Build cuda_13.0.r13.0/compiler.36424714_0
@@ -121,9 +1389,9 @@ provenance:
     variance_source: B11 sustained load
     sampled_sm_mhz:
       min: 227.0
-      max: 2515.0
+      max: 2522.0
     max_sm_mhz: 3003.0
-  date: '2026-10-14T15:04:11Z'
+  date: '2026-10-14T17:32:38Z'
   raw: calibration/spark-6951/raw
   ci_target: 0.04
   max_reps: 50
@@ -248,6 +1516,1543 @@ provenance:
       note: penalty = device read bandwidth / this allocation's read bandwidth, 1
         GiB working set
       method: 'B12: GPU streaming read bandwidth by allocation kind, 1 GiB'
+    l2_sector_bytes:
+      from: l2_sector_bytes
+      method: 'B13.1: bytes per request at stride s (time x B4 DRAM rate / requests);
+        the stride where it stops growing'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+      - - 4
+        - 0.00443
+        - 3.9
+      - - 32
+        - 0.004253
+        - 29.8
+      - - 64
+        - 0.004207
+        - 59.0
+      - - 128
+        - 0.001901
+        - 53.3
+      - - 256
+        - 0.00108
+        - 60.6
+      - - 512
+        - 0.0006812
+        - 76.5
+    l2_line_bytes:
+      from: l2_sector_bytes
+      method: assumed 128 B (4 x the measured sector); not independently measured
+    l2_ways:
+      from: l2_set_conflicts
+      method: 'B13.2: n lines at stride s chased (ld.cg); at the largest stride the
+        first n whose latency crosses the L2/DRAM midpoint gives the associativity'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        grid:
+        - stride: 4096
+          latency_ns_by_n:
+          - 135.2
+          - 134.0
+          - 135.1
+          - 135.8
+          - 135.9
+          - 135.8
+          first_n_at_dram_latency: -1
+        - stride: 8192
+          latency_ns_by_n:
+          - 135.2
+          - 135.7
+          - 136.0
+          - 135.9
+          - 135.8
+          - 135.8
+          first_n_at_dram_latency: -1
+        - stride: 16384
+          latency_ns_by_n:
+          - 133.0
+          - 136.0
+          - 136.0
+          - 135.8
+          - 135.8
+          - 135.9
+          first_n_at_dram_latency: -1
+        - stride: 32768
+          latency_ns_by_n:
+          - 136.3
+          - 136.1
+          - 136.0
+          - 135.9
+          - 135.8
+          - 135.9
+          first_n_at_dram_latency: -1
+        - stride: 65536
+          latency_ns_by_n:
+          - 135.7
+          - 135.0
+          - 135.7
+          - 135.9
+          - 135.8
+          - 135.9
+          first_n_at_dram_latency: -1
+        - stride: 131072
+          latency_ns_by_n:
+          - 136.8
+          - 135.8
+          - 136.0
+          - 135.8
+          - 135.8
+          - 135.8
+          first_n_at_dram_latency: -1
+        - stride: 262144
+          latency_ns_by_n:
+          - 136.3
+          - 136.4
+          - 135.7
+          - 136.0
+          - 135.8
+          - 137.8
+          first_n_at_dram_latency: -1
+        - stride: 524288
+          latency_ns_by_n:
+          - 135.2
+          - 137.8
+          - 136.8
+          - 136.1
+          - 140.2
+          - 140.0
+          first_n_at_dram_latency: -1
+        - stride: 1048576
+          latency_ns_by_n:
+          - 137.4
+          - 136.2
+          - 136.3
+          - 136.1
+          - 139.9
+          - 139.9
+          first_n_at_dram_latency: -1
+        - stride: 2097152
+          latency_ns_by_n:
+          - 135.9
+          - 136.5
+          - 136.6
+          - 135.7
+          - 139.7
+          - 140.0
+          first_n_at_dram_latency: -1
+        - stride: 4194304
+          latency_ns_by_n:
+          - 136.8
+          - 135.1
+          - 135.4
+          - 135.6
+          - 139.7
+          - 139.7
+          first_n_at_dram_latency: -1
+        - stride: 8388608
+          latency_ns_by_n:
+          - 134.1
+          - 135.4
+          - 135.2
+          - 135.8
+          - 139.7
+          - 139.8
+          first_n_at_dram_latency: -1
+        lat_l2_ns: 135.850805
+        lat_dram_ns: 426.551169
+        set_stride_bytes: 0
+        capacity_from_structure: -1
+        declared_l2_bytes: 25165824
+    l2_sets:
+      from: l2_set_conflicts
+      method: 'B13.2: smallest conflicting stride / 128 B line; null when no power-of-two
+        stride conflicts (a hashed set index spreads them)'
+    l2_set_conflicts_observed:
+      from: l2_set_conflicts
+      method: 'B13.2: whether any n <= 64 lines at any power-of-two stride up to 8
+        MiB chased at DRAM latency'
+    l2_ways_lower_bound:
+      from: l2_set_conflicts
+      method: 'B13.2: 64 lines at every power-of-two stride stayed at L2 latency,
+        so the associativity is at least 64 or the set index is hashed'
+    l2_structure_confirmed:
+      from: l2_set_conflicts
+      method: ways x sets x 128 B within 50 % of the declared L2 size
+    l2_slice_hash_bits:
+      from: l2_slice_hash
+      method: 'B13.3: two-line chase base vs base XOR 2^bit; a bit is slice-select
+        when its flip moves the latency by more than half the near/far spread (spread
+        > 5 ns)'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        latency_ns_by_flipped_bit:
+        - - 7
+          - 133.7
+        - - 8
+          - 132.15
+        - - 9
+          - 133.7
+        - - 10
+          - 132.15
+        - - 11
+          - 133.7
+        - - 12
+          - 135.23
+        - - 13
+          - 135.23
+        - - 14
+          - 133.03
+        - - 15
+          - 136.34
+        - - 16
+          - 135.67
+        - - 17
+          - 136.79
+        - - 18
+          - 136.33
+        - - 19
+          - 135.28
+        - - 20
+          - 137.23
+        - - 21
+          - 135.89
+        - - 22
+          - 136.8
+        - - 23
+          - 134.14
+        - - 24
+          - 135.89
+        - - 25
+          - 137.24
+        - - 26
+          - 134.14
+        - - 27
+          - 132.15
+        - - 28
+          - 135.23
+        - - 29
+          - 133.99
+        aggregate_bw_by_region_bit:
+        - - 12
+          - 609800000000.0
+        - - 13
+          - 600100000000.0
+        - - 14
+          - 577700000000.0
+        - - 15
+          - 599800000000.0
+        - - 16
+          - 599200000000.0
+        - - 17
+          - 607800000000.0
+        - - 18
+          - 607000000000.0
+        - - 19
+          - 611900000000.0
+        - - 20
+          - 623800000000.0
+        - - 21
+          - 617300000000.0
+        - - 22
+          - 588600000000.0
+        - - 23
+          - 620400000000.0
+        - - 24
+          - 619400000000.0
+    l2_slices:
+      from: l2_slice_hash
+      method: 2^(number of slice-select bits); null when no bit moves the latency
+        by a clear margin (then the slices, if any, are not visible from one SM's
+        chase)
+    l2_slice_latency_spread_ns:
+      from: l2_slice_hash
+      method: 'B13.3: max - min of the two-line chase latency over the flipped bits
+        7..29 (a near/far slice difference would show as a bimodal spread)'
+    l2_latency_near_far_ns:
+      from: l2_slice_hash
+      method: min and max two-line chase latency over the flipped bits
+    l2_chase_capacity_bytes:
+      from: l2_replacement
+      method: 'B13.4: largest footprint whose sequential cyclic chase still hits above
+        80 % (a single warp sees the whole cache; B4''s bandwidth knee is the streaming
+        view)'
+    l2_replacement:
+      from: l2_replacement
+      method: 'B13.4: hit rate from mean chase latency vs footprint, sequential vs
+        random cyclic order; classified from the points past 1.2x the declared size'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        hit_rate_by_footprint_mb_seq_rand:
+        - - 8
+          - 1.0
+          - 1.0
+        - - 12
+          - 1.0
+          - 0.996
+        - - 16
+          - 0.979
+          - 0.992
+        - - 20
+          - 0.997
+          - 0.989
+        - - 24
+          - 0.914
+          - 0.932
+        - - 32
+          - 0.017
+          - 0.0
+        - - 48
+          - 0.01
+          - 0.0
+    l1_bytes_by_carveout:
+      from:
+      - l1_bytes_by_carveout[smem=32768]
+      - l1_bytes_by_carveout[smem=98304]
+      - l1_bytes_by_carveout[smem=0]
+      - l1_bytes_by_carveout[smem=16384]
+      - l1_bytes_by_carveout[smem=49152]
+      - l1_bytes_by_carveout[smem=65536]
+      method: 'B14.1: single-thread chase at 128 B stride; capacity = largest footprint
+        under 1.5x the 4 KiB latency, per dynamic smem request'
+    l1_latency_ns:
+      from: l1_latency_ns
+      method: 'B14.1: 4 KiB chase hit latency with no shared memory requested'
+      ci95: 0.0008998097345927805
+      n: 5
+      inferred_from:
+        smem_0:
+          carveout_pct: 0
+          cycles_by_footprint_kb:
+          - - 4
+            - 43.0
+          - - 8
+            - 43.0
+          - - 16
+            - 47.8
+          - - 32
+            - 57.4
+          - - 48
+            - 67.0
+          - - 64
+            - 76.7
+          - - 96
+            - 179.5
+          - - 128
+            - 342.8
+          - - 192
+            - 342.8
+          - - 256
+            - 342.8
+          l1_capacity_bytes: 32768
+        smem_16384:
+          carveout_pct: 16
+          cycles_by_footprint_kb:
+          - - 4
+            - 43.0
+          - - 8
+            - 43.0
+          - - 16
+            - 47.8
+          - - 32
+            - 57.4
+          - - 48
+            - 67.0
+          - - 64
+            - 76.7
+          - - 96
+            - 179.8
+          - - 128
+            - 342.8
+          - - 192
+            - 342.8
+          - - 256
+            - 342.8
+          l1_capacity_bytes: 32768
+        smem_32768:
+          carveout_pct: 32
+          cycles_by_footprint_kb:
+          - - 4
+            - 43.0
+          - - 8
+            - 43.0
+          - - 16
+            - 47.8
+          - - 32
+            - 57.4
+          - - 48
+            - 67.0
+          - - 64
+            - 207.4
+          - - 96
+            - 342.7
+          - - 128
+            - 342.8
+          - - 192
+            - 342.8
+          - - 256
+            - 342.7
+          l1_capacity_bytes: 32768
+        smem_49152:
+          carveout_pct: 48
+          cycles_by_footprint_kb:
+          - - 4
+            - 43.0
+          - - 8
+            - 43.0
+          - - 16
+            - 47.8
+          - - 32
+            - 57.4
+          - - 48
+            - 67.0
+          - - 64
+            - 207.4
+          - - 96
+            - 342.7
+          - - 128
+            - 342.9
+          - - 192
+            - 342.8
+          - - 256
+            - 342.7
+          l1_capacity_bytes: 32768
+        smem_65536:
+          carveout_pct: 64
+          cycles_by_footprint_kb:
+          - - 4
+            - 43.0
+          - - 8
+            - 43.0
+          - - 16
+            - 47.8
+          - - 32
+            - 254.9
+          - - 48
+            - 341.9
+          - - 64
+            - 342.6
+          - - 96
+            - 342.7
+          - - 128
+            - 342.7
+          - - 192
+            - 342.7
+          - - 256
+            - 342.7
+          l1_capacity_bytes: 16384
+        smem_98304:
+          carveout_pct: 96
+          cycles_by_footprint_kb:
+          - - 4
+            - 43.0
+          - - 8
+            - 43.0
+          - - 16
+            - 47.8
+          - - 32
+            - 254.9
+          - - 48
+            - 341.9
+          - - 64
+            - 342.6
+          - - 96
+            - 342.7
+          - - 128
+            - 342.7
+          - - 192
+            - 342.7
+          - - 256
+            - 342.7
+          l1_capacity_bytes: 16384
+    l1_line_bytes:
+      from: l1_latency_ns
+      method: 'B14.2: chase at strides 32..256 over 16 KiB; the stride from which
+        the per-step cost is flat (every step touches a new line); null when the cost
+        still falls at the largest stride (unresolved by this probe)'
+      inferred_from:
+      - - 32
+        - 76.4
+      - - 64
+        - 57.4
+      - - 128
+        - 47.8
+      - - 256
+        - 43.0
+    cp_async_cg_allocates_l1:
+      from: cp_async_cg_allocates_l1
+      method: 'B14.3: 32 KB copied global->smem, then the same lines chased with ld.global.ca;
+        L1-hit latency means the copy allocated'
+      ci95: 0.0
+      n: 5
+      chase_cycles_after_copy: 342.4
+      l1_hit_cycles: 43.0
+    cp_async_ca_allocates_l1:
+      from: cp_async_ca_allocates_l1
+      method: 'B14.3: 32 KB copied global->smem, then the same lines chased with ld.global.ca;
+        L1-hit latency means the copy allocated'
+      ci95: 0.0
+      n: 5
+      chase_cycles_after_copy: 257.9
+      l1_hit_cycles: 43.0
+    tma_allocates_l1:
+      from: tma_allocates_l1
+      method: 'B14.3: 32 KB copied global->smem, then the same lines chased with ld.global.ca;
+        L1-hit latency means the copy allocated'
+      ci95: 0.0
+      n: 5
+      chase_cycles_after_copy: 342.7
+      l1_hit_cycles: 43.0
+    l1_smem_pool_bytes:
+      from: l1_smem_pool_bytes
+      method: 'B14.4: max over settings of measured L1 capacity + requested smem'
+      ci95: 0.0
+      n: 5
+      inferred_from:
+      - - 0
+        - 32768
+      - - 16384
+        - 49152
+      - - 32768
+        - 65536
+      - - 49152
+        - 81920
+      - - 65536
+        - 81920
+      - - 98304
+        - 114688
+    cp_async_groups_in_flight:
+      from: cp_async_groups_in_flight
+      method: 'B15.1: clock64 cost to issue the k-th 4 KB group with k-1 pending;
+        the first k whose increment exceeds 3x the median is the window'
+      ci95: -0.0
+      n: 3
+      inferred_from:
+      - 467
+      - 704
+      - 930
+      - 1158
+      - 1382
+      - 1611
+      - 1834
+      - 2056
+      - 2278
+      - 2500
+      - 2722
+      - 2947
+      - 3174
+      - 3400
+      - 3622
+      - 3848
+      - 4070
+      - 4296
+      - 4518
+      - 4744
+      - 4966
+      - 5192
+    cp_async_issue_cycles_per_16B:
+      from: cp_async_issue_cycles_per_16B
+      method: 'B15.3: cycles per cp.async 16 B instruction per warp, issue only (no
+        wait)'
+      ci95: 0.007874015748031496
+      n: 30
+    cp_async_latency_dist:
+      from:
+      - cp_async_latency_dist[tile=4096,resident=6]
+      - cp_async_latency_dist[tile=4096,resident=1]
+      - cp_async_latency_dist[tile=49152,resident=1]
+      - cp_async_latency_dist[tile=8192,resident=6]
+      - cp_async_latency_dist[tile=16384,resident=1]
+      - cp_async_latency_dist[tile=32768,resident=1]
+      - cp_async_latency_dist[tile=16384,resident=6]
+      - cp_async_latency_dist[tile=8192,resident=1]
+      method: 'B15.2: one tile per trial, 2000 trials x 48 SMs (x 6 blocks when resident=6),
+        issue-to-wait_group-return in clock64 cycles'
+    tma_cp_async_shared_path:
+      from:
+      - copy_throughput[mixed_half_half]
+      - copy_throughput[cp_async]
+      - copy_throughput[tma_bulk]
+      method: 'B15.4: half the SMs stream with cp.async and half with TMA; shared
+        path when the mix does not exceed the better single-path aggregate by more
+        than 15 %'
+      inferred_from:
+        cp_async: 1892736520000.0
+        tma_bulk: 1854355060000.0
+        mixed: 1620173060000.0
+    copy_throughput_bytes_per_s:
+      from:
+      - copy_throughput[mixed_half_half]
+      - copy_throughput[cp_async]
+      - copy_throughput[tma_bulk]
+      method: 'B15.4: 48 blocks streaming 16 KB tiles, aggregate bytes per second'
+      ci95:
+        mixed_half_half: 0.002549125832273745
+        cp_async: 0.0029933075418230952
+        tma_bulk: 0.0024683069595096852
+    mbarrier_s:
+      from: mbarrier_s
+      method: 'B15.5: mbarrier arrive + try_wait round with nothing pending, 256 threads'
+      ci95: 5.480495715209058e-06
+      n: 30
+    tma_2d_latency_s:
+      from: tma_2d_latency_s
+      method: 'B15.6: cuTensorMapEncodeTiled 128x32 fp32 tile, cp.async.bulk.tensor.2d
+        + mbarrier, median SM'
+      ci95: 0.0008765507497457634
+      n: 30
+    block_dispatch_order:
+      from:
+      - block_order_table[grid=32,threads=256,smem=0]
+      - block_order_table[grid=144,threads=128,smem=0]
+      - block_order_table[grid=49,threads=256,smem=61440]
+      - block_order_table[grid=47,threads=256,smem=61440]
+      - block_order_table[grid=24,threads=256,smem=0]
+      - block_order_table[grid=8,threads=128,smem=61440]
+      - block_order_table[grid=49,threads=128,smem=61440]
+      - block_order_table[grid=47,threads=128,smem=61440]
+      - block_order_table[grid=8,threads=256,smem=61440]
+      - block_order_table[grid=1,threads=256,smem=0]
+      - block_order_table[grid=48,threads=128,smem=0]
+      - block_order_table[grid=8,threads=256,smem=0]
+      - block_order_table[grid=144,threads=256,smem=61440]
+      - block_order_table[grid=96,threads=256,smem=0]
+      - block_order_table[grid=144,threads=128,smem=61440]
+      - block_order_table[grid=49,threads=128,smem=0]
+      - block_order_table[grid=32,threads=128,smem=61440]
+      - block_order_table[grid=47,threads=256,smem=0]
+      - block_order_table[grid=32,threads=256,smem=61440]
+      - block_order_table[grid=96,threads=256,smem=61440]
+      - block_order_table[grid=24,threads=128,smem=61440]
+      - block_order_table[grid=96,threads=128,smem=61440]
+      - block_order_table[grid=24,threads=256,smem=61440]
+      - block_order_table[grid=192,threads=256,smem=0]
+      - block_order_table[grid=8,threads=128,smem=0]
+      - block_order_table[grid=192,threads=256,smem=61440]
+      - block_order_table[grid=192,threads=128,smem=61440]
+      - block_order_table[grid=96,threads=128,smem=0]
+      - block_order_table[grid=49,threads=256,smem=0]
+      - block_order_table[grid=47,threads=128,smem=0]
+      - block_order_table[grid=1,threads=128,smem=61440]
+      - block_order_table[grid=1,threads=256,smem=61440]
+      - block_order_table[grid=192,threads=128,smem=0]
+      - block_order_table[grid=48,threads=128,smem=61440]
+      - block_order_table[grid=48,threads=256,smem=61440]
+      - block_order_table[grid=32,threads=128,smem=0]
+      - block_order_table[grid=144,threads=256,smem=0]
+      - block_order_table[grid=24,threads=128,smem=0]
+      - block_order_table[grid=1,threads=128,smem=0]
+      - block_order_table[grid=48,threads=256,smem=0]
+      - block_distinct_sms[grid=192,threads=128,smem=0]
+      - block_distinct_sms[grid=24,threads=128,smem=0]
+      - block_distinct_sms[grid=48,threads=256,smem=0]
+      - block_distinct_sms[grid=8,threads=128,smem=0]
+      - block_distinct_sms[grid=32,threads=128,smem=0]
+      - block_distinct_sms[grid=48,threads=256,smem=61440]
+      - block_distinct_sms[grid=48,threads=128,smem=61440]
+      - block_distinct_sms[grid=144,threads=256,smem=61440]
+      - block_distinct_sms[grid=8,threads=256,smem=61440]
+      - block_distinct_sms[grid=144,threads=128,smem=61440]
+      - block_distinct_sms[grid=8,threads=128,smem=61440]
+      - block_distinct_sms[grid=96,threads=128,smem=0]
+      - block_distinct_sms[grid=1,threads=128,smem=0]
+      - block_distinct_sms[grid=144,threads=256,smem=0]
+      - block_distinct_sms[grid=47,threads=128,smem=0]
+      - block_distinct_sms[grid=49,threads=256,smem=0]
+      - block_distinct_sms[grid=192,threads=256,smem=61440]
+      - block_distinct_sms[grid=192,threads=128,smem=61440]
+      - block_distinct_sms[grid=96,threads=256,smem=0]
+      - block_distinct_sms[grid=49,threads=128,smem=61440]
+      - block_distinct_sms[grid=47,threads=128,smem=61440]
+      - block_distinct_sms[grid=1,threads=256,smem=0]
+      - block_distinct_sms[grid=144,threads=128,smem=0]
+      - block_distinct_sms[grid=49,threads=256,smem=61440]
+      - block_distinct_sms[grid=47,threads=256,smem=61440]
+      - block_distinct_sms[grid=47,threads=256,smem=0]
+      - block_distinct_sms[grid=49,threads=128,smem=0]
+      - block_distinct_sms[grid=192,threads=256,smem=0]
+      - block_distinct_sms[grid=24,threads=256,smem=0]
+      - block_distinct_sms[grid=32,threads=256,smem=61440]
+      - block_distinct_sms[grid=48,threads=128,smem=0]
+      - block_distinct_sms[grid=1,threads=256,smem=61440]
+      - block_distinct_sms[grid=32,threads=128,smem=61440]
+      - block_distinct_sms[grid=8,threads=256,smem=0]
+      - block_distinct_sms[grid=1,threads=128,smem=61440]
+      - block_distinct_sms[grid=32,threads=256,smem=0]
+      - block_distinct_sms[grid=24,threads=256,smem=61440]
+      - block_distinct_sms[grid=96,threads=128,smem=61440]
+      - block_distinct_sms[grid=24,threads=128,smem=61440]
+      - block_distinct_sms[grid=96,threads=256,smem=61440]
+      method: 'B16.1: %smid and globaltimer at entry of every block, sorted by entry
+        time; class from the first-wave SM sequence; the full table is in the raw
+        record'
+    block_dispatch_deterministic:
+      from:
+      - block_distinct_sms[grid=192,threads=128,smem=0]
+      - block_distinct_sms[grid=24,threads=128,smem=0]
+      - block_distinct_sms[grid=48,threads=256,smem=0]
+      - block_distinct_sms[grid=8,threads=128,smem=0]
+      - block_distinct_sms[grid=32,threads=128,smem=0]
+      - block_distinct_sms[grid=48,threads=256,smem=61440]
+      - block_distinct_sms[grid=48,threads=128,smem=61440]
+      - block_distinct_sms[grid=144,threads=256,smem=61440]
+      - block_distinct_sms[grid=8,threads=256,smem=61440]
+      - block_distinct_sms[grid=144,threads=128,smem=61440]
+      - block_distinct_sms[grid=8,threads=128,smem=61440]
+      - block_distinct_sms[grid=96,threads=128,smem=0]
+      - block_distinct_sms[grid=1,threads=128,smem=0]
+      - block_distinct_sms[grid=144,threads=256,smem=0]
+      - block_distinct_sms[grid=47,threads=128,smem=0]
+      - block_distinct_sms[grid=49,threads=256,smem=0]
+      - block_distinct_sms[grid=192,threads=256,smem=61440]
+      - block_distinct_sms[grid=192,threads=128,smem=61440]
+      - block_distinct_sms[grid=96,threads=256,smem=0]
+      - block_distinct_sms[grid=49,threads=128,smem=61440]
+      - block_distinct_sms[grid=47,threads=128,smem=61440]
+      - block_distinct_sms[grid=1,threads=256,smem=0]
+      - block_distinct_sms[grid=144,threads=128,smem=0]
+      - block_distinct_sms[grid=49,threads=256,smem=61440]
+      - block_distinct_sms[grid=47,threads=256,smem=61440]
+      - block_distinct_sms[grid=47,threads=256,smem=0]
+      - block_distinct_sms[grid=49,threads=128,smem=0]
+      - block_distinct_sms[grid=192,threads=256,smem=0]
+      - block_distinct_sms[grid=24,threads=256,smem=0]
+      - block_distinct_sms[grid=32,threads=256,smem=61440]
+      - block_distinct_sms[grid=48,threads=128,smem=0]
+      - block_distinct_sms[grid=1,threads=256,smem=61440]
+      - block_distinct_sms[grid=32,threads=128,smem=61440]
+      - block_distinct_sms[grid=8,threads=256,smem=0]
+      - block_distinct_sms[grid=1,threads=128,smem=61440]
+      - block_distinct_sms[grid=32,threads=256,smem=0]
+      - block_distinct_sms[grid=24,threads=256,smem=61440]
+      - block_distinct_sms[grid=96,threads=128,smem=61440]
+      - block_distinct_sms[grid=24,threads=128,smem=61440]
+      - block_distinct_sms[grid=96,threads=256,smem=61440]
+      method: 'B16.1: fraction of repeated launches whose block->SM assignment is
+        identical to the first (min over configurations)'
+    block_dispatch_rate_per_s:
+      from: block_dispatch_rate_per_s
+      method: 'B16.2: 48 x 32 empty-ish blocks, entry timestamps; blocks per second
+        over the dispatch span'
+      ci95: 0.07219273686746844
+      n: 3
+    block_refill_latency_s:
+      from: block_refill_latency_s
+      method: 'B16.3: exit of a first-wave block to entry of the block that replaces
+        it on the same SM, median'
+      ci95: 0.0
+      n: 3
+    wave_staircase:
+      from:
+      - wave_staircase[r=8]
+      - wave_staircase[r=24]
+      - wave_staircase[r=47]
+      - wave_staircase[r=40]
+      - wave_staircase[r=1]
+      - wave_staircase[r=16]
+      - wave_staircase[r=32]
+      - wave_staircase[r=0]
+      method: 'B16.4: kernel time vs grid size in units of one wave (r x 48 blocks);
+        a staircase means waves are serialized'
+      ci95:
+        '8': 0.004986481826826774
+        '24': 0.0016628689137613735
+        '47': 0.001246374539010523
+        '40': 0.000830913113598749
+        '1': 0.0018695634313866576
+        '16': 0.0020763795700887776
+        '32': 0.0018683503251933234
+        '0': 0.012832396274590239
+    bandwidth_vs_warps:
+      from:
+      - bandwidth_vs_warps[l2,warps=48]
+      - bandwidth_vs_warps[dram,warps=16]
+      - bandwidth_vs_warps[dram,warps=32]
+      - bandwidth_vs_warps[l2,warps=8]
+      - bandwidth_vs_warps[dram,warps=48]
+      - bandwidth_vs_warps[l2,warps=16]
+      - bandwidth_vs_warps[l2,warps=32]
+      - bandwidth_vs_warps[dram,warps=8]
+      - bandwidth_vs_warps[dram,warps=4]
+      - bandwidth_vs_warps[l2,warps=24]
+      - bandwidth_vs_warps[dram,warps=24]
+      - bandwidth_vs_warps[l2,warps=1]
+      - bandwidth_vs_warps[dram,warps=2]
+      - bandwidth_vs_warps[l2,warps=4]
+      - bandwidth_vs_warps[dram,warps=1]
+      - bandwidth_vs_warps[l2,warps=2]
+      method: 'B17.1: streaming read bandwidth with w resident warps per SM (dram:
+        1 GiB, l2: 8 MiB)'
+    warps_to_hide_dram_latency:
+      from: warps_to_hide_latency[dram]
+      method: 'B17.1: smallest warp count reaching 90 % of the plateau bandwidth'
+      ci95: 0.0
+      n: 5
+    warps_to_hide_l2_latency:
+      from: warps_to_hide_latency[l2]
+      method: 'B17.1: smallest warp count reaching 90 % of the plateau bandwidth'
+      ci95: 0.0
+      n: 5
+    per_warp_outstanding_loads:
+      from: per_warp_outstanding_loads
+      method: 'B17.2: independent loads per warp before the issue time per load rises
+        (the per-warp MLP limit)'
+      ci95: 0.5
+      n: 5
+      inferred_from:
+        table_u_cyclesPerIteration:
+        - - 1
+          - 1178.0
+        - - 2
+          - 1203.0
+        - - 4
+          - 1523.0
+        - - 8
+          - 2825.0
+        - - 16
+          - 5495.0
+        - - 32
+          - 10523.0
+        inferred_per_warp_outstanding_loads: 4
+        method: one warp per SM; each iteration issues U independent 128-bit L2-missing
+          loads and the next iteration depends on their data; cycles per iteration
+          stay at the latency while all U overlap and grow once U exceeds the per-warp
+          outstanding limit (largest U within 1.3x the U=1 cycles)
+        sm_clock_mhz: 2521.8
+    per_sm_outstanding_requests:
+      from:
+      - bandwidth_vs_warps[l2,warps=48]
+      - bandwidth_vs_warps[dram,warps=16]
+      - bandwidth_vs_warps[dram,warps=32]
+      - bandwidth_vs_warps[l2,warps=8]
+      - bandwidth_vs_warps[dram,warps=48]
+      - bandwidth_vs_warps[l2,warps=16]
+      - bandwidth_vs_warps[l2,warps=32]
+      - bandwidth_vs_warps[dram,warps=8]
+      - bandwidth_vs_warps[dram,warps=4]
+      - bandwidth_vs_warps[l2,warps=24]
+      - bandwidth_vs_warps[dram,warps=24]
+      - bandwidth_vs_warps[l2,warps=1]
+      - bandwidth_vs_warps[dram,warps=2]
+      - bandwidth_vs_warps[l2,warps=4]
+      - bandwidth_vs_warps[dram,warps=1]
+      - bandwidth_vs_warps[l2,warps=2]
+      method: 'B17.3 (derived): Little''s law, peak bandwidth per SM x unloaded latency
+        (B5) / 128 B per request; the loaded latency is higher, so this is a lower
+        bound on the queue depth'
+    issue_rate_warp_instr_per_cycle_per_sm:
+      from: issue_width_per_sm
+      method: 'B17.4: FFMA warp-instructions issued per SM cycle with w warps of 8
+        independent chains each, saturating value (block-wide clock64 window)'
+      ci95: 0.0
+      n: 5
+      inferred_from:
+        table_warps_warpInstrPerCycle:
+        - - 1
+          - 0.652
+        - - 2
+          - 1.305
+        - - 4
+          - 2.611
+        - - 8
+          - 3.121
+        - - 16
+          - 3.262
+        saturation_ipc: 3.120969
+        saturation_warps: 8
+        method: independent FMA chains (ILP 8) from w warps in one block per SM; warp-instructions
+          per cycle per SM; the saturating IPC is schedulers x issue width
+        sm_clock_mhz: 2521.8
+    schedulers_per_sm:
+      from: issue_width_per_sm
+      method: 'B17.4 (derived): smallest integer at or above the saturating issue
+        rate; the FFMA probe reaches 3.3 of the 4 x 1 the family declares'
+    issue_width_per_scheduler:
+      from: issue_width_per_sm
+      method: assumed 1 instruction per scheduler per cycle (B17.4 measures the product)
+    op_latency_cycles:
+      from:
+      - op_latency_cycles[fma]
+      - op_latency_cycles[ld_shared]
+      - op_latency_cycles[imad]
+      - op_latency_cycles[ld_l1hit]
+      method: 'B17.5: dependent chain of one instruction, clock64 per step, single
+        warp'
+      ci95:
+        fma: 0.0
+        ld_shared: 0.0
+        imad: 0.0
+        ld_l1hit: 0.0
+    dram_channels:
+      from: dram_interleave
+      method: 'B18.1: random 128 B requests over 1 GiB with one address bit forced
+        to 0; a bit whose forcing drops the bandwidth below 70 % selects a channel;
+        channels = 2^(bits found); null when no bit does'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        top_bytes_per_s: 228678348479.22977
+        table_forcedBit_bytesPerS:
+        - - 7
+          - 234200000000.0
+        - - 8
+          - 227700000000.0
+        - - 9
+          - 224000000000.0
+        - - 10
+          - 232900000000.0
+        - - 11
+          - 230200000000.0
+        - - 12
+          - 234300000000.0
+        - - 13
+          - 234500000000.0
+        - - 14
+          - 234600000000.0
+        - - 15
+          - 216400000000.0
+        - - 16
+          - 234300000000.0
+        - - 17
+          - 233900000000.0
+        - - 18
+          - 234200000000.0
+        - - 19
+          - 229200000000.0
+        - - 20
+          - 234700000000.0
+        - - 21
+          - 235200000000.0
+        - - 22
+          - 234500000000.0
+        - - 23
+          - 234400000000.0
+        - - 24
+          - 234200000000.0
+        - - 25
+          - 234700000000.0
+        - - 26
+          - 234700000000.0
+        - - 27
+          - 234300000000.0
+        - - 28
+          - 221900000000.0
+        - - 29
+          - 235000000000.0
+        inferred_interleave_bits: []
+        floor_bytes_per_s_all_bits_forced: 228678348479.22977
+        top_over_floor: 1.0
+        inferred_channels: 1
+        sm_clock_mhz: 2521.9
+    dram_interleave_bits:
+      from: dram_interleave
+      method: 'B18.1: the address bits whose forcing drops the random-request bandwidth'
+    dram_channel_select:
+      from: dram_interleave
+      method: 'B18.1: reading of the per-bit table (min bandwidth ratio over bits
+        7..29)'
+    dram_locality_bytes_per_s:
+      from:
+      - dram_locality[rand_128B]
+      - dram_locality[seq_128B]
+      - dram_locality[rand_16KB]
+      - dram_locality[rand_4KB]
+      - dram_locality[rand_512B]
+      method: 'B18.2: read bandwidth for sequential 128 B lines vs random lines of
+        128 B .. 16 KB runs over 1 GiB'
+      ci95:
+        rand_128B: 0.04932491438640069
+        seq_128B: 0.0027290490501989287
+        rand_16KB: 0.001099790779733599
+        rand_4KB: 0.0016630494496239464
+        rand_512B: 0.003970443212821776
+    dram_seq_random_ratio:
+      from:
+      - dram_locality[seq_128B]
+      - dram_locality[rand_128B]
+      method: 'B18.2: sequential / random-128B bandwidth'
+    dram_page_bytes_effective:
+      from: dram_page_bytes_effective
+      method: 'B18.2: smallest random run length reaching 90 % of the sequential bandwidth'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        seq_random_ratio_128B: 0.995
+        ratios_512B_4KB_16KB:
+        - 1.231
+        - 1.251
+        - 1.262
+        inferred_effective_page_bytes: 128
+        method: random chunk size at which bandwidth reaches 90 % of sequential
+        sm_clock_mhz: 2521.9
+    dram_rw_turnaround_penalty:
+      from: dram_rw_turnaround_penalty
+      method: 'B18.3: (read-only + write-only time) / mixed time at read:write ratios;
+        > 1 = turnaround cost'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        table_readFraction_bytesPerS:
+        - - 1.0
+          - 239700000000.0
+        - - 0.75
+          - 220100000000.0
+        - - 0.5
+          - 214700000000.0
+        - - 0.25
+          - 208900000000.0
+        - - 0.0
+          - 196900000000.0
+        worst_dip_below_linear: 0.0386
+        method: 4 KB runs of reads and writes interleaved in the stated fraction over
+          1 GiB; dip below the linear interpolation of the pure cases is the turnaround
+          cost
+        sm_clock_mhz: 2521.9
+    dram_bytes_per_s_under_cpu_load:
+      from: dram_bytes_per_s_under_cpu_load
+      method: 'B18.4: GPU streaming read while all CPU cores run a memcpy-style stream'
+      ci95: 0.0024720887954207656
+      n: 3
+      inferred_from:
+        alone_bytes_per_s: 239200000000.0
+        host_load: 10 threads memcpy over 4 GiB
+        method: GPU 1 GiB streaming read with and without the host load
+        sm_clock_mhz: 2521.9
+    dram_drift_60s:
+      from: dram_drift_60s
+      method: 'B18.5: (max - min) / max of per-second read-bandwidth samples over
+        60 s'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        samples: 3334
+        min_bytes_per_s: 224667514767.3405
+        max_bytes_per_s: 240577108792.96136
+        drift: 0.066131
+        method: 1 GiB x 4 read passes repeated for 60 s; drift = (max - min) / max
+        sm_clock_mhz: 2521.9
+    spill_penalty_curve:
+      from:
+      - spill_flops_per_s_per_sm[maxrreg=255]
+      - spill_flops_per_s_per_sm[maxrreg=48]
+      - spill_flops_per_s_per_sm[maxrreg=32]
+      - spill_flops_per_s_per_sm[maxrreg=128]
+      - spill_flops_per_s_per_sm[maxrreg=96]
+      - spill_flops_per_s_per_sm[maxrreg=64]
+      method: 'B19.1: the same 64-accumulator FMA kernel built at each -maxrregcount;
+        throughput per SM with the ptxas spill bytes'
+      ci95:
+        '255': 0.0039135292053681
+        '48': 0.003064451947269777
+        '32': 0.0006816078037174267
+        '128': 0.0014312216443478866
+        '96': 0.00322054125821032
+        '64': 0.002209171970108716
+    local_mem_latency_ns:
+      from: local_mem_latency_ns
+      method: 'B19.2: single-thread dependent chase over a local array'
+      ci95: 0.005135912146761113
+      n: 10
+    local_mem_bytes_per_s_per_sm:
+      from: local_mem_bytes_per_s_per_sm
+      method: 'B19.2: 8 blocks per SM streaming a 256 B local array, bytes per second
+        per SM'
+      ci95: 0.012355801918051145
+      n: 10
+    reg_alloc_granularity:
+      from:
+      - max_blocks_per_sm[regs=20]
+      method: 'B19.4 (derived from B9): resident blocks per SM at each register budget'
+    reg_bank_conflict_penalty:
+      from: reg_bank_conflict_penalty
+      method: 'B19.3: not measured'
+    tensor_flops_per_s_per_sm_by_shape:
+      from:
+      - tensor_rate[bf16_m16n8k16]
+      - tensor_rate[fp8_e4m3_m16n8k32]
+      - tensor_rate[tf32_m16n8k8]
+      - tensor_rate[fp16_m16n8k16]
+      - tensor_rate[int8_m16n8k32]
+      method: 'B20.2: mma.sync per shape, 4 chains x 4 warps x 4 blocks per SM, clock64
+        cycles'
+      ci95:
+        bf16_m16n8k16: 3.777067337127997e-05
+        fp8_e4m3_m16n8k32: 4.500709849677607e-05
+        tf32_m16n8k8: 6.298475422545342e-05
+        fp16_m16n8k16: 3.8356461191200616e-05
+        int8_m16n8k32: 2.4302310210744196e-05
+    tensor_shapes_supported:
+      from:
+      - tensor_rate[bf16_m16n8k16]
+      - tensor_rate[fp8_e4m3_m16n8k32]
+      - tensor_rate[tf32_m16n8k8]
+      - tensor_rate[fp16_m16n8k16]
+      - tensor_rate[int8_m16n8k32]
+      method: 'B20.2: shapes that compiled and ran on sm_121'
+    tensor_op_latency_cycles:
+      from:
+      - tensor_op_latency_cycles[fp16_m16n8k16]
+      method: 'B20.3: dependent mma.sync chain, accumulator feeds the next, single
+        warp'
+    ldmatrix_bytes_per_s_per_sm:
+      from:
+      - ldmatrix_bytes_per_s_per_sm[unswizzled]
+      - ldmatrix_bytes_per_s_per_sm[swizzled]
+      method: 'B20.4: ldmatrix.x4 from a 16 KB smem tile, swizzled vs row-major (128
+        B rows conflict)'
+      ci95:
+        unswizzled: 0.0003026490562336833
+        swizzled: 0.00028805782839153504
+    tensor_flops_per_s_chip_fp8:
+      from:
+      - tensor_flops_per_s_chip[fp8_e5m2]
+      - tensor_flops_per_s_chip[fp8_e4m3]
+      method: 'B20.1: cublasLtMatmul 8192^2, FP8 inputs, FP32 accumulate'
+    inst_throughput_per_sm:
+      from:
+      - inst_throughput_per_sm[lop3]
+      - inst_throughput_per_sm[lds_64]
+      - inst_throughput_per_sm[mufu_rsqrt]
+      - inst_throughput_per_sm[iadd3]
+      - inst_throughput_per_sm[ffma]
+      - inst_throughput_per_sm[fadd]
+      - inst_throughput_per_sm[fmul]
+      - inst_throughput_per_sm[sts_32]
+      - inst_throughput_per_sm[imad]
+      - inst_throughput_per_sm[lds_128]
+      - inst_throughput_per_sm[lds_32]
+      - inst_throughput_per_sm[shf]
+      - inst_throughput_per_sm[i2f_f2i]
+      method: 'B21.1: B2 pattern per opcode class (ILP 8, 8 x 256 threads per SM),
+        instructions per second per SM'
+      ci95:
+        lop3: 7.762943185109415e-05
+        lds_64: 0.0009363941176875424
+        mufu_rsqrt: 8.836693093767054e-05
+        iadd3: 6.753384331367476e-05
+        ffma: 0.0004662887350144028
+        fadd: 0.0005559465168371074
+        fmul: 0.0002457845587282883
+        sts_32: 0.00021148078408166136
+        imad: 0.00030573249510809007
+        lds_128: 0.0018396653014089814
+        lds_32: 0.001210552787701542
+        shf: 0.00023244231304842894
+        i2f_f2i: 3.837150390003702e-05
+    ld_shared_bytes_per_s_per_sm:
+      from:
+      - inst_throughput_per_sm[lds_64]
+      - inst_throughput_per_sm[sts_32]
+      - inst_throughput_per_sm[lds_128]
+      - inst_throughput_per_sm[lds_32]
+      method: 'B21.1: ld.shared / st.shared throughput by access width, bytes per
+        second per SM'
+    compute_block_efficiency:
+      from:
+      - compute_block_efficiency[T3_64x256x16]
+      - compute_block_efficiency[T5_128x128x32]
+      - compute_block_efficiency[T1_128x256x16]
+      - compute_block_efficiency[R4_64x64x32]
+      - compute_block_efficiency[R2_32x32x32]
+      method: 'B21.2-3: the template''s inner loop with the smem tile pre-filled,
+        one block per SM; cycles per TK step over the FFMA-only bound; SASS opcode
+        mix from cuobjdump'
+    clock_warmup_s:
+      from: clock_warmup_s
+      method: 'B22.1: time from an idle start until the in-kernel clock reaches 98
+        % of its sustained value'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        idle_probe_mhz:
+        - 2482.793
+        - 2478.905
+        start_mhz: 2480
+        sustained_mhz: 2462
+        samples_ms: 1985
+        method: 2 s FMA burst from idle; clock64/globaltimer every 1 ms; warm-up =
+          first ms within 2 % of the final clock
+    clock_idle_hz:
+      from: clock_idle_hz
+      method: 'B22.1: SM clock reported by nvidia-smi at idle'
+      ci95: 1.0
+      n: 2
+      inferred_from:
+        method: clock probe at idle, twice
+    clock_hz_sustained_by_load:
+      from:
+      - clock_hz_sustained_by_load[fma]
+      - clock_hz_sustained_by_load[gemm_inner_loop]
+      - clock_hz_sustained_by_load[dram_stream]
+      - clock_hz_sustained_by_load[tensor_bf16]
+      method: 'B22.2: median SM clock over 30 s of each load type (nvidia-smi once
+        per second, with power and temperature)'
+      inferred_from:
+        fma:
+          smi_clock_mhz_min_median_max:
+          - 2457
+          - 2457
+          - 2457
+          power_w_min_median_max:
+          - 76.5
+          - 76.8
+          - 76.9
+          temperature_c_min_median_max:
+          - 78
+          - 79
+          - 79
+          sw_power_cap_and_thermal_last: Not Active/Not
+          probe_mhz_after: 2443.913
+          series: in raw/
+        gemm_inner_loop:
+          smi_clock_mhz_min_median_max:
+          - 2437
+          - 2437
+          - 2457
+          power_w_min_median_max:
+          - 97.4
+          - 97.9
+          - 104.6
+          temperature_c_min_median_max:
+          - 78
+          - 80
+          - 81
+          sw_power_cap_and_thermal_last: Not Active/Not
+          probe_mhz_after: 2443.886
+          series: in raw/
+        dram_stream:
+          smi_clock_mhz_min_median_max:
+          - 2463
+          - 2483
+          - 2483
+          power_w_min_median_max:
+          - 26.4
+          - 26.9
+          - 28.1
+          temperature_c_min_median_max:
+          - 66
+          - 68
+          - 72
+          sw_power_cap_and_thermal_last: Not Active/Not
+          probe_mhz_after: 2483.306
+          series: in raw/
+        tensor_bf16:
+          smi_clock_mhz_min_median_max:
+          - 2457
+          - 2457
+          - 2457
+          power_w_min_median_max:
+          - 52.4
+          - 52.4
+          - 53.4
+          temperature_c_min_median_max:
+          - 71
+          - 71
+          - 71
+          sw_power_cap_and_thermal_last: Not Active/Not
+          probe_mhz_after: 2463.38
+          series: in raw/
+    clock_governor_limit:
+      from:
+      - clock_hz_sustained_by_load[fma]
+      - clock_hz_sustained_by_load[gemm_inner_loop]
+      - clock_hz_sustained_by_load[dram_stream]
+      - clock_hz_sustained_by_load[tensor_bf16]
+      method: 'B22.3: nvidia-smi throttle reasons / power vs cap during each load'
+    clock_after_gap_hz:
+      from: clock_after_gap_hz
+      method: 'B22.4: in-kernel clock of the first kernel after an idle gap of the
+        given length'
+    um_first_touch_s:
+      from:
+      - um_first_touch_s[page=2097152]
+      - um_first_touch_s[page=4096]
+      - um_first_touch_s[page=65536]
+      method: 'B23.1: managed 1 GiB touched by the CPU one byte per page, then by
+        a GPU kernel one byte per page; per-touch cost on first access vs the second
+        pass'
+      inferred_from:
+        '2097152': 0.0001659
+        '4096': 0.0002635
+        '65536': 0.0004015
+    um_prefetched_bytes_per_s:
+      from: um_prefetched_bytes_per_s
+      method: 'B23: managed buffer touched by the CPU, cudaMemPrefetchAsync to the
+        GPU, then streamed'
+      ci95: 0.0017788247823354141
+      n: 3
+      inferred_from:
+        sm_clock_mhz: 2521.9
+    um_host_resident_bytes_per_s:
+      from: um_host_resident_bytes_per_s
+      method: 'B23: managed buffer with preferred location CPU and accessed-by GPU,
+        streamed from the GPU'
+      ci95: 0.0005477120411168348
+      n: 3
+      inferred_from:
+        sm_clock_mhz: 2521.9
+    um_translation_overhead:
+      from: um_translation_overhead
+      method: 'B23: device vs GPU-first managed streaming with the CPU idle; the ratio
+        is the managed-page overhead itself'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        device_bytes_per_s: 233200000000.0
+        managed_bytes_per_s: 162900000000.0
+        sm_clock_mhz: 2521.9
+    um_max_alloc_bytes:
+      from: um_max_alloc_bytes
+      method: 'B23: one allocation of free - 8 GiB per API, freed untouched; larger
+        probes are unsafe on unified memory (a binary search OOM-killed host services)'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        total_bytes: 128520019968
+        free_bytes: 124678369280
+        tried_bytes: 116088434688
+        cudaMalloc_ok: true
+        cudaMallocManaged_ok: true
+        oversubscription_probed: false
+        sm_clock_mhz: 2521.9
+    atomic_throughput_per_s:
+      from:
+      - atomic_throughput_per_s[global_per_warp_red]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=32]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=8]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=16]
+      - atomic_throughput_per_s[global_per_thread_atom]
+      - atomic_throughput_per_s[global_per_warp_atom]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=48]
+      - atomic_throughput_per_s[global_per_thread_red]
+      - atomic_throughput_per_s[global_same_address_red]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=2]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=4]
+      - atomic_throughput_per_s[shared_same_address]
+      - atomic_throughput_per_s[shared_per_warp]
+      - atomic_throughput_per_s[shared_per_thread]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=1]
+      - atomic_throughput_per_s[global_same_address_atom]
+      method: 'B24.1-2: atomicAdd f32 by scope (global L2 / shared) and pattern (same
+        address, per warp, per thread), atom (value used) vs red (value unused); atomics
+        per second over the slowest block'
+      ci95:
+        global_per_warp_red: 0.031095039933205875
+        global_same_address_contention_blocks=32: 0.0015056481118865244
+        global_same_address_contention_blocks=8: 0.0035000523159160555
+        global_same_address_contention_blocks=16: 0.004216067552450887
+        global_per_thread_atom: 0.011611172743317478
+        global_per_warp_atom: 0.03483966789838743
+        global_same_address_contention_blocks=48: 0.003818641946810313
+        global_per_thread_red: 0.01766951074160576
+        global_same_address_red: 2.3767449115772412e-05
+        global_same_address_contention_blocks=2: 0.003040448538027614
+        global_same_address_contention_blocks=4: 0.003963354251625661
+        shared_same_address: 0.001322007054128671
+        shared_per_warp: 4.592792018238517e-06
+        shared_per_thread: 3.010732096133221e-05
+        global_same_address_contention_blocks=1: 0.00305874494826404
+        global_same_address_atom: 0.002606117884283478
+    atomic_contention_curve:
+      from:
+      - atomic_throughput_per_s[global_same_address_contention_blocks=32]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=8]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=16]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=48]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=2]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=4]
+      - atomic_throughput_per_s[global_same_address_contention_blocks=1]
+      method: 'B24.3: same-address global atomics vs number of blocks'
+    atomic_latency_ns:
+      from:
+      - atomic_latency_ns[shared]
+      - atomic_latency_ns[global]
+      method: 'B24.4: single-thread dependent atomicAdd chain'
+    kernel_gap_s:
+      from: kernel_gap_s
+      method: 'B25: globaltimer at exit of kernel i and entry of i+1 on one stream,
+        median gap'
+      ci95: 0.0
+      n: 9
+    graph_kernel_gap_s:
+      from: graph_kernel_gap_s
+      method: 'B25: the same chain captured as a CUDA graph'
+      ci95: 0.0
+      n: 9
+    concurrent_kernels:
+      from:
+      - concurrent_kernels[blocks=48]
+      - concurrent_kernels[blocks=24]
+      method: 'B25.3: two 2 ms kernels on two streams; ratio ~1 = co-run, ~2 = serialized,
+        by blocks per kernel'
+    l2_persists_across_kernels:
+      from: l2_persists_across_kernels
+      method: 'B25.4: kernel A writes 8 MiB, kernel B reads it at once (warm) or after
+        a 56 MiB read (cold); L2-level warm bandwidth means L2 persists across launches'
+      ci95: 0.0
+      n: 3
+      inferred_from:
+        warm_read_bytes_per_s: 648900000000.0
+        after_64MiB_flush_bytes_per_s: 240300000000.0
+        persists: true
+        persisting_window_api: no error / no error
+        sm_clock_mhz: 2502.4
+    l2_persisting_window_supported:
+      from: l2_persisting_window_supported
+      method: 'B25.4: kernel A writes 8 MiB, kernel B reads it at once (warm) or after
+        a 56 MiB read (cold); L2-level warm bandwidth means L2 persists across launches'
+      ci95: 0.0
+      n: 3
+      inferred_from:
+        warm_read_bytes_per_s: 648900000000.0
+        after_64MiB_flush_bytes_per_s: 240300000000.0
+        persists: true
+        persisting_window_api: no error / no error
+        sm_clock_mhz: 2502.4
+    cp_async_window_cycles:
+      from: cp_async_window_cycles
+      method: 'B26.1: cycles from issue to the moment every 16 B chunk of a group
+        is visible to a polling warp; chunk order from the landing order; torn = a
+        chunk seen half-written'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        trials: 2000
+        tile_bytes: 32768
+        chunks: 2048
+        in_order_fraction_median: 1.0
+        window_cycles_p1: 13357
+        window_cycles_p50: 13357
+        window_cycles_p99: 13358
+        first_chunk_cycles_p50: 961
+        torn_chunks_observed: 0
+        method: warp 1 polls all 16 B chunks of a slot warp 0 is filling by cp.async.cg,
+          recording the first clock64 at which each chunk is fully new; torn = a chunk
+          seen with some words new and some sentinel
+        sm_clock_mhz: 2521.9
+    cp_async_chunk_order:
+      from: cp_async_window_cycles
+      method: 'B26.1: fraction of groups whose chunks landed in issue order'
+    cp_async_torn_chunks_observed:
+      from: cp_async_window_cycles
+      method: 'B26.1: count over all polled chunks'
+    wait_group_overcomplete_observed:
+      from: wait_group_overcomplete_observed
+      method: 'B26.2: wait_group N returned while more than N groups were still incomplete
+        (count)'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        trials: 157
+        group0_complete: 157
+        group1_complete: 157
+        group2_already_complete: 152
+        method: 'three 4 KB groups, wait_group 1: groups 0 and 1 must be complete;
+          group 2 may be'
+        sm_clock_mhz: 2521.9
+    threadfence_visibility_cycles:
+      from: threadfence_visibility_cycles
+      method: 'B26.3: a writer warp''s smem store seen by a reader after syncthreads
+        / named barrier / fence only; counts of stale reads and the visibility delay'
+      ci95: 0.0
+      n: 1
+    tma_early_bytes_observed:
+      from: tma_early_bytes_observed
+      method: 'B26.4: bytes of a TMA tile visible before the mbarrier phase completed
+        (count)'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        trials: 2000
+        early_bytes_observed: 58005
+        status: no error
+        method: warp 1 polls 16 KB being filled by cp.async.bulk while mbarrier.test_wait
+          says the phase is incomplete
+        sm_clock_mhz: 2521.9
+    fma_contraction_default:
+      from: fma_contraction_default
+      method: 'B26.5: a*b+c vs __fadd_rn(__fmul_rn(a,b),c) on 2^20 random inputs;
+        1e-40f*x == 0 tests ftz'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        samples: 1048576
+        contracted_differs_from_rn_mul_add: 261885
+        denormal_flushed: 0
+        sm_clock_mhz: 2521.9
+    ftz_default:
+      from: ftz_default
+      method: 'B26.5: a*b+c vs __fadd_rn(__fmul_rn(a,b),c) on 2^20 random inputs;
+        1e-40f*x == 0 tests ftz'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        samples: 1048576
+        contracted_differs_from_rn_mul_add: 261885
+        denormal_flushed: 0
+        sm_clock_mhz: 2521.9
+    tensor_accumulate_ulp_bound:
+      from: tensor_accumulate_ulp_bound
+      method: 'B26.5: max |mma - fp64 reference| in ulps of the fp32 accumulator over
+        random inputs, per precision'
+    smem_bank_map:
+      from: smem_bank_map
+      method: 'B26.6: conflict cycles at 8 B and 16 B strides; saturation at stride
+        16 (8 B) and 8 (16 B) with no penalty at stride 1 is the 32 x 4 B map with
+        half/quarter-warp wavefronts'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        cycles_per_access_by_stride_elems_8B:
+        - - 1
+          - 27.0
+        - - 2
+          - 37.0
+        - - 4
+          - 64.0
+        - - 8
+          - 128.0
+        - - 16
+          - 255.0
+        - - 32
+          - 256.0
+        cycles_per_access_by_stride_elems_16B:
+        - - 1
+          - 37.0
+        - - 2
+          - 64.0
+        - - 4
+          - 127.0
+        - - 8
+          - 255.0
+        - - 16
+          - 256.0
+        - - 32
+          - 255.0
+        penalty_8B_stride16_over_stride1: 9.444444
+        penalty_16B_stride8_over_stride1: 6.891892
+        method: 256 threads, 8 B and 16 B shared loads at element strides 1..32 (a
+          64-bit access that pays no penalty at stride 1 and doubles per stride step
+          from 2 elements implies 8-byte banks / the half-warp rule)
+        sm_clock_mhz: 2521.9
+    independent_thread_scheduling:
+      from: independent_thread_scheduling
+      method: 'B26.7: divergent branches of one warp interleave in time (even lanes
+        start before odd lanes finish)'
+      ci95: 0.0
+      n: 1
+      inferred_from:
+        trials: 2000
+        interleaved_observed: 0
+        syncwarp_reconverge_spread_cycles_p50: 0
+        spread_p99: 0
+        method: 'odd lanes spin 2000 cycles in one branch, even lanes record their
+          start in the other: interleaved if an even lane''s start precedes the odd
+          branch''s end; spread of clock64 across lanes after __syncwarp'
+        sm_clock_mhz: 2521.9
     dram_bytes_per_s_write:
       from:
       - bandwidth_write[1073741824]
@@ -303,12 +3108,16 @@ provenance:
     tensor_flops_per_s_chip:
       from:
       - tensor_flops_per_s_chip[bf16]
+      - tensor_flops_per_s_chip[fp8_e5m2]
+      - tensor_flops_per_s_chip[fp8_e4m3]
       - tensor_flops_per_s_chip[tf32]
       - tensor_flops_per_s_chip[fp32]
       - tensor_flops_per_s_chip[fp16]
       method: 'B3: cublasGemmEx 8192^2 per precision, whole chip'
       ci95:
         bf16: 0.016318743300663102
+        fp8_e5m2: 0.009695345170840534
+        fp8_e4m3: 0.03210764607415919
         tf32: 0.011767687866556957
         fp32: 0.00741753079937421
         fp16: 0.019027537521749086

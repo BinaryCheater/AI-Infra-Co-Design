@@ -1,0 +1,44 @@
+{
+ "quantity": "cp_async_window_cycles",
+ "unit": "cycles",
+ "samples": [
+  13357
+ ],
+ "detail": {
+  "trials": 2000,
+  "tile_bytes": 32768,
+  "chunks": 2048,
+  "in_order_fraction_median": 1.0,
+  "window_cycles_p1": 13357,
+  "window_cycles_p50": 13357,
+  "window_cycles_p99": 13358,
+  "first_chunk_cycles_p50": 961,
+  "torn_chunks_observed": 0,
+  "method": "warp 1 polls all 16 B chunks of a slot warp 0 is filling by cp.async.cg, recording the first clock64 at which each chunk is fully new; torn = a chunk seen with some words new and some sentinel",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 13357,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "in-flight cp.async visibility and chunk order, wait_group semantics, barrier/fence visibility, TMA early bytes, FP32 contraction/ftz/tensor rounding, bank map, independent thread scheduling",
+ "benchmark": "b26_functional_probes",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 48.0,
+   "power_w": 4.43,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2463.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 9.18,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:26:56Z",
+ "arch": "sm_121"
+}

@@ -1,0 +1,65 @@
+{
+ "quantity": "l1_smem_pool_bytes",
+ "unit": "bytes",
+ "samples": [
+  114688,
+  114688,
+  114688,
+  114688,
+  114688
+ ],
+ "detail": {
+  "l1_plus_smem_by_setting": [
+   [
+    0,
+    32768
+   ],
+   [
+    16384,
+    49152
+   ],
+   [
+    32768,
+    65536
+   ],
+   [
+    49152,
+    81920
+   ],
+   [
+    65536,
+    81920
+   ],
+   [
+    98304,
+    114688
+   ]
+  ],
+  "method": "measured L1 capacity + dynamic smem request per setting; constant within one line if the pool is unified",
+  "sm_clock_mhz": 2518.5
+ },
+ "value": 114688,
+ "ci95": 0.0,
+ "n": 5,
+ "method": "pointer chase vs footprint per shared-memory carve-out; L1 allocation after cp.async.cg / .ca / TMA",
+ "benchmark": "b14_l1_carveout",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 50.0,
+   "power_w": 10.69,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2522.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 51.0,
+   "power_w": 17.17,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:14:27Z",
+ "arch": "sm_121",
+ "repeat_policy": "to_ci"
+}

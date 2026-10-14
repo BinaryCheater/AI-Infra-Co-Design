@@ -1,0 +1,188 @@
+{
+ "quantity": "l2_set_conflicts",
+ "unit": "ways",
+ "samples": [
+  -1
+ ],
+ "detail": {
+  "grid": [
+   {
+    "stride": 4096,
+    "latency_ns_by_n": [
+     135.2,
+     134.0,
+     135.1,
+     135.8,
+     135.9,
+     135.8
+    ],
+    "first_n_at_dram_latency": -1
+   },
+   {
+    "stride": 8192,
+    "latency_ns_by_n": [
+     135.2,
+     135.7,
+     136.0,
+     135.9,
+     135.8,
+     135.8
+    ],
+    "first_n_at_dram_latency": -1
+   },
+   {
+    "stride": 16384,
+    "latency_ns_by_n": [
+     133.0,
+     136.0,
+     136.0,
+     135.8,
+     135.8,
+     135.9
+    ],
+    "first_n_at_dram_latency": -1
+   },
+   {
+    "stride": 32768,
+    "latency_ns_by_n": [
+     136.3,
+     136.1,
+     136.0,
+     135.9,
+     135.8,
+     135.9
+    ],
+    "first_n_at_dram_latency": -1
+   },
+   {
+    "stride": 65536,
+    "latency_ns_by_n": [
+     135.7,
+     135.0,
+     135.7,
+     135.9,
+     135.8,
+     135.9
+    ],
+    "first_n_at_dram_latency": -1
+   },
+   {
+    "stride": 131072,
+    "latency_ns_by_n": [
+     136.8,
+     135.8,
+     136.0,
+     135.8,
+     135.8,
+     135.8
+    ],
+    "first_n_at_dram_latency": -1
+   },
+   {
+    "stride": 262144,
+    "latency_ns_by_n": [
+     136.3,
+     136.4,
+     135.7,
+     136.0,
+     135.8,
+     137.8
+    ],
+    "first_n_at_dram_latency": -1
+   },
+   {
+    "stride": 524288,
+    "latency_ns_by_n": [
+     135.2,
+     137.8,
+     136.8,
+     136.1,
+     140.2,
+     140.0
+    ],
+    "first_n_at_dram_latency": -1
+   },
+   {
+    "stride": 1048576,
+    "latency_ns_by_n": [
+     137.4,
+     136.2,
+     136.3,
+     136.1,
+     139.9,
+     139.9
+    ],
+    "first_n_at_dram_latency": -1
+   },
+   {
+    "stride": 2097152,
+    "latency_ns_by_n": [
+     135.9,
+     136.5,
+     136.6,
+     135.7,
+     139.7,
+     140.0
+    ],
+    "first_n_at_dram_latency": -1
+   },
+   {
+    "stride": 4194304,
+    "latency_ns_by_n": [
+     136.8,
+     135.1,
+     135.4,
+     135.6,
+     139.7,
+     139.7
+    ],
+    "first_n_at_dram_latency": -1
+   },
+   {
+    "stride": 8388608,
+    "latency_ns_by_n": [
+     134.1,
+     135.4,
+     135.2,
+     135.8,
+     139.7,
+     139.8
+    ],
+    "first_n_at_dram_latency": -1
+   }
+  ],
+  "lat_l2_ns": 135.850805,
+  "lat_dram_ns": 426.551169,
+  "inferred_ways": -1,
+  "inferred_set_stride_bytes": 0,
+  "inferred_sets_if_128B_lines": -1,
+  "inferred_capacity_bytes": -1,
+  "declared_l2_bytes": 25165824,
+  "method": "n addresses at stride s chased cyclically; at the largest stride the first n whose latency crosses the L2/DRAM midpoint is the associativity (reported as n/2..n); the smallest stride that conflicts gives the set stride",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": -1,
+ "ci95": 0.0,
+ "n": 1,
+ "method": "pointer chases: sector/line fill, set-conflict (stride, n) grid for ways and sets, one-bit address flips for slice bits, cyclic vs random footprints for replacement (Mei & Chu 2017; Jia et al. 2018)",
+ "benchmark": "b13_l2_structure",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 47.0,
+   "power_w": 4.47,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 16.65,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:14:10Z",
+ "arch": "sm_121",
+ "repeat_policy": "once"
+}

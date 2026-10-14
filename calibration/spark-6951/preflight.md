@@ -48,3 +48,15 @@ Hello-world kernel: compiled with `-arch=sm_121`, ran, returned the expected val
 - Python driver: `~/.venv/bin/python` on the host; benchmarks themselves are plain CUDA C++ built with `nvcc`.
 - Shared-memory tiles above 48 KiB need the opt-in attribute (`cudaFuncSetAttribute(..., cudaFuncAttributeMaxDynamicSharedMemorySize, ...)`), up to 101 376 bytes.
 - B12 (unified memory) applies: the GPU is integrated and pageable access is on.
+
+## P0 (2026-10-15): profiler counters, and the tools the B13–B26 suite needs
+
+| Item | Result |
+|---|---|
+| Profiler counters for non-admin users | **Done (2026-10-15, second pass).** The account was given passwordless sudo; `/etc/modprobe.d/nvidia-profiling.conf` now holds `options nvidia NVreg_RestrictProfilingToAdminUsers=0`, `update-initramfs -u` was run and the host rebooted. After the reboot `/proc/driver/nvidia/params` reports `RmProfilingAdminOnly: 0` and `ncu --metrics lts__t_bytes.sum` reads counters as `lishang` (195,232 bytes for the clock-probe kernel). The GB10 exposes no `dram__*` metrics (unified LPDDR5X behind the L2); DRAM traffic is read as L2 lookup misses (`lts__t_sectors_*lookup_miss`), see the runner. Earlier (first pass, before the sudo grant) `ncu` failed with `ERR_NVGPUCTRPERM`. |
+| `cuobjdump` / `nvdisasm` | present (CUDA 13.0, compiler build 36400806) |
+| `cublasLt` | present: `libcublasLt.so.13`, `cublasLt.h` (B20.1 FP8 can use it) |
+| Thread-block clusters + distributed shared memory | **supported**: `cudaDevAttrClusterLaunch = 1`; a `__cluster_dims__(2,1,1)` kernel launched and read a peer block's shared memory through `map_shared_rank` correctly |
+| `wgmma.fence` | not supported on `sm_121` (ptxas error) |
+| `setmaxnreg` | not supported on `sm_121` (ptxas error) |
+| `tcgen05.alloc` | not supported on `sm_121` (ptxas error) |

@@ -1,0 +1,48 @@
+{
+ "quantity": "spill_flops_per_s_per_sm[maxrreg=48]",
+ "unit": "flop/s",
+ "samples": [
+  16761695100.0,
+  16796576400.0,
+  16804150200.0,
+  16722256300.0,
+  16717454400.0,
+  16761677100.0,
+  16843562200.0,
+  16846308900.0,
+  16801552000.0,
+  16866582500.0
+ ],
+ "detail": {
+  "maxrregcount": 48,
+  "regs_used": 48,
+  "local_bytes": 216,
+  "spill_bytes_ptxas": 1064,
+  "method": "64-accumulator FMA kernel per register cap; throughput per SM; spill bytes from ptxas -v",
+  "sm_clock_mhz": 2502.6
+ },
+ "value": 16799064200.0,
+ "ci95": 0.003064451947269777,
+ "n": 10,
+ "method": "FMA kernel under -maxrregcount (spill curve from ptxas -v); local-memory chase and stream; allocation granularity from B9",
+ "benchmark": "b19_registers_local",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 57.0,
+   "power_w": 4.69,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2483.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 65.0,
+   "power_w": 35.15,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:19:18Z",
+ "arch": "sm_121",
+ "repeat_policy": "to_ci"
+}

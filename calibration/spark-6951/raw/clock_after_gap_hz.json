@@ -1,0 +1,60 @@
+{
+ "quantity": "clock_after_gap_hz",
+ "unit": "Hz",
+ "samples": [
+  2443670000.0,
+  2451986000.0,
+  2463461000.0,
+  2482874000.0,
+  2482901000.0
+ ],
+ "detail": {
+  "gap_ms_vs_clock_hz": [
+   [
+    0,
+    2443670000
+   ],
+   [
+    1,
+    2451986000
+   ],
+   [
+    10,
+    2463461000
+   ],
+   [
+    100,
+    2482874000
+   ],
+   [
+    1000,
+    2482901000
+   ]
+  ],
+  "method": "200 us FMA kernel after an idle gap, clock probed right after it; what a reps loop with host gaps experiences"
+ },
+ "value": 2463461000.0,
+ "ci95": 0.007962577852866354,
+ "n": 5,
+ "method": "in-kernel clock64/globaltimer sampling: step response, clock by load type, power cap, clock after idle gaps",
+ "benchmark": "b22_clock_governor",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2444.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 70.0,
+   "power_w": 52.87,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2392.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 64.0,
+   "power_w": 14.89,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:06:56Z",
+ "arch": "sm_121",
+ "repeat_policy": "once"
+}

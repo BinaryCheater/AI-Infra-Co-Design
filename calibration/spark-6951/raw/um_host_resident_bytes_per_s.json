@@ -1,0 +1,37 @@
+{
+ "quantity": "um_host_resident_bytes_per_s",
+ "unit": "byte/s",
+ "samples": [
+  163169158000.0,
+  163159641000.0,
+  162990429000.0
+ ],
+ "detail": {
+  "method": "managed buffer with preferred location CPU and accessed-by GPU, streamed from the GPU",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 163159641000.0,
+ "ci95": 0.0005477120411168348,
+ "n": 3,
+ "repeat_policy": "once",
+ "method": "first-touch cost by page size, prefetch, host-resident access, managed-vs-device overhead with the CPU idle, allocation limits",
+ "benchmark": "b23_unified_mechanics",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 45.0,
+   "power_w": 4.4,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 47.0,
+   "power_w": 12.72,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:31:40Z",
+ "arch": "sm_121"
+}

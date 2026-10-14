@@ -1,0 +1,57 @@
+{
+ "quantity": "tensor_rate[tf32_m16n8k8]",
+ "unit": "flop/s",
+ "samples": [
+  1273016300000.0,
+  1273195590000.0,
+  1273023770000.0,
+  1273021280000.0,
+  1273045680000.0,
+  1273031730000.0,
+  1273024760000.0,
+  1273189860000.0,
+  1273197590000.0,
+  1273187370000.0,
+  1273090840000.0,
+  1272721680000.0,
+  1273094580000.0,
+  1273102300000.0,
+  1273080880000.0,
+  1272963120000.0,
+  1273040550000.0,
+  1273242760000.0,
+  1273246490000.0,
+  1273245990000.0
+ ],
+ "detail": {
+  "shape": "tf32_m16n8k8",
+  "chains": 4,
+  "blocks_per_sm": 4,
+  "warps_per_block": 4,
+  "sm_clock_mhz": 2482.8
+ },
+ "value": 1273085860000.0,
+ "ci95": 6.298475422545342e-05,
+ "n": 20,
+ "method": "cublasLt FP8; mma.sync shapes per precision; dependent mma chain latency; ldmatrix feed; ISA probes",
+ "benchmark": "b20_tensor_detail",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2392.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 64.0,
+   "power_w": 13.5,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2450.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 65.0,
+   "power_w": 30.97,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:08:41Z",
+ "arch": "sm_121",
+ "repeat_policy": "to_ci"
+}

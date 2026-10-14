@@ -1,0 +1,41 @@
+{
+ "quantity": "concurrent_kernels[blocks=24]",
+ "unit": "ratio",
+ "samples": [
+  1.0011639,
+  1.00092476,
+  1.00089289
+ ],
+ "detail": {
+  "blocks_per_kernel": 24,
+  "one_kernel_s": 0.002007,
+  "two_streams_s": 0.002009,
+  "concurrent": true,
+  "method": "two 2 ms kernels on two streams; ratio ~1 = co-run, ~2 = serialized",
+  "sm_clock_mhz": 2502.4
+ },
+ "value": 1.00092476,
+ "ci95": 0.00013537980617048153,
+ "n": 3,
+ "repeat_policy": "to_ci",
+ "method": "kernel-to-kernel gap, CUDA graph gap, two-stream concurrency, L2 persistence across kernels",
+ "benchmark": "b25_multi_kernel",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 54.0,
+   "power_w": 9.5,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2463.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 55.0,
+   "power_w": 16.74,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:20:13Z",
+ "arch": "sm_121"
+}

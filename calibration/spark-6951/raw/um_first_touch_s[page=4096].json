@@ -1,0 +1,39 @@
+{
+ "quantity": "um_first_touch_s[page=4096]",
+ "unit": "s",
+ "samples": [
+  0.000203988,
+  0.000230784,
+  0.000266352
+ ],
+ "detail": {
+  "page_bytes": 4096,
+  "steady_touch_s_per_page_median": 0.0002635,
+  "method": "managed 1 GiB touched by the CPU one byte per page; GPU kernel touches one byte per page (wall time x threads / pages = per-touch cost); second pass = steady",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 0.000230784,
+ "ci95": 0.13511335274542424,
+ "n": 3,
+ "repeat_policy": "once",
+ "method": "first-touch cost by page size, prefetch, host-resident access, managed-vs-device overhead with the CPU idle, allocation limits",
+ "benchmark": "b23_unified_mechanics",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 45.0,
+   "power_w": 4.4,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 47.0,
+   "power_w": 12.72,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:31:40Z",
+ "arch": "sm_121"
+}

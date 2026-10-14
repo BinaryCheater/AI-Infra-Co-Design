@@ -1,0 +1,44 @@
+{
+ "quantity": "local_mem_bytes_per_s_per_sm",
+ "unit": "byte/s",
+ "samples": [
+  11158399500.0,
+  11267471900.0,
+  11273775800.0,
+  11339406400.0,
+  11409164700.0,
+  11429655500.0,
+  10906148600.0,
+  11135406000.0,
+  11422958000.0,
+  11434108400.0
+ ],
+ "detail": {
+  "method": "one block of 256 threads per SM streaming a 256 B local array: 8 independent 4 B loads and one store per step, bytes per second per SM (clock64 of the median block)",
+  "sm_clock_mhz": 2502.4
+ },
+ "value": 11306591100.0,
+ "ci95": 0.012355801918051145,
+ "n": 10,
+ "method": "FMA kernel under -maxrregcount (spill curve from ptxas -v); local-memory chase and stream; allocation granularity from B9",
+ "benchmark": "b19_registers_local",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 57.0,
+   "power_w": 4.69,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2483.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 65.0,
+   "power_w": 35.15,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:19:18Z",
+ "arch": "sm_121",
+ "repeat_policy": "to_ci"
+}

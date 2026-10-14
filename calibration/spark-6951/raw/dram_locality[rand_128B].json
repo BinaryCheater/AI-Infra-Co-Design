@@ -1,0 +1,38 @@
+{
+ "quantity": "dram_locality[rand_128B]",
+ "unit": "byte/s",
+ "samples": [
+  168577114000.0,
+  186992146000.0,
+  186670694000.0
+ ],
+ "detail": {
+  "chunk_bytes": 128,
+  "order": "random",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 186670694000.0,
+ "ci95": 0.04932491438640069,
+ "n": 3,
+ "method": "bandwidth vs power-of-two stride (interleave bits, channels), sequential vs random (page locality), read/write mix, CPU contention, 60 s drift",
+ "benchmark": "b18_dram",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2502.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 53.0,
+   "power_w": 12.94,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2502.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 61.0,
+   "power_w": 23.69,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:18:49Z",
+ "arch": "sm_121",
+ "repeat_policy": "once"
+}

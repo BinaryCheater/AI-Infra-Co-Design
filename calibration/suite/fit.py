@@ -163,6 +163,13 @@ def main():
             contract["coherent_access_bytes_per_s"] = um.get("pinned_host", {}).get("value")
         src["unified_memory"] = {"from": [r["quantity"] for r in um.values()], "note": "penalty = device read bandwidth / this allocation's read bandwidth, 1 GiB working set"}
     contract["suite_level"] = "full" if tensor_sm and um else "minimum"
+    # ---- B13-B26 (the structure suite, calibration/suite/B13_plus.md): one fitter per benchmark in fit_micro.py
+    from fit_micro import fit_micro
+    micro_fields, micro_src, micro_present = fit_micro(recs, contract)
+    contract.update(micro_fields); src.update(micro_src)
+    if micro_present:
+        contract["suite_level"] = contract["suite_level"] + "+micro"
+        contract["micro_benchmarks"] = micro_present
 
     # method strings for every derived row (the page shows them; "declared (B1)" is only for B1 fields)
     def ci_of(q):

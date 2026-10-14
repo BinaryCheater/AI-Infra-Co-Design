@@ -1,0 +1,46 @@
+{
+ "quantity": "atomic_throughput_per_s[global_per_warp_red]",
+ "unit": "atomics/s",
+ "samples": [
+  26782585500.0,
+  26792426900.0,
+  26798393100.0,
+  26848672700.0,
+  26811679000.0,
+  26815426000.0,
+  25200446400.0,
+  25044406700.0,
+  26168601600.0,
+  25091077300.0
+ ],
+ "detail": {
+  "blocks": 48,
+  "threads": 256,
+  "iters": 2000,
+  "sm_clock_mhz": 2521.8
+ },
+ "value": 26787506200.0,
+ "ci95": 0.031095039933205875,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "atomicAdd / red throughput by scope and address pattern; contention curve",
+ "benchmark": "b24_atomics_reductions",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 47.0,
+   "power_w": 11.62,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 20.92,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:30:57Z",
+ "arch": "sm_121"
+}

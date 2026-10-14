@@ -1,0 +1,337 @@
+{
+ "quantity": "l1_latency_ns",
+ "unit": "ns",
+ "samples": [
+  17.0602585,
+  17.0653812,
+  17.0534941,
+  17.0346914,
+  17.0361503
+ ],
+ "detail": {
+  "table": {
+   "smem_0": {
+    "carveout_pct": 0,
+    "cycles_by_footprint_kb": [
+     [
+      4,
+      43.0
+     ],
+     [
+      8,
+      43.0
+     ],
+     [
+      16,
+      47.8
+     ],
+     [
+      32,
+      57.4
+     ],
+     [
+      48,
+      67.0
+     ],
+     [
+      64,
+      76.7
+     ],
+     [
+      96,
+      179.5
+     ],
+     [
+      128,
+      342.8
+     ],
+     [
+      192,
+      342.8
+     ],
+     [
+      256,
+      342.8
+     ]
+    ],
+    "l1_capacity_bytes": 32768
+   },
+   "smem_16384": {
+    "carveout_pct": 16,
+    "cycles_by_footprint_kb": [
+     [
+      4,
+      43.0
+     ],
+     [
+      8,
+      43.0
+     ],
+     [
+      16,
+      47.8
+     ],
+     [
+      32,
+      57.4
+     ],
+     [
+      48,
+      67.0
+     ],
+     [
+      64,
+      76.7
+     ],
+     [
+      96,
+      179.8
+     ],
+     [
+      128,
+      342.8
+     ],
+     [
+      192,
+      342.8
+     ],
+     [
+      256,
+      342.8
+     ]
+    ],
+    "l1_capacity_bytes": 32768
+   },
+   "smem_32768": {
+    "carveout_pct": 32,
+    "cycles_by_footprint_kb": [
+     [
+      4,
+      43.0
+     ],
+     [
+      8,
+      43.0
+     ],
+     [
+      16,
+      47.8
+     ],
+     [
+      32,
+      57.4
+     ],
+     [
+      48,
+      67.0
+     ],
+     [
+      64,
+      207.4
+     ],
+     [
+      96,
+      342.7
+     ],
+     [
+      128,
+      342.8
+     ],
+     [
+      192,
+      342.8
+     ],
+     [
+      256,
+      342.7
+     ]
+    ],
+    "l1_capacity_bytes": 32768
+   },
+   "smem_49152": {
+    "carveout_pct": 48,
+    "cycles_by_footprint_kb": [
+     [
+      4,
+      43.0
+     ],
+     [
+      8,
+      43.0
+     ],
+     [
+      16,
+      47.8
+     ],
+     [
+      32,
+      57.4
+     ],
+     [
+      48,
+      67.0
+     ],
+     [
+      64,
+      207.4
+     ],
+     [
+      96,
+      342.7
+     ],
+     [
+      128,
+      342.9
+     ],
+     [
+      192,
+      342.8
+     ],
+     [
+      256,
+      342.7
+     ]
+    ],
+    "l1_capacity_bytes": 32768
+   },
+   "smem_65536": {
+    "carveout_pct": 64,
+    "cycles_by_footprint_kb": [
+     [
+      4,
+      43.0
+     ],
+     [
+      8,
+      43.0
+     ],
+     [
+      16,
+      47.8
+     ],
+     [
+      32,
+      254.9
+     ],
+     [
+      48,
+      341.9
+     ],
+     [
+      64,
+      342.6
+     ],
+     [
+      96,
+      342.7
+     ],
+     [
+      128,
+      342.7
+     ],
+     [
+      192,
+      342.7
+     ],
+     [
+      256,
+      342.7
+     ]
+    ],
+    "l1_capacity_bytes": 16384
+   },
+   "smem_98304": {
+    "carveout_pct": 96,
+    "cycles_by_footprint_kb": [
+     [
+      4,
+      43.0
+     ],
+     [
+      8,
+      43.0
+     ],
+     [
+      16,
+      47.8
+     ],
+     [
+      32,
+      254.9
+     ],
+     [
+      48,
+      341.9
+     ],
+     [
+      64,
+      342.6
+     ],
+     [
+      96,
+      342.7
+     ],
+     [
+      128,
+      342.7
+     ],
+     [
+      192,
+      342.7
+     ],
+     [
+      256,
+      342.7
+     ]
+    ],
+    "l1_capacity_bytes": 16384
+   }
+  },
+  "line_cycles_by_stride_16KiB": [
+   [
+    32,
+    76.4
+   ],
+   [
+    64,
+    57.4
+   ],
+   [
+    128,
+    47.8
+   ],
+   [
+    256,
+    43.0
+   ]
+  ],
+  "l1_hit_cycles": 42.9665,
+  "smem_per_sm_declared": 102400,
+  "method": "single-thread chase at 128 B stride; capacity = largest footprint under 1.5x the 4 KiB latency, per dynamic-smem request (the carve-out attribute is set to match)",
+  "sm_clock_mhz": 2518.5
+ },
+ "value": 17.0534941,
+ "ci95": 0.0008998097345927805,
+ "n": 5,
+ "method": "pointer chase vs footprint per shared-memory carve-out; L1 allocation after cp.async.cg / .ca / TMA",
+ "benchmark": "b14_l1_carveout",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 50.0,
+   "power_w": 10.69,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2522.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 51.0,
+   "power_w": 17.17,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:14:27Z",
+ "arch": "sm_121",
+ "repeat_policy": "to_ci"
+}

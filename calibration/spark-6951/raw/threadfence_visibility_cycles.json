@@ -1,0 +1,41 @@
+{
+ "quantity": "threadfence_visibility_cycles",
+ "unit": "cycles",
+ "samples": [
+  243
+ ],
+ "detail": {
+  "trials": 2000,
+  "syncthreads_visible": 2000,
+  "named_barrier_arrive_only_visible": 2000,
+  "fence_no_barrier_visible": 2000,
+  "fence_visibility_cycles_p50": 243,
+  "fence_visibility_cycles_p99": 243,
+  "method": "warp 0 stores, warp 1 reads after __syncthreads / after bar.sync paired with warp 0's bar.arrive / after polling with only __threadfence_block on the writer",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 243,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "in-flight cp.async visibility and chunk order, wait_group semantics, barrier/fence visibility, TMA early bytes, FP32 contraction/ftz/tensor rounding, bank map, independent thread scheduling",
+ "benchmark": "b26_functional_probes",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 48.0,
+   "power_w": 4.43,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2463.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 9.18,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:26:56Z",
+ "arch": "sm_121"
+}

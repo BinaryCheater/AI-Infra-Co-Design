@@ -2,6 +2,7 @@
 // (5 warm-ups, then --reps timed with cudaEvent), checks C against cublasSgemm on the same inputs
 // at a relative tolerance, and prints one JSON object. Built by agentic_runner.py together with the
 // generated kernel (#include "kernel.cu"). The SM clock is probed in-run with clock64 vs globaltimer.
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -29,6 +30,7 @@ int main(int argc, char** argv) {
   int M = argi(argc, argv, "--m", 1000), N = argi(argc, argv, "--n", 1000), K = argi(argc, argv, "--k", 1000);
   int reps = argi(argc, argv, "--reps", 50), seed = argi(argc, argv, "--seed", 12345); double tol = argd(argc, argv, "--tol", 1e-4);
   int amp_warp = argi(argc, argv, "--amplify-warp", -1); long long amp_cycles = (long long)argd(argc, argv, "--amplify-cycles", 20000);
+  double warmup_s = argd(argc, argv, "--warmup-s", 0.0);        // B22 clock_warmup_s: keep launching until the clock has had this long to ramp (at least 5 launches)
   int gx, gy, threads, smem, use_async; smem_tiling_geometry(M, N, K, &gx, &gy, &threads, &smem, &use_async);
   std::vector<float> hA((size_t)M * K), hB((size_t)K * N), hC((size_t)M * N), hR((size_t)M * N);
   unsigned s = seed; auto rnd = [&]() { s = s * 1664525u + 1013904223u; return ((s >> 8) & 0xFFFF) / 65536.0f - 0.5f; };
@@ -38,7 +40,8 @@ int main(int argc, char** argv) {
   CK(cudaMemset(C, 0, hC.size() * 4));
   if (smem > 48 * 1024) CK(cudaFuncSetAttribute(smem_tiling_gemm, cudaFuncAttributeMaxDynamicSharedMemorySize, smem));
   dim3 grid(gx, gy), block(threads);
-  for (int w = 0; w < 5; w++) smem_tiling_gemm<<<grid, block, smem>>>(A, B, C, M, N, K, use_async, amp_warp, amp_cycles);
+  int warmups = 0; { auto w0 = std::chrono::steady_clock::now(); do { smem_tiling_gemm<<<grid, block, smem>>>(A, B, C, M, N, K, use_async, amp_warp, amp_cycles); warmups++; if (warmups % 5 == 0) cudaDeviceSynchronize(); }
+    while (warmups < 5 || std::chrono::duration<double>(std::chrono::steady_clock::now() - w0).count() < warmup_s); }
   cudaError_t le = cudaDeviceSynchronize();
   if (le != cudaSuccess) { printf("{\"error\": \"kernel: %s\", \"compiled\": true, \"ran\": false}\n", cudaGetErrorString(le)); return 3; }
   cudaEvent_t e0, e1; CK(cudaEventCreate(&e0)); CK(cudaEventCreate(&e1));
@@ -61,12 +64,12 @@ int main(int argc, char** argv) {
   for (size_t i = 0; i < hC.size(); i++) { double d = fabs((double)hC[i] - hR[i]), rel = d / (fabs((double)hR[i]) + mean_abs); if (rel > tol) { bad++; if (first < 0) first = (long)i; } worst = std::max(worst, rel); max_abs = std::max(max_abs, d); }
   FILE* f = popen("nvidia-smi --query-gpu=clocks.sm,power.draw,temperature.gpu --format=csv,noheader,nounits", "r"); char clk[128] = "?"; if (f) { if (!fgets(clk, sizeof clk, f)) strcpy(clk, "?"); pclose(f); } for (char* c = clk; *c; c++) if (*c == '\n') *c = 0;
   printf("{\"compiled\": true, \"ran\": true, \"m\": %d, \"n\": %d, \"k\": %d, \"grid\": [%d, %d], \"threads\": %d, \"smem_bytes\": %d, \"cp_async\": %d, "
-         "\"reps\": %d, \"warmups\": 5, \"median_us\": %.4f, \"ci95_us\": [%.4f, %.4f], \"min_us\": %.4f, "
+         "\"reps\": %d, \"warmups\": %d, \"warmup_s\": %g, \"median_us\": %.4f, \"ci95_us\": [%.4f, %.4f], \"min_us\": %.4f, "
          "\"reference\": \"cublasSgemm\", \"tolerance\": %g, \"reference_agrees\": %s, \"disagreeing\": %ld, \"first_disagreeing_index\": %ld, "
          "\"first_disagreeing_rc\": [%ld, %ld], \"worst_rel_error\": %.3g, \"max_abs_error\": %.3g, \"mean_abs_ref\": %.4g, \"clocks_after\": \"%s\", "
          "\"sm_clock_mhz_in_run\": [%.1f, %.1f, %.1f], \"sm_clock_mhz\": %.1f, \"median_cycles\": %.0f, \"ci95_cycles\": [%.0f, %.0f], "
          "\"amplify_warp\": %d, \"amplify_cycles\": %lld}\n",
-         M, N, K, gx, gy, threads, smem, use_async, reps, median, lo, hi, ts[0], tol, bad ? "false" : "true", bad, first,
+         M, N, K, gx, gy, threads, smem, use_async, reps, warmups, warmup_s, median, lo, hi, ts[0], tol, bad ? "false" : "true", bad, first,
          first < 0 ? -1L : first / N, first < 0 ? -1L : first % N, worst, max_abs, mean_abs, clk,
          clk_mhz[0], clk_mhz[1], clk_mhz[2], clk_med, median * clk_med, lo * clk_med, hi * clk_med, amp_warp, amp_cycles);
   return 0;

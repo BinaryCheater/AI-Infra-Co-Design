@@ -1,0 +1,41 @@
+{
+ "quantity": "wave_staircase[r=8]",
+ "unit": "s",
+ "samples": [
+  0.000152544007,
+  0.000154016003,
+  0.000154080003
+ ],
+ "detail": {
+  "grid": 104,
+  "r": 8,
+  "block_us": 50,
+  "smem_bytes": 61440,
+  "expected_waves": 3,
+  "sm_clock_mhz": 2502.4
+ },
+ "value": 0.000154016003,
+ "ci95": 0.004986481826826774,
+ "n": 3,
+ "repeat_policy": "once",
+ "method": "blocks record %smid and %globaltimer at entry: dispatch order, rate, refill latency, wave staircase (Accel-Sim)",
+ "benchmark": "b16_block_scheduler",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 54.0,
+   "power_w": 9.86,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 54.0,
+   "power_w": 9.53,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:20:11Z",
+ "arch": "sm_121"
+}

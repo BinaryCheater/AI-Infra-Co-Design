@@ -13,7 +13,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 
 
-NCU_METRICS = "dram__bytes.sum,lts__t_bytes.sum,dram__bytes_read.sum,dram__bytes_write.sum,gpu__time_duration.sum"
+# The GB10 exposes no dram__* counters (unified LPDDR5X behind the L2): DRAM traffic is the L2 lookup misses, 32 B sectors.
+NCU_METRICS = "lts__t_bytes.sum,lts__t_sectors_op_read_lookup_miss.sum,lts__t_sectors_op_write_lookup_miss.sum,lts__t_sectors_op_read.sum,lts__t_sectors_op_write.sum,gpu__time_duration.sum"
 
 
 def ncu_traffic(args: list[str]) -> dict:
@@ -41,9 +42,45 @@ def ncu_traffic(args: list[str]) -> dict:
     def bytes_of(k):
         v = vals.get(k); u = units.get(k, "byte")
         return None if v is None else v * scale.get(u, 1)
-    return {"available": True, "ok": True, "dram_bytes": bytes_of("dram__bytes.sum"), "l2_bytes": bytes_of("lts__t_bytes.sum"),
-            "dram_bytes_read": bytes_of("dram__bytes_read.sum"), "dram_bytes_write": bytes_of("dram__bytes_write.sum"),
+    def sectors_bytes(k):
+        v = vals.get(k); return None if v is None else v * 32
+    rd, wr = sectors_bytes("lts__t_sectors_op_read_lookup_miss.sum"), sectors_bytes("lts__t_sectors_op_write_lookup_miss.sum")
+    return {"available": True, "ok": True, "dram_bytes": (rd or 0) + (wr or 0) if rd is not None or wr is not None else None, "l2_bytes": bytes_of("lts__t_bytes.sum"),
+            "dram_bytes_read": rd, "dram_bytes_write": wr, "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+            "l2_read_bytes": sectors_bytes("lts__t_sectors_op_read.sum"), "l2_write_bytes": sectors_bytes("lts__t_sectors_op_write.sum"),
             "raw": {k: [vals[k], units.get(k)] for k in vals}}
+
+
+def derive_policy(contract_path, k, tol_cli, warmup_cli):
+    """Warm-up and reference tolerance from the measured contract (B13_plus.md §3, runner changes).
+
+    warm-up: B22 clock_warmup_s (the time the clock takes to reach its sustained value from idle), else 0 s (five launches).
+    tolerance: an FP32 FMA kernel checked against cublasSgemm differs by the accumulation-order rounding, bounded by
+    K x 2^-24 relative to the output scale, times the measured ulp bound of the accumulate (B26.5; 1 when contraction is the
+    default and nothing larger was measured). The CLI --tol stays as a floor.
+    """
+    pol = {"warmup_s": warmup_cli if warmup_cli is not None else 0.0, "tol": tol_cli, "source": "cli defaults"}
+    if not contract_path:
+        return pol
+    try:
+        import yaml
+        c = yaml.safe_load(Path(contract_path).read_text())
+    except Exception as e:                      # a missing yaml module or file leaves the defaults, and says so
+        pol["source"] = f"contract unreadable: {e}"
+        return pol
+    fn = c.get("functional") or {}
+    if warmup_cli is None and c.get("clock_warmup_s"):
+        pol["warmup_s"] = float(c["clock_warmup_s"])
+    ulp = fn.get("tensor_accumulate_ulp_bound")
+    ulp_fp32 = 1.0
+    if isinstance(ulp, dict):
+        ulp_fp32 = float(ulp.get("fp32") or ulp.get("fp32_fma") or 1.0)
+    elif isinstance(ulp, (int, float)):
+        ulp_fp32 = 1.0                           # the measured bound is for tensor accumulates; the FP32 FMA path is 1 ulp per op
+    derived = ulp_fp32 * k * 2.0 ** -24
+    pol.update({"tol": max(tol_cli, derived), "tol_derived": derived, "ulp_bound_fp32": ulp_fp32,
+                "fma_contraction_default": fn.get("fma_contraction_default"), "source": str(contract_path)})
+    return pol
 
 
 def main():
@@ -54,7 +91,10 @@ def main():
     ap.add_argument("--amplify-warp", type=int, default=-1, help="race amplifier: this warp spins before each compute")
     ap.add_argument("--amplify-cycles", type=int, default=20000)
     ap.add_argument("--ncu", action="store_true", help="also profile one launch with ncu for DRAM and L2 bytes, when ncu is available")
+    ap.add_argument("--contract", default=None, help="measured contract YAML: warm-up from B22 clock_warmup_s, tolerance from B26.5 (see derive_policy)")
+    ap.add_argument("--warmup-s", type=float, default=None, help="override the warm-up time in seconds")
     a = ap.parse_args()
+    policy = derive_policy(a.contract, a.k, a.tol, a.warmup_s)
     src = Path(a.kernel).read_text()
     digest = hashlib.sha256(src.encode()).hexdigest()[:12]
     work = Path(tempfile.mkdtemp(prefix=f"agentic-runner-{digest}-"))
@@ -68,8 +108,9 @@ def main():
     if build.returncode != 0:
         out.update({"ran": False, "error": build.stderr[-2000:]})
     else:
-        args = [str(work / "run"), "--m", str(a.m), "--n", str(a.n), "--k", str(a.k), "--reps", str(a.reps), "--tol", str(a.tol),
-                "--amplify-warp", str(a.amplify_warp), "--amplify-cycles", str(a.amplify_cycles)]
+        args = [str(work / "run"), "--m", str(a.m), "--n", str(a.n), "--k", str(a.k), "--reps", str(a.reps), "--tol", str(policy["tol"]),
+                "--warmup-s", str(policy["warmup_s"]), "--amplify-warp", str(a.amplify_warp), "--amplify-cycles", str(a.amplify_cycles)]
+        out["policy"] = policy
         r = subprocess.run(args, capture_output=True, text=True)
         line = next((l for l in r.stdout.splitlines() if l.startswith("{")), None)
         if line:

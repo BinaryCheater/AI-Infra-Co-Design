@@ -1,0 +1,41 @@
+{
+ "quantity": "l2_persisting_window_supported",
+ "unit": "bool",
+ "samples": [
+  1,
+  1,
+  1
+ ],
+ "detail": {
+  "warm_read_bytes_per_s": 648900000000.0,
+  "after_64MiB_flush_bytes_per_s": 240300000000.0,
+  "persists": true,
+  "persisting_window_api": "no error / no error",
+  "method": "kernel A writes 8 MiB, kernel B reads it at once (warm) or after a 56 MiB read (cold); L2-level warm bandwidth means L2 persists across launches",
+  "sm_clock_mhz": 2502.4
+ },
+ "value": 1,
+ "ci95": 0.0,
+ "n": 3,
+ "repeat_policy": "structural",
+ "method": "kernel-to-kernel gap, CUDA graph gap, two-stream concurrency, L2 persistence across kernels",
+ "benchmark": "b25_multi_kernel",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 54.0,
+   "power_w": 9.5,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2463.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 55.0,
+   "power_w": 16.74,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:20:13Z",
+ "arch": "sm_121"
+}

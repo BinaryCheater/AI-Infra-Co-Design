@@ -1,0 +1,48 @@
+{
+ "quantity": "block_distinct_sms[grid=8,threads=256,smem=61440]",
+ "unit": "sms",
+ "samples": [
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8,
+  8
+ ],
+ "detail": {
+  "grid": 8,
+  "threads": 256,
+  "smem_bytes": 61440,
+  "identical_orderings_fraction": 1.0,
+  "sms_with_two_blocks_median": 0,
+  "sm_clock_mhz": 2502.4
+ },
+ "value": 8.0,
+ "ci95": 0.0,
+ "n": 10,
+ "repeat_policy": "once",
+ "method": "blocks record %smid and %globaltimer at entry: dispatch order, rate, refill latency, wave staircase (Accel-Sim)",
+ "benchmark": "b16_block_scheduler",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 54.0,
+   "power_w": 9.86,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 54.0,
+   "power_w": 9.53,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:20:11Z",
+ "arch": "sm_121"
+}

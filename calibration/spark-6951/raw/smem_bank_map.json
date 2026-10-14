@@ -1,0 +1,89 @@
+{
+ "quantity": "smem_bank_map",
+ "unit": "cycles",
+ "samples": [
+  27
+ ],
+ "detail": {
+  "cycles_per_access_by_stride_elems_8B": [
+   [
+    1,
+    27.0
+   ],
+   [
+    2,
+    37.0
+   ],
+   [
+    4,
+    64.0
+   ],
+   [
+    8,
+    128.0
+   ],
+   [
+    16,
+    255.0
+   ],
+   [
+    32,
+    256.0
+   ]
+  ],
+  "cycles_per_access_by_stride_elems_16B": [
+   [
+    1,
+    37.0
+   ],
+   [
+    2,
+    64.0
+   ],
+   [
+    4,
+    127.0
+   ],
+   [
+    8,
+    255.0
+   ],
+   [
+    16,
+    256.0
+   ],
+   [
+    32,
+    255.0
+   ]
+  ],
+  "penalty_8B_stride16_over_stride1": 9.444444,
+  "penalty_16B_stride8_over_stride1": 6.891892,
+  "method": "256 threads, 8 B and 16 B shared loads at element strides 1..32 (a 64-bit access that pays no penalty at stride 1 and doubles per stride step from 2 elements implies 8-byte banks / the half-warp rule)",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 27,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "in-flight cp.async visibility and chunk order, wait_group semantics, barrier/fence visibility, TMA early bytes, FP32 contraction/ftz/tensor rounding, bank map, independent thread scheduling",
+ "benchmark": "b26_functional_probes",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 48.0,
+   "power_w": 4.43,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2463.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 9.18,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:26:56Z",
+ "arch": "sm_121"
+}

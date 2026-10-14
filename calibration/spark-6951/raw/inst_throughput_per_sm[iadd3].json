@@ -1,0 +1,64 @@
+{
+ "quantity": "inst_throughput_per_sm[iadd3]",
+ "unit": "ops/s",
+ "samples": [
+  109113039000.0,
+  109113416000.0,
+  109113619000.0,
+  109113852000.0,
+  109114374000.0,
+  109114549000.0,
+  109114897000.0,
+  109125568000.0,
+  109126004000.0,
+  109126527000.0,
+  109088560000.0,
+  109094410000.0,
+  109094497000.0,
+  109095817000.0,
+  109095890000.0,
+  109096035000.0,
+  109097240000.0,
+  109108345000.0,
+  109108403000.0,
+  109109115000.0,
+  109095701000.0,
+  109096079000.0,
+  109096137000.0,
+  109096267000.0,
+  109096296000.0,
+  109096645000.0,
+  109096863000.0,
+  109108171000.0,
+  109108534000.0,
+  109108621000.0
+ ],
+ "detail": {
+  "method": "B2 pattern: ILP 8, 8 blocks x 256 threads per SM, clock64 per block, median block",
+  "sm_clock_mhz": 2502.8
+ },
+ "value": 109108258000.0,
+ "ci95": 6.753384331367476e-05,
+ "n": 30,
+ "repeat_policy": "to_ci",
+ "method": "per-opcode throughput (B2 pattern); the generated inner loop's cycles per MAC step with its SASS mix",
+ "benchmark": "b21_compute_block",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2483.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 54.0,
+   "power_w": 14.02,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 55.0,
+   "power_w": 27.39,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T17:20:09Z",
+ "arch": "sm_121"
+}
