@@ -1,0 +1,38 @@
+# Structural choices for the mechanistic model of spark-6951-gb10 (notes/mechanistic_simulator_design.md §4-5).
+# Measured parameters are NOT here: they come from calibration/spark-6951/contract.yaml, never fitted.
+# Each structural choice names the benchmark that justified it. "phenomenological" marks a structure
+# that reproduces the benchmark without being confirmed by a dedicated microbenchmark (§9.2).
+name: spark-6951-gb10
+contract: calibration/spark-6951/contract.yaml
+kinds:
+  measured: [latency_ns, dram_bytes_per_s, dram_bytes_per_s_write, l2_bytes_per_s, l2_bytes_effective, fp32_flops_per_s_per_sm,
+             smem_bytes_per_s_per_sm, bank_conflict_penalty, barrier_s, async_copy_latency_s, async_copy_bytes_per_s,
+             launch_s, clock_hz_sustained, max_blocks_per_sm_measured]
+  structural: [sms, smem_bytes_per_sm, banks, bank_bytes, ports, l2_region_bytes, l2_policy, copy_queue_depth, copy_chunk_bytes,
+               scheduler, issue_cycles]
+  fixed: [line_bytes, warp_size, bytes_per_element]
+
+structural:
+  scheduler:
+    policy: breadth-first-least-loaded # M8: each block goes to the SM with the most free capacity, in grid order (B9 fixes the capacity)
+    justified_by: B9
+  copy_chunk_bytes: 16                 # M4: cp.async.cg request size the kernel issues (one 16 B chunk per thread)
+  copy_queue_depth: 256                # M4: outstanding chunks per SM. B8: ~37 GB/s per SM at the L2 latency (136 ns) -> 37e9*136e-9/16 B ~ 314;
+                                       #     one block of 256 threads keeps at most 256 in flight with one group outstanding
+  copy_queue_justified_by: B8
+  banks: 32                            # M3: 32 banks of 8 bytes. B6: strides 1 and 2 words conflict-free, penalty = stride/2 from 4 on
+  bank_bytes: 8
+  ports: 1
+  banks_justified_by: B6
+  l2_policy: lru-fully-associative     # M5, phenomenological: LRU over regions with capacity l2_bytes_effective; reproduces B4's
+                                       #     plateaus and places the knee at the effective capacity. Set/slice structure unknown (§9.2).
+  l2_region_bytes: 1024                # granularity of the LRU (a tile row); line_bytes stays 128 for sector traffic
+  l2_justified_by: B4
+  issue_cycles:                        # M1: per-operation issue cost in SM cycles (warp-level); structural, small, from B2/B7 fits of 0 (no fit: taken as 1 cycle)
+    IssueCopy: 1
+    Wait: 1
+    BarrierArrive: 1
+    Compute: 0
+fixed:
+  line_bytes: 128
+  sector_bytes: 32
