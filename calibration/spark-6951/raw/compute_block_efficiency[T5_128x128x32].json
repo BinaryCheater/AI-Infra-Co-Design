@@ -2,9 +2,9 @@
  "quantity": "compute_block_efficiency[T5_128x128x32]",
  "unit": "fraction",
  "samples": [
-  0.45033487,
-  0.450551325,
-  0.450075788
+  0.450547098,
+  0.450476258,
+  0.450474504
  ],
  "detail": {
   "TM": 128,
@@ -16,13 +16,13 @@
   ],
   "blocks_per_sm": 1,
   "warps_per_sm": 8,
-  "cycles_per_phase": 7362,
-  "fma_bound_cycles": 3315,
-  "efficiency": 0.45,
+  "cycles_per_phase": 7361,
+  "fma_bound_cycles": 3317,
+  "efficiency": 0.451,
   "lds_per_thread_per_phase": 512,
   "ffma_per_thread_per_phase": 2048,
   "method": "bps blocks per SM, 256 threads each, smem tile pre-filled, cycles per full TK step of one block (median block) vs TM*TN*TK FMAs at the measured FFMA rate; SASS mix via cuobjdump by the driver",
-  "sm_clock_mhz": 2541.4,
+  "sm_clock_mhz": 2541.5,
   "sass_mix": {
    "LDC": 4,
    "S2R": 6,
@@ -63,8 +63,8 @@
    "NOP": 14
   }
  },
- "value": 0.45033487,
- "ci95": 0.0005279815440452411,
+ "value": 0.450476258,
+ "ci95": 8.05747236516751e-05,
  "n": 3,
  "repeat_policy": "to_ci",
  "method": "per-opcode throughput (B2 pattern); the generated inner loop's cycles per MAC step with its SASS mix",
@@ -74,17 +74,17 @@
    "sm_mhz": 208.0,
    "max_sm_mhz": 3003.0,
    "temp_c": 41.0,
-   "power_w": 4.32,
+   "power_w": 4.21,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2515.0,
+   "sm_mhz": 2522.0,
    "max_sm_mhz": 3003.0,
    "temp_c": 45.0,
-   "power_w": 36.34,
+   "power_w": 34.99,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T18:22:47Z",
+ "timestamp": "2026-10-14T19:03:40Z",
  "arch": "sm_121"
 }

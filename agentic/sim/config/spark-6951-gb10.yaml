@@ -9,7 +9,7 @@ kinds:
              smem_bytes_per_s_per_sm, bank_conflict_penalty, barrier_s, async_copy_latency_s, async_copy_bytes_per_s,
              launch_s, clock_hz_sustained, max_blocks_per_sm_measured]
   structural: [sms, smem_bytes_per_sm, banks, bank_bytes, ports, l2_region_bytes, l2_policy, copy_queue_depth, copy_chunk_bytes,
-               scheduler, issue_cycles, issue_model]
+               scheduler, issue_cycles, issue_model, issue_overlap_by_warps_per_scheduler]
   fixed: [line_bytes, warp_size, bytes_per_element]
 
 structural:
@@ -34,6 +34,7 @@ structural:
                                        #     penalty), shared round-robin by every warp resident on the SM. B21 at 1-4 blocks per SM: per-block
                                        #     step time doubles with the warps (additive), all loops within 10 %; ncu: not_selected dominant.
   issue_model_justified_by: [B17, B21, counter_crosscheck.inner_loop]
+  issue_overlap_by_warps_per_scheduler: {1: 1.0, 2: 1.0, 4: 1.0, 6: 0.70, 8: 0.75}   # phenomenological: B21 R2/R4 at 3 and 4 blocks per SM
   issue_overhead_per_chunk: 40         # M7 (G4): instructions per cp.async chunk (16 B per thread) issued per phase outside the k-loop
   issue_overhead_per_phase: 180        #     (address, guard, wait, barrier, loop control); from the SASS of the six spark-001 kernels:
                                        #     per-phase non-loop instructions 663/391/301/467/280/354 at 12/6/5/6/3/3 chunks per thread

@@ -434,6 +434,7 @@
         "null"
       ]
     },
+    "ld_shared_instr_per_s_per_sm": {"type": ["object", "null"]},
     "clock_warmup_s": {
       "type": [
         "number",

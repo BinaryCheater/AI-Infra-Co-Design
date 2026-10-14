@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Validation</title>
+<link rel="stylesheet" href="console.css">
+<style>
+  body { display: block; overflow: auto; height: auto; }
+  main.cal { display: block; padding: 18px; max-width: 1180px; margin: 0 auto; }
+  table.cal { border-collapse: collapse; width: 100%; font-size: 13px; margin: 8px 0 18px; }
+  table.cal th, table.cal td { border-bottom: 1px solid var(--line); padding: 3px 6px; text-align: left; vertical-align: top; white-space: nowrap; }
+  table.cal th { color: var(--muted); font-weight: 500; }
+  .ok { color: var(--teal); } .bad { color: #d9534f; } .muted { color: var(--muted); }
+  svg { background: transparent; }
+  h2 { margin-top: 18px; }
+</style>
+</head>
+<body>
+<header id="top"><div class="brand">VALIDATION</div><span class="spacer"></span><a class="ghost link" href="/calibration">calibration</a> <a class="ghost link" href="/">console</a></header>
+<main class="cal">
+  <p class="muted">G4 validation sets (<code>calibration/&lt;host&gt;/validation.json</code>): designs sampled from the feasible menu, measured on the GPU through the runner (clock sampled in-run, <code>ncu</code> traffic and stall reasons) and simulated by the mechanistic model with every parameter from the measured contract. Gate: median error ≤ 10 %, worst ≤ 20 %, simulated critical path agreeing with the profiler's dominant stall on ≥ 24 of 30.</p>
+  <div id="sets">loading…</div>
+</main>
+<script>
+(async () => {
+  const sets = await (await fetch("/api/validation")).json();
+  const box = document.getElementById("sets"); box.innerHTML = "";
+  const esc = s => String(s).replace(/[&<>]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"}[c]));
+  const pct = x => x == null ? "–" : (x * 100).toFixed(1) + " %";
+  for (const v of sets) {
+    const s = v.summary || {};
+    const pass = s.median_abs_error != null && s.median_abs_error <= 0.10 && s.worst_abs_error <= 0.20;
+    const rows = (v.rows || []).map((r, i) => {
+      const d = r.design || {}; const e = r.sim_error;
+      return `<tr><td>${i + 1}</td><td>${esc(r.workload)}</td><td>${d.tm}×${d.tn}×${d.tk} S${d.stages} P${d.prefetch} β${d.trailing_barrier ? 1 : 0}</td><td>${r.measured_us == null ? "–" : r.measured_us.toFixed(1)}</td><td>${r.simulated_us == null ? "–" : r.simulated_us.toFixed(1)}</td><td class="${e == null ? "" : (Math.abs(e) <= 0.10 ? "ok" : (Math.abs(e) <= 0.20 ? "" : "bad"))}">${pct(e)}</td><td>${esc(r.sim_critical || "–")}</td><td>${esc((r.ncu || {}).dominant_stall || "–")}</td><td class="${r.critical_agrees_with_stalls ? "ok" : (r.critical_agrees_with_stalls === false ? "bad" : "")}">${r.critical_agrees_with_stalls == null ? "–" : (r.critical_agrees_with_stalls ? "yes" : "no")}</td><td>${r.reference_agrees ? "yes" : "<span class=bad>no</span>"}</td><td>${r.sm_mhz_in_run ? Math.round(r.sm_mhz_in_run) : "–"}</td></tr>`; });
+    // scatter: measured vs simulated (log-log), the 10 % and 20 % bands
+    const pts = (v.rows || []).filter(r => r.measured_us && r.simulated_us);
+    const lo = Math.min(...pts.map(r => Math.min(r.measured_us, r.simulated_us))) * 0.8, hi = Math.max(...pts.map(r => Math.max(r.measured_us, r.simulated_us))) * 1.25;
+    const W = 420, H = 420, P = 40; const sx = x => P + (Math.log(x) - Math.log(lo)) / (Math.log(hi) - Math.log(lo)) * (W - 2 * P); const sy = y => H - P - (Math.log(y) - Math.log(lo)) / (Math.log(hi) - Math.log(lo)) * (H - 2 * P);
+    const band = f => `M ${sx(lo)} ${sy(lo * f)} L ${sx(hi)} ${sy(hi * f)}`;
+    const colors = {square_4096: "#4c8bf5", skinny_64x4096x4096: "#f5a24c", ragged_1000x1000x1000: "#3cb371"};
+    const svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><path d="${band(1)}" stroke="var(--muted)" fill="none"/><path d="${band(1.1)}" stroke="var(--line)" fill="none" stroke-dasharray="4 3"/><path d="${band(0.9)}" stroke="var(--line)" fill="none" stroke-dasharray="4 3"/><path d="${band(1.2)}" stroke="var(--line)" fill="none" stroke-dasharray="2 4"/><path d="${band(0.8)}" stroke="var(--line)" fill="none" stroke-dasharray="2 4"/>
+      ${pts.map(r => `<circle cx="${sx(r.measured_us)}" cy="${sy(r.simulated_us)}" r="4" fill="${colors[r.workload] || "#999"}"><title>${esc(r.workload)} ${esc(JSON.stringify(r.design))}: measured ${r.measured_us.toFixed(1)}, simulated ${r.simulated_us.toFixed(1)} (${pct(r.sim_error)})</title></circle>`).join("")}
+      <text x="${W / 2}" y="${H - 8}" text-anchor="middle" fill="var(--muted)" font-size="12">measured µs (log)</text><text x="12" y="${H / 2}" transform="rotate(-90 12 ${H / 2})" text-anchor="middle" fill="var(--muted)" font-size="12">simulated µs (log)</text></svg>`;
+    box.insertAdjacentHTML("beforeend", `<h2>${esc(v.host_dir)} <span class="muted">· ${esc(v.config)} · ${esc(v.timestamp)} · seed ${v.seed} · ${s.designs} designs</span></h2>
+      <p>median |error| <b class="${pass ? "ok" : "bad"}">${pct(s.median_abs_error)}</b> · worst <b>${pct(s.worst_abs_error)}</b> · signed median ${pct(s.signed_median_error)} · critical path agrees with ncu stalls <b>${esc(s.critical_agreement)}</b> · reference agrees ${s.reference_agrees}/${s.ran} · <span class="${pass ? "ok" : "bad"}">${pass ? "gate passed" : "gate not passed"}</span> · <a href="/calibration-files/${esc(v.host_dir)}/validation.json">validation.json</a></p>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">${svg}<div style="flex:1;min-width:520px;overflow:auto"><table class="cal"><tr><th>#</th><th>workload</th><th>design</th><th>measured µs</th><th>simulated µs</th><th>error</th><th>sim critical</th><th>ncu stall</th><th>agree</th><th>ref</th><th>MHz</th></tr>${rows.join("")}</table></div></div>`);
+  }
+  if (!sets.length) box.textContent = "no validation sets in this checkout";
+})();
+</script>
+</body>
+</html>

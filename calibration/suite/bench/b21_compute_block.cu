@@ -14,6 +14,12 @@ OPK_BEGIN(k_shf) unsigned x0 = threadIdx.x, x1 = 1, x2 = 2, x3 = 3, x4 = 4, x5 =
 OPK_BEGIN(k_lop3) unsigned x0 = threadIdx.x, x1 = 1, x2 = 2, x3 = 3, x4 = 4, x5 = 5, x6 = 6, x7 = 7; (void)out; OPK_LOOP x0 = (x0 & x1) ^ x2; x1 = (x1 & x2) ^ x3; x2 = (x2 & x3) ^ x4; x3 = (x3 & x4) ^ x5; x4 = (x4 & x5) ^ x6; x5 = (x5 & x6) ^ x7; x6 = (x6 & x7) ^ x0; x7 = (x7 & x0) ^ x1; if (k == iters - 1) out[blockIdx.x * blockDim.x + threadIdx.x] = x0 + x1 + x2 + x3 + x4 + x5 + x6 + x7; OPK_END
 OPK_BEGIN(k_i2f) int i0 = threadIdx.x, i1 = 1, i2 = 2, i3 = 3; float f0 = 0, f1 = 0, f2 = 0, f3 = 0; (void)out; OPK_LOOP f0 += (float)i0; i0 = (int)f1 + 1; f1 += (float)i1; i1 = (int)f2 + 1; f2 += (float)i2; i2 = (int)f3 + 1; f3 += (float)i3; i3 = (int)f0 + 1; if (k == iters - 1) out[blockIdx.x * blockDim.x + threadIdx.x] = f0 + f1 + f2 + f3; OPK_END
 OPK_BEGIN(k_mufu) float x0 = threadIdx.x + 1, x1 = 2, x2 = 3, x3 = 4, x4 = 5, x5 = 6, x6 = 7, x7 = 8; (void)out; OPK_LOOP x0 = rsqrtf(x0) + 1; x1 = rsqrtf(x1) + 1; x2 = rsqrtf(x2) + 1; x3 = rsqrtf(x3) + 1; x4 = rsqrtf(x4) + 1; x5 = rsqrtf(x5) + 1; x6 = rsqrtf(x6) + 1; x7 = rsqrtf(x7) + 1; if (k == iters - 1) out[blockIdx.x * blockDim.x + threadIdx.x] = x0 + x1 + x2 + x3 + x4 + x5 + x6 + x7; OPK_END
+__global__ void k_lds128_bcast(float* out, int iters, long long* cyc) {
+  extern __shared__ __align__(16) char sb[]; for (int i = threadIdx.x; i < 4096; i += blockDim.x) ((float*)sb)[i] = i; __syncthreads();
+  float acc = 0; int row = (threadIdx.x >> 4) & 1; int idx = row * 64; long long t0 = clock64(); asm volatile("" : "+r"(iters));
+  for (int k = 0; k < iters; k++) { float4 v = ((float4*)sb)[(idx + k * 4) & 1023]; acc += v.x + v.y + v.z + v.w; }
+  asm volatile("" : "+f"(acc)); long long t1 = clock64(); if (acc == 123456.789f) out[0] = acc; if (threadIdx.x == 0) cyc[blockIdx.x] = t1 - t0;
+}
 template <int W> __global__ void k_lds(float* out, int iters, long long* cyc) {
   extern __shared__ __align__(16) char sb[]; for (int i = threadIdx.x; i < 4096; i += blockDim.x) ((float*)sb)[i] = i; __syncthreads();
   float acc = 0; int idx = threadIdx.x; long long t0 = clock64(); asm volatile("" : "+r"(iters));
@@ -37,7 +43,7 @@ int main(int argc, char** argv) {
     for (int r = 0; r < reps; r++) { kern<<<blocks, threads, smem>>>(out, iters, cyc); CK(cudaDeviceSynchronize()); std::vector<long long> h(blocks); CK(cudaMemcpy(h.data(), cyc, blocks * 8, cudaMemcpyDeviceToHost)); std::sort(h.begin(), h.end()); s.push_back(ops_per_iter_per_thread * iters * threads * 8 / ((double)h[blocks / 2] / hz)); }
     std::sort(s.begin(), s.end()); char q[64]; snprintf(q, sizeof q, "inst_throughput_per_sm[%s]", name); emit_clocked(q, "ops/s", s, "{\"method\": \"B2 pattern: ILP 8, 8 blocks x 256 threads per SM, clock64 per block, median block\"}", mhz); return s[s.size() / 2]; };
   fma_rate = per_sm(k_fma, "ffma", 8, 0); per_sm(k_fadd, "fadd", 8, 0); per_sm(k_fmul, "fmul", 8, 0); per_sm(k_imad, "imad", 8, 0); per_sm(k_iadd, "iadd3", 8, 0); per_sm(k_shf, "shf", 8, 0); per_sm(k_lop3, "lop3", 8, 0); per_sm(k_i2f, "i2f_f2i", 8, 0); per_sm(k_mufu, "mufu_rsqrt", 8, 0);
-  per_sm(k_lds<4>, "lds_32", 1, 16384); per_sm(k_lds<8>, "lds_64", 1, 16384); per_sm(k_lds<16>, "lds_128", 1, 16384); per_sm(k_sts, "sts_32", 1, 16384);
+  per_sm(k_lds<4>, "lds_32", 1, 16384); per_sm(k_lds<8>, "lds_64", 1, 16384); per_sm(k_lds<16>, "lds_128", 1, 16384); per_sm(k_lds128_bcast, "lds_128_broadcast2", 1, 16384); per_sm(k_sts, "sts_32", 1, 16384);
   // inner loops: cycles per MAC step vs FMA bound
   auto loop = [&](auto kern, const char* name, int TM, int TN, int TK) { int iters = 200, smem = (TM * TK + TK * TN) * 4; CK(cudaFuncSetAttribute(kern, cudaFuncAttributeMaxDynamicSharedMemorySize, 96 * 1024));
     int max_bps = std::max(1, std::min(4, (96 * 1024) / std::max(smem, 1)));

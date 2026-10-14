@@ -1,0 +1,2687 @@
+{
+ "host": "dgx-spark",
+ "chip": "spark-6951-gb10",
+ "config": "spark-6951-gb10",
+ "seed": 7,
+ "per_workload": 10,
+ "reps": 30,
+ "excluded_spark001_designs": 6,
+ "simulation_budget_block_phases": 1200000,
+ "menu": {
+  "square_4096": {
+   "feasible_in_budget": 410,
+   "over_budget": 306
+  },
+  "skinny_64x4096x4096": {
+   "feasible_in_budget": 716,
+   "over_budget": 0
+  },
+  "ragged_1000x1000x1000": {
+   "feasible_in_budget": 716,
+   "over_budget": 0
+  }
+ },
+ "timestamp": "2026-10-14T19:01:52Z",
+ "summary": {
+  "designs": 30,
+  "ran": 30,
+  "reference_agrees": 30,
+  "median_abs_error": 0.13903801936663307,
+  "worst_abs_error": 0.6489055823017322,
+  "signed_median_error": -0.05405678443535433,
+  "critical_agreement": "25/30",
+  "gate": {
+   "median_abs_error": 0.1,
+   "worst_abs_error": 0.2,
+   "critical_agreement_min": 24
+  }
+ },
+ "rows": [
+  {
+   "workload": "square_4096",
+   "design": {
+    "tm": 64,
+    "tn": 128,
+    "tk": 8,
+    "stages": 2,
+    "prefetch": 1,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_square_4096_0",
+   "predicted_us": 27658.119593115942,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 13491.168,
+   "ci95_us": [
+    13269.0239,
+    14246.9759
+   ],
+   "sm_mhz_in_run": [
+    2502.4,
+    2502.4,
+    2502.5
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 11616.690691229214,
+   "sim_error": -0.13894106935520967,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 488,
+    "barrier": 23
+   },
+   "sim_dram_bytes": 809023488,
+   "sim_waves": 43,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 2991384448.0,
+    "l2_bytes": 6512706880.0,
+    "stalls_per_issue_active": {
+     "barrier": 1.58,
+     "lg_throttle": 0.01,
+     "long_scoreboard": 0.06,
+     "math_pipe_throttle": 0.07,
+     "membar": 0.0,
+     "mio_throttle": 2.32,
+     "no_instruction": 0.1,
+     "not_selected": 2.37,
+     "short_scoreboard": 0.41,
+     "wait": 0.83
+    },
+    "dominant_stall": "not_selected",
+    "issue_active_fraction": 0.5871895381891601,
+    "inst_issued_per_active_cycle_per_sm": 2.3487581527566403,
+    "dram_bytes_read": 2931620224.0,
+    "dram_bytes_write": 59764224.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 6444766752.0,
+    "l2_write_bytes": 67915552.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "ccc8a60b58e57178d2306b6a7471df07f394028cc257df6713c4da01816568f5",
+   "seconds": 90.0,
+   "sim_wait_families_warp_s": {
+    "copy": 0.03839905118994928,
+    "barrier": 0.41099833018091747,
+    "compute": 20.189877034674502
+   },
+   "ncu_stall_families": {
+    "barrier": 1.58,
+    "copy": 0.06999999999999999,
+    "compute": 6.0
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "square_4096",
+   "design": {
+    "tm": 32,
+    "tn": 128,
+    "tk": 32,
+    "stages": 3,
+    "prefetch": 0,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_square_4096_1",
+   "predicted_us": 51133.67005656943,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 34742.5919,
+   "ci95_us": [
+    34645.0882,
+    35801.9524
+   ],
+   "sm_mhz_in_run": [
+    2521.9,
+    2521.9,
+    2521.9
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 27901.77630069825,
+   "sim_error": -0.19689997853331576,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 4,
+    "compute": 124
+   },
+   "sim_dram_bytes": 5894569984,
+   "sim_waves": 86,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 5893172064.0,
+    "l2_bytes": 10811489088.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.45,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 1.66,
+     "math_pipe_throttle": 0.02,
+     "membar": 0.0,
+     "mio_throttle": 0.86,
+     "no_instruction": 0.05,
+     "not_selected": 0.14,
+     "short_scoreboard": 2.16,
+     "wait": 0.86
+    },
+    "dominant_stall": "short_scoreboard",
+    "issue_active_fraction": 0.26977766792486046,
+    "inst_issued_per_active_cycle_per_sm": 1.0791106718576313,
+    "dram_bytes_read": 5831971936.0,
+    "dram_bytes_write": 61200128.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 10742233472.0,
+    "l2_write_bytes": 69215680.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "90887dd930401e3a9924147523354459e3e3cd02e552ea357c91995be32aa638",
+   "seconds": 53.4,
+   "sim_wait_families_warp_s": {
+    "copy": 2.7930756632684344,
+    "barrier": 0.36007033082888595,
+    "compute": 7.458526692534382
+   },
+   "ncu_stall_families": {
+    "barrier": 0.45,
+    "copy": 1.66,
+    "compute": 4.04
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "square_4096",
+   "design": {
+    "tm": 64,
+    "tn": 256,
+    "tk": 16,
+    "stages": 1,
+    "prefetch": 0,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_square_4096_2",
+   "predicted_us": 28273.708092469424,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 12548.192,
+   "ci95_us": [
+    12301.3763,
+    13230.4316
+   ],
+   "sm_mhz_in_run": [
+    2502.4,
+    2502.4,
+    2489.4
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 10858.229807210388,
+   "sim_error": -0.13467774423515444,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 13,
+    "compute": 243
+   },
+   "sim_dram_bytes": 671514624,
+   "sim_waves": 22,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 1568192512.0,
+    "l2_bytes": 5437762624.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.34,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 0.9,
+     "math_pipe_throttle": 0.09,
+     "membar": 0.0,
+     "mio_throttle": 1.09,
+     "no_instruction": 0.07,
+     "not_selected": 1.76,
+     "short_scoreboard": 0.22,
+     "wait": 0.58
+    },
+    "dominant_stall": "not_selected",
+    "issue_active_fraction": 0.5608325741756525,
+    "inst_issued_per_active_cycle_per_sm": 2.24333029670261,
+    "dram_bytes_read": 1510767296.0,
+    "dram_bytes_write": 57425216.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 5370270912.0,
+    "l2_write_bytes": 67474304.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "b44c4ce930155c4bbf16174db40602b8fa613ed4b21c6ac03b56c6585f35ae10",
+   "seconds": 38.7,
+   "sim_wait_families_warp_s": {
+    "copy": 1.7060788265502327,
+    "barrier": 0.21220979588270514,
+    "compute": 9.200998160072594
+   },
+   "ncu_stall_families": {
+    "barrier": 0.34,
+    "copy": 0.9,
+    "compute": 3.7400000000000007
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "square_4096",
+   "design": {
+    "tm": 256,
+    "tn": 16,
+    "tk": 16,
+    "stages": 3,
+    "prefetch": 0,
+    "trailing_barrier": false,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_square_4096_3",
+   "predicted_us": 83068.81845274454,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 29567.8406,
+   "ci95_us": [
+    29397.1195,
+    30729.6009
+   ],
+   "sm_mhz_in_run": [
+    2522.4,
+    2502.9,
+    2502.9
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 34869.372991579374,
+   "sim_error": 0.17930062811483682,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 3,
+    "compute": 253
+   },
+   "sim_dram_bytes": 1290862592,
+   "sim_waves": 86,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 1190793152.0,
+    "l2_bytes": 18324316992.0,
+    "stalls_per_issue_active": {
+     "barrier": 1.14,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 1.15,
+     "math_pipe_throttle": 0.04,
+     "membar": 0.0,
+     "mio_throttle": 0.3,
+     "no_instruction": 0.05,
+     "not_selected": 0.33,
+     "short_scoreboard": 0.93,
+     "wait": 1.04
+    },
+    "dominant_stall": "long_scoreboard",
+    "issue_active_fraction": 0.3046665651746695,
+    "inst_issued_per_active_cycle_per_sm": 1.218666260698678,
+    "dram_bytes_read": 1155948736.0,
+    "dram_bytes_write": 34844416.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 18256038336.0,
+    "l2_write_bytes": 68249984.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "be1083f3caa75ed4ea2384e85c7dc285f401034035f0ed64577a2daa373bcb09",
+   "seconds": 76.3,
+   "sim_wait_families_warp_s": {
+    "copy": 4.713280544323951,
+    "barrier": 0.3244886701043116,
+    "compute": 8.226074991884254
+   },
+   "ncu_stall_families": {
+    "barrier": 1.14,
+    "copy": 1.15,
+    "compute": 2.64
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "square_4096",
+   "design": {
+    "tm": 16,
+    "tn": 256,
+    "tk": 16,
+    "stages": 2,
+    "prefetch": 0,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_square_4096_4",
+   "predicted_us": 83402.45420388694,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 43325.3441,
+   "ci95_us": [
+    42957.9849,
+    44499.3591
+   ],
+   "sm_mhz_in_run": [
+    2522.1,
+    2502.8,
+    2502.6
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 38485.594924547055,
+   "sim_error": -0.11170711453052129,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 3,
+    "compute": 253
+   },
+   "sim_dram_bytes": 3060510720,
+   "sim_waves": 86,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 5889505152.0,
+    "l2_bytes": 18325016000.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.85,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 1.59,
+     "math_pipe_throttle": 0.04,
+     "membar": 0.0,
+     "mio_throttle": 6.82,
+     "no_instruction": 0.09,
+     "not_selected": 0.97,
+     "short_scoreboard": 0.47,
+     "wait": 1.34
+    },
+    "dominant_stall": "mio_throttle",
+    "issue_active_fraction": 0.29332793239656824,
+    "inst_issued_per_active_cycle_per_sm": 1.1733117294631752,
+    "dram_bytes_read": 5824556224.0,
+    "dram_bytes_write": 64948928.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 18256669824.0,
+    "l2_write_bytes": 68317504.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "ec86902fd72740ef92207de4cb527b28d4c064cdd92ad19fc7478b1ea5c5e783",
+   "seconds": 86.9,
+   "sim_wait_families_warp_s": {
+    "copy": 5.27181107457263,
+    "barrier": 0.438063202066688,
+    "compute": 23.5098799653125
+   },
+   "ncu_stall_families": {
+    "barrier": 0.85,
+    "copy": 1.59,
+    "compute": 9.64
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "square_4096",
+   "design": {
+    "tm": 32,
+    "tn": 32,
+    "tk": 64,
+    "stages": 2,
+    "prefetch": 0,
+    "trailing_barrier": false,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_square_4096_5",
+   "predicted_us": 78476.26547616514,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 38713.7299,
+   "ci95_us": [
+    38664.4478,
+    39969.1505
+   ],
+   "sm_mhz_in_run": [
+    2522.3,
+    2522.3,
+    2503.2
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 33331.049572409196,
+   "sim_error": -0.13903801936663307,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 25,
+    "compute": 39
+   },
+   "sim_dram_bytes": 7828144128,
+   "sim_waves": 342,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 8704844736.0,
+    "l2_bytes": 17250777472.0,
+    "stalls_per_issue_active": {
+     "barrier": 2.12,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 7.15,
+     "math_pipe_throttle": 0.05,
+     "membar": 0.0,
+     "mio_throttle": 1.32,
+     "no_instruction": 0.07,
+     "not_selected": 0.51,
+     "short_scoreboard": 3.1,
+     "wait": 1.1
+    },
+    "dominant_stall": "long_scoreboard",
+    "issue_active_fraction": 0.35983367666856647,
+    "inst_issued_per_active_cycle_per_sm": 1.4393347065169484,
+    "dram_bytes_read": 8641097312.0,
+    "dram_bytes_write": 63747424.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 17182733920.0,
+    "l2_write_bytes": 68016928.0
+   },
+   "critical_agrees_with_stalls": false,
+   "kernel_sha256": "3dcf761b7222430d004f5ef53866548da4edbb2938835008a235ebc6fef7aeec",
+   "seconds": 80.6,
+   "sim_wait_families_warp_s": {
+    "copy": 7.000941355546937,
+    "barrier": 7.248779352986534,
+    "compute": 24.040353576299857
+   },
+   "ncu_stall_families": {
+    "barrier": 2.12,
+    "copy": 7.15,
+    "compute": 6.08
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "copy"
+  },
+  {
+   "workload": "square_4096",
+   "design": {
+    "tm": 128,
+    "tn": 64,
+    "tk": 32,
+    "stages": 3,
+    "prefetch": 1,
+    "trailing_barrier": false,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_square_4096_6",
+   "predicted_us": 27658.119593115942,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 12312.9921,
+   "ci95_us": [
+    12142.848,
+    12902.2722
+   ],
+   "sm_mhz_in_run": [
+    2502.9,
+    2502.6,
+    2502.4
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 11647.391340296079,
+   "sim_error": -0.05405678443535433,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 117,
+    "barrier": 10
+   },
+   "sim_dram_bytes": 2348810240,
+   "sim_waves": 43,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 2345568416.0,
+    "l2_bytes": 6511309056.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.1,
+     "lg_throttle": 0.01,
+     "long_scoreboard": 0.17,
+     "math_pipe_throttle": 0.02,
+     "membar": 0.0,
+     "mio_throttle": 0.45,
+     "no_instruction": 0.04,
+     "not_selected": 0.56,
+     "short_scoreboard": 0.49,
+     "wait": 0.58
+    },
+    "dominant_stall": "wait",
+    "issue_active_fraction": 0.5368839086248698,
+    "inst_issued_per_active_cycle_per_sm": 2.14753563406532,
+    "dram_bytes_read": 2282267456.0,
+    "dram_bytes_write": 63300960.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 6443834496.0,
+    "l2_write_bytes": 67457152.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "77c27bca5377c9011cb0c5bc0bd8aee7313a355aed8a6304a03f65636e042dec",
+   "seconds": 34.7,
+   "sim_wait_families_warp_s": {
+    "copy": 0.02228308015759777,
+    "barrier": 0.06373515261269543,
+    "compute": 4.34251473119179
+   },
+   "ncu_stall_families": {
+    "barrier": 0.1,
+    "copy": 0.18000000000000002,
+    "compute": 2.1
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "square_4096",
+   "design": {
+    "tm": 32,
+    "tn": 64,
+    "tk": 32,
+    "stages": 2,
+    "prefetch": 1,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_square_4096_7",
+   "predicted_us": 55031.1039326946,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 29674.8161,
+   "ci95_us": [
+    26881.5689,
+    37381.3438
+   ],
+   "sm_mhz_in_run": [
+    2522.6,
+    2503.0,
+    2503.0
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 17358.410468830305,
+   "sim_error": -0.41504572731521305,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 123,
+    "barrier": 4
+   },
+   "sim_dram_bytes": 3981881344,
+   "sim_waves": 171,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 8469430464.0,
+    "l2_bytes": 12955181984.0,
+    "stalls_per_issue_active": {
+     "barrier": 6.78,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 8.76,
+     "math_pipe_throttle": 0.06,
+     "membar": 0.0,
+     "mio_throttle": 2.93,
+     "no_instruction": 0.06,
+     "not_selected": 0.86,
+     "short_scoreboard": 1.19,
+     "wait": 1.23
+    },
+    "dominant_stall": "long_scoreboard",
+    "issue_active_fraction": 0.34979167839737624,
+    "inst_issued_per_active_cycle_per_sm": 1.3991667137604384,
+    "dram_bytes_read": 8403437536.0,
+    "dram_bytes_write": 65992928.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 12887474720.0,
+    "l2_write_bytes": 67682688.0
+   },
+   "critical_agrees_with_stalls": false,
+   "kernel_sha256": "1672c533c919d162c2e971366c11198783dfbe6495d67a2f955f13a8a6bd0463",
+   "seconds": 85.6,
+   "sim_wait_families_warp_s": {
+    "copy": 0.13068731362344843,
+    "barrier": 0.4737307165110223,
+    "compute": 19.306550714367518
+   },
+   "ncu_stall_families": {
+    "barrier": 6.78,
+    "copy": 8.76,
+    "compute": 6.27
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "copy"
+  },
+  {
+   "workload": "square_4096",
+   "design": {
+    "tm": 64,
+    "tn": 128,
+    "tk": 32,
+    "stages": 3,
+    "prefetch": 1,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_square_4096_8",
+   "predicted_us": 27658.119593115942,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 14477.5362,
+   "ci95_us": [
+    14456.192,
+    15769.3443
+   ],
+   "sm_mhz_in_run": [
+    2522.1,
+    2503.1,
+    2502.3
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 12982.883649765163,
+   "sim_error": -0.10323942759230242,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 124,
+    "barrier": 3
+   },
+   "sim_dram_bytes": 3041918976,
+   "sim_waves": 43,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 3036238272.0,
+    "l2_bytes": 6510602528.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.06,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 0.07,
+     "math_pipe_throttle": 0.02,
+     "membar": 0.0,
+     "mio_throttle": 1.02,
+     "no_instruction": 0.05,
+     "not_selected": 0.54,
+     "short_scoreboard": 0.15,
+     "wait": 0.59
+    },
+    "dominant_stall": "mio_throttle",
+    "issue_active_fraction": 0.49019530394767924,
+    "inst_issued_per_active_cycle_per_sm": 1.9607812154218713,
+    "dram_bytes_read": 2976053056.0,
+    "dram_bytes_write": 60185216.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 6443279296.0,
+    "l2_write_bytes": 67305824.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "4ce973b88ea11422ae78d2c9f92b5afc003f4e8a6346dbd1012349427350fe43",
+   "seconds": 37.5,
+   "sim_wait_families_warp_s": {
+    "copy": 0.036589368294982064,
+    "barrier": 0.17019083564643822,
+    "compute": 4.729245339848514
+   },
+   "ncu_stall_families": {
+    "barrier": 0.06,
+    "copy": 0.07,
+    "compute": 2.32
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "square_4096",
+   "design": {
+    "tm": 128,
+    "tn": 128,
+    "tk": 16,
+    "stages": 3,
+    "prefetch": 2,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_square_4096_9",
+   "predicted_us": 18533.791479923053,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 10069.4723,
+   "ci95_us": [
+    9692.4477,
+    10500.4797
+   ],
+   "sm_mhz_in_run": [
+    2502.4,
+    2502.5,
+    2502.4
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 10258.583140697092,
+   "sim_error": 0.018780610846617307,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 248,
+    "barrier": 7
+   },
+   "sim_dram_bytes": 897310720,
+   "sim_waves": 22,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 1560261216.0,
+    "l2_bytes": 4362462272.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.46,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 0.11,
+     "math_pipe_throttle": 0.13,
+     "membar": 0.0,
+     "mio_throttle": 0.58,
+     "no_instruction": 0.1,
+     "not_selected": 2.13,
+     "short_scoreboard": 0.18,
+     "wait": 0.44
+    },
+    "dominant_stall": "not_selected",
+    "issue_active_fraction": 0.6434641118544336,
+    "inst_issued_per_active_cycle_per_sm": 2.5738564468532275,
+    "dram_bytes_read": 1501865472.0,
+    "dram_bytes_write": 58395744.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 4295267712.0,
+    "l2_write_bytes": 67179200.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "e1d06a89b895d46f9544d8cc2401f3589265679774d168b482222fc41dc88b6f",
+   "seconds": 38.2,
+   "sim_wait_families_warp_s": {
+    "copy": 0.023441259438719622,
+    "barrier": 0.12769601747860912,
+    "compute": 7.3886881340864665
+   },
+   "ncu_stall_families": {
+    "barrier": 0.46,
+    "copy": 0.11,
+    "compute": 3.46
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "skinny_64x4096x4096",
+   "design": {
+    "tm": 16,
+    "tn": 32,
+    "tk": 32,
+    "stages": 3,
+    "prefetch": 0,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_skinny_64x4096x4096_0",
+   "predicted_us": 1836.176337242904,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 929.12,
+   "ci95_us": [
+    922.016,
+    1340.928
+   ],
+   "sm_mhz_in_run": [
+    2515.4,
+    2495.9,
+    2522.3
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 1104.0291855710657,
+   "sim_error": 0.1882525245082074,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 14,
+    "compute": 114
+   },
+   "sim_dram_bytes": 246153216,
+   "sim_waves": 11,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 200804192.0,
+    "l2_bytes": 403914080.0,
+    "stalls_per_issue_active": {
+     "barrier": 5.49,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 9.21,
+     "math_pipe_throttle": 0.05,
+     "membar": 0.0,
+     "mio_throttle": 5.06,
+     "no_instruction": 0.11,
+     "not_selected": 1.31,
+     "short_scoreboard": 1.63,
+     "wait": 1.78
+    },
+    "dominant_stall": "long_scoreboard",
+    "issue_active_fraction": 0.3343660796148222,
+    "inst_issued_per_active_cycle_per_sm": 1.3374643243030515,
+    "dram_bytes_read": 200003008.0,
+    "dram_bytes_write": 801184.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 402773440.0,
+    "l2_write_bytes": 1125280.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "49607c7dca928417d468b3912a28eb7fcfda50a55ab0a4f2b530080c6aab522c",
+   "seconds": 25.7,
+   "sim_wait_families_warp_s": {
+    "copy": 0.20026113677211432,
+    "barrier": 0.21841420221205154,
+    "compute": 0.7183131024615386
+   },
+   "ncu_stall_families": {
+    "barrier": 5.49,
+    "copy": 9.21,
+    "compute": 9.83
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "skinny_64x4096x4096",
+   "design": {
+    "tm": 128,
+    "tn": 32,
+    "tk": 8,
+    "stages": 2,
+    "prefetch": 1,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_skinny_64x4096x4096_1",
+   "predicted_us": 1430.1315060229085,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 532.832,
+   "ci95_us": [
+    531.68,
+    541.344
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2541.3,
+    2521.8
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 504.20823024395736,
+   "sim_error": -0.05372006515382455,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "compute": 511,
+    "barrier": 1
+   },
+   "sim_dram_bytes": 71303168,
+   "sim_waves": 3,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 69260928.0,
+    "l2_bytes": 203544704.0,
+    "stalls_per_issue_active": {
+     "barrier": 5.95,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 0.59,
+     "math_pipe_throttle": 0.07,
+     "membar": 0.0,
+     "mio_throttle": 0.97,
+     "no_instruction": 0.08,
+     "not_selected": 1.57,
+     "short_scoreboard": 0.67,
+     "wait": 1.3
+    },
+    "dominant_stall": "barrier",
+    "issue_active_fraction": 0.3365714380840817,
+    "inst_issued_per_active_cycle_per_sm": 1.3462857523363267,
+    "dram_bytes_read": 68243264.0,
+    "dram_bytes_write": 1017664.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 201487552.0,
+    "l2_write_bytes": 2041792.0
+   },
+   "critical_agrees_with_stalls": false,
+   "kernel_sha256": "4d693539b24da4c003f4cab6e273931d1209a9b8d6dfe6e7c5601b4799c7924e",
+   "seconds": 26.0,
+   "sim_wait_families_warp_s": {
+    "copy": 0.0007677451585883874,
+    "barrier": 0.01496828965723982,
+    "compute": 0.4895983680162917
+   },
+   "ncu_stall_families": {
+    "barrier": 5.95,
+    "copy": 0.59,
+    "compute": 4.58
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "barrier"
+  },
+  {
+   "workload": "skinny_64x4096x4096",
+   "design": {
+    "tm": 32,
+    "tn": 32,
+    "tk": 32,
+    "stages": 2,
+    "prefetch": 1,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_skinny_64x4096x4096_2",
+   "predicted_us": 1144.9962524856307,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 467.424,
+   "ci95_us": [
+    465.312,
+    472.48
+   ],
+   "sm_mhz_in_run": [
+    2541.5,
+    2541.3,
+    2541.4
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 474.46384586911086,
+   "sim_error": 0.01506094224753296,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "compute": 128
+   },
+   "sim_dram_bytes": 76894208,
+   "sim_waves": 6,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 119707520.0,
+    "l2_bytes": 269752096.0,
+    "stalls_per_issue_active": {
+     "barrier": 4.8,
+     "lg_throttle": 0.01,
+     "long_scoreboard": 4.59,
+     "math_pipe_throttle": 0.08,
+     "membar": 0.0,
+     "mio_throttle": 4.43,
+     "no_instruction": 0.11,
+     "not_selected": 1.52,
+     "short_scoreboard": 1.81,
+     "wait": 1.37
+    },
+    "dominant_stall": "barrier",
+    "issue_active_fraction": 0.3582706428400386,
+    "inst_issued_per_active_cycle_per_sm": 1.4330825713601545,
+    "dram_bytes_read": 118664224.0,
+    "dram_bytes_write": 1043296.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 268601472.0,
+    "l2_write_bytes": 1135264.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "64197d574e8560cdffffc782329773f6a71d988b077918f6dbb642684ad23cb4",
+   "seconds": 24.0,
+   "sim_wait_families_warp_s": {
+    "copy": 0.0026560884280016866,
+    "barrier": 0.007825179936938001,
+    "compute": 0.7086134755254181
+   },
+   "ncu_stall_families": {
+    "barrier": 4.8,
+    "copy": 4.6,
+    "compute": 9.21
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "skinny_64x4096x4096",
+   "design": {
+    "tm": 16,
+    "tn": 32,
+    "tk": 8,
+    "stages": 2,
+    "prefetch": 0,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_skinny_64x4096x4096_3",
+   "predicted_us": 1964.1993580301041,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 939.36,
+   "ci95_us": [
+    918.816,
+    1504.768
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2541.4,
+    2522.7
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 1548.9159477909552,
+   "sim_error": 0.6489055823017322,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 3,
+    "compute": 509
+   },
+   "sim_dram_bytes": 136577024,
+   "sim_waves": 11,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 138283936.0,
+    "l2_bytes": 403980160.0,
+    "stalls_per_issue_active": {
+     "barrier": 15.18,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 3.13,
+     "math_pipe_throttle": 0.05,
+     "membar": 0.0,
+     "mio_throttle": 3.4,
+     "no_instruction": 0.22,
+     "not_selected": 1.22,
+     "short_scoreboard": 1.56,
+     "wait": 2.09
+    },
+    "dominant_stall": "barrier",
+    "issue_active_fraction": 0.37731855151200505,
+    "inst_issued_per_active_cycle_per_sm": 1.5092742012553348,
+    "dram_bytes_read": 137538304.0,
+    "dram_bytes_write": 745632.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 402776128.0,
+    "l2_write_bytes": 1186624.0
+   },
+   "critical_agrees_with_stalls": false,
+   "kernel_sha256": "40b48dbb96dfe61b5b956f9af2738846dd5bfaa9bb2b515356fce36223f7f3e6",
+   "seconds": 40.4,
+   "sim_wait_families_warp_s": {
+    "copy": 0.43494774834603595,
+    "barrier": 0.1918070162563553,
+    "compute": 2.281863556010088
+   },
+   "ncu_stall_families": {
+    "barrier": 15.18,
+    "copy": 3.13,
+    "compute": 8.32
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "barrier"
+  },
+  {
+   "workload": "skinny_64x4096x4096",
+   "design": {
+    "tm": 16,
+    "tn": 64,
+    "tk": 16,
+    "stages": 3,
+    "prefetch": 1,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_skinny_64x4096x4096_4",
+   "predicted_us": 1430.1315060229085,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 805.376,
+   "ci95_us": [
+    797.984,
+    969.184
+   ],
+   "sm_mhz_in_run": [
+    2541.5,
+    2521.8,
+    2521.8
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 691.176793123967,
+   "sim_error": -0.1417961385440254,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "compute": 255,
+    "barrier": 1
+   },
+   "sim_dram_bytes": 86245376,
+   "sim_waves": 6,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 180841696.0,
+    "l2_bytes": 336898656.0,
+    "stalls_per_issue_active": {
+     "barrier": 7.1,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 4.56,
+     "math_pipe_throttle": 0.06,
+     "membar": 0.0,
+     "mio_throttle": 7.07,
+     "no_instruction": 0.1,
+     "not_selected": 1.53,
+     "short_scoreboard": 2.12,
+     "wait": 1.77
+    },
+    "dominant_stall": "barrier",
+    "issue_active_fraction": 0.29770432952100084,
+    "inst_issued_per_active_cycle_per_sm": 1.1908173239983928,
+    "dram_bytes_read": 179870912.0,
+    "dram_bytes_write": 970784.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 335699520.0,
+    "l2_write_bytes": 1181728.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "ff18ce692de2b07b7234652b316c4e742e44d62cab063e33be3bdab16f18a18a",
+   "seconds": 27.0,
+   "sim_wait_families_warp_s": {
+    "copy": 0.0018045380871350952,
+    "barrier": 0.014586717715522031,
+    "compute": 1.0301603140515534
+   },
+   "ncu_stall_families": {
+    "barrier": 7.1,
+    "copy": 4.56,
+    "compute": 12.55
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "skinny_64x4096x4096",
+   "design": {
+    "tm": 64,
+    "tn": 128,
+    "tk": 16,
+    "stages": 2,
+    "prefetch": 1,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_skinny_64x4096x4096_5",
+   "predicted_us": 432.1581186424366,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 372.16,
+   "ci95_us": [
+    371.072,
+    374.08
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2541.3,
+    2541.4
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 318.7569611131783,
+   "sim_error": -0.14349483793750462,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 255
+   },
+   "sim_dram_bytes": 69206016,
+   "sim_waves": 1,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 69282368.0,
+    "l2_bytes": 102250176.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.66,
+     "lg_throttle": 0.01,
+     "long_scoreboard": 0.67,
+     "math_pipe_throttle": 0.02,
+     "membar": 0.0,
+     "mio_throttle": 0.79,
+     "no_instruction": 0.09,
+     "not_selected": 0.47,
+     "short_scoreboard": 0.44,
+     "wait": 0.77
+    },
+    "dominant_stall": "mio_throttle",
+    "issue_active_fraction": 0.37351251482497,
+    "inst_issued_per_active_cycle_per_sm": 1.494050042327902,
+    "dram_bytes_read": 68247232.0,
+    "dram_bytes_write": 1035136.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 101073472.0,
+    "l2_write_bytes": 1163328.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "16c517712d91d982154949b47579eeea3352104bf7aecc6fb03f2ab6804e9bb8",
+   "seconds": 22.5,
+   "sim_wait_families_warp_s": {
+    "copy": 0.00017596749577433618,
+    "barrier": 0.0018121139393421249,
+    "compute": 0.07865878799930225
+   },
+   "ncu_stall_families": {
+    "barrier": 0.66,
+    "copy": 0.68,
+    "compute": 2.49
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "skinny_64x4096x4096",
+   "design": {
+    "tm": 64,
+    "tn": 64,
+    "tk": 64,
+    "stages": 3,
+    "prefetch": 0,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_skinny_64x4096x4096_6",
+   "predicted_us": 692.4019398644829,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 472.704,
+   "ci95_us": [
+    466.304,
+    484.928
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2541.3,
+    2541.4
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 465.9635535027499,
+   "sim_error": -0.01425933881932484,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 63
+   },
+   "sim_dram_bytes": 70254592,
+   "sim_waves": 2,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 69992384.0,
+    "l2_bytes": 135608704.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.84,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 2.34,
+     "math_pipe_throttle": 0.03,
+     "membar": 0.0,
+     "mio_throttle": 1.06,
+     "no_instruction": 0.04,
+     "not_selected": 0.49,
+     "short_scoreboard": 0.32,
+     "wait": 0.68
+    },
+    "dominant_stall": "long_scoreboard",
+    "issue_active_fraction": 0.25632907675419475,
+    "inst_issued_per_active_cycle_per_sm": 1.0253162954332737,
+    "dram_bytes_read": 69044864.0,
+    "dram_bytes_write": 947520.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 134409856.0,
+    "l2_write_bytes": 1181440.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "9ff2fefbb2414011db8e7c890bffc1ddaef9519c351d81d0a8ecc6b5426d91ce",
+   "seconds": 21.7,
+   "sim_wait_families_warp_s": {
+    "copy": 0.031590460594764745,
+    "barrier": 0.0034607713857029423,
+    "compute": 0.08376339966983776
+   },
+   "ncu_stall_families": {
+    "barrier": 0.84,
+    "copy": 2.34,
+    "compute": 2.58
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "skinny_64x4096x4096",
+   "design": {
+    "tm": 16,
+    "tn": 32,
+    "tk": 64,
+    "stages": 3,
+    "prefetch": 2,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_skinny_64x4096x4096_7",
+   "predicted_us": 1715.2667595601865,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 1043.072,
+   "ci95_us": [
+    1033.728,
+    1164.8
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2522.7,
+    2522.5
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 1167.3350227073697,
+   "sim_error": 0.1191317787337498,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 62,
+    "barrier": 1
+   },
+   "sim_dram_bytes": 271564800,
+   "sim_waves": 11,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 271274432.0,
+    "l2_bytes": 404598496.0,
+    "stalls_per_issue_active": {
+     "barrier": 3.48,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 2.65,
+     "math_pipe_throttle": 0.05,
+     "membar": 0.0,
+     "mio_throttle": 1.83,
+     "no_instruction": 0.1,
+     "not_selected": 0.42,
+     "short_scoreboard": 1.6,
+     "wait": 1.81
+    },
+    "dominant_stall": "barrier",
+    "issue_active_fraction": 0.2784955704395741,
+    "inst_issued_per_active_cycle_per_sm": 1.1139822817582965,
+    "dram_bytes_read": 270406368.0,
+    "dram_bytes_write": 868064.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 403370752.0,
+    "l2_write_bytes": 1210336.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "06cde50a4756785215e893d8996d43bf6e82b0afde057c9db6aa17b09a23dcae",
+   "seconds": 23.8,
+   "sim_wait_families_warp_s": {
+    "copy": 0.031547506786532585,
+    "barrier": 0.1991478185844665,
+    "compute": 0.6203607537732211
+   },
+   "ncu_stall_families": {
+    "barrier": 3.48,
+    "copy": 2.65,
+    "compute": 5.710000000000001
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "skinny_64x4096x4096",
+   "design": {
+    "tm": 32,
+    "tn": 64,
+    "tk": 16,
+    "stages": 2,
+    "prefetch": 1,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_skinny_64x4096x4096_8",
+   "predicted_us": 859.8609989483531,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 445.792,
+   "ci95_us": [
+    443.712,
+    604.672
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2541.4,
+    2542.4
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 336.5370577143115,
+   "sim_error": -0.24508053595777513,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 255
+   },
+   "sim_dram_bytes": 69206016,
+   "sim_waves": 3,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 90023072.0,
+    "l2_bytes": 202683808.0,
+    "stalls_per_issue_active": {
+     "barrier": 2.97,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 1.1,
+     "math_pipe_throttle": 0.06,
+     "membar": 0.0,
+     "mio_throttle": 3.47,
+     "no_instruction": 0.07,
+     "not_selected": 1.15,
+     "short_scoreboard": 0.7,
+     "wait": 1.37
+    },
+    "dominant_stall": "mio_throttle",
+    "issue_active_fraction": 0.36237793075719454,
+    "inst_issued_per_active_cycle_per_sm": 1.4495117230287782,
+    "dram_bytes_read": 88965440.0,
+    "dram_bytes_write": 1057632.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 201482432.0,
+    "l2_write_bytes": 1183968.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "929fc3b06a637a0e2305c05673a4f785d803df7a7675319945a4bac5fa6e6ca5",
+   "seconds": 23.4,
+   "sim_wait_families_warp_s": {
+    "copy": 0.0007211572298650936,
+    "barrier": 0.007157201335590696,
+    "compute": 0.32891011750001214
+   },
+   "ncu_stall_families": {
+    "barrier": 2.97,
+    "copy": 1.1,
+    "compute": 6.75
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "skinny_64x4096x4096",
+   "design": {
+    "tm": 16,
+    "tn": 64,
+    "tk": 32,
+    "stages": 2,
+    "prefetch": 0,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_skinny_64x4096x4096_9",
+   "predicted_us": 1538.755950624564,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 864.544,
+   "ci95_us": [
+    857.568,
+    1226.016
+   ],
+   "sm_mhz_in_run": [
+    2541.3,
+    2541.3,
+    2522.0
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.000244140625,
+    "source": "contract.yaml",
+    "tol_derived": 0.000244140625,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 666.3726467949627,
+   "sim_error": -0.22922066801115648,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 3,
+    "compute": 125
+   },
+   "sim_dram_bytes": 136577024,
+   "sim_waves": 6,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 195454912.0,
+    "l2_bytes": 337810848.0,
+    "stalls_per_issue_active": {
+     "barrier": 7.71,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 7.85,
+     "math_pipe_throttle": 0.04,
+     "membar": 0.0,
+     "mio_throttle": 6.47,
+     "no_instruction": 0.09,
+     "not_selected": 1.24,
+     "short_scoreboard": 1.14,
+     "wait": 1.58
+    },
+    "dominant_stall": "long_scoreboard",
+    "issue_active_fraction": 0.18922127725579857,
+    "inst_issued_per_active_cycle_per_sm": 0.7568851090231943,
+    "dram_bytes_read": 194415104.0,
+    "dram_bytes_write": 1039808.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 335735808.0,
+    "l2_write_bytes": 2057632.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "cb612ec47b645b87383d6031d394d04ca5f5029e2797fa786afe0533c05c66f2",
+   "seconds": 23.7,
+   "sim_wait_families_warp_s": {
+    "copy": 0.13534628767527945,
+    "barrier": 0.018559179646532507,
+    "compute": 0.5182507755381641
+   },
+   "ncu_stall_families": {
+    "barrier": 7.71,
+    "copy": 7.85,
+    "compute": 10.47
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "ragged_1000x1000x1000",
+   "design": {
+    "tm": 128,
+    "tn": 64,
+    "tk": 16,
+    "stages": 3,
+    "prefetch": 2,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_ragged_1000x1000x1000_0",
+   "predicted_us": 434.6739795487771,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 201.28,
+   "ci95_us": [
+    199.296,
+    212.064
+   ],
+   "sm_mhz_in_run": [
+    2541.3,
+    2541.4,
+    2541.4
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.0001,
+    "source": "contract.yaml",
+    "tol_derived": 5.9604644775390625e-05,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 229.3158177795081,
+   "sim_error": 0.1392876479506564,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 58,
+    "barrier": 4
+   },
+   "sim_dram_bytes": 12451840,
+   "sim_waves": 3,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 10635264.0,
+    "l2_bytes": 100211328.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.57,
+     "lg_throttle": 0.05,
+     "long_scoreboard": 0.58,
+     "math_pipe_throttle": 0.11,
+     "membar": 0.0,
+     "mio_throttle": 0.93,
+     "no_instruction": 0.09,
+     "not_selected": 1.15,
+     "short_scoreboard": 1.15,
+     "wait": 0.63
+    },
+    "dominant_stall": "not_selected",
+    "issue_active_fraction": 0.5062671522433688,
+    "inst_issued_per_active_cycle_per_sm": 2.0250686089734753,
+    "dram_bytes_read": 8059680.0,
+    "dram_bytes_write": 2575584.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 96119392.0,
+    "l2_write_bytes": 4076576.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "339488053590971597c06d3549eb1ee9cb66d947d8d83d26c3a7e21a46bd4353",
+   "seconds": 22.5,
+   "sim_wait_families_warp_s": {
+    "copy": 0.0012176978718933375,
+    "barrier": 0.0021368578495773835,
+    "compute": 0.12510148110260677
+   },
+   "ncu_stall_families": {
+    "barrier": 0.57,
+    "copy": 0.63,
+    "compute": 3.9699999999999998
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "ragged_1000x1000x1000",
+   "design": {
+    "tm": 64,
+    "tn": 128,
+    "tk": 8,
+    "stages": 2,
+    "prefetch": 0,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_ragged_1000x1000x1000_1",
+   "predicted_us": 529.3868586175813,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 239.04,
+   "ci95_us": [
+    237.76,
+    259.264
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2541.4,
+    2541.7
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.0001,
+    "source": "contract.yaml",
+    "tol_derived": 5.9604644775390625e-05,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 222.3815412640622,
+   "sim_error": -0.06968900073601814,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "compute": 123,
+    "copy": 2
+   },
+   "sim_dram_bytes": 12386304,
+   "sim_waves": 3,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 10735520.0,
+    "l2_bytes": 100250656.0,
+    "stalls_per_issue_active": {
+     "barrier": 3.21,
+     "lg_throttle": 0.02,
+     "long_scoreboard": 3.21,
+     "math_pipe_throttle": 0.05,
+     "membar": 0.0,
+     "mio_throttle": 1.46,
+     "no_instruction": 0.14,
+     "not_selected": 1.65,
+     "short_scoreboard": 0.75,
+     "wait": 0.72
+    },
+    "dominant_stall": "barrier",
+    "issue_active_fraction": 0.35005440792922404,
+    "inst_issued_per_active_cycle_per_sm": 1.4002176159066126,
+    "dram_bytes_read": 8077952.0,
+    "dram_bytes_write": 2657568.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 96120704.0,
+    "l2_write_bytes": 4112544.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "3d2079879c467dbd83137ad8bec45abf9f931356f11e6aa8c1ab897d292c8389",
+   "seconds": 23.2,
+   "sim_wait_families_warp_s": {
+    "copy": 0.040948551742274165,
+    "barrier": 0.0053496086160623145,
+    "compute": 0.17432057694148953
+   },
+   "ncu_stall_families": {
+    "barrier": 3.21,
+    "copy": 3.23,
+    "compute": 4.63
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "ragged_1000x1000x1000",
+   "design": {
+    "tm": 16,
+    "tn": 32,
+    "tk": 32,
+    "stages": 3,
+    "prefetch": 1,
+    "trailing_barrier": false,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_ragged_1000x1000x1000_2",
+   "predicted_us": 1661.6048495669704,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 698.912,
+   "ci95_us": [
+    696.544,
+    771.968
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2542.8,
+    2522.9
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.0001,
+    "source": "contract.yaml",
+    "tol_derived": 5.9604644775390625e-05,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 647.5314562370237,
+   "sim_error": -0.07351504018099042,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 31
+   },
+   "sim_dram_bytes": 12451840,
+   "sim_waves": 42,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 10108800.0,
+    "l2_bytes": 384261408.0,
+    "stalls_per_issue_active": {
+     "barrier": 4.54,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 1.57,
+     "math_pipe_throttle": 0.07,
+     "membar": 0.0,
+     "mio_throttle": 9.83,
+     "no_instruction": 0.12,
+     "not_selected": 2.59,
+     "short_scoreboard": 1.63,
+     "wait": 1.91
+    },
+    "dominant_stall": "mio_throttle",
+    "issue_active_fraction": 0.4092967409297924,
+    "inst_issued_per_active_cycle_per_sm": 1.6371869637191696,
+    "dram_bytes_read": 8084032.0,
+    "dram_bytes_write": 2024768.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 380114624.0,
+    "l2_write_bytes": 4129376.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "fd1b1af2f88cc819c1b553022e1bfad11531dee8263336d1b736b1649f2508ce",
+   "seconds": 25.0,
+   "sim_wait_families_warp_s": {
+    "copy": 0.009624210163165291,
+    "barrier": 0.006955506256356462,
+    "compute": 0.7230269706301269
+   },
+   "ncu_stall_families": {
+    "barrier": 4.54,
+    "copy": 1.57,
+    "compute": 16.03
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "ragged_1000x1000x1000",
+   "design": {
+    "tm": 128,
+    "tn": 128,
+    "tk": 8,
+    "stages": 2,
+    "prefetch": 0,
+    "trailing_barrier": false,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_ragged_1000x1000x1000_3",
+   "predicted_us": 410.3659401784338,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 249.44,
+   "ci95_us": [
+    248.032,
+    273.92
+   ],
+   "sm_mhz_in_run": [
+    2541.5,
+    2541.5,
+    2542.5
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.0001,
+    "source": "contract.yaml",
+    "tol_derived": 5.9604644775390625e-05,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 299.010475525394,
+   "sim_error": 0.19872705069513308,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "compute": 120,
+    "copy": 5
+   },
+   "sim_dram_bytes": 12386304,
+   "sim_waves": 2,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 10810848.0,
+    "l2_bytes": 68255808.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.55,
+     "lg_throttle": 0.07,
+     "long_scoreboard": 3.71,
+     "math_pipe_throttle": 0.05,
+     "membar": 0.0,
+     "mio_throttle": 0.59,
+     "no_instruction": 0.11,
+     "not_selected": 1.28,
+     "short_scoreboard": 0.29,
+     "wait": 0.47
+    },
+    "dominant_stall": "long_scoreboard",
+    "issue_active_fraction": 0.2918001553145861,
+    "inst_issued_per_active_cycle_per_sm": 1.1672006377198798,
+    "dram_bytes_read": 8080128.0,
+    "dram_bytes_write": 2730720.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 64132288.0,
+    "l2_write_bytes": 4106112.0
+   },
+   "critical_agrees_with_stalls": false,
+   "kernel_sha256": "4d228bc0066de20e5e542c12de902c0dcd4033cf34cda7e0b08ab598957bb610",
+   "seconds": 22.2,
+   "sim_wait_families_warp_s": {
+    "copy": 0.023637749500868343,
+    "barrier": 0.0023292609844334272,
+    "compute": 0.09243492490450367
+   },
+   "ncu_stall_families": {
+    "barrier": 0.55,
+    "copy": 3.78,
+    "compute": 2.6799999999999997
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "copy"
+  },
+  {
+   "workload": "ragged_1000x1000x1000",
+   "design": {
+    "tm": 16,
+    "tn": 128,
+    "tk": 32,
+    "stages": 1,
+    "prefetch": 0,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_ragged_1000x1000x1000_4",
+   "predicted_us": 1337.5226676591142,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 659.712,
+   "ci95_us": [
+    653.632,
+    703.488
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2542.2,
+    2522.2
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.0001,
+    "source": "contract.yaml",
+    "tol_derived": 5.9604644775390625e-05,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 501.1227213224759,
+   "sim_error": -0.24039168406444644,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 31
+   },
+   "sim_dram_bytes": 12451840,
+   "sim_waves": 11,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 11113504.0,
+    "l2_bytes": 288270336.0,
+    "stalls_per_issue_active": {
+     "barrier": 3.53,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 3.03,
+     "math_pipe_throttle": 0.04,
+     "membar": 0.0,
+     "mio_throttle": 15.33,
+     "no_instruction": 0.06,
+     "not_selected": 2.83,
+     "short_scoreboard": 0.71,
+     "wait": 1.44
+    },
+    "dominant_stall": "mio_throttle",
+    "issue_active_fraction": 0.30164993977393295,
+    "inst_issued_per_active_cycle_per_sm": 1.2065997590957318,
+    "dram_bytes_read": 8082048.0,
+    "dram_bytes_write": 3031456.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 284119808.0,
+    "l2_write_bytes": 4133120.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "f2f7b10945169f732f469482bbe46bef93a2d554b880c309d9b51b4ddca8d4b8",
+   "seconds": 22.5,
+   "sim_wait_families_warp_s": {
+    "copy": 0.09023478067597032,
+    "barrier": 0.005773204615318193,
+    "compute": 0.40481669924593133
+   },
+   "ncu_stall_families": {
+    "barrier": 3.53,
+    "copy": 3.03,
+    "compute": 20.35
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "ragged_1000x1000x1000",
+   "design": {
+    "tm": 32,
+    "tn": 32,
+    "tk": 64,
+    "stages": 2,
+    "prefetch": 1,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_ragged_1000x1000x1000_5",
+   "predicted_us": 1130.8049696300216,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 414.304,
+   "ci95_us": [
+    413.952,
+    423.104
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2542.9,
+    2542.9
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.0001,
+    "source": "contract.yaml",
+    "tol_derived": 5.9604644775390625e-05,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 359.2374766849334,
+   "sim_error": -0.13291332768949016,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 15
+   },
+   "sim_dram_bytes": 12582912,
+   "sim_waves": 22,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 10684448.0,
+    "l2_bytes": 260279488.0,
+    "stalls_per_issue_active": {
+     "barrier": 1.38,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 1.22,
+     "math_pipe_throttle": 0.11,
+     "membar": 0.0,
+     "mio_throttle": 5.36,
+     "no_instruction": 0.09,
+     "not_selected": 1.81,
+     "short_scoreboard": 1.32,
+     "wait": 1.34
+    },
+    "dominant_stall": "mio_throttle",
+    "issue_active_fraction": 0.40983374583414794,
+    "inst_issued_per_active_cycle_per_sm": 1.63933497211479,
+    "dram_bytes_read": 8323264.0,
+    "dram_bytes_write": 2361184.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 256132288.0,
+    "l2_write_bytes": 4129792.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "adde6dcc5cc644df9f4f04d0f3826d03f2fe30ba5186471f174c393384cd027b",
+   "seconds": 22.7,
+   "sim_wait_families_warp_s": {
+    "copy": 0.010477218527739446,
+    "barrier": 0.003585251561621121,
+    "compute": 0.3727352531823721
+   },
+   "ncu_stall_families": {
+    "barrier": 1.38,
+    "copy": 1.22,
+    "compute": 9.940000000000001
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "ragged_1000x1000x1000",
+   "design": {
+    "tm": 256,
+    "tn": 16,
+    "tk": 32,
+    "stages": 2,
+    "prefetch": 0,
+    "trailing_barrier": false,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_ragged_1000x1000x1000_6",
+   "predicted_us": 1268.1839022792171,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 375.136,
+   "ci95_us": [
+    373.152,
+    398.496
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2543.2,
+    2543.3
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.0001,
+    "source": "contract.yaml",
+    "tol_derived": 5.9604644775390625e-05,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 551.9086142996158,
+   "sim_error": 0.4712227413514454,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 31
+   },
+   "sim_dram_bytes": 12451840,
+   "sim_waves": 6,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 9785088.0,
+    "l2_bytes": 272295424.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.39,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 2.0,
+     "math_pipe_throttle": 0.05,
+     "membar": 0.0,
+     "mio_throttle": 0.33,
+     "no_instruction": 0.07,
+     "not_selected": 0.39,
+     "short_scoreboard": 0.65,
+     "wait": 1.01
+    },
+    "dominant_stall": "long_scoreboard",
+    "issue_active_fraction": 0.28009549337136547,
+    "inst_issued_per_active_cycle_per_sm": 1.12038199027521,
+    "dram_bytes_read": 8087680.0,
+    "dram_bytes_write": 1697408.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 268142528.0,
+    "l2_write_bytes": 4135488.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "864c177cbb682e1637190081d052a6400aff879d5bf60e86511666c4ad430f2b",
+   "seconds": 22.5,
+   "sim_wait_families_warp_s": {
+    "copy": 0.06592364038896398,
+    "barrier": 0.0024171970031302416,
+    "compute": 0.1171443288068245
+   },
+   "ncu_stall_families": {
+    "barrier": 0.39,
+    "copy": 2.0,
+    "compute": 2.4299999999999997
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "ragged_1000x1000x1000",
+   "design": {
+    "tm": 256,
+    "tn": 16,
+    "tk": 16,
+    "stages": 3,
+    "prefetch": 1,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_ragged_1000x1000x1000_7",
+   "predicted_us": 1181.9270892141128,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 364.992,
+   "ci95_us": [
+    364.0,
+    373.984
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2543.8,
+    2544.4
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.0001,
+    "source": "contract.yaml",
+    "tol_derived": 5.9604644775390625e-05,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 390.71612333675256,
+   "sim_error": 0.07047859497400633,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "copy": 1,
+    "compute": 61,
+    "barrier": 1
+   },
+   "sim_dram_bytes": 12321792,
+   "sim_waves": 6,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 9766752.0,
+    "l2_bytes": 272287648.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.7,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 1.09,
+     "math_pipe_throttle": 0.06,
+     "membar": 0.0,
+     "mio_throttle": 0.28,
+     "no_instruction": 0.05,
+     "not_selected": 0.16,
+     "short_scoreboard": 1.29,
+     "wait": 1.09
+    },
+    "dominant_stall": "short_scoreboard",
+    "issue_active_fraction": 0.33880154209664026,
+    "inst_issued_per_active_cycle_per_sm": 1.3552061748511393,
+    "dram_bytes_read": 8089024.0,
+    "dram_bytes_write": 1677728.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 268137344.0,
+    "l2_write_bytes": 4132896.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "04e82d19b4c5b03b44fcbba37532ce9f59c0c0290e79ddfadabdb7b51409a052",
+   "seconds": 22.3,
+   "sim_wait_families_warp_s": {
+    "copy": 0.0020905982498109735,
+    "barrier": 0.0036095002845124603,
+    "compute": 0.12454716353153546
+   },
+   "ncu_stall_families": {
+    "barrier": 0.7,
+    "copy": 1.09,
+    "compute": 2.88
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "ragged_1000x1000x1000",
+   "design": {
+    "tm": 128,
+    "tn": 128,
+    "tk": 32,
+    "stages": 1,
+    "prefetch": 0,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_ragged_1000x1000x1000_8",
+   "predicted_us": 408.5171228801338,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 217.536,
+   "ci95_us": [
+    215.36,
+    226.24
+   ],
+   "sm_mhz_in_run": [
+    2541.4,
+    2541.4,
+    2541.3
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.0001,
+    "source": "contract.yaml",
+    "tol_derived": 5.9604644775390625e-05,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 257.63571518663406,
+   "sim_error": 0.18433599581969906,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "compute": 32
+   },
+   "sim_dram_bytes": 12582912,
+   "sim_waves": 2,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 10695264.0,
+    "l2_bytes": 68219392.0,
+    "stalls_per_issue_active": {
+     "barrier": 0.4,
+     "lg_throttle": 0.03,
+     "long_scoreboard": 1.99,
+     "math_pipe_throttle": 0.05,
+     "membar": 0.0,
+     "mio_throttle": 0.41,
+     "no_instruction": 0.09,
+     "not_selected": 1.29,
+     "short_scoreboard": 0.18,
+     "wait": 0.34
+    },
+    "dominant_stall": "long_scoreboard",
+    "issue_active_fraction": 0.4013916730961933,
+    "inst_issued_per_active_cycle_per_sm": 1.6055666923847731,
+    "dram_bytes_read": 8064224.0,
+    "dram_bytes_write": 2631040.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 64124960.0,
+    "l2_write_bytes": 4079072.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "3ef044ac486b0a1e5834d4087b94ba551d0a3a32514fa1c3c8ac387ffc903c68",
+   "seconds": 21.8,
+   "sim_wait_families_warp_s": {
+    "copy": 0.01630788067077915,
+    "barrier": 0.001200448502308967,
+    "compute": 0.08403627393376714
+   },
+   "ncu_stall_families": {
+    "barrier": 0.4,
+    "copy": 2.02,
+    "compute": 2.27
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  },
+  {
+   "workload": "ragged_1000x1000x1000",
+   "design": {
+    "tm": 16,
+    "tn": 32,
+    "tk": 64,
+    "stages": 1,
+    "prefetch": 0,
+    "trailing_barrier": true,
+    "leading_barrier": true,
+    "grid_rounding": "ceil",
+    "guard": "bounded",
+    "stride_offset": 0
+   },
+   "assignment": "val_ragged_1000x1000x1000_9",
+   "predicted_us": 1754.9009474153368,
+   "ran": true,
+   "reference_agrees": true,
+   "measured_us": 689.536,
+   "ci95_us": [
+    688.352,
+    698.016
+   ],
+   "sm_mhz_in_run": [
+    2542.8,
+    2543.1,
+    2522.6
+   ],
+   "policy": {
+    "warmup_s": 0.0,
+    "tol": 0.0001,
+    "source": "contract.yaml",
+    "tol_derived": 5.9604644775390625e-05,
+    "ulp_bound_fp32": 1.0,
+    "fma_contraction_default": true
+   },
+   "error": null,
+   "simulated_us": 701.9158931875866,
+   "sim_error": 0.017953947564139705,
+   "sim_critical": "compute",
+   "sim_critical_counts": {
+    "compute": 16
+   },
+   "sim_dram_bytes": 12451840,
+   "sim_waves": 42,
+   "ncu": {
+    "available": true,
+    "ok": true,
+    "dram_bytes": 10170720.0,
+    "l2_bytes": 384858016.0,
+    "stalls_per_issue_active": {
+     "barrier": 4.14,
+     "lg_throttle": 0.0,
+     "long_scoreboard": 4.1,
+     "math_pipe_throttle": 0.06,
+     "membar": 0.0,
+     "mio_throttle": 14.99,
+     "no_instruction": 0.1,
+     "not_selected": 3.25,
+     "short_scoreboard": 1.77,
+     "wait": 1.82
+    },
+    "dominant_stall": "mio_throttle",
+    "issue_active_fraction": 0.35730342874846127,
+    "inst_issued_per_active_cycle_per_sm": 1.4292137209396878,
+    "dram_bytes_read": 8084672.0,
+    "dram_bytes_write": 2086048.0,
+    "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
+    "l2_read_bytes": 380656320.0,
+    "l2_write_bytes": 4184288.0
+   },
+   "critical_agrees_with_stalls": true,
+   "kernel_sha256": "16c46b8bfe3f93fe71e5723a6179c25ecf2efec7b3f04722d345cbd0e7744396",
+   "seconds": 22.4,
+   "sim_wait_families_warp_s": {
+    "copy": 0.11958535735945572,
+    "barrier": 0.009487535973577781,
+    "compute": 1.1575688892547378
+   },
+   "ncu_stall_families": {
+    "barrier": 4.14,
+    "copy": 4.1,
+    "compute": 21.89
+   },
+   "sim_dominant_family": "compute",
+   "ncu_dominant_family": "compute"
+  }
+ ],
+ "resimulated": "2026-10-14T19:30:23Z"
+}

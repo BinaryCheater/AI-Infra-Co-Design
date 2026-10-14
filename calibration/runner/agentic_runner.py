@@ -14,7 +14,9 @@ HERE = Path(__file__).resolve().parent
 
 
 # The GB10 exposes no dram__* counters (unified LPDDR5X behind the L2): DRAM traffic is the L2 lookup misses, 32 B sectors.
-NCU_METRICS = "lts__t_bytes.sum,lts__t_sectors_op_read_lookup_miss.sum,lts__t_sectors_op_write_lookup_miss.sum,lts__t_sectors_op_read.sum,lts__t_sectors_op_write.sum,gpu__time_duration.sum"
+STALLS = ("barrier", "long_scoreboard", "short_scoreboard", "mio_throttle", "lg_throttle", "not_selected", "wait", "math_pipe_throttle", "membar", "no_instruction")
+NCU_METRICS = ("lts__t_bytes.sum,lts__t_sectors_op_read_lookup_miss.sum,lts__t_sectors_op_write_lookup_miss.sum,lts__t_sectors_op_read.sum,lts__t_sectors_op_write.sum,gpu__time_duration.sum,"
+               "sm__cycles_active.avg,sm__issue_active.avg,sm__inst_issued.sum," + ",".join(f"smsp__average_warps_issue_stalled_{s}_per_issue_active.ratio" for s in STALLS))
 
 
 def ncu_traffic(args: list[str]) -> dict:
@@ -45,7 +47,12 @@ def ncu_traffic(args: list[str]) -> dict:
     def sectors_bytes(k):
         v = vals.get(k); return None if v is None else v * 32
     rd, wr = sectors_bytes("lts__t_sectors_op_read_lookup_miss.sum"), sectors_bytes("lts__t_sectors_op_write_lookup_miss.sum")
+    cyc = vals.get("sm__cycles_active.avg")
+    stalls = {k.split("stalled_")[1].split("_per")[0]: v for k, v in vals.items() if "issue_stalled" in k}
     return {"available": True, "ok": True, "dram_bytes": (rd or 0) + (wr or 0) if rd is not None or wr is not None else None, "l2_bytes": bytes_of("lts__t_bytes.sum"),
+            "stalls_per_issue_active": stalls, "dominant_stall": max(stalls, key=stalls.get) if stalls else None,
+            "issue_active_fraction": (vals["sm__issue_active.avg"] / cyc) if cyc and "sm__issue_active.avg" in vals else None,
+            "inst_issued_per_active_cycle_per_sm": (vals["sm__inst_issued.sum"] / 48 / cyc) if cyc and "sm__inst_issued.sum" in vals else None,
             "dram_bytes_read": rd, "dram_bytes_write": wr, "dram_source": "L2 lookup misses x 32 B (no dram__ counters on this chip)",
             "l2_read_bytes": sectors_bytes("lts__t_sectors_op_read.sum"), "l2_write_bytes": sectors_bytes("lts__t_sectors_op_write.sum"),
             "raw": {k: [vals[k], units.get(k)] for k in vals}}

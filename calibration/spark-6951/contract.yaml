@@ -996,21 +996,129 @@ tensor_flops_per_s_chip_fp8:
   fp8_e5m2: 200447601000000.0
   fp8_e4m3: 197775200500000.0
 inst_throughput_per_sm:
-  lop3: 150130071500.0
-  mufu_rsqrt: 59918532200.0
-  iadd3: 109098869000.0
-  ffma: 395990762500.0
-  fadd: 375949260000.0
-  fmul: 366353880000.0
-  imad: 226327237000.0
-  shf: 183546434500.0
-  i2f_f2i: 120314037000.0
+  lop3: 151325524000.0
+  mufu_rsqrt: 60391577350.0
+  iadd3: 109962798500.0
+  ffma: 398898351500.0
+  fadd: 379513016500.0
+  fmul: 369659308000.0
+  imad: 228138472500.0
+  shf: 185012399500.0
+  i2f_f2i: 121265084500.0
 ld_shared_bytes_per_s_per_sm:
-  lds_64: 619582779600.0
-  sts_32: 284365557000.0
-  lds_128: 616101744000.0
-  lds_32: 328621030800.0
+  lds_64: 625575076400.0
+  sts_32: 286736757800.0
+  lds_128: 622056088800.0
+  lds_32: 331731090200.0
+ld_shared_instr_per_s_per_sm:
+  lds_64: 2443652642.1875
+  sts_32: 2240130920.3125
+  lds_128: 1214953298.4375
+  lds_128_broadcast2: 1968548756.25
+  lds_32: 2591649142.1875
 compute_block_efficiency:
+  T1_128x256x16,bps=3:
+    TM: 128
+    TN: 256
+    TK: 16
+    R:
+    - 8
+    - 16
+    cycles_per_phase: 7186
+    fma_bound_cycles: 3317
+    efficiency: 0.462
+    lds_per_thread_per_phase: 384
+    ffma_per_thread_per_phase: 2048
+    sass_mix:
+      LDC: 4
+      S2R: 9
+      LDCU: 4
+      LOP3: 13
+      IADD3: 19
+      PRMT: 1
+      MOV: 62
+      CALL: 2
+      BSSY: 4
+      ISETP: 9
+      BRA: 11
+      HFMA2: 52
+      LEA: 15
+      I2FP: 10
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      CS2UR: 1
+      CS2R: 17
+      UISETP: 3
+      UMOV: 2
+      SHF: 1
+      UIADD3: 2
+      LDS: 72
+      FFMA: 512
+      FADD: 128
+      IMAD: 3
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      I2F: 2
+      FSETP: 2
+      FSEL: 2
+      MUFU: 1
+      F2I: 1
+      RET: 1
+      NOP: 9
+  T1_128x256x16,bps=2:
+    TM: 128
+    TN: 256
+    TK: 16
+    R:
+    - 8
+    - 16
+    cycles_per_phase: 7188
+    fma_bound_cycles: 3317
+    efficiency: 0.461
+    lds_per_thread_per_phase: 384
+    ffma_per_thread_per_phase: 2048
+    sass_mix:
+      LDC: 4
+      S2R: 9
+      LDCU: 4
+      LOP3: 13
+      IADD3: 19
+      PRMT: 1
+      MOV: 62
+      CALL: 2
+      BSSY: 4
+      ISETP: 9
+      BRA: 11
+      HFMA2: 52
+      LEA: 15
+      I2FP: 10
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      CS2UR: 1
+      CS2R: 17
+      UISETP: 3
+      UMOV: 2
+      SHF: 1
+      UIADD3: 2
+      LDS: 72
+      FFMA: 512
+      FADD: 128
+      IMAD: 3
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      I2F: 2
+      FSETP: 2
+      FSEL: 2
+      MUFU: 1
+      F2I: 1
+      RET: 1
+      NOP: 9
   T3_64x256x16:
     TM: 64
     TN: 256
@@ -1019,8 +1127,8 @@ compute_block_efficiency:
     - 4
     - 16
     cycles_per_phase: 4867
-    fma_bound_cycles: 1654
-    efficiency: 0.34
+    fma_bound_cycles: 1658
+    efficiency: 0.341
     lds_per_thread_per_phase: 320
     ffma_per_thread_per_phase: 1024
     sass_mix:
@@ -1063,16 +1171,118 @@ compute_block_efficiency:
       FSEL: 2
       RET: 1
       NOP: 9
-  T5_128x128x32:
+  T1_128x256x16,bps=4:
+    TM: 128
+    TN: 256
+    TK: 16
+    R:
+    - 8
+    - 16
+    cycles_per_phase: 7179
+    fma_bound_cycles: 3317
+    efficiency: 0.462
+    lds_per_thread_per_phase: 384
+    ffma_per_thread_per_phase: 2048
+    sass_mix:
+      LDC: 4
+      S2R: 9
+      LDCU: 4
+      LOP3: 13
+      IADD3: 19
+      PRMT: 1
+      MOV: 62
+      CALL: 2
+      BSSY: 4
+      ISETP: 9
+      BRA: 11
+      HFMA2: 52
+      LEA: 15
+      I2FP: 10
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      CS2UR: 1
+      CS2R: 17
+      UISETP: 3
+      UMOV: 2
+      SHF: 1
+      UIADD3: 2
+      LDS: 72
+      FFMA: 512
+      FADD: 128
+      IMAD: 3
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      I2F: 2
+      FSETP: 2
+      FSEL: 2
+      MUFU: 1
+      F2I: 1
+      RET: 1
+      NOP: 9
+  R4_64x64x32,bps=4:
+    TM: 64
+    TN: 64
+    TK: 32
+    R:
+    - 4
+    - 4
+    cycles_per_phase: 8647
+    fma_bound_cycles: 829
+    efficiency: 0.096
+    lds_per_thread_per_phase: 256
+    ffma_per_thread_per_phase: 512
+    sass_mix:
+      LDC: 4
+      S2R: 8
+      LDCU: 3
+      LOP3: 10
+      IADD3: 19
+      PRMT: 1
+      MOV: 17
+      CALL: 1
+      BSSY: 4
+      ISETP: 10
+      BRA: 12
+      HFMA2: 8
+      LEA: 15
+      I2FP: 11
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      CS2UR: 1
+      CS2R: 6
+      UISETP: 3
+      SHF: 2
+      UMOV: 2
+      UIADD3: 2
+      LDS: 20
+      FFMA: 64
+      FADD: 16
+      IMAD: 3
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      I2F: 1
+      FSETP: 2
+      FSEL: 2
+      MUFU: 1
+      F2I: 1
+      RET: 1
+      NOP: 12
+  T5_128x128x32,bps=3:
     TM: 128
     TN: 128
     TK: 32
     R:
     - 8
     - 8
-    cycles_per_phase: 7361
-    fma_bound_cycles: 3307
-    efficiency: 0.449
+    cycles_per_phase: 11441
+    fma_bound_cycles: 3317
+    efficiency: 0.29
     lds_per_thread_per_phase: 512
     ffma_per_thread_per_phase: 2048
     sass_mix:
@@ -1113,6 +1323,454 @@ compute_block_efficiency:
       F2I: 1
       RET: 1
       NOP: 14
+  T3_64x256x16,bps=2:
+    TM: 64
+    TN: 256
+    TK: 16
+    R:
+    - 4
+    - 16
+    cycles_per_phase: 9305
+    fma_bound_cycles: 1658
+    efficiency: 0.178
+    lds_per_thread_per_phase: 320
+    ffma_per_thread_per_phase: 1024
+    sass_mix:
+      LDC: 4
+      S2R: 8
+      LDCU: 4
+      BSSY: 4
+      I2F: 2
+      ISETP: 13
+      IADD3: 26
+      MUFU: 2
+      VIMNMX: 1
+      LOP3: 11
+      SEL: 1
+      MOV: 36
+      F2I: 2
+      HFMA2: 27
+      IMAD: 7
+      BRA: 11
+      LEA: 14
+      I2FP: 11
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      CALL: 1
+      BAR: 2
+      CS2UR: 1
+      CS2R: 10
+      UISETP: 3
+      UMOV: 2
+      SHF: 1
+      UIADD3: 2
+      LDS: 68
+      FFMA: 256
+      FADD: 64
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      FSETP: 2
+      FSEL: 2
+      RET: 1
+      NOP: 9
+  R2_32x32x32,bps=4:
+    TM: 32
+    TN: 32
+    TK: 32
+    R:
+    - 2
+    - 2
+    cycles_per_phase: 4214
+    fma_bound_cycles: 207
+    efficiency: 0.049
+    lds_per_thread_per_phase: 128
+    ffma_per_thread_per_phase: 128
+    sass_mix:
+      LDC: 4
+      S2R: 7
+      BSSY: 4
+      I2F: 1
+      ISETP: 11
+      IADD3: 25
+      MUFU: 1
+      VIMNMX: 1
+      SEL: 1
+      F2I: 1
+      HFMA2: 4
+      IMAD: 19
+      MOV: 17
+      LOP3: 5
+      BRA: 12
+      LEA: 5
+      I2FP: 10
+      FMUL: 10
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      LDCU: 3
+      CS2UR: 1
+      UISETP: 3
+      UMOV: 2
+      UIADD3: 2
+      LDS: 10
+      FFMA: 16
+      FADD: 4
+      CS2R: 1
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      NOP: 15
+  T5_128x128x32:
+    TM: 128
+    TN: 128
+    TK: 32
+    R:
+    - 8
+    - 8
+    cycles_per_phase: 7361
+    fma_bound_cycles: 3317
+    efficiency: 0.451
+    lds_per_thread_per_phase: 512
+    ffma_per_thread_per_phase: 2048
+    sass_mix:
+      LDC: 4
+      S2R: 6
+      MOV: 24
+      LDCU: 4
+      LOP3: 9
+      IADD3: 17
+      CALL: 1
+      BSSY: 4
+      ISETP: 8
+      BRA: 10
+      HFMA2: 18
+      LEA: 12
+      I2FP: 11
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      CS2UR: 1
+      CS2R: 19
+      UISETP: 3
+      UMOV: 2
+      SHF: 2
+      UIADD3: 2
+      LDS: 40
+      FFMA: 256
+      FADD: 64
+      IMAD: 3
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      I2F: 1
+      FSETP: 2
+      FSEL: 2
+      MUFU: 1
+      F2I: 1
+      RET: 1
+      NOP: 14
+  R4_64x64x32,bps=2:
+    TM: 64
+    TN: 64
+    TK: 32
+    R:
+    - 4
+    - 4
+    cycles_per_phase: 5343
+    fma_bound_cycles: 829
+    efficiency: 0.155
+    lds_per_thread_per_phase: 256
+    ffma_per_thread_per_phase: 512
+    sass_mix:
+      LDC: 4
+      S2R: 8
+      LDCU: 3
+      LOP3: 10
+      IADD3: 19
+      PRMT: 1
+      MOV: 17
+      CALL: 1
+      BSSY: 4
+      ISETP: 10
+      BRA: 12
+      HFMA2: 8
+      LEA: 15
+      I2FP: 11
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      CS2UR: 1
+      CS2R: 6
+      UISETP: 3
+      SHF: 2
+      UMOV: 2
+      UIADD3: 2
+      LDS: 20
+      FFMA: 64
+      FADD: 16
+      IMAD: 3
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      I2F: 1
+      FSETP: 2
+      FSEL: 2
+      MUFU: 1
+      F2I: 1
+      RET: 1
+      NOP: 12
+  T3_64x256x16,bps=4:
+    TM: 64
+    TN: 256
+    TK: 16
+    R:
+    - 4
+    - 16
+    cycles_per_phase: 8873
+    fma_bound_cycles: 1658
+    efficiency: 0.187
+    lds_per_thread_per_phase: 320
+    ffma_per_thread_per_phase: 1024
+    sass_mix:
+      LDC: 4
+      S2R: 8
+      LDCU: 4
+      BSSY: 4
+      I2F: 2
+      ISETP: 13
+      IADD3: 26
+      MUFU: 2
+      VIMNMX: 1
+      LOP3: 11
+      SEL: 1
+      MOV: 36
+      F2I: 2
+      HFMA2: 27
+      IMAD: 7
+      BRA: 11
+      LEA: 14
+      I2FP: 11
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      CALL: 1
+      BAR: 2
+      CS2UR: 1
+      CS2R: 10
+      UISETP: 3
+      UMOV: 2
+      SHF: 1
+      UIADD3: 2
+      LDS: 68
+      FFMA: 256
+      FADD: 64
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      FSETP: 2
+      FSEL: 2
+      RET: 1
+      NOP: 9
+  R2_32x32x32,bps=2:
+    TM: 32
+    TN: 32
+    TK: 32
+    R:
+    - 2
+    - 2
+    cycles_per_phase: 2645
+    fma_bound_cycles: 207
+    efficiency: 0.078
+    lds_per_thread_per_phase: 128
+    ffma_per_thread_per_phase: 128
+    sass_mix:
+      LDC: 4
+      S2R: 7
+      BSSY: 4
+      I2F: 1
+      ISETP: 11
+      IADD3: 25
+      MUFU: 1
+      VIMNMX: 1
+      SEL: 1
+      F2I: 1
+      HFMA2: 4
+      IMAD: 19
+      MOV: 17
+      LOP3: 5
+      BRA: 12
+      LEA: 5
+      I2FP: 10
+      FMUL: 10
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      LDCU: 3
+      CS2UR: 1
+      UISETP: 3
+      UMOV: 2
+      UIADD3: 2
+      LDS: 10
+      FFMA: 16
+      FADD: 4
+      CS2R: 1
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      NOP: 15
+  T3_64x256x16,bps=3:
+    TM: 64
+    TN: 256
+    TK: 16
+    R:
+    - 4
+    - 16
+    cycles_per_phase: 8495
+    fma_bound_cycles: 1658
+    efficiency: 0.195
+    lds_per_thread_per_phase: 320
+    ffma_per_thread_per_phase: 1024
+    sass_mix:
+      LDC: 4
+      S2R: 8
+      LDCU: 4
+      BSSY: 4
+      I2F: 2
+      ISETP: 13
+      IADD3: 26
+      MUFU: 2
+      VIMNMX: 1
+      LOP3: 11
+      SEL: 1
+      MOV: 36
+      F2I: 2
+      HFMA2: 27
+      IMAD: 7
+      BRA: 11
+      LEA: 14
+      I2FP: 11
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      CALL: 1
+      BAR: 2
+      CS2UR: 1
+      CS2R: 10
+      UISETP: 3
+      UMOV: 2
+      SHF: 1
+      UIADD3: 2
+      LDS: 68
+      FFMA: 256
+      FADD: 64
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      FSETP: 2
+      FSEL: 2
+      RET: 1
+      NOP: 9
+  T5_128x128x32,bps=2:
+    TM: 128
+    TN: 128
+    TK: 32
+    R:
+    - 8
+    - 8
+    cycles_per_phase: 13906
+    fma_bound_cycles: 3317
+    efficiency: 0.239
+    lds_per_thread_per_phase: 512
+    ffma_per_thread_per_phase: 2048
+    sass_mix:
+      LDC: 4
+      S2R: 6
+      MOV: 24
+      LDCU: 4
+      LOP3: 9
+      IADD3: 17
+      CALL: 1
+      BSSY: 4
+      ISETP: 8
+      BRA: 10
+      HFMA2: 18
+      LEA: 12
+      I2FP: 11
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      CS2UR: 1
+      CS2R: 19
+      UISETP: 3
+      UMOV: 2
+      SHF: 2
+      UIADD3: 2
+      LDS: 40
+      FFMA: 256
+      FADD: 64
+      IMAD: 3
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      I2F: 1
+      FSETP: 2
+      FSEL: 2
+      MUFU: 1
+      F2I: 1
+      RET: 1
+      NOP: 14
+  R2_32x32x32,bps=3:
+    TM: 32
+    TN: 32
+    TK: 32
+    R:
+    - 2
+    - 2
+    cycles_per_phase: 2942
+    fma_bound_cycles: 207
+    efficiency: 0.07
+    lds_per_thread_per_phase: 128
+    ffma_per_thread_per_phase: 128
+    sass_mix:
+      LDC: 4
+      S2R: 7
+      BSSY: 4
+      I2F: 1
+      ISETP: 11
+      IADD3: 25
+      MUFU: 1
+      VIMNMX: 1
+      SEL: 1
+      F2I: 1
+      HFMA2: 4
+      IMAD: 19
+      MOV: 17
+      LOP3: 5
+      BRA: 12
+      LEA: 5
+      I2FP: 10
+      FMUL: 10
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      LDCU: 3
+      CS2UR: 1
+      UISETP: 3
+      UMOV: 2
+      UIADD3: 2
+      LDS: 10
+      FFMA: 16
+      FADD: 4
+      CS2R: 1
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      NOP: 15
   T1_128x256x16:
     TM: 128
     TN: 256
@@ -1121,8 +1779,8 @@ compute_block_efficiency:
     - 8
     - 16
     cycles_per_phase: 7192
-    fma_bound_cycles: 3307
-    efficiency: 0.46
+    fma_bound_cycles: 3317
+    efficiency: 0.461
     lds_per_thread_per_phase: 384
     ffma_per_thread_per_phase: 2048
     sass_mix:
@@ -1171,9 +1829,60 @@ compute_block_efficiency:
     R:
     - 4
     - 4
-    cycles_per_phase: 2830
-    fma_bound_cycles: 827
-    efficiency: 0.292
+    cycles_per_phase: 2831
+    fma_bound_cycles: 829
+    efficiency: 0.293
+    lds_per_thread_per_phase: 256
+    ffma_per_thread_per_phase: 512
+    sass_mix:
+      LDC: 4
+      S2R: 8
+      LDCU: 3
+      LOP3: 10
+      IADD3: 19
+      PRMT: 1
+      MOV: 17
+      CALL: 1
+      BSSY: 4
+      ISETP: 10
+      BRA: 12
+      HFMA2: 8
+      LEA: 15
+      I2FP: 11
+      FMUL: 13
+      STS: 10
+      BSYNC: 4
+      BAR: 2
+      CS2UR: 1
+      CS2R: 6
+      UISETP: 3
+      SHF: 2
+      UMOV: 2
+      UIADD3: 2
+      LDS: 20
+      FFMA: 64
+      FADD: 16
+      IMAD: 3
+      STG: 2
+      EXIT: 2
+      IADD: 1
+      I2F: 1
+      FSETP: 2
+      FSEL: 2
+      MUFU: 1
+      F2I: 1
+      RET: 1
+      NOP: 12
+  R4_64x64x32,bps=3:
+    TM: 64
+    TN: 64
+    TK: 32
+    R:
+    - 4
+    - 4
+    cycles_per_phase: 6142
+    fma_bound_cycles: 829
+    efficiency: 0.135
     lds_per_thread_per_phase: 256
     ffma_per_thread_per_phase: 512
     sass_mix:
@@ -1224,7 +1933,7 @@ compute_block_efficiency:
     - 2
     cycles_per_phase: 1442
     fma_bound_cycles: 207
-    efficiency: 0.143
+    efficiency: 0.144
     lds_per_thread_per_phase: 128
     ffma_per_thread_per_phase: 128
     sass_mix:
@@ -1527,7 +2236,7 @@ micro_benchmarks:
 - b25_multi_kernel
 - b26_functional_probes
 provenance:
-  suite_commit: 978ec5d666248d90d006c56a69a61a23aa4b5b7c
+  suite_commit: 56dbedaffaf580c6164613d4e91cfb635efb9752
   host: spark-6951
   driver: 580.159.03
   toolkit: Build cuda_13.0.r13.0/compiler.36424714_0
@@ -1540,9 +2249,9 @@ provenance:
     variance_source: B11 sustained load
     sampled_sm_mhz:
       min: 208.0
-      max: 2515.0
+      max: 2522.0
     max_sm_mhz: 3003.0
-  date: '2026-10-14T18:12:05Z'
+  date: '2026-10-14T19:03:40Z'
   raw: calibration/spark-6951/raw
   ci_target: 0.04
   max_reps: 50
@@ -2763,6 +3472,16 @@ provenance:
       - tensor_flops_per_s_chip[fp8_e5m2]
       - tensor_flops_per_s_chip[fp8_e4m3]
       method: 'B20.1: cublasLtMatmul 8192^2, FP8 inputs, FP32 accumulate'
+    ld_shared_instr_per_s_per_sm:
+      from:
+      - inst_throughput_per_sm[lds_64]
+      - inst_throughput_per_sm[sts_32]
+      - inst_throughput_per_sm[lds_128]
+      - inst_throughput_per_sm[lds_128_broadcast2]
+      - inst_throughput_per_sm[lds_32]
+      method: 'B21.1: ld.shared / st.shared warp-instructions per second per SM by
+        width; lds_128_broadcast2 = 16 B loads with two distinct addresses per warp
+        (the template''s A-load pattern)'
     inst_throughput_per_sm:
       from:
       - inst_throughput_per_sm[lop3]
@@ -2775,39 +3494,56 @@ provenance:
       - inst_throughput_per_sm[sts_32]
       - inst_throughput_per_sm[imad]
       - inst_throughput_per_sm[lds_128]
+      - inst_throughput_per_sm[lds_128_broadcast2]
       - inst_throughput_per_sm[lds_32]
       - inst_throughput_per_sm[shf]
       - inst_throughput_per_sm[i2f_f2i]
       method: 'B21.1: B2 pattern per opcode class (ILP 8, 8 x 256 threads per SM),
         instructions per second per SM'
       ci95:
-        lop3: 9.235324982843295e-06
-        lds_64: 0.0009933371621421352
-        mufu_rsqrt: 5.230560370769563e-05
-        iadd3: 1.1246679376667049e-05
-        ffma: 0.000653185691421274
-        fadd: 0.0006377622607901928
-        fmul: 0.0015874343953993335
-        sts_32: 0.000604312286666982
-        imad: 0.00018126298250174813
-        lds_128: 0.0021022222589261166
-        lds_32: 0.002287959471643164
-        shf: 0.00031557137112352894
-        i2f_f2i: 6.902145590875651e-05
+        lop3: 0.001961499898721646
+        lds_64: 0.0020329863640328365
+        mufu_rsqrt: 0.001959313371039149
+        iadd3: 0.0019499594674284321
+        ffma: 0.0028891169784641237
+        fadd: 0.0019854766957643996
+        fmul: 0.0019301847256609592
+        sts_32: 0.001853018790045062
+        imad: 0.002155957058053854
+        lds_128: 0.0023410544904548165
+        lds_128_broadcast2: 0.0032560074291530516
+        lds_32: 0.0028581577910842437
+        shf: 0.002155150147112167
+        i2f_f2i: 0.001993593217675117
     ld_shared_bytes_per_s_per_sm:
       from:
       - inst_throughput_per_sm[lds_64]
       - inst_throughput_per_sm[sts_32]
       - inst_throughput_per_sm[lds_128]
+      - inst_throughput_per_sm[lds_128_broadcast2]
       - inst_throughput_per_sm[lds_32]
       method: 'B21.1: ld.shared / st.shared throughput by access width, bytes per
         second per SM'
     compute_block_efficiency:
       from:
+      - compute_block_efficiency[T1_128x256x16,bps=3]
+      - compute_block_efficiency[T1_128x256x16,bps=2]
       - compute_block_efficiency[T3_64x256x16]
+      - compute_block_efficiency[T1_128x256x16,bps=4]
+      - compute_block_efficiency[R4_64x64x32,bps=4]
+      - compute_block_efficiency[T5_128x128x32,bps=3]
+      - compute_block_efficiency[T3_64x256x16,bps=2]
+      - compute_block_efficiency[R2_32x32x32,bps=4]
       - compute_block_efficiency[T5_128x128x32]
+      - compute_block_efficiency[R4_64x64x32,bps=2]
+      - compute_block_efficiency[T3_64x256x16,bps=4]
+      - compute_block_efficiency[R2_32x32x32,bps=2]
+      - compute_block_efficiency[T3_64x256x16,bps=3]
+      - compute_block_efficiency[T5_128x128x32,bps=2]
+      - compute_block_efficiency[R2_32x32x32,bps=3]
       - compute_block_efficiency[T1_128x256x16]
       - compute_block_efficiency[R4_64x64x32]
+      - compute_block_efficiency[R4_64x64x32,bps=3]
       - compute_block_efficiency[R2_32x32x32]
       method: 'B21.2-3: the template''s inner loop with the smem tile pre-filled,
         one block per SM; cycles per TK step over the FFMA-only bound; SASS opcode

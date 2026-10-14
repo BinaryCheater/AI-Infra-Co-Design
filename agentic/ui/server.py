@@ -188,6 +188,14 @@ def _calibration_file(connection, rel: str):
     return _response(connection, HTTPStatus.OK, path.read_bytes(), mimetypes.guess_type(str(path))[0] or "text/plain")
 
 
+def validation_index() -> list[dict]:
+    """The G4 validation sets (calibration/<host>/validation.json): simulated vs measured per design."""
+    out = []
+    for f in sorted(CALIBRATION.glob("*/validation.json")) if CALIBRATION.exists() else []:
+        v = json.loads(f.read_text()); v["host_dir"] = f.parent.name; out.append(v)
+    return out
+
+
 def calibration_index() -> list[dict]:
     """One entry per host with a fitted contract: the contract, its sources, and the raw file names."""
     import yaml
@@ -211,6 +219,8 @@ def make_process_request(session: Session):
             return _static(connection, "index.html")
         if p == "/calibration" or p == "/calibration/":
             return _static(connection, "calibration.html")
+        if p == "/validation" or p == "/validation/":
+            return _static(connection, "validation.html")
         if p.startswith("/calibration-files/"):
             return _calibration_file(connection, p[len("/calibration-files/"):])
         if p.startswith("/api/"):
@@ -237,6 +247,8 @@ def api(session: Session, route: str, q: dict):
         return catalog()
     if route == "calibration":
         return calibration_index()
+    if route == "validation":
+        return validation_index()
     if route == "population":
         return session._summary()
     if route == "describe_all":

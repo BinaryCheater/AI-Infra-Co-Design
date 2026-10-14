@@ -26,12 +26,21 @@ class IssueModel:
         self.lds_latency = float((contract.get("op_latency_cycles") or {}).get("ld_shared") or 33)
         hz = float(contract.get("clock_hz_sustained") or 2.4e9)
         lds = contract.get("ld_shared_bytes_per_s_per_sm") or {}
-        inst = contract.get("inst_throughput_per_sm") or {}
-        # warp-level ld.shared instructions per SM cycle by width (B21: thread-ops/s / 32 lanes / Hz)
-        r32 = (float(inst["lds_32"]) / 32 / hz) if "lds_32" in inst else ((float(lds["lds_32"]) / 128 / hz) if "lds_32" in lds else 1.0)
-        r128 = (float(inst["lds_128"]) / 32 / hz) if "lds_128" in inst else ((float(lds["lds_128"]) / 512 / hz) if "lds_128" in lds else r32 / 2)
+        inst = contract.get("ld_shared_instr_per_s_per_sm") or {}
+        # warp-level ld.shared instructions per SM cycle by width (B21: warp-instructions/s / Hz)
+        r32 = (float(inst["lds_32"]) / hz) if "lds_32" in inst else ((float(lds["lds_32"]) / 128 / hz) if "lds_32" in lds else 1.0)
+        r128 = (float(inst["lds_128"]) / hz) if "lds_128" in inst else ((float(lds["lds_128"]) / 512 / hz) if "lds_128" in lds else r32 / 2)
+        # the template's A loads are ld.shared.128 with two distinct addresses per warp (threads 0-15 one row, 16-31 the next): B21
+        # measures that broadcast pattern separately (lds_128_broadcast2, ~0.8 per SM cycle against 0.49 for 32 distinct addresses)
+        r128b = (float(inst["lds_128_broadcast2"]) / hz) if "lds_128_broadcast2" in inst else r128
+        # beyond four warps per scheduler the schedulers overlap part of the LDS occupancy (B21 at 3 and 4 blocks per SM: per-block
+        # phase time 2.1x and 3.0x the one-block time instead of 3x and 4x); phenomenological, from those two points
+        self.overlap = {int(k): float(v) for k, v in (structural.get("issue_overlap_by_warps_per_scheduler") or {1: 1.0, 2: 1.0, 4: 1.0, 6: 0.70, 8: 0.75}).items()}
         self.c_lds32 = self.schedulers / r32          # scheduler cycles one ld.shared.32 occupies
+        # B21's inner loops (the same A-load pattern) are reproduced with the 32-address rate and under-read by 13-20 % with the
+        # broadcast rate, so the 32-address rate stays; the broadcast measurement is kept in the contract (notes/sim_gaps.md #8)
         self.c_lds128 = self.schedulers / r128
+        self.c_lds128_broadcast = self.schedulers / r128b
         ffma_per_sm_cycle = float(contract["fp32_flops_per_s_per_sm"]) / 64.0 / hz      # warp-FFMA per SM cycle (B2)
         self.c_ffma = self.schedulers / ffma_per_sm_cycle
         self.c_alu = 1.0
@@ -47,6 +56,16 @@ class IssueModel:
         k = max([x for x in keys if x <= stride_words] or [keys[0]])
         return self.penalty[k]
 
+    def overlap_factor(self, per_sched: int) -> float:
+        keys = sorted(self.overlap)
+        if per_sched <= keys[0]:
+            return self.overlap[keys[0]]
+        for a, b in zip(keys, keys[1:]):
+            if a <= per_sched <= b:
+                f = (per_sched - a) / (b - a)
+                return self.overlap[a] + f * (self.overlap[b] - self.overlap[a])
+        return self.overlap[keys[-1]]
+
     def warp_step_cycles(self, ffma: int, lds32: int, lds128: int, alu: int = 1, stride_words: int = 1) -> float:
         """Scheduler cycles one warp's k-step occupies."""
         deg = self.degree(stride_words)
@@ -57,7 +76,7 @@ class IssueModel:
         if warps_per_sm <= 0:
             return 0.0
         per_sched = math.ceil(warps_per_sm / self.schedulers)
-        occupancy = per_sched * self.warp_step_cycles(ffma, lds32, lds128, alu, stride_words)
+        occupancy = per_sched * self.overlap_factor(per_sched) * self.warp_step_cycles(ffma, lds32, lds128, alu, stride_words)
         # a lone warp cannot overlap its loads' latency with anything: dependent path = issue the loads, wait, issue the FFMAs
         lone = (lds32 * self.c_lds32 + lds128 * self.c_lds128) * self.degree(stride_words) + self.lds_latency + (ffma + alu) * self.issue_interval
         return max(occupancy, lone if per_sched == 1 else 0.0)
@@ -65,7 +84,7 @@ class IssueModel:
     def phase_cycles(self, warps_per_sm: int, k_steps: int, ffma: int, lds32: int, lds128: int, other_per_phase: int = 0, stride_words: int = 1) -> float:
         """SM cycles for one phase of a block: k_steps of the inner loop plus the per-phase overhead instructions, shared by the SM's warps."""
         per_sched = math.ceil(max(1, warps_per_sm) / self.schedulers)
-        return self.cycles_per_step(warps_per_sm, ffma, lds32, lds128, 1, stride_words) * k_steps + per_sched * other_per_phase * self.c_alu
+        return self.cycles_per_step(warps_per_sm, ffma, lds32, lds128, 1, stride_words) * k_steps + per_sched * self.overlap_factor(per_sched) * other_per_phase * self.c_alu
 
     @staticmethod
     def counts(rm: int, rn: int) -> tuple[int, int, int]:

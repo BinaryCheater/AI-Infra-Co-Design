@@ -359,6 +359,8 @@ def fit_b21(recs):
     if it:
         f["inst_throughput_per_sm"] = {k: r["value"] for k, r in it.items() if not k.startswith("lds") and not k.startswith("sts")}
         f["ld_shared_bytes_per_s_per_sm"] = {k: r["value"] * {"lds_32": 4, "lds_64": 8, "lds_128": 16, "sts_32": 4}[k] for k, r in it.items() if k in ("lds_32", "lds_64", "lds_128", "sts_32")}
+        f["ld_shared_instr_per_s_per_sm"] = {k: r["value"] / 32 for k, r in it.items() if k.startswith(("lds", "sts"))}   # warp instructions per second per SM
+        s["ld_shared_instr_per_s_per_sm"] = {"from": [r["quantity"] for k, r in it.items() if k.startswith(("lds", "sts"))], "method": "B21.1: ld.shared / st.shared warp-instructions per second per SM by width; lds_128_broadcast2 = 16 B loads with two distinct addresses per warp (the template's A-load pattern)"}
         s["inst_throughput_per_sm"] = {"from": [r["quantity"] for r in it.values()], "method": "B21.1: B2 pattern per opcode class (ILP 8, 8 x 256 threads per SM), instructions per second per SM", "ci95": {k: r.get("ci95") for k, r in it.items()}}
         s["ld_shared_bytes_per_s_per_sm"] = {"from": [r["quantity"] for k, r in it.items() if k.startswith(("lds", "sts"))], "method": "B21.1: ld.shared / st.shared throughput by access width, bytes per second per SM"}
     eff = keyed(recs, "compute_block_efficiency")
