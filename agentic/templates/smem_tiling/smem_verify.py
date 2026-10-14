@@ -27,6 +27,7 @@ from time import perf_counter
 
 import z3
 
+from ...sim.explore import admissibility, event_vars, linearize
 from .smem_template import TilingDesign
 
 TIMEOUT_MS = 5000
@@ -181,52 +182,10 @@ class EventModel:
         return e % self.warps
 
 
-def build_program(design: TilingDesign, em: EventModel):
-    S, P = design.stages, design.prefetch
-    progs = []
-    for w in range(em.warps):
-        prog = []
-        for u in range(min(P, em.phases)):
-            prog.append(("LOAD", w, u))
-        for p in range(em.phases):
-            if P == 0:
-                prog.append(("LOAD", w, p))
-            elif p + P < em.phases:
-                prog.append(("LOAD", w, p + P))
-            if design.leading_barrier:
-                prog.append(("BAR", "A", p))
-            prog.append(("COMP", w, p))
-            if design.trailing_barrier:
-                prog.append(("BAR", "B", p))
-        progs.append(prog)
-    return progs
-
-
-def _event_vars(progs):
-    """Per-warp event variables; barriers share one variable per instance."""
-    ev, bars = {}, {}
-    for prog in progs:
-        for e in prog:
-            if e[0] == "BAR":
-                bars.setdefault(e, z3.Int(f"t_bar_{e[1]}_{e[2]}"))
-            else:
-                ev.setdefault(e, z3.Int(f"t_{e[0]}_{e[1]}_{e[2]}"))
-    return ev, bars
-
-
-def admissibility(progs, ev, bars):
-    """Program order per warp; a barrier instance is one point every warp crosses."""
-    c = []
-    for prog in progs:
-        times = [bars[e] if e[0] == "BAR" else ev[e] for e in prog]
-        c += [a < b for a, b in zip(times, times[1:])]
-    c.append(z3.Distinct(*ev.values()))
-    return z3.And(*c)
-
-
 def schedule_obligations(design: TilingDesign, em: EventModel = EventModel()):
-    progs = build_program(design, em)
-    ev, bars = _event_vars(progs)
+    from .events import verifier_projection, warp_programs     # the shared event model, projected
+    progs = verifier_projection(warp_programs(design, em.warps, em.phases))
+    ev, bars = event_vars(progs)
     adm = admissibility(progs, ev, bars)
     S = design.stages
     elems = em.elements()
@@ -265,20 +224,6 @@ def schedule_obligations(design: TilingDesign, em: EventModel = EventModel()):
     else:
         out.append(Outcome("terminal_agreement(witness run)", scope, "no admissible execution", dt, h))
     return out
-
-
-def linearize(model, progs):
-    items = []
-    seen = set()
-    for prog in progs:
-        for e in prog:
-            name = f"t_bar_{e[1]}_{e[2]}" if e[0] == "BAR" else f"t_{e[0]}_{e[1]}_{e[2]}"
-            if name in seen:
-                continue
-            seen.add(name)
-            items.append((model[name], name, e))
-    items.sort()
-    return [list(e) for _, _, e in items]
 
 
 def replay_schedule(design, em, progs, order):
