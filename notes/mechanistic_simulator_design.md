@@ -178,3 +178,16 @@ It is not Accel-Sim or GPGPU-Sim. Those model the instruction pipeline and take 
 
 
 **Counter cross-checks (after P0).** `calibration/suite/ncu_crosscheck.py` runs `bench/bx_counters.cu` under `ncu` and the contract carries the results under `counter_crosscheck:`; where a counter measures the same quantity as a timing inference, the counter wins and the inference stays in provenance (sector size, L1 capacity). The issue-rate, inner-loop stall and bank-conflict counters are the acceptance data for G4's issue model.
+
+---
+
+## 10. Revision after B13–B26 and G4 (October 15, 2026)
+
+What the structure suite and the first validation changed in this note:
+
+- **Instruction issue is a mechanism, not out of scope.** §1 excluded instruction-level modeling; G4 and the counters showed the dominant limiter on the compute phase is the four warp schedulers (`not_selected` dominant, then `mio_throttle`, `short_scoreboard`). M7 therefore gains a warp issue model: per-warp scoreboard with measured latencies (B17), four schedulers per SM, LSU and shared-memory ports arbitrated per SM across all resident blocks. Its parameters come from B17, B21, B27 and B28; the additive occupancy model of G4a and its fitted overlap factor are replaced. Specification: `calibration/suite/B27_plus.md` §2.
+- **TMA bytes can be visible before completion.** B26.4: bytes of a `cp.async.bulk` tile are readable before the mbarrier reports completion; `cp.async` chunks land in issue order and are never torn. The verifier keeps the conservative reading (destination undefined until the wait returns), which stays sound. The timed reader must not treat a read-before-wait as a certain failure; it reports it as a race with the measured window (B15.2's completion distribution, B26.1's chunk spread).
+- **L2 is 24 MiB with hashed sets.** B13 and the counter cross-check: 91 % single-warp chase hits at 24 MiB, no set conflicts at any power-of-two stride up to 64 lines, no slice latency spread, LRU-like replacement, 32 B fills. B4's 16 MiB knee is a bandwidth effect of many streams, and the model must produce it from the bandwidth queue, not from the capacity. §2's `l2_bytes_effective` entry and §9 question 2 are answered: capacity measured, set/slice structure hashed and unobservable at this level.
+- **First-wave block dispatch is deterministic.** B16: SM pairs round-robin over six groups of eight (0,1,8,9,16,17,…), identical on every launch; later waves follow completion order; 192 ns refill. M8's breadth-first rule is right for the first wave; the pair/group order matters only for effects B13 did not find.
+- **Clocks need no warm-up on this host** (B22): the kernel starts at the idle clock and settles within 2 %; the runner's in-run clock sampling is sufficient.
+- **The G4 gate stands** (median ≤ 10 %, worst ≤ 20 %) and the agreement criterion is revised to per-family agreement (`B27_plus.md` §3.2), since a simulator that always predicts `compute` trivially agrees at the base rate.
