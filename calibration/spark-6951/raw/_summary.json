@@ -6,44 +6,14 @@
  "nvcc": "Build cuda_13.0.r13.0/compiler.36424714_0",
  "driver": "580.159.03",
  "ncu": "/usr/local/cuda/bin/ncu",
- "started": "2026-10-14T14:54:19Z",
+ "started": "2026-10-14T15:04:03Z",
  "benchmarks": {
-  "b1_props": {
-   "quantities": 1,
-   "seconds": 0.3,
-   "reps": 10,
+  "b9_occupancy": {
+   "quantities": 8,
+   "seconds": 7.8,
+   "reps": 30,
    "worst_ci95": 0
-  },
-  "b2_fma": {
-   "quantities": 1,
-   "seconds": 0.6,
-   "reps": 10,
-   "worst_ci95": 9.644480972979248e-05
-  },
-  "b4_bandwidth": {
-   "quantities": 27,
-   "seconds": 27.4,
-   "reps": 40,
-   "worst_ci95": 0.03833782228388361
-  },
-  "b5_latency": {
-   "quantities": 13,
-   "seconds": 5.4,
-   "reps": 10,
-   "worst_ci95": 0.006220562674353929
-  },
-  "b6_smem": {
-   "quantities": 6,
-   "seconds": 1.4,
-   "reps": 10,
-   "worst_ci95": 0.003605522519098073
-  },
-  "b7_barrier": {
-   "quantities": 4,
-   "seconds": 0.6,
-   "reps": 10,
-   "worst_ci95": 0.0009113219376365877
   }
  },
- "finished": "2026-10-14T14:54:59Z"
+ "finished": "2026-10-14T15:04:11Z"
 }

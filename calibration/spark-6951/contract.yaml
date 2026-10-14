@@ -50,8 +50,65 @@ fixed:
 - fp32_flops_per_s_per_sm
 - warp_size
 - max_threads_per_block
+tensor_flops_per_s_per_sm:
+  bf16: 2488334015000.0
+  tf32: 634902161500.0
+  fp16: 2524732570000.0
+  fp8: null
+tensor_shapes:
+  bf16: m16n16k16
+  tf32: m16n16k8
+  fp16: m16n16k16
+tensor_flops_per_s_chip:
+  bf16: 95036924500000.0
+  tf32: 40102098250000.0
+  fp32: 21564979550000.0
+  fp16: 91931818450000.0
+async_copy_latency_s:
+  '4096': 2.52728081e-07
+  '8192': 3.189917285e-07
+  '16384': 4.6087944550000003e-07
+  '32768': 8.230125100000001e-07
+  '49152': 1.258826095e-06
+async_copy_bytes_per_s:
+  '4096': 1473204745000.0
+  '8192': 1933140730000.0
+  '16384': 1982415135000.0
+  '32768': 1990906580000.0
+  '49152': 1943715275000.0
+tma_supported: true
+tma_bulk_latency_s:
+  '16384': 5.002463815e-07
+max_blocks_per_sm_measured:
+  '98304': 1
+  '32768': 3
+  '8192': 6
+  '16384': 5
+  '0': 6
+  '20': 6
+  '49152': 2
+  '65536': 1
+launch_s: 2.0162399999999997e-06
+launch_host_s: 1.773056e-06
+clock_hz_sustained: 2476000000.0
+clock_variance_sustained: 0.015625
+sustained_fp32_flops_per_s_per_sm: 580796223500.0
+power_w_sustained: 79.295
+unified_memory:
+  pinned_host: 200038414500.0
+  managed_gpu_first: 162760770000.0
+  managed_cpu_first_steady: 162929300000.0
+  managed_cpu_first_pass1: 163603561000.0
+  device: 238068997000.0
+unified_memory_penalty:
+  pinned_host: 1.19
+  managed_gpu_first: 1.463
+  managed_cpu_first_steady: 1.461
+  managed_cpu_first_pass1: 1.455
+coherent_access_bytes_per_s: 200038414500.0
+suite_level: full
 provenance:
-  suite_commit: ac8679f844870d69765c1c3c0de4d48a5cd79017
+  suite_commit: 768c44d5205f2a2a06bb9878a0ebada68b6ef71c
   host: spark-6951
   driver: 580.159.03
   toolkit: Build cuda_13.0.r13.0/compiler.36424714_0
@@ -61,10 +118,10 @@ provenance:
     locked: false
     sampled_sm_mhz:
       min: 227.0
-      max: 2509.0
+      max: 2515.0
     max_sm_mhz: 3003.0
-    variance: 0.9095257074531686
-  date: '2026-10-14T14:54:59Z'
+    variance: 0.9097415506958251
+  date: '2026-10-14T15:04:11Z'
   raw: calibration/spark-6951/raw
   ci_target: 0.04
   max_reps: 50
@@ -122,3 +179,54 @@ provenance:
         '128': 0.00033206283955372254
         '1024': 0.0009113219376365877
         '256': 0.0005173337575755005
+    tensor_flops_per_s_per_sm:
+      from:
+      - tensor_flops_per_s_per_sm[bf16]
+      - tensor_flops_per_s_per_sm[tf32]
+      - tensor_flops_per_s_per_sm[fp16]
+      note: WMMA mma_sync microkernel, one block per SM; chip-level cuBLAS numbers
+        in tensor_flops_per_s_chip
+    tensor_fp8:
+      measured: false
+      reason: FP8 GEMM needs cublasLt; not in this round
+    async_copy_latency_s:
+      from:
+      - async_copy_latency_s[32768]
+      - async_copy_latency_s[16384]
+      - async_copy_latency_s[49152]
+      - async_copy_latency_s[8192]
+      - async_copy_latency_s[4096]
+      note: cp.async 16 B/thread, one tile in flight, median SM, s per tile at the
+        attribute clock
+    tma_supported:
+      correct: true
+    max_blocks_per_sm_measured:
+      from:
+      - max_blocks_per_sm[smem=98304]
+      - max_blocks_per_sm[smem=32768]
+      - max_blocks_per_sm[smem=8192]
+      - max_blocks_per_sm[smem=16384]
+      - max_blocks_per_sm[smem=0]
+      - max_blocks_per_sm[regs=20]
+      - max_blocks_per_sm[smem=49152]
+      - max_blocks_per_sm[smem=65536]
+      note: smem=... rows measured by resident-block count; regs=... rows from the
+        occupancy API with __launch_bounds__ variants
+    launch_s:
+      from: launch_s
+      ci95: 0.005344564635162368
+      n: 10
+      method: 1000 empty launches
+    clock_hz_sustained:
+      from: sustained_clock_mhz
+      n: 58
+      note: nvidia-smi sampled once per second during a 60 s FMA load
+    unified_memory:
+      from:
+      - unified_read_bytes_per_s[pinned_host]
+      - unified_read_bytes_per_s[managed_gpu_first]
+      - unified_read_bytes_per_s[managed_cpu_first_steady]
+      - unified_read_bytes_per_s[managed_cpu_first_pass1]
+      - unified_read_bytes_per_s[device]
+      note: penalty = device read bandwidth / this allocation's read bandwidth, 1
+        GiB working set

@@ -118,6 +118,52 @@ def main():
         "smem_bytes_per_s_per_sm": {"from": "smem_bytes_per_s_per_sm[stride=1]", "ci95": smem[1].get("ci95") if 1 in smem else None},
         "barrier_s": {"from": [r["quantity"] for r in bar.values()], "ci95": {str(k): r.get("ci95") for k, r in bar.items()}},
     })
+    # ---- F2 fields (present only after a --full run); absent quantities leave the field out
+    tensor_sm = keyed(recs, "tensor_flops_per_s_per_sm"); tensor_chip = keyed(recs, "tensor_flops_per_s_chip")
+    if tensor_sm:
+        contract["tensor_flops_per_s_per_sm"] = {k: r["value"] for k, r in tensor_sm.items()}
+        contract["tensor_shapes"] = {k: r["detail"].get("shape") for k, r in tensor_sm.items()}
+        src["tensor_flops_per_s_per_sm"] = {"from": [r["quantity"] for r in tensor_sm.values()], "note": "WMMA mma_sync microkernel, one block per SM; chip-level cuBLAS numbers in tensor_flops_per_s_chip"}
+    if tensor_chip:
+        contract["tensor_flops_per_s_chip"] = {k: r["value"] for k, r in tensor_chip.items()}
+    if "tensor_fp8" in recs:
+        contract.setdefault("tensor_flops_per_s_per_sm", {})["fp8"] = None
+        src["tensor_fp8"] = recs["tensor_fp8"]["detail"]
+    acl = keyed(recs, "async_copy_latency_s"); acb = keyed(recs, "async_copy_bytes_per_s")
+    if acl:
+        contract["async_copy_latency_s"] = {str(k): r["value"] for k, r in sorted(acl.items())}
+        contract["async_copy_bytes_per_s"] = {str(k): r["value"] for k, r in sorted(acb.items())}
+        src["async_copy_latency_s"] = {"from": [r["quantity"] for r in acl.values()], "note": "cp.async 16 B/thread, one tile in flight, median SM, s per tile at the attribute clock"}
+    if "tma_supported" in recs:
+        contract["tma_supported"] = bool(recs["tma_supported"]["value"]) and bool(recs["tma_supported"]["detail"].get("correct", False))
+        src["tma_supported"] = recs["tma_supported"]["detail"]
+        if "tma_bulk_latency_s[16384]" in recs:
+            contract["tma_bulk_latency_s"] = {"16384": recs["tma_bulk_latency_s[16384]"]["value"]}
+    occ = keyed(recs, "max_blocks_per_sm")
+    if occ:
+        contract["max_blocks_per_sm_measured"] = {str(k): int(r["value"]) for k, r in occ.items()}
+        regs = {k: r for k, r in occ.items() if isinstance(k, int) and r["detail"].get("regs_per_thread")}
+        src["max_blocks_per_sm_measured"] = {"from": [r["quantity"] for r in occ.values()], "note": "smem=... rows measured by resident-block count; regs=... rows from the occupancy API with __launch_bounds__ variants"}
+    if "launch_s" in recs:
+        contract["launch_s"] = take("launch_s", "launch_s")
+        contract["launch_host_s"] = recs["launch_host_s"]["value"] if "launch_host_s" in recs else None
+    if "sustained_clock_mhz" in recs:
+        sc = recs["sustained_clock_mhz"]["samples"]
+        contract["clock_hz_sustained"] = sorted(sc)[len(sc) // 2] * 1e6 if sc else None
+        contract["clock_variance_sustained"] = (max(sc) - min(sc)) / max(sc) if sc and max(sc) else None
+        contract["sustained_fp32_flops_per_s_per_sm"] = recs["sustained_fp32_flops_per_s_per_sm"]["value"]
+        contract["power_w_sustained"] = recs["sustained_power_w"]["value"] if "sustained_power_w" in recs else None
+        src["clock_hz_sustained"] = {"from": "sustained_clock_mhz", "n": len(sc), "note": "nvidia-smi sampled once per second during a 60 s FMA load"}
+    um = keyed(recs, "unified_read_bytes_per_s")
+    if um:
+        dev = um.get("device", {}).get("value")
+        contract["unified_memory"] = {k: r["value"] for k, r in um.items()}
+        if dev:
+            contract["unified_memory_penalty"] = {k: round(dev / r["value"], 3) for k, r in um.items() if k != "device" and r["value"]}
+            contract["coherent_access_bytes_per_s"] = um.get("pinned_host", {}).get("value")
+        src["unified_memory"] = {"from": [r["quantity"] for r in um.values()], "note": "penalty = device read bandwidth / this allocation's read bandwidth, 1 GiB working set"}
+    contract["suite_level"] = "full" if tensor_sm and um else "minimum"
+
     clocks = [r["clocks"] for r in recs.values() if r.get("clocks")]
     sm_mhz = [c["after"]["sm_mhz"] for c in clocks if c.get("after", {}).get("sm_mhz")]
     contract["provenance"] = {

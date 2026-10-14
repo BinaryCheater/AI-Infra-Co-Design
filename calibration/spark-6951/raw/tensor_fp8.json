@@ -1,0 +1,32 @@
+{
+ "quantity": "tensor_fp8",
+ "unit": "",
+ "samples": [],
+ "detail": {
+  "measured": false,
+  "reason": "FP8 GEMM needs cublasLt; not in this round"
+ },
+ "value": null,
+ "ci95": null,
+ "n": 0,
+ "method": "cublasGemmEx large square GEMM per precision; mma.sync microkernel per SM",
+ "benchmark": "b3_tensor",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 51.0,
+   "power_w": 19.32,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2476.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 54.0,
+   "power_w": 66.8,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T15:02:23Z",
+ "arch": "sm_121"
+}

@@ -1,0 +1,38 @@
+{
+ "quantity": "max_blocks_per_sm[smem=32768]",
+ "unit": "blocks",
+ "samples": [
+  3,
+  3,
+  3
+ ],
+ "detail": {
+  "smem_bytes": 32768,
+  "threads": 256,
+  "occupancy_api": 3,
+  "measured_peak_resident": 3
+ },
+ "value": 3,
+ "ci95": 0.0,
+ "n": 3,
+ "method": "cudaOccupancyMaxActiveBlocksPerMultiprocessor sweep over registers and smem",
+ "benchmark": "b9_occupancy",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 4.16,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 48.0,
+   "power_w": 28.41,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T15:04:11Z",
+ "arch": "sm_121"
+}

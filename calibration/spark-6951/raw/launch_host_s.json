@@ -1,0 +1,43 @@
+{
+ "quantity": "launch_host_s",
+ "unit": "s",
+ "samples": [
+  1.977408e-06,
+  1.973296e-06,
+  1.82192e-06,
+  1.803744e-06,
+  1.775664e-06,
+  1.770448e-06,
+  1.764016e-06,
+  1.760096e-06,
+  1.757568e-06,
+  1.754144e-06
+ ],
+ "detail": {
+  "launches": 1000,
+  "timing": "host wall time per async launch call"
+ },
+ "value": 1.773056e-06,
+ "ci95": 0.03657188492636439,
+ "n": 10,
+ "method": "1000 empty launches",
+ "benchmark": "b10_launch",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 11.57,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2418.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 42.0,
+   "power_w": 12.11,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T14:58:47Z",
+ "arch": "sm_121"
+}

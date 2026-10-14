@@ -1,0 +1,43 @@
+{
+ "quantity": "launch_s",
+ "unit": "s",
+ "samples": [
+  1.98083198e-06,
+  1.98806405e-06,
+  2.01526403e-06,
+  2.01568007e-06,
+  2.01462412e-06,
+  2.01679993e-06,
+  2.01795197e-06,
+  2.02284789e-06,
+  2.02399993e-06,
+  2.02697611e-06
+ ],
+ "detail": {
+  "launches": 1000,
+  "timing": "cudaEvent, back-to-back"
+ },
+ "value": 2.0162399999999997e-06,
+ "ci95": 0.005344564635162368,
+ "n": 10,
+ "method": "1000 empty launches",
+ "benchmark": "b10_launch",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 11.57,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2418.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 42.0,
+   "power_w": 12.11,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T14:58:47Z",
+ "arch": "sm_121"
+}

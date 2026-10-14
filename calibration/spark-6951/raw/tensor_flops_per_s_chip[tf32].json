@@ -1,0 +1,54 @@
+{
+ "quantity": "tensor_flops_per_s_chip[tf32]",
+ "unit": "flop/s",
+ "samples": [
+  40530844100000.0,
+  34967971500000.0,
+  41819704800000.0,
+  39843107200000.0,
+  40145463400000.0,
+  40218344500000.0,
+  41812173200000.0,
+  41672817600000.0,
+  38876663200000.0,
+  36034249500000.0,
+  39664600600000.0,
+  39982565500000.0,
+  40283415600000.0,
+  38123520000000.0,
+  42009858800000.0,
+  40058733100000.0,
+  37742485100000.0,
+  39455178400000.0,
+  40478320800000.0,
+  40319671900000.0
+ ],
+ "detail": {
+  "n": 8192,
+  "api": "cublasGemmEx",
+  "compute": "fp32 accumulate"
+ },
+ "value": 40102098250000.0,
+ "ci95": 0.011767687866556957,
+ "n": 20,
+ "method": "cublasGemmEx large square GEMM per precision; mma.sync microkernel per SM",
+ "benchmark": "b3_tensor",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 51.0,
+   "power_w": 19.32,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2476.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 54.0,
+   "power_w": 66.8,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T15:02:23Z",
+ "arch": "sm_121"
+}

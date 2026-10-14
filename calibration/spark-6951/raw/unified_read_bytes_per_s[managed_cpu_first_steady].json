@@ -1,0 +1,43 @@
+{
+ "quantity": "unified_read_bytes_per_s[managed_cpu_first_steady]",
+ "unit": "byte/s",
+ "samples": [
+  155851111000.0,
+  162962332000.0,
+  163027647000.0,
+  161261236000.0,
+  162896268000.0,
+  161475818000.0,
+  162982902000.0,
+  162689333000.0,
+  163088656000.0,
+  163221944000.0
+ ],
+ "detail": {
+  "alloc": "cudaMallocManaged, CPU touched first; later passes",
+  "working_set_bytes": 1073741824
+ },
+ "value": 162929300000.0,
+ "ci95": 0.004787232867262058,
+ "n": 10,
+ "method": "streaming over cudaMallocManaged buffers touched by CPU first vs GPU first",
+ "benchmark": "b12_unified",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 61.0,
+   "power_w": 19.82,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2450.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 59.0,
+   "power_w": 15.99,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T14:59:52Z",
+ "arch": "sm_121"
+}

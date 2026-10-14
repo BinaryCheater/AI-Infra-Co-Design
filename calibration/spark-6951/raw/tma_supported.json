@@ -1,0 +1,35 @@
+{
+ "quantity": "tma_supported",
+ "unit": "",
+ "samples": [
+  1,
+  1,
+  1
+ ],
+ "detail": {
+  "correct": true
+ },
+ "value": 1,
+ "ci95": 0.0,
+ "n": 3,
+ "method": "cp.async / cp.async.bulk issue-to-completion timing per tile size",
+ "benchmark": "b8_async_copy",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 7.11,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2509.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 52.0,
+   "power_w": 27.93,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T15:01:25Z",
+ "arch": "sm_121"
+}

@@ -41,3 +41,20 @@ def test_f1_contract_fits_and_validates(host):
     assert 0 < c["barrier_s"]["256"] < 1e-6
     assert c["fp32_flops_per_s_per_sm"] > 0 and c["sms"] > 0
     assert set(["sms", "smem_bytes_per_block", "dram_bytes_per_s"]) <= set(c["fixed"])
+
+
+@pytest.mark.parametrize("host", HOSTS or ["none"])
+def test_f2_full_suite_fields(host):
+    if host == "none" or not (CAL / host / "contract.yaml").exists():
+        pytest.skip("no fitted contract")
+    c = yaml.safe_load((CAL / host / "contract.yaml").read_text())
+    if c.get("suite_level") != "full":
+        pytest.skip("minimum suite only")
+    assert "tma_supported" in c and isinstance(c["tma_supported"], bool)
+    assert c["unified_memory_penalty"] and all(v > 0 for v in c["unified_memory_penalty"].values())
+    assert c["clock_variance_sustained"] is not None and 0 <= c["clock_variance_sustained"] < 1
+    assert c["tensor_flops_per_s_per_sm"]["bf16"] > c["fp32_flops_per_s_per_sm"]
+    assert c["launch_s"] > 0 and c["async_copy_latency_s"]
+    readme = (CAL / "suite" / "README.md").read_text()
+    for b in ("B3", "B8", "B9", "B10", "B11", "B12"):
+        assert f"| {b} |" in readme
