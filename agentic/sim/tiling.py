@@ -15,7 +15,7 @@ def design_programs(d: TilingDesign, w: Workload, threads: int = 256) -> tuple[l
     tile_bytes = 4 * (d.tm * d.tk + d.tk * d.tn)
     warps = threads // 32
     flops_per_phase = 2.0 * d.tm * d.tn * d.tk
-    base = warp_programs(d, warps, KT, tile_bytes, flops_per_phase / warps)
+    base = warp_programs(d, warps, KT, tile_bytes // warps, flops_per_phase / warps, store_bytes=4 * d.tm * d.tn // warps)   # each warp copies its share
     progs = []
     for i in range(gm):
         for j in range(gn):

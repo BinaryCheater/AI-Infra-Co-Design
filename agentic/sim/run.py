@@ -20,7 +20,7 @@ import heapq
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 
-from .events import BarrierArrive, Compute, IssueCopy, Program, Wait
+from .events import BarrierArrive, Compute, IssueCopy, Program, Store, Wait
 
 
 # ------------------------------------------------------------------------ engine
@@ -235,6 +235,11 @@ class Simulator:
                 self._account(b, w, "compute_queue", start - now, e.phase)
             self._account(b, w, "compute", service, e.phase)
             self._advance(b, w, end, "compute", e)
+        elif isinstance(e, Store):
+            # a write-back: the warp continues after issue (stores are fire-and-forget), the bytes go to DRAM
+            if hasattr(self.memory, "request_write"):
+                self.memory.request_write(self.engine, b.sm, ("store", b.idx, w), e.bytes)
+            self._advance(b, w, now + cost, "store", e)
         else:
             self._advance(b, w, now + cost, name.lower(), e)
 

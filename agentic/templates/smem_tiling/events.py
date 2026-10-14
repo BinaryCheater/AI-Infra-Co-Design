@@ -17,11 +17,12 @@ the former `build_program` in smem_verify.py and must agree with it event for ev
 """
 from __future__ import annotations
 
-from ...sim.events import BarrierArrive, Compute, IssueCopy, Program, Wait
+from ...sim.events import BarrierArrive, Compute, IssueCopy, Program, Store, Wait
 from .smem_template import TilingDesign
 
 
-def warp_programs(design: TilingDesign, warps: int, phases: int, tile_bytes: int = 0, flops_per_phase: float = 0.0) -> Program:
+def warp_programs(design: TilingDesign, warps: int, phases: int, tile_bytes: int = 0, flops_per_phase: float = 0.0,
+                  store_bytes: int = 0) -> Program:
     S, P = design.stages, design.prefetch
     progs = []
     for w in range(warps):
@@ -39,6 +40,8 @@ def warp_programs(design: TilingDesign, warps: int, phases: int, tile_bytes: int
             seq.append(Compute(w, (p % S,), flops_per_phase, "fp32", tile=p, phase=p))
             if design.trailing_barrier:
                 seq.append(BarrierArrive(w, f"B{p}", p, "trailing"))
+        if store_bytes:
+            seq.append(Store(w, 0, store_bytes))          # the warp's share of the C tile, written once at the end
         progs.append(seq)
     return Program(progs, S, phases, {"P": P, "beta": int(bool(design.trailing_barrier)), "leading": design.leading_barrier})
 
