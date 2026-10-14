@@ -108,7 +108,7 @@ unified_memory_penalty:
 coherent_access_bytes_per_s: 200038414500.0
 suite_level: full
 provenance:
-  suite_commit: 649987152fcc117457353de7020db4c24afb6883
+  suite_commit: 8fc1559914bf1c1927bf208a03add16080600cc1
   host: spark-6951
   driver: 580.159.03
   toolkit: Build cuda_13.0.r13.0/compiler.36424714_0
@@ -132,8 +132,7 @@ provenance:
       from: fp32_flops_per_s_per_sm
       ci95: 9.644480972979248e-05
       n: 10
-      method: dependent-FMA chains, ILP 8, 8 blocks per SM x 256 threads, cudaEvent
-        timing (Jia et al. 2018)
+      method: 'B2: dependent FMA chains, ILP 8, 8 blocks per SM'
     dram_bytes_per_s:
       from:
       - bandwidth_read[1073741824]
@@ -142,15 +141,19 @@ provenance:
       - bandwidth_read[2147483648]
       note: median of the read plateau at >= 1 GiB working sets
       ci95: 0.0008725952313826453
+      method: B4 read plateau at >= 1 GiB (median)
     l2_bytes_per_s:
       from:
       - bandwidth_read[1048576]
       - bandwidth_read[4194304]
       note: median of the read plateau at <= 8 MiB
+      method: B4 read plateau at <= 8 MiB (median)
     l2_bytes_effective:
       from: bandwidth_read[*]
       note: largest working set still above 60 % of the way from the DRAM plateau
         to the L2 plateau
+      method: 'B4 knee: largest working set still above 60 % of the way from the DRAM
+        to the L2 plateau'
     latency_ns:
       from:
       - latency[4096]
@@ -167,15 +170,19 @@ provenance:
       - latency[268435456]
       - latency[1073741824]
       note: l1 = smallest set; l2 = min over 1-8 MiB; dram = max over >= 256 MiB
+      method: 'B5 pointer chase: l1 = smallest set, l2 = min over 1-8 MiB, dram =
+        max over >= 256 MiB'
     smem_bytes_per_s_per_sm:
       from: smem_bytes_per_s_per_sm[stride=1]
       ci95: 0.00022857914101123353
+      method: 'B6: ld.shared throughput at stride 1, per SM'
     barrier_s:
       from:
       - barrier_s[512]
       - barrier_s[128]
       - barrier_s[1024]
       - barrier_s[256]
+      method: 'B7: __syncthreads loop, one block per SM, per block size'
       ci95:
         '512': 0.00021606885580515475
         '128': 0.00033206283955372254
@@ -188,6 +195,8 @@ provenance:
       - tensor_flops_per_s_per_sm[fp16]
       note: WMMA mma_sync microkernel, one block per SM; chip-level cuBLAS numbers
         in tensor_flops_per_s_chip
+      method: 'B3: WMMA mma.sync microkernel, 4 live accumulator chains, 4 blocks
+        per SM'
     tensor_fp8:
       measured: false
       reason: FP8 GEMM needs cublasLt; not in this round
@@ -200,8 +209,11 @@ provenance:
       - async_copy_latency_s[4096]
       note: cp.async 16 B/thread, one tile in flight, median SM, s per tile at the
         attribute clock
+      method: 'B8: cp.async 16 B/thread, one tile in flight, median SM, clock64 at
+        the attribute clock'
     tma_supported:
       correct: true
+      method: 'B8: cp.async.bulk + mbarrier compiled, ran and copied correctly'
     max_blocks_per_sm_measured:
       from:
       - max_blocks_per_sm[smem=98304]
@@ -214,15 +226,18 @@ provenance:
       - max_blocks_per_sm[smem=65536]
       note: smem=... rows measured by resident-block count; regs=... rows from the
         occupancy API with __launch_bounds__ variants
+      method: 'B9: peak resident blocks per SM (entry/exit counter) by dynamic smem;
+        regs rows from the occupancy API'
     launch_s:
       from: launch_s
       ci95: 0.005344564635162368
       n: 10
-      method: 1000 empty launches
+      method: 'B10: cudaEvent time per launch over 1000 empty launches'
     clock_hz_sustained:
-      from: sustained_clock_mhz
+      from:
+      - sustained_clock_mhz
+      method: 'B11: median SM clock under the sustained load'
       n: 58
-      note: nvidia-smi sampled once per second during a 60 s FMA load
     unified_memory:
       from:
       - unified_read_bytes_per_s[pinned_host]
@@ -232,3 +247,110 @@ provenance:
       - unified_read_bytes_per_s[device]
       note: penalty = device read bandwidth / this allocation's read bandwidth, 1
         GiB working set
+      method: 'B12: GPU streaming read bandwidth by allocation kind, 1 GiB'
+    dram_bytes_per_s_write:
+      from:
+      - bandwidth_write[1073741824]
+      - bandwidth_write[8589934592]
+      - bandwidth_write[4294967296]
+      - bandwidth_write[2147483648]
+      method: B4 write plateau at >= 1 GiB (median)
+      ci95: 0.0005174848636228562
+    dram_bytes_per_s_copy:
+      from:
+      - bandwidth_copy[2147483648]
+      - bandwidth_copy[1073741824]
+      - bandwidth_copy[4294967296]
+      - bandwidth_copy[8589934592]
+      method: B4 copy plateau at >= 1 GiB (median; bytes read + written)
+      ci95: 0.0008383017379390531
+    bank_conflict_penalty:
+      from:
+      - smem_bytes_per_s_per_sm[stride=8]
+      - smem_bytes_per_s_per_sm[stride=32]
+      - smem_bytes_per_s_per_sm[stride=16]
+      - smem_bytes_per_s_per_sm[stride=4]
+      - smem_bytes_per_s_per_sm[stride=2]
+      - smem_bytes_per_s_per_sm[stride=1]
+      method: 'B6: stride-1 shared-memory bandwidth / bandwidth at each stride'
+      ci95:
+        '8': 0.003605522519098073
+        '32': 2.9360345684139727e-05
+        '16': 2.7964569248948016e-05
+        '4': 0.00021870542772707322
+        '2': 0.0021757899332796697
+        '1': 0.00022857914101123353
+    async_copy_bytes_per_s:
+      from:
+      - async_copy_bytes_per_s[16384]
+      - async_copy_bytes_per_s[32768]
+      - async_copy_bytes_per_s[8192]
+      - async_copy_bytes_per_s[49152]
+      - async_copy_bytes_per_s[4096]
+      method: 'B8: cp.async pipelined throughput, two tiles in flight, aggregate over
+        SMs'
+      ci95:
+        '16384': 0.0019153253690226695
+        '32768': 0.005488021190828552
+        '8192': 0.0020440299242983724
+        '49152': 0.0053172319695846395
+        '4096': 0.0011994344343494495
+    tma_bulk_latency_s:
+      from:
+      - tma_bulk_latency_s[16384]
+      method: 'B8: cp.async.bulk + mbarrier, one 16 KB tile, median SM'
+      ci95: 0.0012686053782080431
+    tensor_flops_per_s_chip:
+      from:
+      - tensor_flops_per_s_chip[bf16]
+      - tensor_flops_per_s_chip[tf32]
+      - tensor_flops_per_s_chip[fp32]
+      - tensor_flops_per_s_chip[fp16]
+      method: 'B3: cublasGemmEx 8192^2 per precision, whole chip'
+      ci95:
+        bf16: 0.016318743300663102
+        tf32: 0.011767687866556957
+        fp32: 0.00741753079937421
+        fp16: 0.019027537521749086
+    launch_host_s:
+      from:
+      - launch_host_s
+      method: 'B10: host wall time per asynchronous launch call'
+      ci95: 0.03657188492636439
+    clock_variance_sustained:
+      from:
+      - sustained_clock_mhz
+      method: 'B11: (max - min) / max of the per-second SM clock samples under a 60
+        s FMA load'
+    power_w_sustained:
+      from:
+      - sustained_power_w
+      method: 'B11: median nvidia-smi power draw under the sustained load'
+      ci95: 0.0070307081152657476
+    sustained_fp32_flops_per_s_per_sm:
+      from:
+      - sustained_fp32_flops_per_s_per_sm
+      method: 'B11: FP32 FMA throughput per SM, median of 1 s chunks over 60 s'
+      ci95: 0.0001304571154808826
+    unified_memory_penalty:
+      from:
+      - unified_read_bytes_per_s[pinned_host]
+      - unified_read_bytes_per_s[managed_gpu_first]
+      - unified_read_bytes_per_s[managed_cpu_first_steady]
+      - unified_read_bytes_per_s[managed_cpu_first_pass1]
+      - unified_read_bytes_per_s[device]
+      method: 'B12: device read bandwidth / this allocation''s read bandwidth, 1 GiB
+        working set'
+    coherent_access_bytes_per_s:
+      from:
+      - unified_read_bytes_per_s[pinned_host]
+      method: 'B12: GPU read bandwidth over cudaMallocHost (coherent access)'
+      ci95: 0.031161758433153348
+    tensor_shapes:
+      from:
+      - tensor_flops_per_s_per_sm[bf16]
+      - tensor_flops_per_s_per_sm[tf32]
+      - tensor_flops_per_s_per_sm[fp16]
+      method: 'B3: the mma.sync fragment shape used per precision'
+    suite_level:
+      method: which benchmarks the raw records cover

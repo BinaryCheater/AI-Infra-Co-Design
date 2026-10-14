@@ -62,7 +62,8 @@ __device__ __forceinline__ void load_tile(float* As, float* Bs, const float* __r
 template <int PENDING> __device__ __forceinline__ void wait_pending(int use_async) { if (use_async) cp_async_wait<PENDING>(); }
 
 extern "C" __global__ void __launch_bounds__(THREADS)
-smem_tiling_gemm(const float* __restrict__ A, const float* __restrict__ B, float* __restrict__ C, int M, int N, int K, int use_async) {
+smem_tiling_gemm(const float* __restrict__ A, const float* __restrict__ B, float* __restrict__ C, int M, int N, int K, int use_async,
+                 int amp_warp, long long amp_cycles) {   // race amplifier: warp amp_warp spins amp_cycles before each compute (-1: off)
   extern __shared__ float smem[];
   float* As = smem;                           // SLOTS x TM x TK
   float* Bs = smem + SLOTS * TM * TK;         // SLOTS x TK x TN
@@ -83,6 +84,7 @@ smem_tiling_gemm(const float* __restrict__ A, const float* __restrict__ B, float
     int pending = PREFETCH == 0 ? 0 : min(PREFETCH, KT - 1 - p);
     if (pending >= 2) wait_pending<2>(use_async); else if (pending == 1) wait_pending<1>(use_async); else wait_pending<0>(use_async);
     __syncthreads();                                                   // leading barrier
+    if (amp_warp >= 0 && (int)(threadIdx.x / 32) == amp_warp) { long long t0 = clock64(); while (clock64() - t0 < amp_cycles) { } }
     const float* a = As + (p % SLOTS) * TM * TK; const float* b = Bs + (p % SLOTS) * TK * TN;
 #pragma unroll 4
     for (int kk = 0; kk < TK; kk++) {

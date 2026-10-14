@@ -65,7 +65,24 @@
    },
    "contract": "tmpl_44e830aae4a8",
    "seconds": 15.0,
-   "predicted_us_illustrative": 53.13991111111123
+   "predicted_us_illustrative": 53.13991111111123,
+   "sm_clock_mhz_in_run": [
+    2541.4,
+    2541.4,
+    2541.5
+   ],
+   "sm_clock_mhz": 2541.4,
+   "median_cycles": 620741,
+   "ci95_cycles": [
+    620091,
+    643187
+   ],
+   "ncu": {
+    "available": true,
+    "ok": false,
+    "reason": "==ERROR== ERR_NVGPUCTRPERM - The user does not have permission to access NVIDIA GPU Performance Counters on the target device 0. For instructions on enabling permissions and to get more information see https://developer.nvidia.com/ERR_NVGPUCTRPERM",
+    "permission_denied": true
+   }
   },
   "T7_floor_grid": {
    "kernel_sha256": "c4be70a541bc789c91b5d47ad0cfc0627cfaf04e9b223e3f241e85f9695e3d04",
@@ -182,6 +199,59 @@
    "contract": "tmpl_44e830aae4a8",
    "seconds": 14.7,
    "predicted_us_illustrative": null
+  }
+ },
+ "amplified": {
+  "method": "warp 0 spins amplify_cycles (clock64) before each phase's compute; cuBLAS check unchanged",
+  "cases": {
+   "T5_exact": {
+    "compiled": true,
+    "ran": true,
+    "median_us": 639.2,
+    "median_cycles": 1624452,
+    "sm_clock_mhz": 2541.4,
+    "reference_agrees": true,
+    "disagreeing": 0,
+    "first_disagreeing_rc": [
+     -1,
+     -1
+    ],
+    "worst_rel_error": 3.16e-06,
+    "amplify_warp": 0,
+    "amplify_cycles": 20000,
+    "design": {
+     "P": 1,
+     "S": 3,
+     "Tk": 32,
+     "Tm": 128,
+     "Tn": 128,
+     "beta": 0
+    }
+   },
+   "unsound_S2_P1_beta0": {
+    "compiled": true,
+    "ran": true,
+    "median_us": 638.272,
+    "median_cycles": 1622111,
+    "sm_clock_mhz": 2541.4,
+    "reference_agrees": false,
+    "disagreeing": 875594,
+    "first_disagreeing_rc": [
+     0,
+     0
+    ],
+    "worst_rel_error": 4.67,
+    "amplify_warp": 0,
+    "amplify_cycles": 20000,
+    "design": {
+     "P": 1,
+     "S": 2,
+     "Tk": 32,
+     "Tm": 128,
+     "Tn": 128,
+     "beta": 0
+    }
+   }
   }
  }
 }

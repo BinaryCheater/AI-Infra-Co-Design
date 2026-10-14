@@ -1,7 +1,7 @@
 // Harness for one generated tiling kernel: fills A and B from a fixed seed, runs the kernel
 // (5 warm-ups, then --reps timed with cudaEvent), checks C against cublasSgemm on the same inputs
 // at a relative tolerance, and prints one JSON object. Built by agentic_runner.py together with the
-// generated kernel (#include "kernel.cu").
+// generated kernel (#include "kernel.cu"). The SM clock is probed in-run with clock64 vs globaltimer.
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -12,6 +12,15 @@
 #include <cublas_v2.h>
 #include "kernel.cu"
 
+// SM clock probe: one thread compares clock64 (SM cycles) against globaltimer (ns) over ~1 ms
+__global__ void clock_probe(double* mhz) {
+  long long c0 = clock64(); unsigned long long t0, t1; asm volatile("mov.u64 %0, %%globaltimer;" : "=l"(t0));
+  do { asm volatile("mov.u64 %0, %%globaltimer;" : "=l"(t1)); } while (t1 - t0 < 1000000ull);
+  long long c1 = clock64();
+  mhz[0] = (double)(c1 - c0) / (double)(t1 - t0) * 1e3;
+}
+static double probe_clock_mhz() { double* d; double h; cudaMalloc(&d, 8); clock_probe<<<1, 1>>>(d); cudaDeviceSynchronize(); cudaMemcpy(&h, d, 8, cudaMemcpyDeviceToHost); cudaFree(d); return h; }
+
 #define CK(x) do { cudaError_t e_ = (x); if (e_ != cudaSuccess) { printf("{\"error\": \"%s at %s:%d\"}\n", cudaGetErrorString(e_), __FILE__, __LINE__); exit(2); } } while (0)
 static int argi(int argc, char** argv, const char* k, int d) { for (int i = 1; i + 1 < argc; i++) if (!strcmp(argv[i], k)) return atoi(argv[i + 1]); return d; }
 static double argd(int argc, char** argv, const char* k, double d) { for (int i = 1; i + 1 < argc; i++) if (!strcmp(argv[i], k)) return atof(argv[i + 1]); return d; }
@@ -19,6 +28,7 @@ static double argd(int argc, char** argv, const char* k, double d) { for (int i 
 int main(int argc, char** argv) {
   int M = argi(argc, argv, "--m", 1000), N = argi(argc, argv, "--n", 1000), K = argi(argc, argv, "--k", 1000);
   int reps = argi(argc, argv, "--reps", 50), seed = argi(argc, argv, "--seed", 12345); double tol = argd(argc, argv, "--tol", 1e-4);
+  int amp_warp = argi(argc, argv, "--amplify-warp", -1); long long amp_cycles = (long long)argd(argc, argv, "--amplify-cycles", 20000);
   int gx, gy, threads, smem, use_async; smem_tiling_geometry(M, N, K, &gx, &gy, &threads, &smem, &use_async);
   std::vector<float> hA((size_t)M * K), hB((size_t)K * N), hC((size_t)M * N), hR((size_t)M * N);
   unsigned s = seed; auto rnd = [&]() { s = s * 1664525u + 1013904223u; return ((s >> 8) & 0xFFFF) / 65536.0f - 0.5f; };
@@ -28,12 +38,17 @@ int main(int argc, char** argv) {
   CK(cudaMemset(C, 0, hC.size() * 4));
   if (smem > 48 * 1024) CK(cudaFuncSetAttribute(smem_tiling_gemm, cudaFuncAttributeMaxDynamicSharedMemorySize, smem));
   dim3 grid(gx, gy), block(threads);
-  for (int w = 0; w < 5; w++) smem_tiling_gemm<<<grid, block, smem>>>(A, B, C, M, N, K, use_async);
+  for (int w = 0; w < 5; w++) smem_tiling_gemm<<<grid, block, smem>>>(A, B, C, M, N, K, use_async, amp_warp, amp_cycles);
   cudaError_t le = cudaDeviceSynchronize();
   if (le != cudaSuccess) { printf("{\"error\": \"kernel: %s\", \"compiled\": true, \"ran\": false}\n", cudaGetErrorString(le)); return 3; }
   cudaEvent_t e0, e1; CK(cudaEventCreate(&e0)); CK(cudaEventCreate(&e1));
-  std::vector<double> t(reps);
-  for (int r = 0; r < reps; r++) { CK(cudaEventRecord(e0)); smem_tiling_gemm<<<grid, block, smem>>>(A, B, C, M, N, K, use_async); CK(cudaEventRecord(e1)); CK(cudaEventSynchronize(e1)); float ms; CK(cudaEventElapsedTime(&ms, e0, e1)); t[r] = ms * 1e3; }
+  std::vector<double> t(reps), clk_mhz;
+  clk_mhz.push_back(probe_clock_mhz());                       // clock sampled before, mid-run and after, in-run (no root needed)
+  for (int r = 0; r < reps; r++) {
+    if (r == reps / 2) clk_mhz.push_back(probe_clock_mhz());
+    CK(cudaEventRecord(e0)); smem_tiling_gemm<<<grid, block, smem>>>(A, B, C, M, N, K, use_async, amp_warp, amp_cycles); CK(cudaEventRecord(e1)); CK(cudaEventSynchronize(e1)); float ms; CK(cudaEventElapsedTime(&ms, e0, e1)); t[r] = ms * 1e3; }
+  clk_mhz.push_back(probe_clock_mhz());
+  std::vector<double> cs = clk_mhz; std::sort(cs.begin(), cs.end()); double clk_med = cs[cs.size() / 2];
   std::vector<double> ts = t; std::sort(ts.begin(), ts.end());
   double median = ts[reps / 2], lo = ts[(int)(0.025 * reps)], hi = ts[std::min(reps - 1, (int)(0.975 * reps))];
   // reference: cublasSgemm, row-major via the transpose identity C^T = B^T A^T
@@ -48,8 +63,11 @@ int main(int argc, char** argv) {
   printf("{\"compiled\": true, \"ran\": true, \"m\": %d, \"n\": %d, \"k\": %d, \"grid\": [%d, %d], \"threads\": %d, \"smem_bytes\": %d, \"cp_async\": %d, "
          "\"reps\": %d, \"warmups\": 5, \"median_us\": %.4f, \"ci95_us\": [%.4f, %.4f], \"min_us\": %.4f, "
          "\"reference\": \"cublasSgemm\", \"tolerance\": %g, \"reference_agrees\": %s, \"disagreeing\": %ld, \"first_disagreeing_index\": %ld, "
-         "\"first_disagreeing_rc\": [%ld, %ld], \"worst_rel_error\": %.3g, \"max_abs_error\": %.3g, \"mean_abs_ref\": %.4g, \"clocks_after\": \"%s\"}\n",
+         "\"first_disagreeing_rc\": [%ld, %ld], \"worst_rel_error\": %.3g, \"max_abs_error\": %.3g, \"mean_abs_ref\": %.4g, \"clocks_after\": \"%s\", "
+         "\"sm_clock_mhz_in_run\": [%.1f, %.1f, %.1f], \"sm_clock_mhz\": %.1f, \"median_cycles\": %.0f, \"ci95_cycles\": [%.0f, %.0f], "
+         "\"amplify_warp\": %d, \"amplify_cycles\": %lld}\n",
          M, N, K, gx, gy, threads, smem, use_async, reps, median, lo, hi, ts[0], tol, bad ? "false" : "true", bad, first,
-         first < 0 ? -1L : first / N, first < 0 ? -1L : first % N, worst, max_abs, mean_abs, clk);
+         first < 0 ? -1L : first / N, first < 0 ? -1L : first % N, worst, max_abs, mean_abs, clk,
+         clk_mhz[0], clk_mhz[1], clk_mhz[2], clk_med, median * clk_med, lo * clk_med, hi * clk_med, amp_warp, amp_cycles);
   return 0;
 }

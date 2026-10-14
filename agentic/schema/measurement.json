@@ -93,6 +93,24 @@
         "string",
         "null"
       ]
+    },
+    "regime_source": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "measured",
+        "modeled",
+        "simulated",
+        null
+      ]
+    },
+    "cycles": {
+      "type": [
+        "object",
+        "null"
+      ]
     }
   }
 }

@@ -13,11 +13,47 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 
 
+NCU_METRICS = "dram__bytes.sum,lts__t_bytes.sum,dram__bytes_read.sum,dram__bytes_write.sum,gpu__time_duration.sum"
+
+
+def ncu_traffic(args: list[str]) -> dict:
+    """Profile the sixth launch (after the five warm-ups) with ncu; returns the metric values or why not."""
+    ncu = shutil.which("ncu")
+    if not ncu:
+        return {"available": False, "reason": "ncu not on PATH"}
+    cmd = [ncu, "--csv", "--metrics", NCU_METRICS, "--launch-skip", "5", "--launch-count", "1", "--kernel-name", "smem_tiling_gemm"] + args[:1] + args[1:9] + ["--reps", "1"]
+    r = subprocess.run(cmd, capture_output=True, text=True)
+    vals, units = {}, {}
+    for line in r.stdout.splitlines():
+        cells = [c.strip().strip('"') for c in line.split('","')]
+        if len(cells) >= 3 and any(cells[i] in NCU_METRICS.split(",") for i in range(len(cells))):
+            for i, c in enumerate(cells):
+                if c in NCU_METRICS.split(",") and i + 2 < len(cells):
+                    try:
+                        vals[c] = float(cells[i + 2].replace(",", "")); units[c] = cells[i + 1]
+                    except ValueError:
+                        pass
+    if not vals:
+        err = next((l for l in (r.stderr + r.stdout).splitlines() if "ERR" in l or "error" in l.lower()), None)
+        return {"available": True, "ok": False, "reason": (err or (r.stderr or r.stdout)[-400:]).strip()[:400],
+                "permission_denied": "ERR_NVGPUCTRPERM" in (r.stderr + r.stdout)}
+    scale = {"byte": 1, "Kbyte": 1e3, "Mbyte": 1e6, "Gbyte": 1e9, "KB": 1e3, "MB": 1e6, "GB": 1e9}
+    def bytes_of(k):
+        v = vals.get(k); u = units.get(k, "byte")
+        return None if v is None else v * scale.get(u, 1)
+    return {"available": True, "ok": True, "dram_bytes": bytes_of("dram__bytes.sum"), "l2_bytes": bytes_of("lts__t_bytes.sum"),
+            "dram_bytes_read": bytes_of("dram__bytes_read.sum"), "dram_bytes_write": bytes_of("dram__bytes_write.sum"),
+            "raw": {k: [vals[k], units.get(k)] for k in vals}}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--kernel", required=True); ap.add_argument("--m", type=int, required=True); ap.add_argument("--n", type=int, required=True)
     ap.add_argument("--k", type=int, required=True); ap.add_argument("--reps", type=int, default=50); ap.add_argument("--arch", default="sm_121")
     ap.add_argument("--tol", type=float, default=1e-4); ap.add_argument("--json", default=None); ap.add_argument("--keep", action="store_true")
+    ap.add_argument("--amplify-warp", type=int, default=-1, help="race amplifier: this warp spins before each compute")
+    ap.add_argument("--amplify-cycles", type=int, default=20000)
+    ap.add_argument("--ncu", action="store_true", help="also profile one launch with ncu for DRAM and L2 bytes, when ncu is available")
     a = ap.parse_args()
     src = Path(a.kernel).read_text()
     digest = hashlib.sha256(src.encode()).hexdigest()[:12]
@@ -32,13 +68,16 @@ def main():
     if build.returncode != 0:
         out.update({"ran": False, "error": build.stderr[-2000:]})
     else:
-        r = subprocess.run([str(work / "run"), "--m", str(a.m), "--n", str(a.n), "--k", str(a.k), "--reps", str(a.reps), "--tol", str(a.tol)],
-                           capture_output=True, text=True)
+        args = [str(work / "run"), "--m", str(a.m), "--n", str(a.n), "--k", str(a.k), "--reps", str(a.reps), "--tol", str(a.tol),
+                "--amplify-warp", str(a.amplify_warp), "--amplify-cycles", str(a.amplify_cycles)]
+        r = subprocess.run(args, capture_output=True, text=True)
         line = next((l for l in r.stdout.splitlines() if l.startswith("{")), None)
         if line:
             out.update(json.loads(line))
         else:
             out.update({"ran": False, "error": (r.stdout + r.stderr)[-2000:]})
+        if a.ncu and out.get("ran"):
+            out["ncu"] = ncu_traffic(args)
     out["timestamp"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     if not a.keep:
         shutil.rmtree(work, ignore_errors=True)

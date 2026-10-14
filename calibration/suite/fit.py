@@ -164,6 +164,56 @@ def main():
         src["unified_memory"] = {"from": [r["quantity"] for r in um.values()], "note": "penalty = device read bandwidth / this allocation's read bandwidth, 1 GiB working set"}
     contract["suite_level"] = "full" if tensor_sm and um else "minimum"
 
+    # method strings for every derived row (the page shows them; "declared (B1)" is only for B1 fields)
+    def ci_of(q):
+        r = recs.get(q); return r.get("ci95") if r else None
+    src.setdefault("dram_bytes_per_s_write", {"from": [bw_write[k]["quantity"] for k in bw_write if k >= (1 << 30)], "method": "B4 write plateau at >= 1 GiB (median)",
+                                              "ci95": max((bw_write[k]["ci95"] for k in bw_write if k >= (1 << 30)), default=None)})
+    src.setdefault("dram_bytes_per_s_copy", {"from": [bw_copy[k]["quantity"] for k in bw_copy if k >= (1 << 30)], "method": "B4 copy plateau at >= 1 GiB (median; bytes read + written)",
+                                             "ci95": max((bw_copy[k]["ci95"] for k in bw_copy if k >= (1 << 30)), default=None)})
+    src.setdefault("bank_conflict_penalty", {"from": [r["quantity"] for r in smem.values()], "method": "B6: stride-1 shared-memory bandwidth / bandwidth at each stride",
+                                             "ci95": {str(k): r.get("ci95") for k, r in smem.items()}})
+    src["barrier_s"] = {"from": [r["quantity"] for r in bar.values()], "method": "B7: __syncthreads loop, one block per SM, per block size",
+                        "ci95": {str(k): r.get("ci95") for k, r in bar.items()}}
+    src.setdefault("latency_ns", src.get("latency_ns", {})).update({"method": "B5 pointer chase: l1 = smallest set, l2 = min over 1-8 MiB, dram = max over >= 256 MiB"})
+    src.setdefault("l2_bytes_per_s", src.get("l2_bytes_per_s", {})).update({"method": "B4 read plateau at <= 8 MiB (median)"})
+    src.setdefault("l2_bytes_effective", src.get("l2_bytes_effective", {})).update({"method": "B4 knee: largest working set still above 60 % of the way from the DRAM to the L2 plateau"})
+    src.setdefault("dram_bytes_per_s", src.get("dram_bytes_per_s", {})).update({"method": "B4 read plateau at >= 1 GiB (median)"})
+    src.setdefault("smem_bytes_per_s_per_sm", src.get("smem_bytes_per_s_per_sm", {})).update({"method": "B6: ld.shared throughput at stride 1, per SM"})
+    if acb:
+        src["async_copy_bytes_per_s"] = {"from": [r["quantity"] for r in acb.values()], "method": "B8: cp.async pipelined throughput, two tiles in flight, aggregate over SMs",
+                                         "ci95": {str(k): r.get("ci95") for k, r in acb.items()}}
+    if "tma_bulk_latency_s[16384]" in recs:
+        src["tma_bulk_latency_s"] = {"from": ["tma_bulk_latency_s[16384]"], "method": "B8: cp.async.bulk + mbarrier, one 16 KB tile, median SM", "ci95": ci_of("tma_bulk_latency_s[16384]")}
+    if tensor_chip:
+        src["tensor_flops_per_s_chip"] = {"from": [r["quantity"] for r in tensor_chip.values()], "method": "B3: cublasGemmEx 8192^2 per precision, whole chip",
+                                          "ci95": {k: r.get("ci95") for k, r in tensor_chip.items()}}
+    if "launch_host_s" in recs:
+        src["launch_host_s"] = {"from": ["launch_host_s"], "method": "B10: host wall time per asynchronous launch call", "ci95": ci_of("launch_host_s")}
+    if "sustained_clock_mhz" in recs:
+        src["clock_variance_sustained"] = {"from": ["sustained_clock_mhz"], "method": "B11: (max - min) / max of the per-second SM clock samples under a 60 s FMA load"}
+        src["power_w_sustained"] = {"from": ["sustained_power_w"], "method": "B11: median nvidia-smi power draw under the sustained load", "ci95": ci_of("sustained_power_w")}
+        src["sustained_fp32_flops_per_s_per_sm"] = {"from": ["sustained_fp32_flops_per_s_per_sm"], "method": "B11: FP32 FMA throughput per SM, median of 1 s chunks over 60 s", "ci95": ci_of("sustained_fp32_flops_per_s_per_sm")}
+        src["clock_hz_sustained"] = {"from": ["sustained_clock_mhz"], "method": "B11: median SM clock under the sustained load", "n": len(recs["sustained_clock_mhz"]["samples"])}
+    if um:
+        src["unified_memory_penalty"] = {"from": [r["quantity"] for r in um.values()], "method": "B12: device read bandwidth / this allocation's read bandwidth, 1 GiB working set"}
+        src.setdefault("unified_memory", {}).update({"method": "B12: GPU streaming read bandwidth by allocation kind, 1 GiB"})
+        src["coherent_access_bytes_per_s"] = {"from": ["unified_read_bytes_per_s[pinned_host]"], "method": "B12: GPU read bandwidth over cudaMallocHost (coherent access)", "ci95": ci_of("unified_read_bytes_per_s[pinned_host]")}
+    if occ:
+        src["max_blocks_per_sm_measured"].update({"method": "B9: peak resident blocks per SM (entry/exit counter) by dynamic smem; regs rows from the occupancy API"})
+    if "launch_s" in recs:
+        src["launch_s"].update({"method": "B10: cudaEvent time per launch over 1000 empty launches"})
+    if tensor_sm:
+        src["tensor_flops_per_s_per_sm"].update({"method": "B3: WMMA mma.sync microkernel, 4 live accumulator chains, 4 blocks per SM"})
+        src["tensor_shapes"] = {"from": [r["quantity"] for r in tensor_sm.values()], "method": "B3: the mma.sync fragment shape used per precision"}
+    if "tma_supported" in recs:
+        src["tma_supported"].update({"method": "B8: cp.async.bulk + mbarrier compiled, ran and copied correctly"})
+    if acl:
+        src["async_copy_latency_s"].update({"method": "B8: cp.async 16 B/thread, one tile in flight, median SM, clock64 at the attribute clock"})
+    src["suite_level"] = {"method": "which benchmarks the raw records cover"}
+    for k in ("fp32_flops_per_s_per_sm",):
+        src[k].update({"method": "B2: dependent FMA chains, ILP 8, 8 blocks per SM"})
+
     clocks = [r["clocks"] for r in recs.values() if r.get("clocks")]
     sm_mhz = [c["after"]["sm_mhz"] for c in clocks if c.get("after", {}).get("sm_mhz")]
     contract["provenance"] = {

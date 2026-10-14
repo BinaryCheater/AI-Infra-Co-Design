@@ -27,20 +27,25 @@ def kernel_artifact(T: dict, x: dict) -> dict:
             "provenance": {"generator": "agentic.templates.smem_tiling.codegen", "chip": T["scope"]["chip"].get("name")}}
 
 
-def measure(T: dict, x: dict, host: str, kernel: dict, reps: int = 50) -> dict:
+def measure(T: dict, x: dict, host: str, kernel: dict, reps: int = 50, ncu: bool = True) -> dict:
     w = Workload(**T["scope"]["workload"])
     hw = hardware_contract(T["scope"]["chip"])
     chip = T["scope"]["chip"]
     d = decode(T, x["values"])
     cm = cost_model(d, w, hw)
     arch = kernel.get("arch") or "sm_121"
-    r = run_remote(host, kernel["source"], w.m, w.n, w.k, reps=reps, arch=arch)
+    r = run_remote(host, kernel["source"], w.m, w.n, w.k, reps=reps, arch=arch, ncu=ncu)
     if not r.get("ran"):
         raise RuntimeError(f"kernel did not run on {host}: {r.get('error', '?')[:400]}")
     measured = float(r["median_us"])
     t = measured * 1e-6
     flops = 2.0 * w.m * w.n * w.k
-    util = {"compute": flops / t / (hw.fp32_flops_per_s_per_sm * hw.sms), "DRAM": cm["dram_bytes"] / t / hw.dram_bytes_per_s}
+    # traffic: ncu's DRAM bytes when the profiler ran, else the cost model's count (then the regime label is modeled)
+    prof = r.get("ncu") or {}
+    dram_bytes = prof.get("dram_bytes") if prof.get("ok") else None
+    regime_source = "measured" if dram_bytes is not None else "modeled"
+    util = {"compute": flops / t / (hw.fp32_flops_per_s_per_sm * hw.sms),
+            "DRAM": (dram_bytes if dram_bytes is not None else cm["dram_bytes"]) / t / hw.dram_bytes_per_s}
     dom = max(util, key=util.get)
     predicted = x["objective"]
     return {"contract": T["id"], "assignment": x["id"], "design": d.to_dict(),
@@ -48,12 +53,15 @@ def measure(T: dict, x: dict, host: str, kernel: dict, reps: int = 50) -> dict:
             "discrepancy": (measured - predicted) / predicted if predicted else 0.0,
             "utilizations": util, "dominant_resource": dom,
             "simulator": f"cuda:{host}", "seed": 12345, "kernel": kernel["id"],
-            "reference_agrees": bool(r.get("reference_agrees")), "ci95": r.get("ci95_us"), "clocks": r.get("clocks_after"),
-            "host": r.get("host"),
+            "reference_agrees": bool(r.get("reference_agrees")), "ci95": r.get("ci95_us"),
+            "clocks": {"after": r.get("clocks_after"), "sm_mhz_in_run": r.get("sm_clock_mhz_in_run"), "sm_mhz": r.get("sm_clock_mhz")},
+            "host": r.get("host"), "regime_source": regime_source,
+            "cycles": {"median": r.get("median_cycles"), "ci95": r.get("ci95_cycles"), "sm_mhz": r.get("sm_clock_mhz")},
             "detail": {"reps": r.get("reps"), "warmups": r.get("warmups"), "min_us": r.get("min_us"), "grid": r.get("grid"),
                        "threads": r.get("threads"), "smem_bytes": r.get("smem_bytes"), "cp_async": r.get("cp_async"),
                        "disagreeing": r.get("disagreeing"), "first_disagreeing_rc": r.get("first_disagreeing_rc"),
                        "worst_rel_error": r.get("worst_rel_error"), "tolerance": r.get("tolerance"), "reference": r.get("reference"),
-                       "dram_bytes": cm["dram_bytes"], "flops": flops, "compile_seconds": r.get("compile_seconds"),
+                       "dram_bytes_modeled": cm["dram_bytes"], "dram_bytes_ncu": dram_bytes, "l2_bytes_ncu": prof.get("l2_bytes"),
+                       "ncu": {k: v for k, v in prof.items() if k != "raw"}, "flops": flops, "compile_seconds": r.get("compile_seconds"),
                        "kernel_sha256": r.get("kernel_sha256"), "chip": chip.get("name")},
             "provenance": {"service": "agentic.agents.evaluator.cuda", "backend": f"cuda:{host}", "arch": arch}}
