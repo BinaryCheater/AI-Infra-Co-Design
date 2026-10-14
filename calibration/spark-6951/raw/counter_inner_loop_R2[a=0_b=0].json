@@ -11,18 +11,18 @@
  "method": "ncu: B21: the same for R2 32x32x32",
  "benchmark": "bx_counters",
  "arch": "sm_121",
- "timestamp": "2026-10-14T18:11:14Z",
+ "timestamp": "2026-10-14T22:13:15Z",
  "detail": {
   "kernel": "inner_R2",
   "a": 0,
   "b": 0,
   "metrics": {
    "gpu__time_duration.sum": [
-    142816.0,
+    141152.0,
     "ns"
    ],
    "sm__cycles_active.avg": [
-    293919.58,
+    283361.33,
     "cycle"
    ],
    "sm__inst_executed_pipe_alu.sum": [
@@ -46,7 +46,7 @@
     "cycle"
    ],
    "sm__pipe_fma_cycles_active.avg": [
-    422840.75,
+    422849.42,
     "cycle"
    ],
    "smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio": [
@@ -70,7 +70,7 @@
     "inst"
    ],
    "smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio": [
-    1.52,
+    1.51,
     "inst"
    ],
    "smsp__average_warps_issue_stalled_wait_per_issue_active.ratio": [
@@ -78,7 +78,7 @@
     "inst"
    ],
    "smsp__warps_active.avg": [
-    564757.56,
+    571563.92,
     "warp"
    ]
   },

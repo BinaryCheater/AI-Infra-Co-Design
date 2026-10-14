@@ -62,7 +62,7 @@ def _measured_runs():
     return out
 
 
-@pytest.mark.xfail(strict=True, reason="warp model: the six spark-001 kernels at +3 % to +18 % (median 15 %); notes/sim_gaps.md #9-#11")
+@pytest.mark.xfail(strict=True, reason="warp model with the B30 queue: the six spark-001 kernels not all within 15 %; notes/sim_gaps.md #14")
 def test_g4_spark001_kernels_median_10_worst_15_percent():
     """The six measured spark-001 kernels (two per workload) with the warp model: median within 10 %, worst within 15 %."""
     rows = _measured_runs()
@@ -78,7 +78,7 @@ def test_g4_spark001_kernels_median_10_worst_15_percent():
     assert errs[-1] <= 0.15, errs
 
 
-@pytest.mark.xfail(strict=True, reason="B27_plus.md step 3: the streaming grid is not reproduced (0/20 within 10 %); notes/sim_gaps.md #10")
+@pytest.mark.xfail(strict=True, reason="B27 streaming grid with the B30 queue: 7/20 within 10 % (a = 8 and 16 points over by 2-3x); notes/sim_gaps.md #10, #14")
 def test_g4_b27_stream_grid_predicted_within_10_percent():
     from agentic.sim.check_warp import b27_stream_grid
     rows = b27_stream_grid(WarpModel(C, S))
@@ -86,7 +86,7 @@ def test_g4_b27_stream_grid_predicted_within_10_percent():
     assert all(abs(r["error"]) <= 0.10 for r in rows), sorted(round(r["error"], 2) for r in rows)
 
 
-@pytest.mark.xfail(strict=True, reason="B27_plus.md step 4: B29 2/19 within 10 %, family agreement 4/19; notes/sim_gaps.md #11")
+@pytest.mark.xfail(strict=True, reason="B29 with the B30 queue: 8/19 within 10 %, median 13 %, family agreement 3/19; notes/sim_gaps.md #11, #14")
 def test_g4_b29_ground_truth_within_10_percent():
     from agentic.sim.check_warp import b29
     rows = b29(WarpModel(C, S))
@@ -114,3 +114,18 @@ def test_g4_b29_benchmark_reproduces_b21():
     # spec: 5 %. T1 meets it (+2 %); T5 reads +10 % (B29 times the whole wave by cudaEvent, B21 the block's own clock64 window), recorded in notes/sim_gaps.md #11
     assert abs(got["T1"] / b21["T1"] - 1) <= 0.05, ("T1", got["T1"], b21["T1"])
     assert abs(got["T5"] / b21["T5"] - 1) <= 0.12, ("T5", got["T5"], b21["T5"])
+
+
+def test_g4_b30_queue_parameters_are_measured():
+    """The warp model's LSU parameters come from the contract (B30), not from the config: no table, no tuned number."""
+    m = WarpModel(C, S)
+    assert C["mio_issue_cycles_per_load"] and C["lsu_drain_wavefronts_per_cycle_per_sm"] and C["lsu_min_cycles_per_instruction"]
+    assert m.mio_issue == C["mio_issue_cycles_per_load"] and m.lsu_drain_wf == C["lsu_drain_wavefronts_per_cycle_per_sm"]
+    assert "lsu_queue_instructions" not in S and "issue_overlap_by_warps_per_scheduler" not in S and not hasattr(m, "lsu_rate_by_blocks")
+
+
+def test_g4_b28_predicted_at_one_and_two_blocks():
+    from agentic.sim.check_warp import b28_lds_curve
+    rows = b28_lds_curve(WarpModel(C, S), C)
+    low = [r for r in rows if r["b"] <= 2]
+    assert low and all(abs(r["error"]) <= 0.10 for r in low), [(r["b"], round(r["error"], 2)) for r in rows]

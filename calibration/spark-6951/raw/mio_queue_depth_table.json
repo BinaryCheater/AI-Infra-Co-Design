@@ -1,0 +1,99 @@
+{
+ "quantity": "mio_queue_depth_table",
+ "unit": "cycles",
+ "samples": [
+  0,
+  0,
+  0
+ ],
+ "detail": {
+  "table_n_cyclesPerLoad_1warp_2warps": [
+   [
+    1,
+    9.0,
+    9.0
+   ],
+   [
+    2,
+    6.5,
+    7.5
+   ],
+   [
+    4,
+    4.5,
+    4.5
+   ],
+   [
+    6,
+    5.83,
+    6.33
+   ],
+   [
+    8,
+    3.75,
+    7.5
+   ],
+   [
+    12,
+    4.92,
+    8.92
+   ],
+   [
+    16,
+    3.88,
+    9.69
+   ],
+   [
+    20,
+    4.55,
+    10.05
+   ],
+   [
+    24,
+    4.46,
+    10.46
+   ],
+   [
+    32,
+    3.94,
+    10.78
+   ],
+   [
+    48,
+    4.23,
+    11.81
+   ],
+   [
+    64,
+    3.97,
+    11.86
+   ]
+  ],
+  "method": "one warp (or two on the same sub-partition) issues n back-to-back independent ld.shared.32; clock64 before the first and after the last issue, cycles per load; the n where it jumps is the queue depth",
+  "sm_clock_mhz": 2541.0
+ },
+ "value": 0,
+ "ci95": 0.0,
+ "n": 3,
+ "repeat_policy": "to_ci",
+ "method": "the scheduler-to-LSU queue: depth per sub-partition (burst issue), drain rate by width and stride, cp.async/ldmatrix sharing (B30_plus.md)",
+ "benchmark": "b30_mio_queue",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 43.0,
+   "power_w": 4.22,
+   "sw_power_cap": "Active"
+  },
+  "after": {
+   "sm_mhz": 2457.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 45.0,
+   "power_w": 18.59,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T22:12:33Z",
+ "arch": "sm_121"
+}

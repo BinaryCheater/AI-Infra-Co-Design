@@ -33,6 +33,16 @@ def b27_stream_grid(m: WarpModel):
     return rows
 
 
+def b28_lds_curve(m: WarpModel, contract: dict):
+    """B28's lds mix (4 x ld.shared.128 + 8 x ld.shared.32 per thread per step, one consumer, 8 steps per phase) at 1-6 blocks per SM."""
+    rows = []
+    for b, d in sorted(((int(k), v) for k, v in (contract.get("lds_rate_by_residency") or {}).items())):
+        cyc, hist = m.phase(8, b, 8, 1, 8, 4, 0, 0)
+        sim = cyc / 8
+        rows.append({"b": b, "measured": d["cycles_per_step_per_block"], "simulated": sim, "error": sim / d["cycles_per_step_per_block"] - 1})
+    return rows
+
+
 def b29(m: WarpModel):
     rows = []
     # register-limited residency (ptxas: T1 255 registers -> 1 block, T5 ~100 -> 2); beyond it the harness's extra blocks ran serialized
@@ -63,13 +73,17 @@ def main():
     for r in g:
         print(f"  a={r['a']:2d} w={r['w']}: sim {r['simulated']:6.1f}  meas {r['measured']:6.1f}  {r['error']:+6.0%}")
     e = sorted(abs(r["error"]) for r in g); print(f"  B27: {sum(1 for x in e if x <= 0.10)}/{len(e)} within 10 %, median {e[len(e)//2]:.0%}, worst {e[-1]:.0%}")
+    c28 = b28_lds_curve(m, cfg["contract"])
+    print("B28 lds mix, cycles per step per block vs resident blocks:")
+    for r in c28:
+        print(f"  b={r['b']}: sim {r['simulated']:6.0f}  meas {r['measured']:6.0f}  {r['error']:+6.0%}")
     rows = b29(m)
     print("B29 stripped kernels (cycles per k-step per block):")
     for r in rows:
         print(f"  {r['kernel']:<24} b={r['b']}: sim {r['simulated']:6.1f}  meas {r['measured']:6.1f}  {r['error']:+6.0%}   sim {r['sim_family']} / ncu {r['ncu_stall']} ({r['ncu_family']}) {'agree' if r['agree'] else 'DISAGREE'}   issue-active sim {r['issue_active_sim']:.2f} meas {r['issue_active_measured']:.2f}")
     e = sorted(abs(r["error"]) for r in rows); ag = [r["agree"] for r in rows if r["agree"] is not None]
     print(f"  B29: {sum(1 for x in e if x <= 0.10)}/{len(e)} within 10 %, median {e[len(e)//2]:.0%}, worst {e[-1]:.0%}; family agreement {sum(1 for x in ag if x)}/{len(ag)}")
-    return g, rows
+    return g, c28, rows
 
 
 if __name__ == "__main__":

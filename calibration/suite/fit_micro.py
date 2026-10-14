@@ -636,7 +636,57 @@ def fit_b28(recs):
     return f, s
 
 
-FITTERS = [("b27_dependency_ilp", fit_b27), ("b28_lsu_port_contention", fit_b28), ("b13_l2_structure", fit_b13), ("b14_l1_carveout", fit_b14), ("b15_copy_queue", fit_b15), ("b16_block_scheduler", fit_b16),
+# ---------------------------------------------------------------- B30 the scheduler-to-LSU queue
+def fit_b30(recs):
+    f, s = {}, {}
+    t = recs.get("mio_queue_depth_table")
+    if t:
+        tab = t["detail"].get("table_n_cyclesPerLoad_1warp_2warps") or []
+        big = [c1 for n, c1, c2 in tab if n >= 8]; big2 = [c2 for n, c1, c2 in tab if n >= 8]
+        f["mio_issue_cycles_per_load"] = round(sum(big) / len(big), 2) if big else None
+        f["mio_issue_cycles_per_load_two_warps_per_smsp"] = round(sum(big2) / len(big2), 2) if big2 else None
+        jump = [n for n, c1, c2 in tab if n >= 8 and c1 > 3 * min(big)]
+        f["mio_queue_depth_per_smsp"] = (jump[0] if jump else None)
+        f["mio_queue_depth_note"] = "no issue stall within 64 back-to-back ld.shared from one warp: the dispatch cost per load, not a queue depth, limits issue" if not jump else None
+        f["mio_queue_scope"] = "per-smsp" if (f["mio_issue_cycles_per_load_two_warps_per_smsp"] or 0) > 1.6 * (f["mio_issue_cycles_per_load"] or 1) else "per-warp-or-wider"
+        s["mio_issue_cycles_per_load"] = _nm(t, "mio_queue_depth_table", "B30.1: one warp per SM issues n back-to-back ld.shared.32; cycles per issued load (clock64 before the first, after the last issue), mean over n >= 8", inferred_from=tab)
+        s["mio_queue_depth_per_smsp"] = {"from": "mio_queue_depth_table", "method": "B30.1: the n at which cycles per issued load exceeds 3x the burst value; null when no stall appears up to 64"}
+        s["mio_queue_scope"] = {"from": "mio_queue_depth_table", "method": "B30.1: two warps on the same sub-partition issuing bursts; per-smsp when each warp's cycles per load rise by more than 1.6x"}
+    dr = keyed(recs, "lds_instr_per_cycle_per_sm")
+    wf = {}
+    for q, r in recs.items():
+        m = re.fullmatch(r"counter_lds_wavefronts\[a=(\d+),b=(\d+)\]", q)
+        if m and r["detail"].get("measured"):
+            mt = {k: v[0] for k, v in r["detail"]["metrics"].items()}
+            w = mt.get("l1tex__data_pipe_lsu_wavefronts_mem_shared.sum"); i = mt.get("sm__sass_inst_executed_op_shared_ld.sum"); cyc = mt.get("sm__cycles_active.avg")
+            wf[f"width={m.group(1)},stride={m.group(2)}"] = {"wavefronts_per_instruction": round(w / i, 2) if w and i else None, "instr_per_cycle_per_sm": round(i / 48 / cyc, 3) if i and cyc else None,
+                                                               "wavefronts_per_cycle_per_sm": round(w / 48 / cyc, 3) if w and cyc else None, "mio_throttle_per_issue_active": mt.get("smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio")}
+    if dr:
+        f["lds_instr_per_cycle_per_sm_by_width_stride"] = {k: round(r["value"], 3) for k, r in dr.items() if "span" not in k}
+        s["lds_instr_per_cycle_per_sm_by_width_stride"] = {"from": [r["quantity"] for r in dr.values()], "method": "B30.2: 16 warps per SM in bursts of 32 independent ld.shared with independent consumers, instructions per SM cycle by width (bytes) and word stride"}
+    if wf:
+        f["lds_wavefronts_per_instruction"] = {k: v["wavefronts_per_instruction"] for k, v in wf.items()}
+        rates = [v["wavefronts_per_cycle_per_sm"] for v in wf.values() if v["wavefronts_per_instruction"] and v["wavefronts_per_instruction"] >= 2 and v["wavefronts_per_cycle_per_sm"]]
+        f["lsu_drain_wavefronts_per_cycle_per_sm"] = round(sum(rates) / len(rates), 3) if rates else None
+        one = [v["instr_per_cycle_per_sm"] for v in wf.values() if v["wavefronts_per_instruction"] and v["wavefronts_per_instruction"] < 1.5 and v["instr_per_cycle_per_sm"]]
+        f["lsu_min_cycles_per_instruction"] = round(1 / max(one), 2) if one else None
+        s["lds_wavefronts_per_instruction"] = {"from": [q for q in recs if q.startswith("counter_lds_wavefronts[")], "method": "B30.3 (ncu): l1tex shared-memory wavefronts per ld.shared instruction by width and stride, 16 warps per SM in bursts of 8", "inferred_from": wf}
+        s["lsu_drain_wavefronts_per_cycle_per_sm"] = {"from": [q for q in recs if q.startswith("counter_lds_wavefronts[")], "method": "B30.2 (ncu): wavefronts per active SM cycle, mean over the configurations needing two or more wavefronts per instruction (every one of them drains at 0.96-1.0)"}
+        s["lsu_min_cycles_per_instruction"] = {"from": [q for q in recs if q.startswith("counter_lds_wavefronts[")], "method": "B30.2 (ncu): one-wavefront loads cap at 0.48 instructions per SM cycle: at least two LSU cycles per instruction"}
+    sh = keyed(recs, "mio_share_issue_cycles")
+    if sh:
+        g = lambda k: _val(sh.get(k))
+        f["cp_async_issue_cycles_per_chunk"] = g("cp_async_alone"); f["ldmatrix_issue_cycles"] = g("ldmatrix_alone")
+        f["mio_shared_with_cp_async"] = bool(g("cp_async_after_lds_burst") and g("cp_async_alone") and g("cp_async_after_lds_burst") > 1.5 * g("cp_async_alone"))
+        f["mio_shared_with_ldmatrix"] = bool(g("ldmatrix_after_lds_burst") and g("ldmatrix_alone") and g("ldmatrix_after_lds_burst") > 1.5 * g("ldmatrix_alone"))
+        s["mio_shared_with_cp_async"] = {"from": [r["quantity"] for r in sh.values()], "method": "B30.4: issue cycles of 8 cp.async chunks alone vs right after 32 ld.shared from the same warp; shared when the burst delays them by more than 1.5x", "inferred_from": {k: _val(r) for k, r in sh.items()}}
+        s["mio_shared_with_ldmatrix"] = {"from": [r["quantity"] for r in sh.values()], "method": "B30.4: the same with 8 ldmatrix.x4"}
+        s["cp_async_issue_cycles_per_chunk"] = _nm(sh.get("cp_async_alone"), "mio_share_issue_cycles[cp_async_alone]", "B30.4: clock64 around 8 cp.async 16 B chunks issued by one warp, per chunk (B15.3's 127 included the per-chunk address and guard code)")
+        s["ldmatrix_issue_cycles"] = _nm(sh.get("ldmatrix_alone"), "mio_share_issue_cycles[ldmatrix_alone]", "B30.4: clock64 around 8 ldmatrix.x4 issued by one warp, per instruction")
+    return f, s
+
+
+FITTERS = [("b30_mio_queue", fit_b30), ("b27_dependency_ilp", fit_b27), ("b28_lsu_port_contention", fit_b28), ("b13_l2_structure", fit_b13), ("b14_l1_carveout", fit_b14), ("b15_copy_queue", fit_b15), ("b16_block_scheduler", fit_b16),
            ("b17_latency_hiding", None), ("b18_dram", fit_b18), ("b19_registers_local", fit_b19), ("b20_tensor_detail", fit_b20),
            ("b21_compute_block", fit_b21), ("b22_clock_governor", fit_b22), ("b23_unified_mechanics", fit_b23), ("b24_atomics_reductions", fit_b24),
            ("b25_multi_kernel", fit_b25), ("b26_functional_probes", fit_b26)]

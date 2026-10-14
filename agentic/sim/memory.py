@@ -43,7 +43,9 @@ class Hierarchy(Memory):
         self.copy_depth = int(structural.get("copy_throughput_window_chunks") or structural.get("copy_queue_depth", 256))
         self.copy_chunk = int(structural.get("copy_chunk_bytes", 16))
         hz = float(c.get("clock_hz_sustained") or 2.4e9)
-        self.copy_issue_s_per_chunk_per_warp = float(c.get("cp_async_issue_cycles_per_16B") or 0.0) / hz
+        # B30.4 measured the cp.async issue itself at 6.8 cycles per chunk per warp (B15.3's 127 included the address and guard code,
+        # which the warp model charges as per-phase overhead instructions), so the explicit issue term is small
+        self.copy_issue_s_per_chunk_per_warp = float(c.get("cp_async_issue_cycles_per_chunk") or c.get("cp_async_issue_cycles_per_16B") or 0.0) / hz
         self.threads_per_block = int(c.get("threads_per_block") or 256)
         lat4k = (c.get("async_copy_latency_s") or {}).get("4096")
         self.copy_overhead = 0.0

@@ -1,0 +1,57 @@
+{
+ "quantity": "counter_lds_wavefronts[a=4,b=2]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B30.3: shared-memory wavefronts per ld.shared instruction by width (a, bytes) and word stride (b), 16 warps per SM, with the mio_throttle stall",
+ "benchmark": "bx_counters",
+ "arch": "sm_121",
+ "timestamp": "2026-10-14T22:13:30Z",
+ "detail": {
+  "kernel": "lds_width",
+  "a": 4,
+  "b": 2,
+  "metrics": {
+   "gpu__time_duration.sum": [
+    79104.0,
+    "ns"
+   ],
+   "l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum": [
+    3072000.0,
+    ""
+   ],
+   "l1tex__data_pipe_lsu_wavefronts_mem_shared.sum": [
+    6169392.0,
+    ""
+   ],
+   "sm__cycles_active.avg": [
+    133260.73,
+    "cycle"
+   ],
+   "sm__sass_data_bytes_mem_shared.sum": [
+    396361728.0,
+    "byte"
+   ],
+   "sm__sass_inst_executed_op_shared_ld.sum": [
+    3072000.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio": [
+    5.07,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio": [
+    0.43,
+    "inst"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 1.8
+ }
+}

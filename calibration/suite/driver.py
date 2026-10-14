@@ -39,11 +39,12 @@ METHODS = {
     "b24_atomics_reductions": "atomicAdd / red throughput by scope and address pattern; contention curve",
     "b25_multi_kernel": "kernel-to-kernel gap, CUDA graph gap, two-stream concurrency, L2 persistence across kernels",
     "b27_dependency_ilp": "dependency chains vs ILP vs TLP on one scheduler: loads-then-FFMA iterations over (a, w, L); FFMA and LDS latency references (B27_plus.md)",
+    "b30_mio_queue": "the scheduler-to-LSU queue: depth per sub-partition (burst issue), drain rate by width and stride, cp.async/ldmatrix sharing (B30_plus.md)",
     "b28_lsu_port_contention": "LSU and shared-memory port sharing across resident blocks: T5-width ld.shared + cp.async pattern at 1-6 blocks per SM (B27_plus.md)",
     "b26_functional_probes": "in-flight cp.async visibility and chunk order, wait_group semantics, barrier/fence visibility, TMA early bytes, FP32 contraction/ftz/tensor rounding, bank map, independent thread scheduling",
 }
 MICRO = [f"b{i}_" for i in range(13, 27)]
-MICRO3 = ["b27_", "b28_"]            # B27_plus.md: the warp-model benchmarks (B29 is driven by b29_ground_truth.py)
+MICRO3 = ["b27_", "b28_", "b30_"]            # B27_plus.md: the warp-model benchmarks (B29 is driven by b29_ground_truth.py)
 MINIMUM = ["b1_props", "b2_fma", "b4_bandwidth", "b5_latency", "b6_smem", "b7_barrier"]
 
 

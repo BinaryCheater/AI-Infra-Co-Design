@@ -11,22 +11,22 @@
  "method": "ncu: B6 / B26.6: shared-memory wavefronts and bank conflicts per instruction vs word stride",
  "benchmark": "bx_counters",
  "arch": "sm_121",
- "timestamp": "2026-10-14T18:11:17Z",
+ "timestamp": "2026-10-14T22:13:19Z",
  "detail": {
   "kernel": "smem_stride",
   "a": 2,
   "b": 0,
   "metrics": {
    "gpu__time_duration.sum": [
-    259200.0,
+    258592.0,
     "ns"
    ],
    "l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum": [
-    12289741.0,
+    12289751.0,
     ""
    ],
    "l1tex__data_pipe_lsu_wavefronts_mem_shared.sum": [
-    24679501.0,
+    24679511.0,
     ""
    ],
    "sm__sass_data_bytes_mem_shared.sum": [

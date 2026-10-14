@@ -1,0 +1,68 @@
+{
+ "quantity": "lds_instr_per_cycle_per_sm[width=4,stride=8]",
+ "unit": "instr/cycle",
+ "samples": [
+  0.124958052,
+  0.124958434,
+  0.124958891,
+  0.12495912,
+  0.124958891,
+  0.124958967,
+  0.124960035,
+  0.124959882,
+  0.12495851,
+  0.124959272,
+  0.124958205,
+  0.124958891,
+  0.124959349,
+  0.12495912,
+  0.124959196,
+  0.124959196,
+  0.124960035,
+  0.12495912,
+  0.124958586,
+  0.124959272,
+  0.124958967,
+  0.124958967,
+  0.124959959,
+  0.124958739,
+  0.124959196,
+  0.124960568,
+  0.124959349,
+  0.124959806,
+  0.124959882,
+  0.124959272
+ ],
+ "detail": {
+  "width_bytes": 4,
+  "stride_words": 8,
+  "warps_per_sm": 16,
+  "burst": 32,
+  "address_span_bytes": 65536,
+  "sm_clock_mhz": 2541.0
+ },
+ "value": 0.124959158,
+ "ci95": 1.220398748173852e-06,
+ "n": 30,
+ "repeat_policy": "to_ci",
+ "method": "the scheduler-to-LSU queue: depth per sub-partition (burst issue), drain rate by width and stride, cp.async/ldmatrix sharing (B30_plus.md)",
+ "benchmark": "b30_mio_queue",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 43.0,
+   "power_w": 4.22,
+   "sw_power_cap": "Active"
+  },
+  "after": {
+   "sm_mhz": 2457.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 45.0,
+   "power_w": 18.59,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-14T22:12:33Z",
+ "arch": "sm_121"
+}

@@ -9,7 +9,7 @@ kinds:
              smem_bytes_per_s_per_sm, bank_conflict_penalty, barrier_s, async_copy_latency_s, async_copy_bytes_per_s,
              launch_s, clock_hz_sustained, max_blocks_per_sm_measured]
   structural: [sms, smem_bytes_per_sm, banks, bank_bytes, ports, l2_region_bytes, l2_policy, copy_throughput_window_chunks, copy_chunk_bytes,
-               scheduler, issue_cycles, issue_model, lsu_queue_instructions]
+               scheduler, issue_cycles, issue_model]
   fixed: [line_bytes, warp_size, bytes_per_element]
 
 structural:
@@ -17,10 +17,11 @@ structural:
     policy: breadth-first-least-loaded # M8: each block goes to the SM with the most free capacity, in grid order (B9 fixes the capacity)
     justified_by: B9
   copy_chunk_bytes: 16                 # M4: cp.async.cg request size the kernel issues (one 16 B chunk per thread)
-  copy_throughput_window_chunks: 850   # M4: a THROUGHPUT window of 16 B chunks in flight per SM, not a queue length (B27_plus.md §3.3).
-                                       #     B8's latency-vs-size slope 4-48 KB is 22.9 ns/KB; the per-chunk issue cost B15.3 measured
-                                       #     (127 cycles per 16 B per warp = 12.9 ns per KB of a 256-thread block's tile) is charged
-                                       #     explicitly, leaving 10.0 ns/KB = 100 GB/s per SM at the L2 latency: 100e9 * 136e-9 / 16 = 850.
+  copy_throughput_window_chunks: 383   # M4: a THROUGHPUT window of 16 B chunks in flight per SM, not a queue length (B27_plus.md §3.3).
+                                       #     B8's latency-vs-size slope 4-48 KB is 22.9 ns/KB; the per-chunk issue cost B30.4 measured
+                                       #     (6.8 cycles per 16 B per warp = 0.7 ns per KB of a 256-thread block's tile; B15.3's 127
+                                       #     included the address and guard code) is charged explicitly, leaving 22.2 ns/KB = 45 GB/s per
+                                       #     SM at the L2 latency: 45e9 * 136e-9 / 16 = 383.
                                        #     B15.1's "at least 22 pending 4 KB groups per block with no issue stall" is a different quantity
                                        #     (an issue-window lower bound: 22 x 4 KB / 16 B = 5632 chunks), so issue is never the limit here.
   copy_window_justified_by: [B8, B15]
@@ -33,14 +34,11 @@ structural:
                                        #     no slice latency spread, so fully associative. B4's 16 MiB streaming knee is a prediction (bandwidth).
   l2_region_bytes: 1024                # granularity of the LRU (a tile row); line_bytes stays 128 for sector traffic
   l2_justified_by: [B13, counter_crosscheck.l2_hit_rate, B4]
-  issue_model: warp                    # M1/M7 (B27_plus.md §2): per-warp scoreboard with B17/B27 latencies, four schedulers issuing one
-                                       #     eligible warp-instruction per cycle, LSU and FMA pipe as shared per-SM resources (B28 plateau,
-                                       #     B2). Replaces the additive occupancy model and its fitted overlap factor (G4a).
-  issue_model_justified_by: [B17, B27, B28, B21]
-  lsu_queue_instructions: 24           # M3/M7: ld.shared instructions accepted but unfinished per SM before a warp's next ld.shared is not
-                                       #     eligible (mio_throttle). From B28's residency curve: no single depth reproduces it (the measured
-                                       #     LSU rate rises from 0.47 to 1.02 per cycle with occupancy, B27: and with burst length); 24 is the
-                                       #     depth closest on average (notes/sim_gaps.md #9). The B28 curve itself is a logged miss.
+  issue_model: warp                    # M1/M7 (B27_plus.md §2, B30_plus.md §2): per-warp scoreboard with B27 latencies, four schedulers
+                                       #     issuing one eligible warp-instruction per cycle, the scheduler-to-LSU queue of B30 (4-cycle
+                                       #     dispatch per sub-partition, 1 wavefront per cycle drain, 2 cycles per instruction floor),
+                                       #     FMA pipe per scheduler (B2). No table and no tuned number.
+  issue_model_justified_by: [B17, B27, B30, B21]
   issue_overhead_per_chunk: 40         # M7 (G4): instructions per cp.async chunk (16 B per thread) issued per phase outside the k-loop
   issue_overhead_per_phase: 180        #     (address, guard, wait, barrier, loop control); from the SASS of the six spark-001 kernels:
                                        #     per-phase non-loop instructions 663/391/301/467/280/354 at 12/6/5/6/3/3 chunks per thread

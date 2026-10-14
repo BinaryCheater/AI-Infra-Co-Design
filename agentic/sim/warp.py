@@ -10,9 +10,11 @@ scoreboard until its loads return and other warps issue in its place.
 
 Schedulers: four per SM, warp id mod 4 (across all resident blocks); each cycle a scheduler issues one instruction from
 the oldest eligible warp (operands ready; the structural resource free).
-Shared per-SM resources: the LSU accepts ld.shared instructions at the measured rate by width (B21; B28's mixed-pattern
-plateau is the cross-check) and holds at most `lsu_queue` accepted-but-unfinished instructions (an LDS whose warp would
-exceed it is not eligible: `mio_throttle`); the FMA pipe accepts one FFMA per scheduler per the B2 rate.
+Shared resources (B30): each sub-partition dispatches one shared-memory instruction every `mio_issue_cycles_per_load`
+cycles into the queue (a warp whose load cannot dispatch is not eligible: `mio_throttle`); the SM's LSU drains the queue
+in order at `lsu_drain_wavefronts_per_cycle_per_sm` with at least `lsu_min_cycles_per_instruction` per instruction, an
+entry costing its wavefronts (width x conflict degree, the B30 ncu table); the FMA pipe accepts one FFMA per scheduler
+per the B2 rate. cp.async chunks do not use this queue (B30.4); ldmatrix would.
 Latencies: scoreboard_latency_cycles from B27 (LDS 27, FFMA/IMAD 4), confirming B17.
 
 Outputs per phase: cycles and the wait-family histogram over warp-cycles: issued, scoreboard (operands pending),
@@ -35,26 +37,21 @@ class WarpModel:
                     LDS32: float(sb.get("lds") or (contract.get("op_latency_cycles") or {}).get("ld_shared") or 27),
                     FFMA: float(sb.get("fma") or 4.0), ALU: float(sb.get("fma") or 4.0)}
         self.schedulers = int(contract.get("schedulers_per_sm") or 4)
-        # the LSU accepts ld.shared instructions at B28's plateau (the template's own width mix at six resident blocks, 1.02 per
-        # SM cycle, both widths alike); B28 and B27 show the rate falling at low occupancy and short bursts, which this does not model
-        plateau = float(contract.get("lsu_instr_per_cycle_per_sm") or (float((contract.get("ld_shared_instr_per_s_per_sm") or {}).get("lds_32", 1.05 * hz)) / hz))
-        # B28 measured the acceptance rate per residency (0.47 at one block to 1.02 at six); the model reads that table by the
-        # number of resident blocks (a measured parameter, not a fit) and uses the plateau beyond it
-        self.lsu_rate_by_blocks = {int(k): float(v) for k, v in (contract.get("lsu_instr_per_cycle_per_sm_by_residency") or {}).items()} or {1: plateau}
-        self.lsu_cost = {LDS32: 1.0 / plateau, LDS128: 1.0 / plateau}       # SM cycles the LSU is busy per instruction (at the plateau)
-        self.lsu_queue = int(structural.get("lsu_queue_instructions", 24))   # B28: accepted-but-unfinished LDS per SM before issue blocks (mio_throttle)
+        # B30: the queue between a sub-partition's scheduler and the LSU. A sub-partition dispatches one shared-memory instruction
+        # every mio_issue_cycles_per_load cycles (4.0); no depth limit appears within 64 back-to-back loads from one warp; the LSU,
+        # shared by the SM, drains lsu_drain_wavefronts_per_cycle_per_sm (1.0) with at least lsu_min_cycles_per_instruction (2.1)
+        # per instruction; wavefronts per instruction by width from the ncu table (32-bit 1, 64-bit 2, 128-bit 4, times the stride degree)
+        self.mio_issue = float(contract.get("mio_issue_cycles_per_load") or 4.0)
+        self.lsu_drain_wf = float(contract.get("lsu_drain_wavefronts_per_cycle_per_sm") or 1.0)
+        self.lsu_min_cycles = float(contract.get("lsu_min_cycles_per_instruction") or 2.0)
+        wft = contract.get("lds_wavefronts_per_instruction") or {}
+        self.wavefronts = {LDS32: float(wft.get("width=4,stride=1") or 1.0), LDS128: float(wft.get("width=16,stride=1") or 4.0)}
+        # the template's A loads (ld.shared.128 with two distinct 16 B addresses per warp) move two 16 B segments: one wavefront
+        # by the quarter-warp rule, taken as one (B30 measured 32 distinct addresses only; recorded in notes/sim_gaps.md)
+        self.wavefronts_broadcast128 = 1.0
+        self.mio_queue_depth = contract.get("mio_queue_depth_per_smsp")        # None: no depth limit observed (B30.1)
         self.fma_cost = 1.0 / min(1.0, float(contract["fp32_flops_per_s_per_sm"]) / 64.0 / hz / self.schedulers)
         self.penalty = {int(k): float(v) for k, v in (contract.get("bank_conflict_penalty") or {}).items()}
-
-    def lsu_rate(self, blocks: int) -> float:
-        keys = sorted(self.lsu_rate_by_blocks)
-        if blocks <= keys[0]:
-            return self.lsu_rate_by_blocks[keys[0]]
-        for a, b in zip(keys, keys[1:]):
-            if a <= blocks <= b:
-                f = (blocks - a) / (b - a)
-                return self.lsu_rate_by_blocks[a] + f * (self.lsu_rate_by_blocks[b] - self.lsu_rate_by_blocks[a])
-        return self.lsu_rate_by_blocks[keys[-1]]
 
     def degree(self, stride_words: int) -> float:
         if stride_words <= 1 or not self.penalty:
@@ -95,13 +92,14 @@ class WarpModel:
         step_loads_ready = [[0.0] * k_steps for _ in range(W)]           # per warp per step: when the last load the step depends on returns
         last_issue = [0.0] * W                                            # the warp's previous instruction's issue cycle (in-order: one per cycle at most)
         last_ready = [0.0] * W                                            # when the warp's previous FFMA/ALU result is ready (chains of F >= 4 never bind; ALU before loads does)
-        lsu_free = 0.0; lsu_pending: list[float] = []                     # completion cycles of accepted LDS
+        lsu_free = 0.0                                                    # the SM's LSU drain (wavefronts, in order)
+        mio_free = [0.0] * S                                              # per sub-partition: when the next shared-memory instruction may dispatch
+        mio_pending = [[] for _ in range(S)]                              # per sub-partition: drain times of dispatched entries (for the optional depth limit)
         fma_free = [0.0] * S
         hist = {"issued": 0, "scoreboard": 0, "not_selected": 0, "lsu": 0, "done": 0}
-        t = 0; alive = W; deg = self.degree(stride_words) / self.lsu_rate(blocks) * self.lsu_rate(max(self.lsu_rate_by_blocks))   # the LSU cost scaled to this residency's measured rate
+        t = 0; alive = W; deg = self.degree(stride_words)
         age = list(range(W))
         while alive > 0 and t < 50_000_000:
-            lsu_pending = [c for c in lsu_pending if c > t]
             for s in range(S):
                 issued = False; eligible_seen = 0
                 for w in age:
@@ -115,8 +113,8 @@ class WarpModel:
                         hist["scoreboard"] += 0; continue
                     if cls == FFMA and step_loads_ready[w][dep] > t:
                         hist["scoreboard"] += 1; continue
-                    if cls in (LDS128, LDS32) and len(lsu_pending) >= self.lsu_queue:
-                        hist["lsu"] += 1; continue
+                    if cls in (LDS128, LDS32) and (mio_free[s] > t + 0.5 or (self.mio_queue_depth and sum(1 for c in mio_pending[s] if c > t) >= self.mio_queue_depth)):
+                        hist["lsu"] += 1; continue                           # mio_throttle: the sub-partition's dispatch slot (or queue) is not free
                     if cls == FFMA and fma_free[s] > t + 0.5:
                         hist["not_selected"] += 1; continue
                     eligible_seen += 1
@@ -124,8 +122,12 @@ class WarpModel:
                         hist["not_selected"] += 1; continue
                     # issue
                     if cls in (LDS128, LDS32):
-                        start = max(float(t), lsu_free); lsu_free = start + self.lsu_cost[cls] * deg
-                        done_at = lsu_free + self.lat[cls]; lsu_pending.append(done_at)
+                        mio_free[s] = t + self.mio_issue
+                        wf = (self.wavefronts_broadcast128 if cls == LDS128 else self.wavefronts[LDS32]) * deg
+                        start = max(float(t), lsu_free); lsu_free = start + max(self.lsu_min_cycles, wf / self.lsu_drain_wf)
+                        done_at = lsu_free + self.lat[cls]
+                        if self.mio_queue_depth:
+                            mio_pending[s] = [c for c in mio_pending[s] if c > t] + [lsu_free]
                         if dep >= 0:
                             # an A load serves its whole unrolled body: every step of the body depends on it
                             targets = range(dep, min(dep + 4, k_steps)) if cls == LDS128 else (dep,)
