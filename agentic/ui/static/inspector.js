@@ -8,16 +8,17 @@ window.Inspector = (() => {
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   const fmt = (x, d = 2) => x == null ? "–" : Number(x).toFixed(d);
   const t = s => s == null ? "?" : s < 1e-3 ? (s * 1e6).toFixed(0) + " µs" : s < 1 ? (s * 1e3).toFixed(0) + " ms" : s.toFixed(2) + " s";
-  const LENSES = [["systems", "Systems"], ["optimization", "Optimization"], ["proof", "Proof"]];
+  const LENSES = [["systems", "Systems"], ["optimization", "Optimization"], ["proof", "Proof"], ["schedule", "Schedule"]];
   let current = null, lens = null, view = null, desc = null;
   const stored = () => { try { return sessionStorage.getItem("agentic.lens"); } catch (e) { return null; } };
   const remember = l => { try { sessionStorage.setItem("agentic.lens", l); } catch (e) { /* ignore */ } };
 
-  async function open(id, iteration, keepLens) {
+  async function open(id, iteration, keepLens, wantLens) {
     current = { id, iteration };
     S.state.selected = id;
     [view, desc] = await Promise.all([S.api("template/" + id), S.api("describe/" + id)]);
-    if (!keepLens) lens = stored() || (desc.status === "rejected" ? "proof" : "systems");
+    if (wantLens) lens = wantLens;                 // e.g. from a Solver or Gate badge on the map
+    else if (!keepLens) lens = stored() || (desc.status === "rejected" ? "proof" : "systems");
     render();
     pane.hidden = false;
   }
@@ -37,14 +38,19 @@ window.Inspector = (() => {
     body.append(el("div", "delta", desc.delta_from_parent));
     const tabs = el("div", "tabs");
     for (const [key, label] of LENSES) { const b = el("button", key === lens ? "on" : "", label); b.onclick = () => { lens = key; remember(key); render(); }; tabs.append(b); }
-    const help = el("span", "muted help", lens === "systems" ? "for the architect: the decision and its cost" : lens === "optimization" ? "for the mathematician: the problem the solver saw" : "for the verifier: what was proved, in what scope, and what failed");
+    const help = el("span", "muted help", lens === "systems" ? "for the architect: the decision and its cost" : lens === "optimization" ? "for the mathematician: the problem the solver saw" : lens === "proof" ? "for the verifier: what was proved, in what scope, and what failed" : "how the design runs: loads, slot lifetimes, barriers and computes, as the solver chose and the verifier certified");
     tabs.append(help);
     body.append(tabs);
-    const L = desc[lens];
-    body.append(paras(L.text));
-    if (lens === "systems") renderSystems(L);
-    else if (lens === "optimization") renderOptimization(L);
-    else renderProof(L);
+    if (lens === "schedule") {
+      const host = el("div"); body.append(host);
+      ScheduleView.render(host, T.id).then(() => { if (window.Glossary) Glossary.apply(host); });
+    } else {
+      const L = desc[lens];
+      body.append(paras(L.text));
+      if (lens === "systems") renderSystems(L);
+      else if (lens === "optimization") renderOptimization(L);
+      else renderProof(L);
+    }
     if (desc.rationale) { const q = el("details", "quote"); q.append(el("summary", "muted", "the agent's own words")); q.append(el("blockquote", "", desc.rationale)); body.append(q); }
     const raw = el("details", "raw"); raw.append(el("summary", "", "contract JSON")); raw.append(el("pre", "", JSON.stringify(T, null, 2))); body.append(raw);
     renderActions(T);

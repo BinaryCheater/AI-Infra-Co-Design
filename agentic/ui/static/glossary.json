@@ -38,5 +38,13 @@
   "memory-bound": "the time is set by DRAM bandwidth, not by arithmetic",
   "event model": "the small explicit program (two warps, five k-phases) over which schedule obligations are checked for all interleavings",
   "rank": "the measure that decreases on every step and proves the refined program terminates with the coarse result",
-  "relation": "the state relation connecting the refined execution to the coarse one"
+  "relation": "the state relation connecting the refined execution to the coarse one",
+  "wave": "one batch of thread blocks that run at once, one per SM; the kernel is as many waves as blocks / SMs",
+  "waves": "batches of thread blocks, one block per SM at a time",
+  "phase": "one k-step of the block: load a tile, barrier, compute from the slot",
+  "k-phase": "one reduction step: the block consumes one Tk-wide tile of A and B",
+  "slot lifetime": "the window from a tile's load completing to its last read, during which its slot must not be overwritten",
+  "prefetch overlap": "the part of a tile load that runs while an earlier tile is being computed",
+  "leading barrier": "the barrier before a phase's compute: every warp's loads of that tile are complete",
+  "block pipeline": "the schedule of one thread block's loads, barriers and computes across its k-phases"
 }

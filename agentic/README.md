@@ -70,6 +70,22 @@ defaulting to Systems for accepted and Proof for rejected templates, with the us
 remembered in the browser. API: `/api/describe/<contract>` and `/api/describe_all`. Tests:
 `tests/test_describe.py` (D0) and the D4 assertion in `tests/test_story.py`.
 
+### Round 4: the schedule view (`notes/schedule_view_design.md`)
+
+A fourth inspector tab, **Schedule**, shows how the chosen design runs: the output grid shaded by
+wave (partial tiles dashed, an uncovered tail red), the block pipeline (memory lane, one lane per
+slot, sync ticks, compute lane; prefetch overlap and slot lifetimes visible), and the resource strip
+(DRAM, compute, shared memory, dominant labelled). Toggles: **show what was proved** (teal readiness
+and lifetime brackets from the instance verdict), **show the counterexample** (the verifier's
+two-warp interleaving in the same lanes, the clobbering load and the stale read in red, the broken
+lifetime bracket), **compare with parent** (the parent's pipeline ghosted behind, with a caption
+such as "T4: 53.9 µs → T5: 53.1 µs (−1.3 %)"), **all phases**. Durations are modeled from the
+template's cost model (the caption states the three formulas); ordering, overlap, lifetimes and
+barriers are structural. Clicking the Solver or Gate badge on the map opens this tab.
+`agentic/ledger/schedule.py` builds the schedule object from the ledger via
+`agentic/templates/<name>/schedule.py` (program → events); API `/api/schedule/<contract>`;
+tests in `tests/test_schedule.py` (E0).
+
 ## What the architect can do (design §5)
 
 | Action | Effect | Recorded as |

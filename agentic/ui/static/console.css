@@ -167,3 +167,10 @@ details.raw summary { cursor: pointer; color: var(--muted); }
 .inspector blockquote { margin: 4px 0; padding: 4px 10px; border-left: 3px solid var(--line); color: var(--muted); font-style: italic; }
 .gloss { border-bottom: 1px dotted var(--teal); cursor: help; }
 .gloss:hover { background: #E7EFEE; }
+
+/* round 4: the schedule view */
+.schedule .toggles { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+.schedule .toggles button.on { background: var(--teal); color: #fff; border-color: var(--teal); }
+.sched-svg { width: 100%; height: auto; display: block; background: var(--panel); }
+.schedule .pipe-host { overflow-x: auto; }
+.schedule .caption { font-size: 12.5px; margin-top: 6px; }

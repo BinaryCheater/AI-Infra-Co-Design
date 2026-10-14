@@ -56,6 +56,10 @@ window.MapView = (() => {
       mk("rect", { x: bx, y: by, width: 170, height: 22 }, bg);
       text(bg, bx + 8, by + 15, "", "", "start");
       bg.style.display = "none";
+      if (key === "solver" || key === "gate") {
+        bg.style.cursor = "pointer";
+        bg.addEventListener("click", () => { const e = S.state.storyByIt[S.state.clock.it]; if (e && e.template) Inspector.open(e.template.id, e.iteration, false, "schedule"); });
+      }
     }
     note = text(svg, c(o).cx + 40, o.y + o.h + 46, "", "note");
     // token
