@@ -170,9 +170,15 @@ def main():
         "suite_commit": subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=ROOT).stdout.strip() or None,
         "host": host, "driver": summary.get("driver"), "toolkit": summary.get("nvcc"), "arch": summary.get("arch"),
         "ncu_available": bool(summary.get("ncu")),
-        "clocks": {"locked": False, "sampled_sm_mhz": {"min": min(sm_mhz) if sm_mhz else None, "max": max(sm_mhz) if sm_mhz else None},
-                   "max_sm_mhz": clocks[0]["after"].get("max_sm_mhz") if clocks else None,
-                   "variance": (max(sm_mhz) - min(sm_mhz)) / max(sm_mhz) if sm_mhz and max(sm_mhz) else None},
+        # under load: B11's per-second samples when present, else the driver's before/after samples
+        # (which include idle readings between benchmarks and overstate the variance)
+        "clocks": {"locked": False,
+                   "sustained_hz": contract.get("clock_hz_sustained"),
+                   "variance": contract.get("clock_variance_sustained") if contract.get("clock_variance_sustained") is not None
+                               else ((max(sm_mhz) - min(sm_mhz)) / max(sm_mhz) if sm_mhz and max(sm_mhz) else None),
+                   "variance_source": "B11 sustained load" if contract.get("clock_variance_sustained") is not None else "driver before/after samples",
+                   "sampled_sm_mhz": {"min": min(sm_mhz) if sm_mhz else None, "max": max(sm_mhz) if sm_mhz else None},
+                   "max_sm_mhz": clocks[0]["after"].get("max_sm_mhz") if clocks else None},
         "date": summary.get("finished") or summary.get("started"), "raw": str(raw.relative_to(ROOT)) if raw.is_relative_to(ROOT) else str(raw),
         "ci_target": summary.get("ci_target"), "max_reps": summary.get("max_reps"), "sources": src,
     }

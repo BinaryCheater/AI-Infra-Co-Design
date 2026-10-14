@@ -108,7 +108,7 @@ unified_memory_penalty:
 coherent_access_bytes_per_s: 200038414500.0
 suite_level: full
 provenance:
-  suite_commit: 768c44d5205f2a2a06bb9878a0ebada68b6ef71c
+  suite_commit: 649987152fcc117457353de7020db4c24afb6883
   host: spark-6951
   driver: 580.159.03
   toolkit: Build cuda_13.0.r13.0/compiler.36424714_0
@@ -116,11 +116,13 @@ provenance:
   ncu_available: true
   clocks:
     locked: false
+    sustained_hz: 2476000000.0
+    variance: 0.015625
+    variance_source: B11 sustained load
     sampled_sm_mhz:
       min: 227.0
       max: 2515.0
     max_sm_mhz: 3003.0
-    variance: 0.9097415506958251
   date: '2026-10-14T15:04:11Z'
   raw: calibration/spark-6951/raw
   ci_target: 0.04

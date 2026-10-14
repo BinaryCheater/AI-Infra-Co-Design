@@ -21,8 +21,8 @@ def test_f1_raw_records_converged(host):
     recs = [json.loads(f.read_text()) for f in (CAL / host / "raw").glob("*.json") if not f.name.startswith("_")]
     assert recs
     for r in recs:
-        if r["quantity"] == "device_properties":
-            continue
+        if r["quantity"] == "device_properties" or not r["samples"]:
+            continue                               # declared or "recorded, not measured" entries carry no samples
         assert r["value"] is not None and r["n"] >= 3, r["quantity"]
         assert r["ci95"] <= CI_TARGET or r["n"] >= 50, (r["quantity"], r["ci95"], r["n"])
         assert all(k in r for k in ("unit", "method", "clocks", "timestamp"))
