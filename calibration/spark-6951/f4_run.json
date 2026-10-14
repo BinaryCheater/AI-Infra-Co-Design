@@ -1,0 +1,1576 @@
+{
+ "run": "spark-001",
+ "story": [
+  {
+   "iteration": 1,
+   "title": "Iteration 1 \u00b7 logical tensors -> smem tiles (trailing barrier kept)",
+   "sentence": "The agent proposed logical tensors -> smem tiles (trailing barrier kept) for the 4096\u00b3 GEMM, assuming compute-bound. The verifier proved it safe for all designs in 251 ms. The solver found the best design in 15 ms (gap 0%). The gate checked this design in 17 ms. Measured on spark-6951: 9395.7 \u00b5s, 33% faster than predicted, memory-bound. The model is now known to be pessimistic here. The orchestrator concluded: a measurement beat its prediction: the cost model is no longer one-sided. Cause: model. Response: demote every skip_regime decision to steer and reopen the skipped regimes. The bottleneck moved from compute-bound to memory-bound. The assumption is now proven on every feasible design. The orchestrator concluded: measured vs predicted differs by -32.8%. Cause: cost_model. Response: revise the cost model, not the template. Accepted into the pool.",
+   "clauses": [
+    {
+     "station": "formulator",
+     "text": "The agent proposed logical tensors -> smem tiles (trailing barrier kept) for the 4096\u00b3 GEMM, assuming compute-bound."
+    },
+    {
+     "station": "verifier",
+     "text": "The verifier proved it safe for all designs in 251 ms."
+    },
+    {
+     "station": "solver",
+     "text": "The solver found the best design in 15 ms (gap 0%)."
+    },
+    {
+     "station": "gate",
+     "text": "The gate checked this design in 17 ms."
+    },
+    {
+     "station": "evaluator",
+     "text": "Measured on spark-6951: 9395.7 \u00b5s, 33% faster than predicted, memory-bound. The model is now known to be pessimistic here."
+    },
+    {
+     "station": "orchestrator",
+     "text": "The orchestrator concluded: a measurement beat its prediction: the cost model is no longer one-sided. Cause: model. Response: demote every skip_regime decision to steer and reopen the skipped regimes."
+    },
+    {
+     "station": "evaluator",
+     "text": "The bottleneck moved from compute-bound to memory-bound."
+    },
+    {
+     "station": "orchestrator",
+     "text": "The assumption is now proven on every feasible design."
+    },
+    {
+     "station": "orchestrator",
+     "text": "The orchestrator concluded: measured vs predicted differs by -32.8%. Cause: cost_model. Response: revise the cost model, not the template."
+    },
+    {
+     "station": "orchestrator",
+     "text": "Accepted into the pool."
+    }
+   ],
+   "outcome": "accepted",
+   "flip": true,
+   "level": 4,
+   "descended": false,
+   "visits": [
+    {
+     "station": "formulator",
+     "verdict_text": "proposed T1",
+     "time_s": 1.545785926282406e-05,
+     "ok": true,
+     "artifact": "tmpl_793a848036fc",
+     "seq": 3
+    },
+    {
+     "station": "verifier",
+     "verdict_text": "proved safe \u00b7 251 ms",
+     "time_s": 0.251039374852553,
+     "ok": true,
+     "artifact": "cert_4a5aa01eded6",
+     "seq": 6
+    },
+    {
+     "station": "solver",
+     "verdict_text": "best design \u00b7 15 ms \u00b7 gap 0%",
+     "time_s": 0.015015417011454701,
+     "ok": true,
+     "artifact": "asgn_6b0dccc65952",
+     "seq": 7
+    },
+    {
+     "station": "gate",
+     "verdict_text": "checked \u00b7 17 ms",
+     "time_s": 0.017144584096968174,
+     "ok": true,
+     "artifact": "inst_e805d867fcc2",
+     "seq": 9
+    },
+    {
+     "station": "evaluator",
+     "verdict_text": "measured 9395.7 \u00b5s \u00b7 predicted 13971.6 (-33%)",
+     "time_s": 16.669680666178465,
+     "ok": true,
+     "artifact": "meas_4dfcd0bec01b",
+     "seq": 10
+    },
+    {
+     "station": "orchestrator",
+     "verdict_text": "accepted \u00b7 bottleneck moved \u2192 stayed",
+     "time_s": null,
+     "ok": true,
+     "artifact": "tmpl_793a848036fc",
+     "seq": 17
+    }
+   ],
+   "template": {
+    "id": "tmpl_793a848036fc",
+    "short": "T1",
+    "workload": "square_4096",
+    "refines": "logical tensors -> smem tiles (trailing barrier kept)",
+    "regime": "compute-bound",
+    "rationale": "First tiling proposal. Keep the trailing barrier always: sound by inspection, may cost latency.",
+    "parent": null,
+    "parent_short": null
+   },
+   "pool_delta": {
+    "added": [
+     "tmpl_793a848036fc"
+    ],
+    "reused_from": null,
+    "reused_from_short": null,
+    "incumbent": false,
+    "incumbent_cost": null
+   },
+   "human": [],
+   "paused_at": "admitted",
+   "last_seq": 18
+  },
+  {
+   "iteration": 2,
+   "title": "Iteration 2 \u00b7 lifetime precondition -> weakest (P <= S-2+beta)",
+   "sentence": "The agent proposed lifetime precondition -> weakest (P <= S-2+beta) for the 4096\u00b3 GEMM, assuming memory-bound. The verifier proved it safe for all designs in 242 ms. The solver found the best design in 22 ms (gap 0%). The gate checked this design in 14 ms. Measured on spark-6951: 9264.7 \u00b5s, 34% faster than predicted, memory-bound. The model is now known to be pessimistic here. The assumption is now proven on every feasible design. The orchestrator concluded: measured vs predicted differs by -33.7%. Cause: cost_model. Response: revise the cost model, not the template. Accepted into the pool. New best so far for the 4096\u00b3 GEMM.",
+   "clauses": [
+    {
+     "station": "formulator",
+     "text": "The agent proposed lifetime precondition -> weakest (P <= S-2+beta) for the 4096\u00b3 GEMM, assuming memory-bound."
+    },
+    {
+     "station": "verifier",
+     "text": "The verifier proved it safe for all designs in 242 ms."
+    },
+    {
+     "station": "solver",
+     "text": "The solver found the best design in 22 ms (gap 0%)."
+    },
+    {
+     "station": "gate",
+     "text": "The gate checked this design in 14 ms."
+    },
+    {
+     "station": "evaluator",
+     "text": "Measured on spark-6951: 9264.7 \u00b5s, 34% faster than predicted, memory-bound. The model is now known to be pessimistic here."
+    },
+    {
+     "station": "orchestrator",
+     "text": "The assumption is now proven on every feasible design."
+    },
+    {
+     "station": "orchestrator",
+     "text": "The orchestrator concluded: measured vs predicted differs by -33.7%. Cause: cost_model. Response: revise the cost model, not the template."
+    },
+    {
+     "station": "orchestrator",
+     "text": "Accepted into the pool. New best so far for the 4096\u00b3 GEMM."
+    }
+   ],
+   "outcome": "accepted",
+   "flip": false,
+   "level": 4,
+   "descended": false,
+   "visits": [
+    {
+     "station": "formulator",
+     "verdict_text": "proposed T2",
+     "time_s": 3.616698086261749e-05,
+     "ok": true,
+     "artifact": "tmpl_a6c416b45092",
+     "seq": 20
+    },
+    {
+     "station": "verifier",
+     "verdict_text": "proved safe \u00b7 242 ms",
+     "time_s": 0.24235733319073915,
+     "ok": true,
+     "artifact": "cert_840cbb02417e",
+     "seq": 23
+    },
+    {
+     "station": "solver",
+     "verdict_text": "best design \u00b7 22 ms \u00b7 gap 0%",
+     "time_s": 0.02243312494829297,
+     "ok": true,
+     "artifact": "asgn_2f645593371b",
+     "seq": 24
+    },
+    {
+     "station": "gate",
+     "verdict_text": "checked \u00b7 14 ms",
+     "time_s": 0.014132583979517221,
+     "ok": true,
+     "artifact": "inst_ea5c5ad13e38",
+     "seq": 26
+    },
+    {
+     "station": "evaluator",
+     "verdict_text": "measured 9264.7 \u00b5s \u00b7 predicted 13971.6 (-34%)",
+     "time_s": 15.215402042027563,
+     "ok": true,
+     "artifact": "meas_b9f292a2c0ce",
+     "seq": 27
+    },
+    {
+     "station": "orchestrator",
+     "verdict_text": "accepted",
+     "time_s": null,
+     "ok": true,
+     "artifact": "tmpl_a6c416b45092",
+     "seq": 31
+    }
+   ],
+   "template": {
+    "id": "tmpl_a6c416b45092",
+    "short": "T2",
+    "workload": "square_4096",
+    "refines": "lifetime precondition -> weakest (P <= S-2+beta)",
+    "regime": "memory-bound",
+    "rationale": "Replace the conservative barrier rule by the exact lifetime precondition so the solver may drop the trailing barrier when a slot is free.",
+    "parent": "tmpl_793a848036fc",
+    "parent_short": "T1"
+   },
+   "pool_delta": {
+    "added": [
+     "tmpl_a6c416b45092"
+    ],
+    "reused_from": null,
+    "reused_from_short": null,
+    "incumbent": true,
+    "incumbent_cost": 9264.7038
+   },
+   "human": [],
+   "paused_at": "admitted",
+   "last_seq": 32
+  },
+  {
+   "iteration": 3,
+   "title": "Iteration 3 \u00b7 reuse tmpl on skinny GEMM (M=64)",
+   "sentence": "The agent proposed reuse tmpl on skinny GEMM (M=64) for the skinny 64\u00d74096\u00d74096 GEMM, assuming memory-bound. The verifier reused an earlier proof (36 \u00b5s), from T2. The solver found the best design in 15 ms (gap 0%). The gate checked this design in 20 ms. Measured on spark-6951: 601.6 \u00b5s, 67% slower than predicted, memory-bound. The model is now known to be optimistic in this regime. The orchestrator concluded: measured vs predicted differs by +66.7%. Cause: cost_model. Response: revise the cost model, not the template. Accepted into the pool. New best so far for the skinny 64\u00d74096\u00d74096 GEMM.",
+   "clauses": [
+    {
+     "station": "formulator",
+     "text": "The agent proposed reuse tmpl on skinny GEMM (M=64) for the skinny 64\u00d74096\u00d74096 GEMM, assuming memory-bound."
+    },
+    {
+     "station": "verifier",
+     "text": "The verifier reused an earlier proof (36 \u00b5s), from T2."
+    },
+    {
+     "station": "solver",
+     "text": "The solver found the best design in 15 ms (gap 0%)."
+    },
+    {
+     "station": "gate",
+     "text": "The gate checked this design in 20 ms."
+    },
+    {
+     "station": "evaluator",
+     "text": "Measured on spark-6951: 601.6 \u00b5s, 67% slower than predicted, memory-bound. The model is now known to be optimistic in this regime."
+    },
+    {
+     "station": "orchestrator",
+     "text": "The orchestrator concluded: measured vs predicted differs by +66.7%. Cause: cost_model. Response: revise the cost model, not the template."
+    },
+    {
+     "station": "orchestrator",
+     "text": "Accepted into the pool. New best so far for the skinny 64\u00d74096\u00d74096 GEMM."
+    }
+   ],
+   "outcome": "accepted",
+   "flip": false,
+   "level": 4,
+   "descended": false,
+   "visits": [
+    {
+     "station": "formulator",
+     "verdict_text": "proposed T3",
+     "time_s": 3.3624935895204544e-05,
+     "ok": true,
+     "artifact": "tmpl_4e72e13ae06d",
+     "seq": 34
+    },
+    {
+     "station": "verifier",
+     "verdict_text": "proof reused \u00b7 36 \u00b5s",
+     "time_s": 3.5833101719617844e-05,
+     "ok": true,
+     "artifact": "cert_a0fe03c2ae25",
+     "seq": 37
+    },
+    {
+     "station": "solver",
+     "verdict_text": "best design \u00b7 15 ms \u00b7 gap 0%",
+     "time_s": 0.014842082979157567,
+     "ok": true,
+     "artifact": "asgn_61d2b990d292",
+     "seq": 38
+    },
+    {
+     "station": "gate",
+     "verdict_text": "checked \u00b7 20 ms",
+     "time_s": 0.019990041851997375,
+     "ok": true,
+     "artifact": "inst_37e7f61eb20b",
+     "seq": 40
+    },
+    {
+     "station": "evaluator",
+     "verdict_text": "measured 601.6 \u00b5s \u00b7 predicted 360.9 (+67%)",
+     "time_s": 15.091077208984643,
+     "ok": true,
+     "artifact": "meas_83cb2f06ef41",
+     "seq": 41
+    },
+    {
+     "station": "orchestrator",
+     "verdict_text": "accepted",
+     "time_s": null,
+     "ok": true,
+     "artifact": "tmpl_4e72e13ae06d",
+     "seq": 45
+    }
+   ],
+   "template": {
+    "id": "tmpl_4e72e13ae06d",
+    "short": "T3",
+    "workload": "skinny_64x4096x4096",
+    "refines": "reuse tmpl on skinny GEMM (M=64)",
+    "regime": "memory-bound",
+    "rationale": "Same template on a skinny shape. Regime assumed from the latest evidence.",
+    "parent": "tmpl_a6c416b45092",
+    "parent_short": "T2"
+   },
+   "pool_delta": {
+    "added": [
+     "tmpl_4e72e13ae06d"
+    ],
+    "reused_from": "tmpl_a6c416b45092",
+    "reused_from_short": "T2",
+    "incumbent": true,
+    "incumbent_cost": 601.568
+   },
+   "human": [],
+   "paused_at": "admitted",
+   "last_seq": 46
+  },
+  {
+   "iteration": 4,
+   "title": "Iteration 4 \u00b7 ragged GEMM, trailing barrier kept",
+   "sentence": "The agent proposed ragged GEMM, trailing barrier kept for the ragged 1000\u00b3 GEMM, assuming memory-bound. The verifier reused an earlier proof (34 \u00b5s), from T1. The solver found the best design in 10 ms (gap 0%). The gate checked this design in 20 ms. Measured on spark-6951: 227.6 \u00b5s, 1% slower than predicted, memory-bound. The assumption is now proven on every feasible design. Accepted into the pool.",
+   "clauses": [
+    {
+     "station": "formulator",
+     "text": "The agent proposed ragged GEMM, trailing barrier kept for the ragged 1000\u00b3 GEMM, assuming memory-bound."
+    },
+    {
+     "station": "verifier",
+     "text": "The verifier reused an earlier proof (34 \u00b5s), from T1."
+    },
+    {
+     "station": "solver",
+     "text": "The solver found the best design in 10 ms (gap 0%)."
+    },
+    {
+     "station": "gate",
+     "text": "The gate checked this design in 20 ms."
+    },
+    {
+     "station": "evaluator",
+     "text": "Measured on spark-6951: 227.6 \u00b5s, 1% slower than predicted, memory-bound."
+    },
+    {
+     "station": "orchestrator",
+     "text": "The assumption is now proven on every feasible design."
+    },
+    {
+     "station": "orchestrator",
+     "text": "Accepted into the pool."
+    }
+   ],
+   "outcome": "accepted",
+   "flip": false,
+   "level": 4,
+   "descended": false,
+   "visits": [
+    {
+     "station": "formulator",
+     "verdict_text": "proposed T4",
+     "time_s": 3.1833071261644363e-05,
+     "ok": true,
+     "artifact": "tmpl_119b0367c618",
+     "seq": 48
+    },
+    {
+     "station": "verifier",
+     "verdict_text": "proof reused \u00b7 34 \u00b5s",
+     "time_s": 3.400002606213093e-05,
+     "ok": true,
+     "artifact": "cert_53f7b0522297",
+     "seq": 51
+    },
+    {
+     "station": "solver",
+     "verdict_text": "best design \u00b7 10 ms \u00b7 gap 0%",
+     "time_s": 0.010171207832172513,
+     "ok": true,
+     "artifact": "asgn_12c0763547d4",
+     "seq": 52
+    },
+    {
+     "station": "gate",
+     "verdict_text": "checked \u00b7 20 ms",
+     "time_s": 0.020136875100433826,
+     "ok": true,
+     "artifact": "inst_55d71618f2c8",
+     "seq": 54
+    },
+    {
+     "station": "evaluator",
+     "verdict_text": "measured 227.6 \u00b5s \u00b7 predicted 225.8 (+1%)",
+     "time_s": 14.397217374993488,
+     "ok": true,
+     "artifact": "meas_115ac40ac50c",
+     "seq": 55
+    },
+    {
+     "station": "orchestrator",
+     "verdict_text": "accepted",
+     "time_s": null,
+     "ok": true,
+     "artifact": "tmpl_119b0367c618",
+     "seq": 58
+    }
+   ],
+   "template": {
+    "id": "tmpl_119b0367c618",
+    "short": "T4",
+    "workload": "ragged_1000x1000x1000",
+    "refines": "ragged GEMM, trailing barrier kept",
+    "regime": "memory-bound",
+    "rationale": "Ragged 1000^3 shape; start conservative again on a new shape.",
+    "parent": "tmpl_4e72e13ae06d",
+    "parent_short": "T3"
+   },
+   "pool_delta": {
+    "added": [
+     "tmpl_119b0367c618"
+    ],
+    "reused_from": "tmpl_793a848036fc",
+    "reused_from_short": "T1",
+    "incumbent": false,
+    "incumbent_cost": null
+   },
+   "human": [],
+   "paused_at": "admitted",
+   "last_seq": 59
+  },
+  {
+   "iteration": 5,
+   "title": "Iteration 5 \u00b7 ragged GEMM, exact precondition",
+   "sentence": "The agent proposed ragged GEMM, exact precondition for the ragged 1000\u00b3 GEMM, assuming memory-bound. The verifier reused an earlier proof (49 \u00b5s), from T2. The solver found the best design in 10 ms (gap 0%). The gate checked this design in 22 ms. Measured on spark-6951: 217.4 \u00b5s, 4% faster than predicted, memory-bound. The assumption is now proven on every feasible design. Accepted into the pool. New best so far for the ragged 1000\u00b3 GEMM.",
+   "clauses": [
+    {
+     "station": "formulator",
+     "text": "The agent proposed ragged GEMM, exact precondition for the ragged 1000\u00b3 GEMM, assuming memory-bound."
+    },
+    {
+     "station": "verifier",
+     "text": "The verifier reused an earlier proof (49 \u00b5s), from T2."
+    },
+    {
+     "station": "solver",
+     "text": "The solver found the best design in 10 ms (gap 0%)."
+    },
+    {
+     "station": "gate",
+     "text": "The gate checked this design in 22 ms."
+    },
+    {
+     "station": "evaluator",
+     "text": "Measured on spark-6951: 217.4 \u00b5s, 4% faster than predicted, memory-bound."
+    },
+    {
+     "station": "orchestrator",
+     "text": "The assumption is now proven on every feasible design."
+    },
+    {
+     "station": "orchestrator",
+     "text": "Accepted into the pool. New best so far for the ragged 1000\u00b3 GEMM."
+    }
+   ],
+   "outcome": "accepted",
+   "flip": false,
+   "level": 4,
+   "descended": false,
+   "visits": [
+    {
+     "station": "formulator",
+     "verdict_text": "proposed T5",
+     "time_s": 3.100000321865082e-05,
+     "ok": true,
+     "artifact": "tmpl_aeb430c03632",
+     "seq": 61
+    },
+    {
+     "station": "verifier",
+     "verdict_text": "proof reused \u00b7 49 \u00b5s",
+     "time_s": 4.8958929255604744e-05,
+     "ok": true,
+     "artifact": "cert_e83cc4452e1f",
+     "seq": 64
+    },
+    {
+     "station": "solver",
+     "verdict_text": "best design \u00b7 10 ms \u00b7 gap 0%",
+     "time_s": 0.009950292063876987,
+     "ok": true,
+     "artifact": "asgn_3bcd2562f83c",
+     "seq": 65
+    },
+    {
+     "station": "gate",
+     "verdict_text": "checked \u00b7 22 ms",
+     "time_s": 0.021649833070114255,
+     "ok": true,
+     "artifact": "inst_b3b8355fc0f5",
+     "seq": 67
+    },
+    {
+     "station": "evaluator",
+     "verdict_text": "measured 217.4 \u00b5s \u00b7 predicted 225.8 (-4%)",
+     "time_s": 14.500799415865913,
+     "ok": true,
+     "artifact": "meas_97c03539d14e",
+     "seq": 68
+    },
+    {
+     "station": "orchestrator",
+     "verdict_text": "accepted",
+     "time_s": null,
+     "ok": true,
+     "artifact": "tmpl_aeb430c03632",
+     "seq": 71
+    }
+   ],
+   "template": {
+    "id": "tmpl_aeb430c03632",
+    "short": "T5",
+    "workload": "ragged_1000x1000x1000",
+    "refines": "ragged GEMM, exact precondition",
+    "regime": "memory-bound",
+    "rationale": "Exact precondition on the ragged shape; expect the incumbent to improve (paper: 1.34%).",
+    "parent": "tmpl_119b0367c618",
+    "parent_short": "T4"
+   },
+   "pool_delta": {
+    "added": [
+     "tmpl_aeb430c03632"
+    ],
+    "reused_from": "tmpl_a6c416b45092",
+    "reused_from_short": "T2",
+    "incumbent": true,
+    "incumbent_cost": 217.408
+   },
+   "human": [],
+   "paused_at": "admitted",
+   "last_seq": 72
+  },
+  {
+   "iteration": 6,
+   "title": "Iteration 6 \u00b7 drop beta from the precondition (P <= S-1)",
+   "sentence": "The agent proposed drop beta from the precondition (P <= S-1) for the ragged 1000\u00b3 GEMM, assuming memory-bound. Rejected: the verifier found a bug in lifetime; the failing case is replayed in the inspector. The orchestrator concluded: family certification refuted: lifetime. Cause: contract. Response: repair the contract: the precondition admits a schedule the checker refutes; strengthen Pre (and C3 with it, K1) using the replayed interleaving.",
+   "clauses": [
+    {
+     "station": "formulator",
+     "text": "The agent proposed drop beta from the precondition (P <= S-1) for the ragged 1000\u00b3 GEMM, assuming memory-bound."
+    },
+    {
+     "station": "verifier",
+     "text": "Rejected: the verifier found a bug in lifetime; the failing case is replayed in the inspector."
+    },
+    {
+     "station": "orchestrator",
+     "text": "The orchestrator concluded: family certification refuted: lifetime. Cause: contract. Response: repair the contract: the precondition admits a schedule the checker refutes; strengthen Pre (and C3 with it, K1) using the replayed interleaving."
+    }
+   ],
+   "outcome": "rejected",
+   "flip": false,
+   "level": 4,
+   "descended": false,
+   "visits": [
+    {
+     "station": "formulator",
+     "verdict_text": "proposed T6",
+     "time_s": 4.3125124648213387e-05,
+     "ok": true,
+     "artifact": "tmpl_2358abdd3fe8",
+     "seq": 74
+    },
+    {
+     "station": "verifier",
+     "verdict_text": "rejected: bug found in lifetime",
+     "time_s": 0.24577858299016953,
+     "ok": false,
+     "artifact": "cert_cec6e1a2f862",
+     "seq": 77
+    }
+   ],
+   "template": {
+    "id": "tmpl_2358abdd3fe8",
+    "short": "T6",
+    "workload": "ragged_1000x1000x1000",
+    "refines": "drop beta from the precondition (P <= S-1)",
+    "regime": "memory-bound",
+    "rationale": "Plausible but wrong: without the trailing barrier a slow warp can still be reading the slot.",
+    "parent": "tmpl_aeb430c03632",
+    "parent_short": "T5"
+   },
+   "pool_delta": {
+    "added": [
+     "tmpl_2358abdd3fe8"
+    ],
+    "reused_from": null,
+    "reused_from_short": null,
+    "incumbent": false,
+    "incumbent_cost": null
+   },
+   "human": [],
+   "paused_at": "refuted",
+   "last_seq": 79
+  },
+  {
+   "iteration": 7,
+   "title": "Iteration 7 \u00b7 grid = floor(M/Tm) x floor(N/Tn)",
+   "sentence": "The agent proposed grid = floor(M/Tm) x floor(N/Tn) for the ragged 1000\u00b3 GEMM, assuming memory-bound. The verifier proved it safe for all designs in 233 ms. The solver found the best design in 7 ms (gap 0%). Rejected: this design has a bug in coverage. The orchestrator concluded: instance check refuted: coverage[M]. Cause: contract. Response: a structural choice of the template admits a wrong index set; the replay shows the missing, duplicated or phantom terms.",
+   "clauses": [
+    {
+     "station": "formulator",
+     "text": "The agent proposed grid = floor(M/Tm) x floor(N/Tn) for the ragged 1000\u00b3 GEMM, assuming memory-bound."
+    },
+    {
+     "station": "verifier",
+     "text": "The verifier proved it safe for all designs in 233 ms."
+    },
+    {
+     "station": "solver",
+     "text": "The solver found the best design in 7 ms (gap 0%)."
+    },
+    {
+     "station": "gate",
+     "text": "Rejected: this design has a bug in coverage."
+    },
+    {
+     "station": "orchestrator",
+     "text": "The orchestrator concluded: instance check refuted: coverage[M]. Cause: contract. Response: a structural choice of the template admits a wrong index set; the replay shows the missing, duplicated or phantom terms."
+    }
+   ],
+   "outcome": "rejected",
+   "flip": false,
+   "level": 4,
+   "descended": false,
+   "visits": [
+    {
+     "station": "formulator",
+     "verdict_text": "proposed T7",
+     "time_s": 1.595797948539257e-05,
+     "ok": true,
+     "artifact": "tmpl_a3148ea032c1",
+     "seq": 81
+    },
+    {
+     "station": "verifier",
+     "verdict_text": "proved safe \u00b7 233 ms",
+     "time_s": 0.2327311250846833,
+     "ok": true,
+     "artifact": "cert_7f40a0fa8da3",
+     "seq": 84
+    },
+    {
+     "station": "solver",
+     "verdict_text": "best design \u00b7 7 ms \u00b7 gap 0%",
+     "time_s": 0.00745008303783834,
+     "ok": true,
+     "artifact": "asgn_c23932aaa07f",
+     "seq": 85
+    },
+    {
+     "station": "gate",
+     "verdict_text": "rejected: bug in coverage",
+     "time_s": 0.0940980410668999,
+     "ok": false,
+     "artifact": "inst_0227910dfbf1",
+     "seq": 87
+    }
+   ],
+   "template": {
+    "id": "tmpl_a3148ea032c1",
+    "short": "T7",
+    "workload": "ragged_1000x1000x1000",
+    "refines": "grid = floor(M/Tm) x floor(N/Tn)",
+    "regime": "memory-bound",
+    "rationale": "Drop the partial tail tiles to simplify the kernel. (Wrong: the tail is uncovered.)",
+    "parent": "tmpl_aeb430c03632",
+    "parent_short": "T5"
+   },
+   "pool_delta": {
+    "added": [
+     "tmpl_a3148ea032c1"
+    ],
+    "reused_from": null,
+    "reused_from_short": null,
+    "incumbent": false,
+    "incumbent_cost": null
+   },
+   "human": [],
+   "paused_at": "refuted",
+   "last_seq": 89
+  },
+  {
+   "iteration": 8,
+   "title": "Iteration 8 \u00b7 chip with 128 KiB shared memory per block (not this machine)",
+   "sentence": "The agent proposed chip with 128 KiB shared memory per block (not this machine) for the ragged 1000\u00b3 GEMM, assuming memory-bound. This template changes the chip (smem_bytes_per_block 101376 \u2192 131072), which spark-6951-gb10 cannot run; costs are modeled, and the regime is only assumed. The verifier reused an earlier proof (22 \u00b5s), from T2. The solver found the best design in 14 ms (gap 0%). The gate checked this design in 15 ms. Measured 225.83 \u00b5s, memory-bound. The assumption is now proven on every feasible design. Accepted into the pool.",
+   "clauses": [
+    {
+     "station": "formulator",
+     "text": "The agent proposed chip with 128 KiB shared memory per block (not this machine) for the ragged 1000\u00b3 GEMM, assuming memory-bound."
+    },
+    {
+     "station": "formulator",
+     "text": "This template changes the chip (smem_bytes_per_block 101376 \u2192 131072), which spark-6951-gb10 cannot run; costs are modeled, and the regime is only assumed."
+    },
+    {
+     "station": "verifier",
+     "text": "The verifier reused an earlier proof (22 \u00b5s), from T2."
+    },
+    {
+     "station": "solver",
+     "text": "The solver found the best design in 14 ms (gap 0%)."
+    },
+    {
+     "station": "gate",
+     "text": "The gate checked this design in 15 ms."
+    },
+    {
+     "station": "evaluator",
+     "text": "Measured 225.83 \u00b5s, memory-bound."
+    },
+    {
+     "station": "orchestrator",
+     "text": "The assumption is now proven on every feasible design."
+    },
+    {
+     "station": "orchestrator",
+     "text": "Accepted into the pool."
+    }
+   ],
+   "outcome": "accepted",
+   "flip": false,
+   "level": 4,
+   "descended": false,
+   "visits": [
+    {
+     "station": "formulator",
+     "verdict_text": "proposed T8",
+     "time_s": 1.5042023733258247e-05,
+     "ok": true,
+     "artifact": "tmpl_438f91415450",
+     "seq": 91
+    },
+    {
+     "station": "verifier",
+     "verdict_text": "proof reused \u00b7 22 \u00b5s",
+     "time_s": 2.154218964278698e-05,
+     "ok": true,
+     "artifact": "cert_bd383bcb9b66",
+     "seq": 95
+    },
+    {
+     "station": "solver",
+     "verdict_text": "best design \u00b7 14 ms \u00b7 gap 0%",
+     "time_s": 0.01379787502810359,
+     "ok": true,
+     "artifact": "asgn_b258e73a9521",
+     "seq": 96
+    },
+    {
+     "station": "gate",
+     "verdict_text": "checked \u00b7 15 ms",
+     "time_s": 0.014565875055268407,
+     "ok": true,
+     "artifact": "inst_8798002785d9",
+     "seq": 98
+    },
+    {
+     "station": "evaluator",
+     "verdict_text": "memory-bound \u00b7 226 \u00b5s",
+     "time_s": 0.0020779999904334545,
+     "ok": true,
+     "artifact": "meas_768bad50c85c",
+     "seq": 99
+    },
+    {
+     "station": "orchestrator",
+     "verdict_text": "accepted",
+     "time_s": null,
+     "ok": true,
+     "artifact": "tmpl_438f91415450",
+     "seq": 102
+    }
+   ],
+   "template": {
+    "id": "tmpl_438f91415450",
+    "short": "T8",
+    "workload": "ragged_1000x1000x1000",
+    "refines": "chip with 128 KiB shared memory per block (not this machine)",
+    "regime": "memory-bound",
+    "rationale": "What if the chip had 128 KiB of shared memory per block? A hardware knob: this machine cannot run it.",
+    "parent": "tmpl_aeb430c03632",
+    "parent_short": "T5"
+   },
+   "pool_delta": {
+    "added": [
+     "tmpl_438f91415450"
+    ],
+    "reused_from": "tmpl_a6c416b45092",
+    "reused_from_short": "T2",
+    "incumbent": false,
+    "incumbent_cost": null
+   },
+   "human": [],
+   "paused_at": "admitted",
+   "last_seq": 104
+  }
+ ],
+ "events": [
+  [
+   "run_started",
+   0,
+   null
+  ],
+  [
+   "request",
+   1,
+   null
+  ],
+  [
+   "proposed",
+   1,
+   "tmpl_793a848036fc"
+  ],
+  [
+   "checkpoint",
+   1,
+   "tmpl_793a848036fc"
+  ],
+  [
+   "mark",
+   1,
+   "tmpl_793a848036fc"
+  ],
+  [
+   "family_check",
+   1,
+   "cert_4a5aa01eded6"
+  ],
+  [
+   "solved",
+   1,
+   "asgn_6b0dccc65952"
+  ],
+  [
+   "checkpoint",
+   1,
+   "asgn_6b0dccc65952"
+  ],
+  [
+   "instance_check",
+   1,
+   "inst_e805d867fcc2"
+  ],
+  [
+   "measured",
+   1,
+   "meas_4dfcd0bec01b"
+  ],
+  [
+   "optimism",
+   1,
+   null
+  ],
+  [
+   "diagnosis",
+   1,
+   "diag_03c811e88a60"
+  ],
+  [
+   "regime_flip",
+   1,
+   "meas_4dfcd0bec01b"
+  ],
+  [
+   "checkpoint",
+   1,
+   "meas_4dfcd0bec01b"
+  ],
+  [
+   "regime_bound",
+   1,
+   "tmpl_793a848036fc"
+  ],
+  [
+   "diagnosis",
+   1,
+   "diag_7b947741c83f"
+  ],
+  [
+   "admitted",
+   1,
+   "tmpl_793a848036fc"
+  ],
+  [
+   "checkpoint",
+   1,
+   "tmpl_793a848036fc"
+  ],
+  [
+   "request",
+   2,
+   null
+  ],
+  [
+   "proposed",
+   2,
+   "tmpl_a6c416b45092"
+  ],
+  [
+   "checkpoint",
+   2,
+   "tmpl_a6c416b45092"
+  ],
+  [
+   "mark",
+   2,
+   "tmpl_a6c416b45092"
+  ],
+  [
+   "family_check",
+   2,
+   "cert_840cbb02417e"
+  ],
+  [
+   "solved",
+   2,
+   "asgn_2f645593371b"
+  ],
+  [
+   "checkpoint",
+   2,
+   "asgn_2f645593371b"
+  ],
+  [
+   "instance_check",
+   2,
+   "inst_ea5c5ad13e38"
+  ],
+  [
+   "measured",
+   2,
+   "meas_b9f292a2c0ce"
+  ],
+  [
+   "optimism",
+   2,
+   null
+  ],
+  [
+   "regime_bound",
+   2,
+   "tmpl_a6c416b45092"
+  ],
+  [
+   "diagnosis",
+   2,
+   "diag_f95a7a8571b4"
+  ],
+  [
+   "admitted",
+   2,
+   "tmpl_a6c416b45092"
+  ],
+  [
+   "checkpoint",
+   2,
+   "tmpl_a6c416b45092"
+  ],
+  [
+   "request",
+   3,
+   null
+  ],
+  [
+   "proposed",
+   3,
+   "tmpl_4e72e13ae06d"
+  ],
+  [
+   "checkpoint",
+   3,
+   "tmpl_4e72e13ae06d"
+  ],
+  [
+   "mark",
+   3,
+   "tmpl_4e72e13ae06d"
+  ],
+  [
+   "family_check",
+   3,
+   "cert_a0fe03c2ae25"
+  ],
+  [
+   "solved",
+   3,
+   "asgn_61d2b990d292"
+  ],
+  [
+   "checkpoint",
+   3,
+   "asgn_61d2b990d292"
+  ],
+  [
+   "instance_check",
+   3,
+   "inst_37e7f61eb20b"
+  ],
+  [
+   "measured",
+   3,
+   "meas_83cb2f06ef41"
+  ],
+  [
+   "optimism",
+   3,
+   null
+  ],
+  [
+   "regime_bound",
+   3,
+   "tmpl_4e72e13ae06d"
+  ],
+  [
+   "diagnosis",
+   3,
+   "diag_5541c76cf74b"
+  ],
+  [
+   "admitted",
+   3,
+   "tmpl_4e72e13ae06d"
+  ],
+  [
+   "checkpoint",
+   3,
+   "tmpl_4e72e13ae06d"
+  ],
+  [
+   "request",
+   4,
+   null
+  ],
+  [
+   "proposed",
+   4,
+   "tmpl_119b0367c618"
+  ],
+  [
+   "checkpoint",
+   4,
+   "tmpl_119b0367c618"
+  ],
+  [
+   "mark",
+   4,
+   "tmpl_119b0367c618"
+  ],
+  [
+   "family_check",
+   4,
+   "cert_53f7b0522297"
+  ],
+  [
+   "solved",
+   4,
+   "asgn_12c0763547d4"
+  ],
+  [
+   "checkpoint",
+   4,
+   "asgn_12c0763547d4"
+  ],
+  [
+   "instance_check",
+   4,
+   "inst_55d71618f2c8"
+  ],
+  [
+   "measured",
+   4,
+   "meas_115ac40ac50c"
+  ],
+  [
+   "optimism",
+   4,
+   null
+  ],
+  [
+   "regime_bound",
+   4,
+   "tmpl_119b0367c618"
+  ],
+  [
+   "admitted",
+   4,
+   "tmpl_119b0367c618"
+  ],
+  [
+   "checkpoint",
+   4,
+   "tmpl_119b0367c618"
+  ],
+  [
+   "request",
+   5,
+   null
+  ],
+  [
+   "proposed",
+   5,
+   "tmpl_aeb430c03632"
+  ],
+  [
+   "checkpoint",
+   5,
+   "tmpl_aeb430c03632"
+  ],
+  [
+   "mark",
+   5,
+   "tmpl_aeb430c03632"
+  ],
+  [
+   "family_check",
+   5,
+   "cert_e83cc4452e1f"
+  ],
+  [
+   "solved",
+   5,
+   "asgn_3bcd2562f83c"
+  ],
+  [
+   "checkpoint",
+   5,
+   "asgn_3bcd2562f83c"
+  ],
+  [
+   "instance_check",
+   5,
+   "inst_b3b8355fc0f5"
+  ],
+  [
+   "measured",
+   5,
+   "meas_97c03539d14e"
+  ],
+  [
+   "optimism",
+   5,
+   null
+  ],
+  [
+   "regime_bound",
+   5,
+   "tmpl_aeb430c03632"
+  ],
+  [
+   "admitted",
+   5,
+   "tmpl_aeb430c03632"
+  ],
+  [
+   "checkpoint",
+   5,
+   "tmpl_aeb430c03632"
+  ],
+  [
+   "request",
+   6,
+   null
+  ],
+  [
+   "proposed",
+   6,
+   "tmpl_2358abdd3fe8"
+  ],
+  [
+   "checkpoint",
+   6,
+   "tmpl_2358abdd3fe8"
+  ],
+  [
+   "mark",
+   6,
+   "tmpl_2358abdd3fe8"
+  ],
+  [
+   "family_check",
+   6,
+   "cert_cec6e1a2f862"
+  ],
+  [
+   "diagnosis",
+   6,
+   "diag_b8929e26ace4"
+  ],
+  [
+   "checkpoint",
+   6,
+   "cert_cec6e1a2f862"
+  ],
+  [
+   "request",
+   7,
+   null
+  ],
+  [
+   "proposed",
+   7,
+   "tmpl_a3148ea032c1"
+  ],
+  [
+   "checkpoint",
+   7,
+   "tmpl_a3148ea032c1"
+  ],
+  [
+   "mark",
+   7,
+   "tmpl_a3148ea032c1"
+  ],
+  [
+   "family_check",
+   7,
+   "cert_7f40a0fa8da3"
+  ],
+  [
+   "solved",
+   7,
+   "asgn_c23932aaa07f"
+  ],
+  [
+   "checkpoint",
+   7,
+   "asgn_c23932aaa07f"
+  ],
+  [
+   "instance_check",
+   7,
+   "inst_0227910dfbf1"
+  ],
+  [
+   "diagnosis",
+   7,
+   "diag_ad9b54d33a1d"
+  ],
+  [
+   "checkpoint",
+   7,
+   "inst_0227910dfbf1"
+  ],
+  [
+   "request",
+   8,
+   null
+  ],
+  [
+   "proposed",
+   8,
+   "tmpl_438f91415450"
+  ],
+  [
+   "checkpoint",
+   8,
+   "tmpl_438f91415450"
+  ],
+  [
+   "mark",
+   8,
+   "tmpl_438f91415450"
+  ],
+  [
+   "extrapolating",
+   8,
+   "tmpl_438f91415450"
+  ],
+  [
+   "family_check",
+   8,
+   "cert_bd383bcb9b66"
+  ],
+  [
+   "solved",
+   8,
+   "asgn_b258e73a9521"
+  ],
+  [
+   "checkpoint",
+   8,
+   "asgn_b258e73a9521"
+  ],
+  [
+   "instance_check",
+   8,
+   "inst_8798002785d9"
+  ],
+  [
+   "measured",
+   8,
+   "meas_768bad50c85c"
+  ],
+  [
+   "optimism",
+   8,
+   null
+  ],
+  [
+   "regime_bound",
+   8,
+   "tmpl_438f91415450"
+  ],
+  [
+   "admitted",
+   8,
+   "tmpl_438f91415450"
+  ],
+  [
+   "checkpoint",
+   8,
+   "tmpl_438f91415450"
+  ],
+  [
+   "run_finished",
+   8,
+   null
+  ]
+ ],
+ "measurements": [
+  {
+   "id": "meas_4dfcd0bec01b",
+   "contract": "tmpl_793a848036fc",
+   "assignment": "asgn_6b0dccc65952",
+   "kernel": "kern_33d035b62740",
+   "predicted_cost": 13971.627423326609,
+   "measured_cost": 9395.7119,
+   "discrepancy": -0.32751485454634993,
+   "utilizations": {
+    "DRAM": 1.4870216937288818,
+    "compute": 0.5167598050340726
+   },
+   "dominant_resource": "DRAM",
+   "simulator": "cuda:dgx-spark",
+   "reference_agrees": true,
+   "ci95": [
+    9062.0155,
+    9872.9277
+   ],
+   "clocks": "2411, 53.01, 46",
+   "host": "spark-6951"
+  },
+  {
+   "id": "meas_b9f292a2c0ce",
+   "contract": "tmpl_a6c416b45092",
+   "assignment": "asgn_2f645593371b",
+   "kernel": "kern_2fd31dee0e02",
+   "predicted_cost": 13971.627423326609,
+   "measured_cost": 9264.7038,
+   "discrepancy": -0.33689157896295396,
+   "utilizations": {
+    "DRAM": 1.508049013215793,
+    "compute": 0.5240670780646345
+   },
+   "dominant_resource": "DRAM",
+   "simulator": "cuda:dgx-spark",
+   "reference_agrees": true,
+   "ci95": [
+    9072.2237,
+    9623.8718
+   ],
+   "clocks": "2444, 36.51, 46",
+   "host": "spark-6951"
+  },
+  {
+   "id": "meas_83cb2f06ef41",
+   "contract": "tmpl_4e72e13ae06d",
+   "assignment": "asgn_61d2b990d292",
+   "kernel": "kern_759f7bc322f7",
+   "predicted_cost": 360.87430525811715,
+   "measured_cost": 601.568,
+   "discrepancy": 0.6669737668624688,
+   "utilizations": {
+    "DRAM": 0.5998894642968329,
+    "compute": 0.12611121710264664
+   },
+   "dominant_resource": "DRAM",
+   "simulator": "cuda:dgx-spark",
+   "reference_agrees": true,
+   "ci95": [
+    597.28,
+    747.872
+   ],
+   "clocks": "2431, 6.58, 43",
+   "host": "spark-6951"
+  },
+  {
+   "id": "meas_115ac40ac50c",
+   "contract": "tmpl_119b0367c618",
+   "assignment": "asgn_12c0763547d4",
+   "kernel": "kern_370a69fa24b6",
+   "predicted_cost": 225.83468252440372,
+   "measured_cost": 227.616,
+   "discrepancy": 0.007887705536122898,
+   "utilizations": {
+    "DRAM": 0.9921740234623388,
+    "compute": 0.3104100590039722
+   },
+   "dominant_resource": "DRAM",
+   "simulator": "cuda:dgx-spark",
+   "reference_agrees": true,
+   "ci95": [
+    225.824,
+    227.936
+   ],
+   "clocks": "2268, 6.84, 43",
+   "host": "spark-6951"
+  },
+  {
+   "id": "meas_97c03539d14e",
+   "contract": "tmpl_aeb430c03632",
+   "assignment": "asgn_3bcd2562f83c",
+   "kernel": "kern_85a5d01d4ace",
+   "predicted_cost": 225.83468252440372,
+   "measured_cost": 217.408,
+   "discrepancy": -0.0373135004340759,
+   "utilizations": {
+    "DRAM": 1.0387597628624692,
+    "compute": 0.32498480272229235
+   },
+   "dominant_resource": "DRAM",
+   "simulator": "cuda:dgx-spark",
+   "reference_agrees": true,
+   "ci95": [
+    215.552,
+    217.952
+   ],
+   "clocks": "1748, 6.14, 43",
+   "host": "spark-6951"
+  },
+  {
+   "id": "meas_768bad50c85c",
+   "contract": "tmpl_438f91415450",
+   "assignment": "asgn_b258e73a9521",
+   "kernel": null,
+   "predicted_cost": 225.83468252440372,
+   "measured_cost": 225.83468252440372,
+   "discrepancy": 0.0,
+   "utilizations": {
+    "DRAM": 1.0,
+    "compute": 0.5004717493511753
+   },
+   "dominant_resource": "DRAM",
+   "simulator": "analytic-roofline (template cost model re-evaluated; not a measurement)",
+   "reference_agrees": null,
+   "ci95": null,
+   "clocks": null,
+   "host": null
+  }
+ ],
+ "kernels": {
+  "kern_33d035b62740": {
+   "sha256": "ff491ba5f7e62f0d3985388baac2353497c7ff4baccf41ce70f3a2d4e35a5e78",
+   "arch": "sm_121"
+  },
+  "kern_2fd31dee0e02": {
+   "sha256": "3c5cb249f78e3bd2d19cd927151ae5d60511e7660081bb060b4a252e9d77e5ed",
+   "arch": "sm_121"
+  },
+  "kern_759f7bc322f7": {
+   "sha256": "625a4aeb80bb8fb4520355be7983547a715096f85f037f0305836f607fabb66d",
+   "arch": "sm_121"
+  },
+  "kern_370a69fa24b6": {
+   "sha256": "68c44c9d013f861a868c7b69a5f3b855e8ef34e6cf3048a45850a6cc3db80550",
+   "arch": "sm_121"
+  },
+  "kern_85a5d01d4ace": {
+   "sha256": "bc2acc62bbca48ad7d32172ce27c6ce9f8f20560547580fb275fa0b5a3786fdd",
+   "arch": "sm_121"
+  }
+ },
+ "optimism": [
+  {
+   "clean": false,
+   "dependents": [],
+   "samples": 1,
+   "went_dirty": true
+  },
+  {
+   "clean": false,
+   "dependents": [],
+   "samples": 2,
+   "went_dirty": false
+  },
+  {
+   "clean": false,
+   "dependents": [],
+   "samples": 3,
+   "went_dirty": false
+  },
+  {
+   "clean": false,
+   "dependents": [],
+   "samples": 4,
+   "went_dirty": false
+  },
+  {
+   "clean": false,
+   "dependents": [],
+   "samples": 5,
+   "went_dirty": false
+  },
+  {
+   "clean": false,
+   "dependents": [],
+   "samples": 6,
+   "went_dirty": false
+  }
+ ],
+ "extrapolating": [
+  {
+   "evaluator": "roofline",
+   "fields": {
+    "smem_bytes_per_block": {
+     "measured": 101376,
+     "template": 131072
+    }
+   },
+   "measured_contract": "spark-6951-gb10",
+   "strength_cap": "observed"
+  }
+ ],
+ "finished": {
+  "iterations": 8,
+  "optimism": {
+   "clean": false,
+   "dependents": [],
+   "samples": 6
+  },
+  "status": "ok"
+ }
+}

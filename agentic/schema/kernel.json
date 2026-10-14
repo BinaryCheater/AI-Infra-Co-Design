@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agentic/kernel",
+  "title": "Generated kernel source for a solved design (content-addressed; linked from measurements)",
+  "type": "object",
+  "required": ["id", "contract", "assignment", "template", "language", "source", "sha256"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string"}, "contract": {"type": "string"}, "assignment": {"type": "string"},
+    "template": {"type": "string"}, "language": {"type": "string"}, "arch": {"type": ["string", "null"]},
+    "source": {"type": "string"}, "sha256": {"type": "string"}, "provenance": {"type": "object"}
+  }
+}

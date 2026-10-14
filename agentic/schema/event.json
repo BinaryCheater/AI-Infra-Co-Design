@@ -3,21 +3,72 @@
   "$id": "agentic/event",
   "title": "One ledger event. The ledger is the only source of truth; the stores and the UI are views over it.",
   "type": "object",
-  "required": ["seq", "ts", "run", "kind", "iteration", "payload"],
+  "required": [
+    "seq",
+    "ts",
+    "run",
+    "kind",
+    "iteration",
+    "payload"
+  ],
   "additionalProperties": false,
   "properties": {
-    "seq": {"type": "integer"},
-    "ts": {"type": "string"},
-    "run": {"type": "string"},
-    "kind": {"type": "string", "enum": [
-      "run_started", "run_finished", "request", "proposed", "rejected", "mark",
-      "family_check", "solved", "instance_check", "measured", "optimism",
-      "regime_flip", "regime_bound", "split", "skip_regime", "probe_result",
-      "diagnosis", "admitted", "checkpoint",
-      "pause", "resume", "human_edit", "human_inject", "human_override", "human_refused", "rewind", "replay",
-      "note"]},
-    "iteration": {"type": "integer"},
-    "artifact": {"type": ["string", "null"], "description": "id of the artifact this event carries, if any"},
-    "payload": {"type": "object"}
+    "seq": {
+      "type": "integer"
+    },
+    "ts": {
+      "type": "string"
+    },
+    "run": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "run_started",
+        "run_finished",
+        "request",
+        "proposed",
+        "rejected",
+        "mark",
+        "family_check",
+        "solved",
+        "instance_check",
+        "measured",
+        "optimism",
+        "regime_flip",
+        "regime_bound",
+        "split",
+        "skip_regime",
+        "probe_result",
+        "diagnosis",
+        "admitted",
+        "checkpoint",
+        "pause",
+        "resume",
+        "human_edit",
+        "human_inject",
+        "human_override",
+        "human_refused",
+        "rewind",
+        "replay",
+        "note",
+        "extrapolating",
+        "stopped"
+      ]
+    },
+    "iteration": {
+      "type": "integer"
+    },
+    "artifact": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "id of the artifact this event carries, if any"
+    },
+    "payload": {
+      "type": "object"
+    }
   }
 }

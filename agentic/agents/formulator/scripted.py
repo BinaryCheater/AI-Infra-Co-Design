@@ -46,11 +46,21 @@ def _regime_from_evidence(evidence: list[dict]) -> str:
     return "compute-bound: util(compute) >= util(DRAM)"
 
 
+EXTRAPOLATION_STEP = {
+    "workload": RAGGED, "precondition": "exact", "chip_override": {"smem_bytes_per_block": 131072},
+    "refines": "chip with 128 KiB shared memory per block (not this machine)",
+    "rationale": "What if the chip had 128 KiB of shared memory per block? A hardware knob: this machine cannot run it.",
+}
+
+
 class ScriptedFormulator:
     name = "scripted"
 
-    def __init__(self, script: list[dict] | None = None):
-        self.script = script if script is not None else SCRIPT
+    def __init__(self, script: list[dict] | None = None, chip: dict | None = None, extrapolation: bool = False):
+        self.script = list(script if script is not None else SCRIPT)
+        if extrapolation:
+            self.script.append(EXTRAPOLATION_STEP)
+        self.chip = chip                        # a scope.chip dict (measured or illustrative); None = illustrative
 
     def __len__(self):
         return len(self.script)
@@ -69,6 +79,9 @@ class ScriptedFormulator:
             "evidence": [e["artifact"] for e in request.get("evidence", []) if e.get("artifact")],
         }
         parent = request.get("coarse_template")
-        return tiling_contract(s["workload"], precondition=s["precondition"], structure=structure,
+        chip = self.chip
+        if s.get("chip_override"):
+            chip = {**(chip or tiling_contract(s["workload"])["scope"]["chip"]), **s["chip_override"]}
+        return tiling_contract(s["workload"], hw=chip, precondition=s["precondition"], structure=structure,
                                rationale=s["rationale"], parent=parent, structural=s.get("structural"),
                                formulator=self.name, step=i, refines=s["refines"])

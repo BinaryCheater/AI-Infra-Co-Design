@@ -19,7 +19,8 @@
       "dram_bytes_per_s": 1800000000000.0,
       "fp32_flops_per_s_per_sm": 625000000000.0,
       "barrier_s": 2.2222222222222224e-08,
-      "bytes_per_element": 4
+      "bytes_per_element": 4,
+      "kind": "illustrative"
     },
     "structure": {
       "leading_barrier": true,
@@ -184,5 +185,5 @@
     "model": null,
     "prompt_hash": null
   },
-  "id": "tmpl_de9576aac1f8"
+  "id": "tmpl_9194f62ba43c"
 }

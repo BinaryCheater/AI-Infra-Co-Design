@@ -158,9 +158,33 @@ def story(ledger: Ledger, run: str) -> list[dict]:
                     clauses.append({"station": "gate", "text": f"Rejected: this design has a bug in {ob}."})
         elif k == "measured":
             regime = REGIME_WORDS.get(p["dominant_resource"], p["dominant_resource"])
-            e["visits"].append({"station": "evaluator", "verdict_text": f"{regime} · {p['measured']:.0f} µs",
-                                "time_s": p.get("evaluator_time"), "ok": True, "artifact": a, "seq": ev["seq"]})
-            clauses.append({"station": "evaluator", "text": f"Measured {p['measured']:.2f} µs, {regime}."})
+            sim = p.get("simulator", "")
+            if sim.startswith("cuda:"):
+                host = p.get("host") or sim[5:]
+                gap = p.get("discrepancy", 0.0)
+                e["visits"].append({"station": "evaluator", "verdict_text": f"measured {p['measured']:.1f} µs · predicted {p['predicted']:.1f} ({gap:+.0%})",
+                                    "time_s": p.get("evaluator_time"), "ok": p.get("reference_agrees") is not False, "artifact": a, "seq": ev["seq"]})
+                if p.get("reference_agrees") is False:
+                    e["outcome"] = "rejected"
+                    clauses.append({"station": "evaluator", "text": f"Stopped: the design computed a wrong answer on {host}; "
+                                                                    "the verifier's hardware assumptions need review."})
+                else:
+                    word = "slower" if gap > 0 else "faster"
+                    clauses.append({"station": "evaluator", "text": f"Measured on {host}: {p['measured']:.1f} µs, {abs(gap):.0%} {word} than "
+                                    f"predicted, {regime}." + (" The model is now known to be optimistic in this regime." if gap > 0.05 else
+                                                              (" The model is now known to be pessimistic here." if gap < -0.05 else ""))})
+            else:
+                e["visits"].append({"station": "evaluator", "verdict_text": f"{regime} · {p['measured']:.0f} µs",
+                                    "time_s": p.get("evaluator_time"), "ok": True, "artifact": a, "seq": ev["seq"]})
+                clauses.append({"station": "evaluator", "text": f"Measured {p['measured']:.2f} µs, {regime}."})
+        elif k == "extrapolating":
+            changes = ", ".join(f"{f} {v['measured']} → {v['template']}" for f, v in p.get("fields", {}).items())
+            clauses.append({"station": "formulator", "text": f"This template changes the chip ({changes}), which {p.get('measured_contract', 'the machine')} "
+                                                             "cannot run; costs are modeled, and the regime is only assumed."})
+        elif k == "stopped":
+            e["outcome"] = "rejected"
+            e["visits"].append({"station": "orchestrator", "verdict_text": "stopped: trusted base", "time_s": None, "ok": False,
+                                "artifact": a, "seq": ev["seq"]})
         elif k == "regime_flip":
             e["flip"] = True
             clauses.append({"station": "evaluator", "text": f"The bottleneck moved from {p['assumed']} to {p['actual']}."})

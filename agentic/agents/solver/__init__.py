@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import math
 
+from ...chips import hardware_contract
 from ...templates.smem_tiling import HardwareContract, Workload, solve_milp
 
 BACKENDS = {}
@@ -22,7 +23,7 @@ def backend(name):
 @backend("smem_tiling")
 def _solve_smem_tiling(T: dict) -> dict:
     w = Workload(**T["scope"]["workload"])
-    hw = HardwareContract(**T["scope"]["chip"])
+    hw = hardware_contract(T["scope"]["chip"])
     mode = next(p["mode"] for p in T["preconditions"] if p["id"] == "lifetime")
     sol = solve_milp(w, hw, precondition=mode)
     d = sol["design"]

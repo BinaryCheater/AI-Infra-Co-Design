@@ -17,10 +17,16 @@ from ..agents.orchestrator import Controller, Orchestrator
 from ..ledger import Ledger, rebuild, replay_signature, template_view, timeline
 
 
+def _formulator(a):
+    from ..chips import load_chip, scope_chip
+    chip = scope_chip(load_chip(a.chip)) if getattr(a, "chip", None) else None
+    return ScriptedFormulator(chip=chip, extrapolation=getattr(a, "extrapolation", False))
+
+
 def cmd_run(a):
     L = Ledger(a.ledger)
     ctl = Controller(a.mode)
-    o = Orchestrator(L, a.run, ScriptedFormulator(), ctl)
+    o = Orchestrator(L, a.run, _formulator(a), ctl, evaluator_backend=a.evaluator)
     if a.mode == "observe":
         o.run_loop()
     else:
@@ -49,6 +55,25 @@ def cmd_run(a):
             else:
                 t.join(0.2)
     _print_timeline(L, a.run)
+    if a.export:
+        export_run(L, a.run, a.export)
+
+
+def export_run(L, run, path):
+    """A JSON summary of one run (story, measurements, kernels by id, optimism history) for records kept in git."""
+    from ..ledger.story import story
+    ev = L.events(run)
+    meas = [L.get(e["artifact"]) for e in ev if e["kind"] == "measured"]
+    out = {"run": run, "story": story(L, run), "events": [(e["kind"], e["iteration"], e["artifact"]) for e in ev],
+           "measurements": [{k: m.get(k) for k in ("id", "contract", "assignment", "kernel", "predicted_cost", "measured_cost",
+                                                   "discrepancy", "utilizations", "dominant_resource", "simulator", "reference_agrees", "ci95", "clocks", "host")}
+                            for m in meas],
+           "kernels": {m["kernel"]: {"sha256": L.get(m["kernel"])["sha256"], "arch": L.get(m["kernel"]).get("arch")} for m in meas if m.get("kernel")},
+           "optimism": [e["payload"] for e in ev if e["kind"] == "optimism"],
+           "extrapolating": [e["payload"] for e in ev if e["kind"] == "extrapolating"],
+           "finished": next((e["payload"] for e in ev if e["kind"] == "run_finished"), None)}
+    json.dump(out, open(path, "w"), indent=1, default=str)
+    print("exported", path)
 
 
 def _print_timeline(L, run):
@@ -101,7 +126,11 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog="agentic", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("run"); r.add_argument("--ledger", required=True); r.add_argument("--run", required=True)
-    r.add_argument("--mode", default="observe", choices=["observe", "step", "drive"]); r.set_defaults(fn=cmd_run)
+    r.add_argument("--mode", default="observe", choices=["observe", "step", "drive"])
+    r.add_argument("--chip", default=None, help="hardware contract name, e.g. spark-6951-gb10 (default: illustrative)")
+    r.add_argument("--evaluator", default="roofline", help="roofline or cuda:<ssh-alias>")
+    r.add_argument("--extrapolation", action="store_true", help="append a step that changes a fixed chip field")
+    r.add_argument("--export", default=None, help="write a JSON summary of the run here"); r.set_defaults(fn=cmd_run)
     i = sub.add_parser("inspect"); i.add_argument("--ledger", required=True); i.add_argument("--run")
     i.add_argument("--template"); i.set_defaults(fn=cmd_inspect)
     p = sub.add_parser("replay"); p.add_argument("--ledger", required=True); p.add_argument("--run", required=True)

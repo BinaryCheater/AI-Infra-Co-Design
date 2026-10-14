@@ -15,8 +15,10 @@ from collections import deque
 from dataclasses import dataclass, field
 from time import perf_counter
 
+from ..chips import extrapolation
 from ..ledger import Ledger, rebuild, search
 from . import evaluator as evaluator_svc
+from .evaluator import cuda as cuda_evaluator
 from . import solver as solver_svc
 from . import verifier as verifier_svc
 from .evaluator import OptimismRecord, regime_of
@@ -315,6 +317,14 @@ class Orchestrator:
             return False
         decision = "gate" if T["structure"]["strength"] == "proved" else "steer"
         self._append("mark", {"strength": T["structure"]["strength"], "assumptions_may": decision}, tid)
+        # a template that changes a fixed field of a measured chip is extrapolating: costs are modeled for
+        # this iteration whatever the run's backend, and its regime assumption may only steer (§4.2)
+        extra = extrapolation(T["scope"]["chip"])
+        backend = self.backend
+        if extra:
+            backend = "roofline"
+            self._append("extrapolating", {"fields": extra, "measured_contract": T["scope"]["chip"].get("name"),
+                                           "evaluator": backend, "strength_cap": "observed"}, tid)
 
         v = self.ledger.put("verdict", verifier_svc.certify_family(T, views["proofs"]), "cert")
         V = self.ledger.get(v)
@@ -362,13 +372,31 @@ class Orchestrator:
             return False
 
         t0 = perf_counter()
-        m = self.ledger.put("measurement", evaluator_svc.measure(T, X, self.backend), "meas")
+        if backend.startswith("cuda:"):
+            kid = self.ledger.put("kernel", cuda_evaluator.kernel_artifact(T, X), "kern")
+            m = self.ledger.put("measurement", cuda_evaluator.measure(T, X, backend[5:], self.ledger.get(kid)), "meas")
+        else:
+            m = self.ledger.put("measurement", evaluator_svc.measure(T, X, backend), "meas")
         evaluator_time = perf_counter() - t0
         M = self.ledger.get(m)
+        if M.get("reference_agrees") is False:
+            # not a performance obligation: a certified design computed the wrong answer on real hardware, so the
+            # verifier's hardware contract is wrong somewhere. Record it against the trusted base and stop the run.
+            self._append("measured", {"predicted": M["predicted_cost"], "measured": M["measured_cost"],
+                                      "discrepancy": M["discrepancy"], "utilizations": M["utilizations"],
+                                      "dominant_resource": M["dominant_resource"], "simulator": M["simulator"],
+                                      "evaluator_time": evaluator_time, "reference_agrees": False}, m)
+            self._diagnose("a certified design computed a wrong answer on real hardware "
+                           f"(first disagreeing element {M['detail'].get('first_disagreeing_rc')})", "trusted_base",
+                           "review the verifier's hardware assumptions (event model, async-copy ordering); the run is stopped",
+                           tid, {"measurement": m, "kernel": M.get("kernel")})
+            self._append("stopped", {"reason": "trusted_base", "measurement": m}, tid)
+            return True
         self._append("measured", {"predicted": M["predicted_cost"], "measured": M["measured_cost"],
                                   "discrepancy": M["discrepancy"], "utilizations": M["utilizations"],
                                   "dominant_resource": M["dominant_resource"], "simulator": M["simulator"],
-                                  "evaluator_time": evaluator_time}, m)
+                                  "evaluator_time": evaluator_time, "reference_agrees": M.get("reference_agrees"),
+                                  "ci95": M.get("ci95"), "host": M.get("host")}, m)
         was_clean = self.optimism.clean
         self.optimism.update(M["predicted_cost"], M["measured_cost"], m)
         self._append("optimism", {**self.optimism.to_dict(), "went_dirty": was_clean and not self.optimism.clean})
@@ -398,7 +426,10 @@ class Orchestrator:
             self._diagnose(f"measured vs predicted differs by {M['discrepancy']:+.1%}", "cost_model",
                            "revise the cost model, not the template", m)
 
+        if extra and strength == "proved":
+            strength = "observed"            # extrapolating: a modeled bound may steer, not gate
         self._append("admitted", {"certificate": v, "assignment": x, "measurement": m, "strength": strength,
+                                  "extrapolating": bool(extra), "evaluator": backend,
                                   "objective": X["objective"], "measured": M["measured_cost"]}, tid)
         cur["coarse_template"] = tid
         cur["step"] += 1
@@ -512,11 +543,12 @@ class Orchestrator:
 def _feasible_designs(T: dict) -> list[dict]:
     from itertools import product
 
+    from ..chips import hardware_contract
     from ..templates.smem_tiling import (K_TILE_MENU, PREFETCH_MENU, STAGE_MENU, TILE_MENU, HardwareContract,
                                          TilingDesign, Workload, search_face_violations)
     from .evaluator import _evaluate
     w = Workload(**T["scope"]["workload"])
-    hw = HardwareContract(**T["scope"]["chip"])
+    hw = hardware_contract(T["scope"]["chip"])
     mode = next(p["mode"] for p in T["preconditions"] if p["id"] == "lifetime")
     s = T["scope"]["structure"]
     out = []

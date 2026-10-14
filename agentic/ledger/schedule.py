@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import importlib
 
+from ..chips import hardware_contract
 from .describe import _dedupe, describe, display_name, phrasing
 from .ledger import Ledger
 from .timeline import template_view
@@ -34,7 +35,7 @@ def schedule(ledger: Ledger, contract_id: str, run: str | None = None) -> dict:
     fam = next((w for w in verdicts if w["check"] == "family"), None)
     inst = next((w for w in verdicts if w["check"] == "instance"), None)
     w = tpl.Workload(**T["scope"]["workload"])
-    hw = tpl.HardwareContract(**T["scope"]["chip"])
+    hw = hardware_contract(T["scope"]["chip"])
     s = T["scope"]["structure"]
     ph = phrasing(T["template"])
     out = {"id": contract_id, "short": names.get(contract_id, "T?"), "workload": display_name(w.name),

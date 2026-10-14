@@ -40,7 +40,7 @@ OBLIGATIONS = [
 def tiling_contract(workload: Workload, hw: HardwareContract | None = None, precondition: str = "exact",
                     structure: dict | None = None, rationale: str = "", parent: str | None = None,
                     structural: dict | None = None, formulator: str = "scripted", **provenance) -> dict:
-    hw = hw or HardwareContract()
+    chip = hw if isinstance(hw, dict) else {**(hw or HardwareContract()).to_dict(), "kind": "illustrative"}
     structural = {**DEFAULT_STRUCTURE, **(structural or {})}
     pre_desc, _ = PRECONDITIONS[precondition]
     c3 = {"exact": "P <= S - 2 + beta", "conservative": "P <= S - 1 and beta = 1",
@@ -53,7 +53,7 @@ def tiling_contract(workload: Workload, hw: HardwareContract | None = None, prec
         "strength": "observed", "evidence": []}
     return {
         "parent": parent, "level": LEVEL, "object": "shared-memory slot", "template": TEMPLATE,
-        "scope": {"workload": workload.to_dict(), "chip": hw.to_dict(), "structure": structural},
+        "scope": {"workload": workload.to_dict(), "chip": chip, "structure": structural},
         "signature": f"{TEMPLATE}:{precondition}:{structural['grid_rounding']}:{structural['guard']}:"
                      f"{structural['stride_offset']}:{int(structural['leading_barrier'])}",
         "decisions": {

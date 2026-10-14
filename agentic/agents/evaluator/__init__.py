@@ -15,6 +15,7 @@ from itertools import product
 
 from ...templates.smem_tiling import (K_TILE_MENU, PREFETCH_MENU, STAGE_MENU, TILE_MENU, HardwareContract,
                                       TilingDesign, Workload, cost_model, search_face_violations)
+from ...chips import hardware_contract
 from ..verifier import decode
 
 RESOURCE_REGIME = {"compute": "compute-bound", "DRAM": "memory-bound"}
@@ -36,7 +37,7 @@ def measure(T: dict, x: dict, backend: str = "roofline") -> dict:
     if backend != "roofline":
         raise ValueError(f"no evaluator backend {backend!r} (Ventus adapter is S4 follow-up)")
     w = Workload(**T["scope"]["workload"])
-    hw = HardwareContract(**T["scope"]["chip"])
+    hw = hardware_contract(T["scope"]["chip"])
     d = decode(T, x["values"])
     e = _evaluate(d, w, hw)
     measured, predicted = e["time_us"], x["objective"]
@@ -52,7 +53,7 @@ def measure(T: dict, x: dict, backend: str = "roofline") -> dict:
 def probe(T: dict) -> dict:
     """Regime over the branch: dominant resource on every feasible design of the menu."""
     w = Workload(**T["scope"]["workload"])
-    hw = HardwareContract(**T["scope"]["chip"])
+    hw = hardware_contract(T["scope"]["chip"])
     mode = next(p["mode"] for p in T["preconditions"] if p["id"] == "lifetime")
     s = T["scope"]["structure"]
     counts: dict[str, int] = {}

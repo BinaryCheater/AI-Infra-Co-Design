@@ -3,22 +3,96 @@
   "$id": "agentic/measurement",
   "title": "Evaluator output for one decoded design",
   "type": "object",
-  "required": ["id", "contract", "assignment", "design", "predicted_cost", "measured_cost", "utilizations",
-               "dominant_resource", "simulator"],
+  "required": [
+    "id",
+    "contract",
+    "assignment",
+    "design",
+    "predicted_cost",
+    "measured_cost",
+    "utilizations",
+    "dominant_resource",
+    "simulator"
+  ],
   "additionalProperties": false,
   "properties": {
-    "id": {"type": "string"},
-    "contract": {"type": "string"},
-    "assignment": {"type": "string"},
-    "design": {"type": "object"},
-    "predicted_cost": {"type": "number"},
-    "measured_cost": {"type": "number"},
-    "discrepancy": {"type": "number", "description": "(measured - predicted) / predicted"},
-    "utilizations": {"type": "object", "additionalProperties": {"type": "number"}},
-    "dominant_resource": {"type": "string"},
-    "simulator": {"type": "string"},
-    "seed": {"type": ["integer", "null"]},
-    "detail": {"type": "object"},
-    "provenance": {"type": "object"}
+    "id": {
+      "type": "string"
+    },
+    "contract": {
+      "type": "string"
+    },
+    "assignment": {
+      "type": "string"
+    },
+    "design": {
+      "type": "object"
+    },
+    "predicted_cost": {
+      "type": "number"
+    },
+    "measured_cost": {
+      "type": "number"
+    },
+    "discrepancy": {
+      "type": "number",
+      "description": "(measured - predicted) / predicted"
+    },
+    "utilizations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "dominant_resource": {
+      "type": "string"
+    },
+    "simulator": {
+      "type": "string"
+    },
+    "seed": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "detail": {
+      "type": "object"
+    },
+    "provenance": {
+      "type": "object"
+    },
+    "kernel": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "kernel artifact that produced the number"
+    },
+    "reference_agrees": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "ci95": {
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "clocks": {
+      "type": [
+        "string",
+        "object",
+        "null"
+      ]
+    },
+    "host": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
   }
 }
