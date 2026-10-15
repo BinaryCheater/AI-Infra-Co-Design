@@ -28,6 +28,7 @@ WORKLOAD_NAMES = {
 }
 CHIP_NAMES = {
     "illustrative-fp32-gpu": "the illustrative FP32 GPU (128 SMs, 96 KiB smem/block, 1.8 TB/s)",
+    "spark-6951-gb10": "the GB10 chip in the DGX Spark (host spark-6951)",
 }
 REGIME_WORDS = {"compute": "compute-bound", "DRAM": "memory-bound"}
 CHIP_SHORT = {"illustrative-fp32-gpu": "the illustrative FP32 GPU", "spark-6951-gb10": "spark-6951 (GB10)"}
@@ -129,7 +130,7 @@ def describe(ledger: Ledger, contract_id: str, run: str | None = None, _ctx: dic
     inst = next((w for w in verdicts if w["check"] == "instance"), None)
     m = _dedupe(v["measurements"])[-1] if v["measurements"] else None
     diag = v["diagnoses"][0] if v["diagnoses"] else None
-    mode = next((p["mode"] for p in T["preconditions"] if p["id"] == "lifetime"), None)
+    mode = next((p["mode"] for p in T["preconditions"] if p["id"] == "lifetime"), None) or (T["preconditions"][0].get("mode") if T["preconditions"] else None)
     pre = next((p for p in T["preconditions"] if p["id"] == "lifetime"), T["preconditions"][0])
     c3 = next((c for c in T["constraints"] if c["id"] == "C3"), None)
 
@@ -182,7 +183,7 @@ def describe(ledger: Ledger, contract_id: str, run: str | None = None, _ctx: dic
     elif x:
         outcome = f"{x['objective']:.1f} µs predicted"
     else:
-        outcome = "waiting"
+        outcome = "not checked yet"
     chip_short = CHIP_SHORT.get(chip.get("name"), chip.get("name", "?"))
     headline = f"{short} · {what[0].upper() + what[1:]} on {chip_short} · {status} · {outcome}"
 
@@ -193,6 +194,22 @@ def describe(ledger: Ledger, contract_id: str, run: str | None = None, _ctx: dic
     systems = _systems(T, x, m, parent, parent_short, ph, mode, status, fam, inst, failure_words, what, chip_name, inc)
     optimization = _optimization(T, x, parent_short, ph, mode, status, fam, inst, c3, pre, failure_words, v)
     proof = _proof(T, fam, inst, cex, ph, mode, pre, reused_owner, failure_words, diag)
+    # the plain-language sections every tab shows (ledger/plain.py); the formal statements stay in each section's details
+    from . import plain
+    px = _dedupe(parent["assignments"])[-1] if parent and parent["assignments"] else None
+    vals = (x or {}).get("values") or {}
+    feas = next((e["payload"].get("feasible_designs") for e in v["events"] if e["kind"] == "regime_bound"
+                 and e["payload"].get("feasible_designs")), None)
+    ctx = {"T": T, "ph": ph, "short": short, "x": x, "px": px, "parent_short": parent_short, "m": m, "status": status,
+           "fam": fam, "inst": inst, "cex": cex, "failure_words": failure_words, "diag": diag, "chip_name": chip_name,
+           "what": what, "inc": inc, "is_best": is_best, "reused_owner": reused_owner, "feasible": feas,
+           "decision_order": [k for k, _ in _decisions(T, ph)], "changes": _design_changes(x, px, ph), "mode": mode,
+           "on_boundary": c3 is not None and bool(vals) and vals.get("P") == vals.get("S", 0) - 2 + vals.get("beta", 0),
+           "size": optimization.get("size"), "solver": optimization.get("solver"), "cost_model": _math(T["cost"]["model"]),
+           "math": _math}
+    for lens_dict, make in ((systems, plain.systems), (optimization, plain.optimization), (proof, plain.proof)):
+        lens_dict["sections"] = make(ctx)
+        lens_dict["text"] = plain.text_of(lens_dict["sections"])
     return {
         "id": contract_id, "short": short, "status": status, "headline": headline, "delta_from_parent": delta,
         "workload": wl_name, "chip": chip_name, "chip_short": chip_short, "chip_kind": chip.get("kind", "illustrative"),
@@ -219,7 +236,7 @@ def describe_all(ledger: Ledger, run: str) -> dict[str, dict]:
 def _delta(T, P, parent_short, ph, mode, wl_name) -> str:
     pre_words = (ph.get("precondition_in_words") or {})
     if P is None:
-        return f"First template of the run: {pre_words.get(mode, 'precondition ' + str(mode))}."
+        return "First template of the run."
     changes = []
     for field in ph.get("delta_fields", []):
         a, b = _get(P, field), _get(T, field)
@@ -227,7 +244,7 @@ def _delta(T, P, parent_short, ph, mode, wl_name) -> str:
             continue
         if field.endswith(".mode"):
             label = (ph.get("precondition_label") or {}).get(b, b)
-            changes.append(f"the prefetch rule is {label}: {pre_words.get(b, b)}")
+            changes.append(f"the safety rule is {label}: {pre_words.get(b, b)}")
         elif ".structure." in field:
             name = field.rsplit(".", 1)[1]
             words = ((ph.get("structure_in_words") or {}).get(name) or {}).get(str(b).lower(), f"{name} = {b}")

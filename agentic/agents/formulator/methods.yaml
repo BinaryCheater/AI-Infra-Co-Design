@@ -1,0 +1,325 @@
+# The optimization methods, level by level: the domain know-how the proposer chooses from.
+#
+# One entry per method. A proposal names the methods it uses (the template's `methods` field), so it is a choice from this
+# list, not an invention; the console shows the list on the level ladder, with which methods the run's templates use, which
+# have no template yet, and which do not apply to the workload. Adding a method means adding an entry here.
+#
+# Fields:
+#   id, level, name    the level numbers follow the console's ladder: 1 workload, 2 graph, 3 operators, 4 tensor map,
+#                      5 instructions, 6 architecture, 7 microarchitecture
+#   what               what the method changes, in plain words
+#   helps_when         which bottleneck it relieves, for which workloads
+#   costs              what it costs in return
+#   choices            the decisions it adds to a template, with their ranges
+#   checks             the correctness obligations it brings with it
+#   relies_on          the measured facts it depends on (book chapters and benchmarks on spark-6951)
+#   template           the template that implements it, or null when none exists yet
+#   for_one_matmul     "applies", or "does not apply: <why>" for a workload that is one matrix multiplication
+#   fixed              true for hardware methods: the hardware is fixed in this study
+
+levels:
+  1: workload
+  2: graph
+  3: operators
+  4: tensor map
+  5: instructions
+  6: architecture
+  7: microarchitecture
+
+methods:
+  # ------------------------------------------------------------------------------------------------ 1 workload
+  - id: exploit_structure
+    level: 1
+    name: Use structure in the matrices
+    what: If a matrix is symmetric, triangular, sparse or low rank, compute only the part that carries information.
+    helps_when: The matrices have such structure; it removes work, not just time.
+    costs: A different algorithm per kind of structure.
+    choices: [{name: structure, domain: [dense, symmetric, triangular, sparse, low rank]}]
+    checks: ["The result equals the dense product."]
+    relies_on: []
+    template: null
+    for_one_matmul: "does not apply: the matrices in these workloads are dense with no structure"
+
+  # ------------------------------------------------------------------------------------------------ 2 graph
+  - id: layout
+    level: 2
+    name: Data layout and transposes
+    what: Store a matrix row by row or column by column; storing one transposed costs an extra pass over it but can make every later read contiguous.
+    helps_when: The kernel below reads a matrix along its columns; a transposed copy turns that into contiguous reads.
+    costs: One extra read and write of the matrix through DRAM (K × N × 4 bytes each way for B).
+    choices: [{name: layout_A, domain: [as given, transposed]}, {name: layout_B, domain: [as given, transposed]}]
+    checks: ["Every node reads its inputs in the layout its producer wrote them."]
+    relies_on: ["DRAM read and write bandwidth (Chapter 8, B4)", "L2 capacity (Chapter 7, B13)"]
+    template: gemm_graph
+    for_one_matmul: applies
+
+  - id: split_k
+    level: 2
+    name: Split the shared dimension (split-K)
+    what: Cut K into parts, multiply each part on its own in parallel, then add the partial results.
+    helps_when: The output is too small to give every SM work (few output tiles, long K), as in the skinny matrix.
+    costs: The partial results go through memory and must be added up (split × M × N × 4 bytes read, plus a write).
+    choices: [{name: split_k, domain: [1, 2, 4, 8]}]
+    checks: ["The partial products over the parts of K add up to the full product (up to the order of FP32 additions)."]
+    relies_on: ["48 SMs and how blocks fill them (Chapter 1, B1, B16)", "DRAM bandwidth (Chapter 8, B4)", "atomics at L2 (Chapter 7, B24)"]
+    template: gemm_graph
+    for_one_matmul: applies
+
+  - id: precision
+    level: 2
+    name: Number format
+    what: Multiply in FP32, or in a smaller format (TF32, BF16, FP8) that runs on the tensor cores.
+    helps_when: The answer may be less exact; the tensor cores are 4 to 9 times faster than FP32.
+    costs: Rounding error; the inputs must be converted.
+    choices: [{name: precision, domain: [FP32, TF32, BF16, FP8]}]
+    checks: ["The result meets the accuracy the workload asks for."]
+    relies_on: ["tensor and FP32 rates (Chapter 3, B2, B20, B31)", "accumulation rounding (Chapter 3, B26.5)"]
+    template: gemm_graph
+    for_one_matmul: "applies (but these workloads ask for an FP32 answer, so only FP32 is allowed)"
+
+  - id: batching
+    level: 2
+    name: Batch several multiplications
+    what: Run several independent multiplications as one launch.
+    helps_when: Many small multiplications each too small to fill the chip.
+    costs: All of them must have compatible shapes.
+    choices: [{name: batch, domain: [1, 2, 4, 8, 16]}]
+    checks: ["Each output comes from its own inputs."]
+    relies_on: ["kernel launch cost (Chapter 1, B10)", "the gap between kernels (B25)"]
+    template: null
+    for_one_matmul: "does not apply: there is only one multiplication"
+
+  - id: fusion
+    level: 2
+    name: Fuse with neighboring operations
+    what: Merge the multiplication with what comes before or after it (a bias add, an activation, a residual add) so the intermediate never goes to memory.
+    helps_when: The neighbors are memory-bound and their data is the multiplication's output.
+    costs: A bigger, more specialized kernel.
+    choices: [{name: fuse_with, domain: [nothing, bias, activation, residual]}]
+    checks: ["The fused kernel computes the same values as the separate ones."]
+    relies_on: ["DRAM bandwidth (Chapter 8, B4)", "L2 kept across kernels (Chapter 7, B25)"]
+    template: null
+    for_one_matmul: "does not apply: the graph has only one operation"
+
+  - id: reassociate
+    level: 2
+    name: Reorder a chain of products
+    what: For A·B·C, choose (A·B)·C or A·(B·C), whichever does less work.
+    helps_when: Chains of multiplications with very different shapes.
+    costs: None, beyond the rounding order.
+    choices: [{name: order, domain: [left first, right first]}]
+    checks: ["Both orders give the same product (up to rounding)."]
+    relies_on: []
+    template: null
+    for_one_matmul: "does not apply: there is no chain"
+
+  # ------------------------------------------------------------------------------------------------ 3 operators
+  - id: kernel_source
+    level: 3
+    name: Library kernel or generated kernel
+    what: Call a vendor library (cuBLAS) or generate the kernel from a template.
+    helps_when: A library kernel is a strong baseline; a generated one can be specialized and verified.
+    costs: A library kernel cannot be verified or tuned from here.
+    choices: [{name: source, domain: [library, generated]}]
+    checks: ["Either one computes the reference product."]
+    relies_on: ["cuBLAS rates per precision (Chapter 3, B3)"]
+    template: null
+    for_one_matmul: applies
+
+  - id: reduction_kernel
+    level: 3
+    name: How split-K partial results are added
+    what: Add the partial results in a second kernel, with atomic adds at L2, or inside the same kernel (stream-K).
+    helps_when: The graph chose split-K.
+    costs: A second launch, or atomic traffic at L2, or a more complex kernel.
+    choices: [{name: reduce_by, domain: [second kernel, atomics, in-kernel]}]
+    checks: ["Every partial result is added exactly once."]
+    relies_on: ["atomics at L2 (Chapter 7, B24)", "the gap between kernels (B25)"]
+    template: null
+    for_one_matmul: "applies when split_k > 1"
+
+  - id: persistent_kernel
+    level: 3
+    name: Persistent kernel
+    what: Launch one block per SM that loops over output tiles, instead of one block per tile.
+    helps_when: Many waves of short blocks, or a tail wave that leaves SMs idle.
+    costs: The kernel must schedule its own tiles.
+    choices: [{name: blocks, domain: [one per tile, one per SM]}]
+    checks: ["Every output tile is computed exactly once."]
+    relies_on: ["block dispatch order and refill time (Chapter 1, B16)", "launch cost (B10)"]
+    template: null
+    for_one_matmul: applies
+
+  - id: block_order
+    level: 3
+    name: Block launch order for L2 reuse
+    what: Launch blocks in an order (for example, grouped by rows) so blocks running together share their input tiles in L2.
+    helps_when: The matrices do not fit in L2 and blocks re-read the same tiles.
+    costs: A small remapping of block numbers.
+    choices: [{name: order, domain: [row by row, grouped by 4, grouped by 8]}]
+    checks: ["The remapping is a one-to-one map of tiles."]
+    relies_on: ["L2 capacity and the 16 MiB streaming knee (Chapter 7, B4, B13)", "first-wave dispatch order (B16)"]
+    template: null
+    for_one_matmul: applies
+
+  # ------------------------------------------------------------------------------------------------ 4 tensor map
+  - id: smem_tiling
+    level: 4
+    name: Tiling through shared memory
+    what: Each block computes a Tm × Tn tile of C, loading Tk-wide slices of A and B into shared memory and reusing them from there.
+    helps_when: Always for a large multiplication; it turns DRAM reads into shared-memory reads.
+    costs: Shared memory per block, which limits how many blocks fit on an SM.
+    choices: [{name: Tm, domain: [16, 32, 64, 128, 256]}, {name: Tn, domain: [16, 32, 64, 128, 256]}, {name: Tk, domain: [8, 16, 32, 64]}]
+    checks: ["Every output element is covered exactly once; nothing past the end of a matrix is read or written."]
+    relies_on: ["shared-memory banks and the load path (Chapter 5, B6, B30)", "the GEMM inner loop (Chapter 4, B21, B29)", "occupancy (B9)"]
+    template: smem_tiling
+    for_one_matmul: applies
+
+  - id: multi_stage
+    level: 4
+    name: Multi-stage buffering and prefetch
+    what: Rotate S shared-memory slots and load the next tiles P steps ahead, so copies overlap the compute.
+    helps_when: The copies would otherwise stall the compute.
+    costs: S times the shared memory; a rule on how far ahead it may load.
+    choices: [{name: S, domain: [1, 2, 3]}, {name: P, domain: [0, 1, 2]}]
+    checks: ["A slot is not overwritten while a warp still reads it; a warp reads a slot only after its load completed."]
+    relies_on: ["cp.async latency and completion (Chapter 5, B8, B15)", "the copy that does not overlap (gaps 29, 30)"]
+    template: smem_tiling
+    for_one_matmul: applies
+
+  - id: barrier_placement
+    level: 4
+    name: Barrier placement
+    what: Decide whether a barrier after each compute step (the trailing barrier) is needed, given the buffering.
+    helps_when: Enough slots make the trailing barrier unnecessary, saving one barrier per step.
+    costs: Dropping it is only safe under the right prefetch rule.
+    choices: [{name: beta, domain: [kept, dropped]}]
+    checks: ["No warp can overwrite a slot another warp is reading."]
+    relies_on: ["barrier cost (Chapter 5, B7)", "shared-memory visibility (B26.3)"]
+    template: smem_tiling
+    for_one_matmul: applies
+
+  - id: register_blocking
+    level: 4
+    name: Register blocking
+    what: Each thread computes a small block of outputs in registers, reusing each loaded value several times.
+    helps_when: Shared-memory loads, not arithmetic, would limit the loop.
+    costs: Registers per thread, which limit how many warps fit.
+    choices: [{name: thread_tile, domain: ["Tm/16 × Tn/16 (set by the tile with 256 threads)"]}]
+    checks: ["Each output element belongs to exactly one thread."]
+    relies_on: ["the load queue and wavefronts (Chapter 5, B30)", "registers and occupancy (B9, B19, B40)"]
+    template: smem_tiling
+    for_one_matmul: applies
+
+  - id: copy_engine
+    level: 4
+    name: Copy engine (cp.async or TMA)
+    what: Bring tiles in with per-thread asynchronous copies (cp.async) or with the bulk copy engine (TMA) and an mbarrier.
+    helps_when: TMA frees the threads from address arithmetic; cp.async needs no tensor map.
+    costs: TMA needs a tensor map and mbarrier handling; both share the chip's copy bandwidth.
+    choices: [{name: engine, domain: [cp.async, TMA]}]
+    checks: ["A tile is read only after its copy completed."]
+    relies_on: ["cp.async and TMA completion (Chapter 5, B8, B15, B35, B36)", "mbarrier cost (B37)"]
+    template: null
+    for_one_matmul: applies
+
+  - id: tensor_cores
+    level: 4
+    name: Tensor cores with ldmatrix
+    what: Feed the tensor cores with mma.sync, loading fragments from shared memory with ldmatrix.
+    helps_when: A smaller number format is allowed; then the multiply runs 4 to 9 times faster.
+    costs: Needs TF32, BF16 or FP8 inputs; a swizzled shared-memory layout; many accumulator registers.
+    choices: [{name: mma_shape, domain: [m16n8k16, m16n8k8]}, {name: swizzle, domain: [on, off]}]
+    checks: ["The fragments map to the right elements; accumulation meets the accuracy asked for."]
+    relies_on: ["the tensor path (Chapter 3, B31, B32, B33, B34)", "the BF16 tile composite (C1)"]
+    template: null
+    for_one_matmul: "does not apply while the workload asks for an FP32 answer (it needs TF32 or smaller)"
+
+  - id: smem_swizzle
+    level: 4
+    name: Shared-memory swizzle or padding
+    what: Rearrange or pad the tile in shared memory so a warp's loads hit different banks.
+    helps_when: The access pattern makes several threads hit the same bank.
+    costs: Slightly more complex addressing, or a little extra shared memory.
+    choices: [{name: layout, domain: [plain, padded, swizzled]}]
+    checks: ["Every element still has exactly one place."]
+    relies_on: ["bank conflicts (Chapter 5, B6, B26.6)", "swizzled ldmatrix (B20, B32)"]
+    template: null
+    for_one_matmul: applies
+
+  # ------------------------------------------------------------------------------------------------ 5 instructions
+  - id: unrolling
+    level: 5
+    name: Loop unrolling
+    what: Repeat the loop body several times so the compiler can schedule loads ahead of their use.
+    helps_when: The loop waits on short latencies between dependent instructions.
+    costs: More registers and a bigger loop.
+    choices: [{name: unroll, domain: [1, 2, 4, 8]}]
+    checks: ["The unrolled loop does the same work."]
+    relies_on: ["the SASS of the generated kernels (Chapters 10, 13)", "scoreboard latencies (B27)"]
+    template: null
+    for_one_matmul: "applies (today fixed at 4 in the tiling template's code, not a choice)"
+
+  - id: vector_access
+    level: 5
+    name: Wide loads (128-bit)
+    what: Load 16 bytes per thread per instruction instead of 4.
+    helps_when: The load queue, not the bytes, limits the loop.
+    costs: Aligned data and suitable tile shapes.
+    choices: [{name: width, domain: [32-bit, 64-bit, 128-bit]}]
+    checks: ["Addresses are aligned."]
+    relies_on: ["load widths and wavefronts (Chapter 5, B21, B30)"]
+    template: null
+    for_one_matmul: applies
+
+  - id: address_hoisting
+    level: 5
+    name: Cheaper copy address code
+    what: Compute the copy addresses and bounds checks once per tile instead of once per chunk.
+    helps_when: The copy code's own instructions slow the loop; on the tensor tile they cost about 440 cycles per step.
+    costs: More registers to hold the precomputed addresses.
+    choices: [{name: address_code, domain: [per chunk, per tile]}]
+    checks: ["Every chunk still goes to the right place."]
+    relies_on: ["integer instruction rates (Chapter 3, B21)", "the copy cost on the tensor tile (gap 29)"]
+    template: null
+    for_one_matmul: applies
+
+  - id: register_cap
+    level: 5
+    name: Register cap and occupancy
+    what: Limit registers per thread so more warps fit on an SM, at the risk of spilling to local memory.
+    helps_when: Latency needs more warps to hide it, and the kernel has registers to spare.
+    costs: Spills, which are very slow (12 times on the 192-accumulator tensor loop).
+    choices: [{name: max_registers, domain: [255, 160, 128, 96]}]
+    checks: ["None for correctness; spills only cost time."]
+    relies_on: ["residency by registers (B9, B40)", "spill cost (B19, B34)"]
+    template: null
+    for_one_matmul: applies
+
+  # ------------------------------------------------------------------------------------------------ 6 architecture (fixed)
+  - id: chip_resources
+    level: 6
+    name: Chip resources
+    what: The number of SMs, shared memory per SM, L2 size and DRAM bandwidth.
+    helps_when: Hardware co-design; not in this study.
+    costs: Silicon.
+    choices: [{name: sms, domain: [48]}, {name: smem_per_sm, domain: [100 KB]}, {name: l2, domain: [24 MiB]}, {name: dram, domain: [235 GB/s]}]
+    checks: []
+    relies_on: ["Chapters 1", "7", "8"]
+    template: null
+    for_one_matmul: applies
+    fixed: true
+
+  # ------------------------------------------------------------------------------------------------ 7 microarchitecture (fixed)
+  - id: sm_internals
+    level: 7
+    name: SM internals
+    what: The warp schedulers, the load/store queue, the shared-memory banks, the copy engines.
+    helps_when: Hardware co-design; not in this study.
+    costs: Silicon.
+    choices: [{name: schedulers, domain: [4]}, {name: banks, domain: [32]}]
+    checks: []
+    relies_on: ["Chapters 2 and 5"]
+    template: null
+    for_one_matmul: applies
+    fixed: true

@@ -28,10 +28,11 @@ window.Transport = (() => {
   for (const b of $("speed-seg").children) b.onclick = () => S.setSpeed(b.dataset.speed === "inf" ? "inf" : +b.dataset.speed);
   for (const b of $("breakpoints").children) b.onclick = () => { const n = b.dataset.bp; if (bps.has(n)) bps.delete(n); else bps.add(n); S.send({ op: "breakpoints", names: [...bps] }); render(); };
   $("btn-new-run").onclick = () => {
-    const name = prompt("name for the new run", `run-${String((S.state.runs || []).length + 1).padStart(3, "0")}`);
-    if (!name) return;
+    if (window.Workload && !Workload.chosen()) { S.emit("toast", "Choose a workload first (Step 1).", true); return; }
+    const name = `${Workload.chosen().replace(/_.*/, "")}-${String((S.state.runs || []).length + 1).padStart(3, "0")}`;   // e.g. square-001
     S.send({ op: "breakpoints", names: [...bps] });
-    S.send({ op: "start", run: name, mode: "observe" });
+    // stop after every station, so each step (propose, prove, solve, measure) waits for "Step station" or "Continue"
+    S.send({ op: "start", run: name, mode: "drive" });
   };
   $("btn-back-live").onclick = () => S.backToLive();
   $("run-select").onchange = e => { S.send({ op: "select", run: e.target.value }); setTimeout(() => fetch("/api/state").then(r => r.json()).then(s => S.emit("state-reload", s)), 100); };

@@ -1,0 +1,50 @@
+# Per-template phrasing for the graph-level matrix-multiplication template (agentic/examples/gemm_graph).
+gemm_graph:
+  what_it_decides: "lays out the operator graph of {workload}"
+  decides_in_words: >-
+    whether B is used as given or stored transposed, whether the long dimension K is cut into 1, 2, 4 or 8 parts that are
+    multiplied side by side and added up afterwards, and the number format of the multiply
+  precondition_in_words:
+    exact: "adding the partial products over the parts of K gives the same C"
+  precondition_strictness: {exact: 0}
+  precondition_label:
+    exact: "exact"
+  failure_in_words:
+    equivalence: "the parts of K do not add up to the full product"
+    shapes: "a node gets inputs of the wrong shape"
+    precision: "the result is not computed in the FP32 the workload asks for"
+  decision_order: [layout_B, split_k, precision]
+  decision_units:
+    layout_B: ""
+    split_k: "parts"
+    precision: ""
+  decision_change_in_words:
+    split_k: "K cut into {new} parts instead of {old}"
+    layout_B: "B {new} instead of {old}"
+  delta_fields:
+    - scope.workload.name
+  # ---- plain words for the inspector (agentic/ledger/plain.py)
+  intro_in_words: >-
+    It lays out the work as a small graph of steps, before any code is written. For one multiplication the graph has one main
+    step, C = A × B. What is left to decide is whether to prepare B first and whether to cut the work into pieces.
+  decision_words:
+    layout_B: {label: "How B is stored", values: {as_given: "as given (row by row)", transposed: "transposed (column by column)"}}
+    split_k: {label: "Pieces K is cut into", unit: "pieces"}
+    precision: {label: "Number format"}
+  meaning_in_words:
+    layout_B: "keep B as it is, or first store a transposed copy (one extra pass over B)"
+    split_k: "multiply each piece of K separately and side by side, then add the partial results"
+    precision: "FP32, or a smaller format that runs faster on the tensor cores but rounds more"
+  constraints_in_words:
+    G1: "The number format must be FP32: the workload asks for an FP32 answer, and TF32 or BF16 would change it."
+    G2: "K must divide evenly into the pieces, and each piece must be at least 64 long, so it can still be tiled."
+    G3: "The partial results of all the pieces must fit in memory."
+  goal_in_words: "Make the whole multiplication finish as fast as possible."
+  cost_in_words:
+    - "The multiplication itself: decided by the levels below. Here only its lower limit is known: {t_compute_us} µs at the chip's full FP32 speed."
+    - "A transposed copy of B, if chosen: one read and one write of B through memory."
+    - "Adding up the pieces of K, if K is cut: reading every partial result and writing C once."
+  obligations_in_words:
+    equivalence: "Adding up the partial products of the pieces of K gives A × B."
+    shapes: "Every step gets inputs of the shape it expects."
+    precision: "The result is computed in FP32, as the workload asks."

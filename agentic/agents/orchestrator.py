@@ -26,6 +26,7 @@ from .formulator import well_formed
 
 MODES = ("observe", "step", "drive")
 STEP_CHECKPOINTS = ("proposed", "admitted")
+CHECKED_TEMPLATES = {"smem_tiling"}        # templates the verifier, solver and evaluator services handle
 CHECKPOINTS = ("proposed", "solved", "refuted", "regime_flip", "admitted")
 DEFAULT_BREAKPOINTS = frozenset({"refuted", "regime_flip"})
 DEFAULT_PARAMS = {"eps": 0.05, "B": 20, "delta": 0.15, "discrepancy_tol": 0.05}
@@ -310,6 +311,12 @@ class Orchestrator:
         self._checkpoint("proposed", tid, apply_proposed)
         T, tid = box["T"], box["tid"]
 
+        if T.get("template") not in CHECKED_TEMPLATES:
+            # no checker, solver or evaluator handles this template yet (the graph level is new): record it and go on
+            self._append("note", {"not_checked": T.get("template"), "level": T.get("level"),
+                                  "reason": "no checker, solver or evaluator for this template yet"}, tid)
+            cur["step"] += 1
+            return False
         problems = well_formed(T)
         if problems:
             self._append("rejected", {"reason": "malformed", "problems": problems}, tid)

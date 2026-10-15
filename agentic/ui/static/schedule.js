@@ -20,26 +20,28 @@ window.ScheduleView = (() => {
     const box = el("div", "schedule");
     container.append(box);
     if (!sch.block) {
-      box.append(el("div", "muted", sch.note || "no schedule"));
-      if (sch.counterexample) { box.append(el("h3", "", "what the verifier found")); box.append(counterexamplePanel(sch)); }
+      box.append(el("p", "", sch.note || "There is no timeline for this template."));
+      if (sch.counterexample) { box.append(el("h3", "", "What the checker found")); box.append(counterexamplePanel(sch)); }
       return sch;
     }
     const toggles = el("div", "toggles");
     const mkToggle = (key, label, onChange) => { const b = el("button", state[key] ? "on" : "", label); b.onclick = async () => { state[key] = !state[key]; if (onChange) await onChange(); draw(); }; toggles.append(b); return b; };
-    mkToggle("proved", "show what was proved");
-    if (sch.counterexample) mkToggle("cex", "show the counterexample");
-    if (sch.parent) mkToggle("parent", "compare with parent", async () => { if (state.parent && !parent) parent = await S.api("schedule/" + sch.parent); });
-    mkToggle("all", "all phases");
+    mkToggle("proved", "show what the checker proved");
+    if (sch.counterexample) mkToggle("cex", "show the bug");
+    if (sch.parent) mkToggle("parent", "compare with the parent template", async () => { if (state.parent && !parent) parent = await S.api("schedule/" + sch.parent); });
+    mkToggle("all", "show every step");
     box.append(toggles);
     const gridHost = el("div"), pipeHost = el("div", "pipe-host"), stripHost = el("div"), cexHost = el("div"), captionHost = el("div", "muted caption");
-    box.append(el("h3", "", "the grid and its waves"), gridHost, el("h3", "", "the block pipeline"), pipeHost, el("h3", "", "resources"), stripHost, cexHost, captionHost);
+    box.append(el("h3", "", "How C is split into blocks, and the rounds the chip runs them in"), gridHost,
+               el("h3", "", "One block over time: tiles arriving, the buffers holding them, barriers, and the arithmetic"), pipeHost,
+               el("h3", "", "How busy each part of the chip is"), stripHost, cexHost, el("p", "muted caption", ""), captionHost);
     if (state.parent && sch.parent && !parent) parent = await S.api("schedule/" + sch.parent);
     function draw() {
-      for (const b of toggles.children) b.classList.toggle("on", !!state[{ "show what was proved": "proved", "show the counterexample": "cex", "compare with parent": "parent", "all phases": "all" }[b.textContent]]);
+      for (const b of toggles.children) b.classList.toggle("on", !!state[{ "show what the checker proved": "proved", "show the bug": "cex", "compare with the parent template": "parent", "show every step": "all" }[b.textContent]]);
       gridHost.innerHTML = ""; gridHost.append(gridPanel(sch));
       pipeHost.innerHTML = ""; pipeHost.append(pipeline(sch, state.parent ? parent : null));
       stripHost.innerHTML = ""; stripHost.append(strip(sch));
-      cexHost.innerHTML = ""; if (state.cex && sch.counterexample) { cexHost.append(el("h3", "", "the counterexample, in the same lanes")); cexHost.append(counterexamplePanel(sch)); }
+      cexHost.innerHTML = ""; if (state.cex && sch.counterexample) { cexHost.append(el("h3", "", "The bug, drawn on the same lines")); cexHost.append(counterexamplePanel(sch)); }
       captionHost.textContent = sch.axis.caption + (state.parent && parent ? ` · ${parent.short}: ${(parent.objective_us).toFixed(1)} µs → ${sch.short}: ${sch.objective_us.toFixed(1)} µs (${((sch.objective_us / parent.objective_us - 1) * 100).toFixed(1)} %)` : "");
       if (window.Glossary) Glossary.apply(captionHost);
     }
@@ -78,7 +80,7 @@ window.ScheduleView = (() => {
   function pipeline(sch, parent) {
     const b = sch.block, Sn = sch.design.S;
     const shown = state.all ? [...Array(sch.axis.phases).keys()] : sch.axis.shown;
-    const laneNames = ["memory: DRAM → shared", ...Array.from({ length: Sn }, (_, i) => `slot ${i}`), "sync", "compute: MMA"];
+    const laneNames = ["tiles arriving from memory", ...Array.from({ length: Sn }, (_, i) => `buffer ${i}`), "barriers", "arithmetic"];
     const laneH = 22, left = 130, top = 26, rowGap = 4;
     const H = top + laneNames.length * (laneH + rowGap) + 30;
     // time window: from the first shown phase's earliest event to the last shown phase's end; abridged view breaks the axis before the last phase
@@ -96,13 +98,13 @@ window.ScheduleView = (() => {
     const drawSet = (blk, ghost) => {
       const Xg = ghost ? (t => left + (t - t0) / (tEnd - t0) * axisW * scale) : X;
       // loads
-      for (const l of blk.loads) { if (!(l.t1 >= t0 && l.t0 <= tEnd)) continue; const r = mk("rect", { x: Xg(l.t0), y: laneY(0) + 3, width: Math.max(1.5, Xg(l.t1) - Xg(l.t0)), height: laneH - 6, fill: ghost ? ghostFill : SLOT_COLORS[l.slot % SLOT_COLORS.length], opacity: ghost ? 1 : 0.9, rx: 2 }, svg); mk("title", {}, r).textContent = (ghost ? "parent: " : "") + `load k-tile ${l.tile} → slot ${l.slot} · ${us(l.t0)}–${us(l.t1)} · ${l.bytes} bytes`; if (!ghost && Xg(l.t1) - Xg(l.t0) > 26) txt(svg, Xg(l.t0) + 3, laneY(0) + 15, `k${l.tile}`, { fill: "#fff" }); }
+      for (const l of blk.loads) { if (!(l.t1 >= t0 && l.t0 <= tEnd)) continue; const r = mk("rect", { x: Xg(l.t0), y: laneY(0) + 3, width: Math.max(1.5, Xg(l.t1) - Xg(l.t0)), height: laneH - 6, fill: ghost ? ghostFill : SLOT_COLORS[l.slot % SLOT_COLORS.length], opacity: ghost ? 1 : 0.9, rx: 2 }, svg); mk("title", {}, r).textContent = (ghost ? "parent: " : "") + `tile ${l.tile} arrives into buffer ${l.slot}, ${us(l.t0)} to ${us(l.t1)}, ${l.bytes} bytes`; if (!ghost && Xg(l.t1) - Xg(l.t0) > 26) txt(svg, Xg(l.t0) + 3, laneY(0) + 15, `k${l.tile}`, { fill: "#fff" }); }
       // slot occupancy
-      for (const s of blk.slots) { if (s.slot >= Sn) continue; if (!(s.t_free >= t0 && s.t_ready <= tEnd)) continue; const r = mk("rect", { x: Xg(s.t_ready), y: laneY(1 + s.slot) + 3, width: Math.max(1.5, Xg(s.t_last_read) - Xg(s.t_ready)), height: laneH - 6, fill: ghost ? ghostFill : SLOT_COLORS[s.slot % SLOT_COLORS.length], opacity: ghost ? 1 : 0.55, rx: 2 }, svg); mk("title", {}, r).textContent = (ghost ? "parent: " : "") + `slot ${s.slot} holds k-tile ${s.tile} · ready ${us(s.t_ready)} · last read ${us(s.t_last_read)} (lifetime)`; if (!ghost && Xg(s.t_last_read) - Xg(s.t_ready) > 26) txt(svg, Xg(s.t_ready) + 3, laneY(1 + s.slot) + 15, `k${s.tile}`, { fill: NAVY }); }
+      for (const s of blk.slots) { if (s.slot >= Sn) continue; if (!(s.t_free >= t0 && s.t_ready <= tEnd)) continue; const r = mk("rect", { x: Xg(s.t_ready), y: laneY(1 + s.slot) + 3, width: Math.max(1.5, Xg(s.t_last_read) - Xg(s.t_ready)), height: laneH - 6, fill: ghost ? ghostFill : SLOT_COLORS[s.slot % SLOT_COLORS.length], opacity: ghost ? 1 : 0.55, rx: 2 }, svg); mk("title", {}, r).textContent = (ghost ? "parent: " : "") + `buffer ${s.slot} holds tile ${s.tile} from ${us(s.t_ready)} (loaded) to ${us(s.t_last_read)} (last used); it must not be overwritten in between`; if (!ghost && Xg(s.t_last_read) - Xg(s.t_ready) > 26) txt(svg, Xg(s.t_ready) + 3, laneY(1 + s.slot) + 15, `k${s.tile}`, { fill: NAVY }); }
       // barriers
-      for (const x of blk.barriers) { if (!(x.t >= t0 && x.t <= tEnd)) continue; const l = mk("line", { x1: Xg(x.t), x2: Xg(x.t), y1: laneY(1 + Sn) + 2, y2: laneY(1 + Sn) + laneH - 2, stroke: ghost ? "rgba(197,74,56,0.35)" : RED, "stroke-width": x.kind === "trailing" ? 2.5 : 1.5, "stroke-dasharray": x.kind === "trailing" ? "3 2" : null }, svg); mk("title", {}, l).textContent = (ghost ? "parent: " : "") + `${x.kind} barrier, phase ${x.phase} · ${us(x.t)}`; }
+      for (const x of blk.barriers) { if (!(x.t >= t0 && x.t <= tEnd)) continue; const l = mk("line", { x1: Xg(x.t), x2: Xg(x.t), y1: laneY(1 + Sn) + 2, y2: laneY(1 + Sn) + laneH - 2, stroke: ghost ? "rgba(197,74,56,0.35)" : RED, "stroke-width": x.kind === "trailing" ? 2.5 : 1.5, "stroke-dasharray": x.kind === "trailing" ? "3 2" : null }, svg); mk("title", {}, l).textContent = (ghost ? "parent: " : "") + `${x.kind === "trailing" ? "barrier after the step" : "barrier before the step"}, step ${x.phase}, at ${us(x.t)}: all threads wait here`; }
       // computes
-      for (const c of blk.computes) { if (!(c.t1 >= t0 && c.t0 <= tEnd)) continue; const r = mk("rect", { x: Xg(c.t0), y: laneY(laneNames.length - 1) + 3, width: Math.max(1.5, Xg(c.t1) - Xg(c.t0)), height: laneH - 6, fill: ghost ? ghostFill : NAVY, rx: 2, "data-tile": ghost ? null : c.tile }, svg); mk("title", {}, r).textContent = (ghost ? "parent: " : "") + `compute k-tile ${c.tile} from slot ${c.slot} · ${us(c.t0)}–${us(c.t1)} · ${(c.flops / 1e6).toFixed(2)} MFLOP`; if (!ghost && Xg(c.t1) - Xg(c.t0) > 26) txt(svg, Xg(c.t0) + 3, laneY(laneNames.length - 1) + 15, `k${c.tile}`, { fill: "#fff" }); }
+      for (const c of blk.computes) { if (!(c.t1 >= t0 && c.t0 <= tEnd)) continue; const r = mk("rect", { x: Xg(c.t0), y: laneY(laneNames.length - 1) + 3, width: Math.max(1.5, Xg(c.t1) - Xg(c.t0)), height: laneH - 6, fill: ghost ? ghostFill : NAVY, rx: 2, "data-tile": ghost ? null : c.tile }, svg); mk("title", {}, r).textContent = (ghost ? "parent: " : "") + `arithmetic on tile ${c.tile} from buffer ${c.slot}, ${us(c.t0)} to ${us(c.t1)}, ${(c.flops / 1e6).toFixed(2)} million operations`; if (!ghost && Xg(c.t1) - Xg(c.t0) > 26) txt(svg, Xg(c.t0) + 3, laneY(laneNames.length - 1) + 15, `k${c.tile}`, { fill: "#fff" }); }
     };
     if (parent && parent.block) drawSet(parent.block, true);
     drawSet(b, false);
@@ -119,8 +121,8 @@ window.ScheduleView = (() => {
     mk("line", { x1: left, x2: left + axisW * scale, y1: axY, y2: axY, stroke: LINE }, svg);
     for (const p of contiguous) { const x = X(b.computes[p].t0); txt(svg, x, axY + 12, `k${p}`, { "text-anchor": "middle" }); }
     const sc = sch.axis.measured_scale || 1;
-    txt(svg, left, axY + 24, `0 → ${us(tEnd)}` + (state.all ? "" : ` · phases ${contiguous[0]}–${contiguous[contiguous.length - 1]} of ${sch.axis.phases}`) + (sch.axis.modeled ? "" : ` · block time ×${sc.toFixed(2)} to match the measured ${us(sch.block.block_time * sc)}`), {});
-    if (tail.length) { const x = left + axisW * scale + 8; txt(svg, x, axY + 12, "…", { "font-size": 16 }); const p = tail[tail.length - 1], c = b.computes[p]; const r = mk("rect", { x: x + 16, y: laneY(laneNames.length - 1) + 3, width: Math.max(8, (c.t1 - c.t0) / (tEnd - t0) * axisW * scale), height: laneH - 6, fill: NAVY, rx: 2 }, svg); mk("title", {}, r).textContent = `compute k-tile ${c.tile} (last phase) · ${us(c.t0)}–${us(c.t1)}`; txt(svg, x + 16, axY + 12, `k${p}`); txt(svg, x + 16, axY + 24, `ends ${us(b.block_time)}`); }
+    txt(svg, left, axY + 24, `0 → ${us(tEnd)}` + (state.all ? "" : ` · steps ${contiguous[0]} to ${contiguous[contiguous.length - 1]} of ${sch.axis.phases} shown`) + (sch.axis.modeled ? "" : ` · stretched ×${sc.toFixed(2)} to match the measured ${us(sch.block.block_time * sc)}`), {});
+    if (tail.length) { const x = left + axisW * scale + 8; txt(svg, x, axY + 12, "…", { "font-size": 16 }); const p = tail[tail.length - 1], c = b.computes[p]; const r = mk("rect", { x: x + 16, y: laneY(laneNames.length - 1) + 3, width: Math.max(8, (c.t1 - c.t0) / (tEnd - t0) * axisW * scale), height: laneH - 6, fill: NAVY, rx: 2 }, svg); mk("title", {}, r).textContent = `arithmetic on tile ${c.tile} (the last step), ${us(c.t0)} to ${us(c.t1)}`; txt(svg, x + 16, axY + 12, `k${p}`); txt(svg, x + 16, axY + 24, `ends ${us(b.block_time)}`); }
     return svg;
   }
 
@@ -129,19 +131,19 @@ window.ScheduleView = (() => {
     const r = sch.resources, m = r.measured, W = 760, left = 130, barW = W - left - 190;
     const rowH = m ? 40 : 26, H = 6 + 3 * rowH + 14;
     const svg = mk("svg", { viewBox: `0 0 ${W} ${H}`, class: "sched-svg" });
-    const rows = [["DRAM bandwidth", r.dram.util, m && m.dram.util, `${(r.dram.bytes / 1e6).toFixed(1)} MB · ${us(r.dram.s)}`, r.dominant === "DRAM", m && m.dominant === "DRAM"],
-                  ["compute", r.compute.util, m && m.compute.util, us(r.compute.s), r.dominant === "compute", m && m.dominant === "compute"],
+    const rows = [["memory bandwidth", r.dram.util, m && m.dram.util, `${(r.dram.bytes / 1e6).toFixed(1)} MB · ${us(r.dram.s)}`, r.dominant === "DRAM", m && m.dominant === "DRAM"],
+                  ["arithmetic units", r.compute.util, m && m.compute.util, us(r.compute.s), r.dominant === "compute", m && m.dominant === "compute"],
                   ["shared memory", r.smem.util, null, `${(r.smem.bytes / 1024).toFixed(0)} KiB of ${(r.smem.cap / 1024).toFixed(0)} KiB`, false, false]];
     const bar = (y, u, dom, h, title) => { mk("rect", { x: left, y, width: barW, height: h, fill: LIGHT, stroke: LINE }, svg); const f = mk("rect", { x: left, y, width: Math.max(0, Math.min(1, u)) * barW, height: h, fill: dom ? NAVY : TEAL, opacity: dom ? 1 : 0.75 }, svg); if (u > 1) mk("rect", { x: left + barW - 6, y, width: 6, height: h, fill: RED }, svg); mk("title", {}, f).textContent = title; };
     rows.forEach(([name, u, um, label, dom, domM], i) => {
       const y = 6 + i * rowH;
-      txt(svg, 4, y + 13, name + (dom ? " · dominant" : ""), { fill: dom ? NAVY : MUTED, "font-weight": dom ? 700 : 400, "font-size": 12 });
-      if (!m) { bar(y, u, dom, 18, `${name}: ${(u * 100).toFixed(0)} % (modeled)`); txt(svg, left + barW + 8, y + 13, `${(u * 100).toFixed(0)} % · ${label}`, { "font-size": 11 }); return; }
-      bar(y, u, dom, 14, `${name}, modeled: ${(u * 100).toFixed(0)} %`); txt(svg, left + barW + 8, y + 11, `modeled ${(u * 100).toFixed(0)} % · ${label}`, { "font-size": 11 });
-      if (um != null) { bar(y + 17, um, domM, 14, `${name}, measured: ${(um * 100).toFixed(0)} % of the measured contract's rate over the measured time`); const d = um - u; txt(svg, left + barW + 8, y + 28, `measured ${(um * 100).toFixed(0)} % (${d >= 0 ? "+" : ""}${(d * 100).toFixed(0)} pts)` + (um > 1 ? " · over 100 %: the model over-counts this resource" : ""), { "font-size": 11, fill: um > 1 ? RED : MUTED }); }
+      txt(svg, 4, y + 13, name + (dom ? " · the limit" : ""), { fill: dom ? NAVY : MUTED, "font-weight": dom ? 700 : 400, "font-size": 12 });
+      if (!m) { bar(y, u, dom, 18, `${name}: busy ${(u * 100).toFixed(0)} % of the time, by the time formula`); txt(svg, left + barW + 8, y + 13, `${(u * 100).toFixed(0)} % · ${label}`, { "font-size": 11 }); return; }
+      bar(y, u, dom, 14, `${name}, by the time formula: busy ${(u * 100).toFixed(0)} %`); txt(svg, left + barW + 8, y + 11, `formula ${(u * 100).toFixed(0)} % · ${label}`, { "font-size": 11 });
+      if (um != null) { bar(y + 17, um, domM, 14, `${name}, measured: busy ${(um * 100).toFixed(0)} % of the time`); const d = um - u; txt(svg, left + barW + 8, y + 28, `measured ${(um * 100).toFixed(0)} % (${d >= 0 ? "+" : ""}${(d * 100).toFixed(0)} points)` + (um > 1 ? " · over 100 %: the formula counts more use than this part can deliver" : ""), { "font-size": 11, fill: um > 1 ? RED : MUTED }); }
       else txt(svg, left + barW + 8, y + 28, "not measured", { "font-size": 11 });
     });
-    txt(svg, 4, H - 4, m ? "two bars per resource: modeled (top) and measured (bottom)" : "modeled, not measured", { "font-size": 11 });
+    txt(svg, 4, H - 4, m ? "top bar: from the time formula; bottom bar: measured" : "from the time formula, not measured", { "font-size": 11 });
     return svg;
   }
 
@@ -150,12 +152,12 @@ window.ScheduleView = (() => {
     const c = sch.counterexample;
     const box = el("div");
     if (c.kind === "index") {
-      box.append(el("div", "bad", `${c.violation.obligation}: ${c.words}`));
-      if (c.replay && c.replay.shape) box.append(el("div", "muted", `Replayed on shape ${JSON.stringify(c.replay.shape)}: ${c.replay.differences_total} output terms wrong. The red tail in the grid panel is the uncovered part.`));
+      box.append(el("p", "bad", `The bug: ${c.words}.`));
+      if (c.replay && c.replay.shape) box.append(el("p", "", `On a small ${c.replay.shape.join(" × ")} case, ${c.replay.differences_total} values of C came out wrong. The red strip in the block grid above is the part of C that no block computes.`));
       return box;
     }
     const Sn = c.event_model.S, steps = c.steps, n = steps.length;
-    const lanes = ["memory (loads)", ...Array.from({ length: Sn }, (_, i) => `slot ${i}`), "sync", "compute (reads)"];
+    const lanes = ["loads from memory", ...Array.from({ length: Sn }, (_, i) => `buffer ${i}`), "barriers", "arithmetic (uses a buffer)"];
     const left = 130, colW = Math.max(26, Math.min(60, Math.floor(600 / Math.max(n, 1)))), laneH = 22, gap = 4, top = 22;
     const W = left + colW * n + 20, H = top + lanes.length * (laneH + gap) + 34;
     const svg = mk("svg", { viewBox: `0 0 ${W} ${H}`, class: "sched-svg" });
@@ -171,14 +173,14 @@ window.ScheduleView = (() => {
       const color = pair.has(e.step) ? RED : SLOT_COLORS[e.slot % SLOT_COLORS.length];
       if (e.kind === "load") {
         const r = mk("rect", { x: X(e.step) + 2, y: laneY(0) + 3, width: colW - 4, height: laneH - 6, fill: color, opacity: dim ? 0.3 : 0.95, rx: 2 }, svg);
-        mk("title", {}, r).textContent = `warp ${e.warp}: LOAD k-tile ${e.tile} → slot ${e.slot}` + (pair.has(e.step) ? " ← the write that broke the read" : "");
+        mk("title", {}, r).textContent = `thread group ${e.warp} loads tile ${e.tile} into buffer ${e.slot}` + (pair.has(e.step) ? ": this load overwrites a tile still in use" : "");
         txt(svg, X(e.step) + 4, laneY(0) + 15, `w${e.warp} k${e.tile}`, { fill: "#fff", "font-size": 10 });
         const end = lastRead[e.slot + ":" + e.tile]; const x2 = end != null ? X(end) + colW - 2 : X(e.step) + colW - 2;
         const occ = mk("rect", { x: X(e.step) + 2, y: laneY(1 + e.slot) + 3, width: Math.max(4, x2 - X(e.step) - 2), height: laneH - 6, fill: color, opacity: dim ? 0.2 : 0.45, rx: 2 }, svg);
-        mk("title", {}, occ).textContent = `slot ${e.slot} holds k-tile ${e.tile} (warp ${e.warp}'s part)`;
+        mk("title", {}, occ).textContent = `buffer ${e.slot} holds tile ${e.tile} (thread group ${e.warp}'s part)`;
       } else if (e.kind === "compute") {
         const r = mk("rect", { x: X(e.step) + 2, y: laneY(lanes.length - 1) + 3, width: colW - 4, height: laneH - 6, fill: pair.has(e.step) ? RED : NAVY, opacity: dim ? 0.3 : 1, rx: 2 }, svg);
-        mk("title", {}, r).textContent = `warp ${e.warp}: COMPUTE k-tile ${e.tile} reads slot ${e.slot}` + (e.stale ? " ← reads a slot already overwritten" : "");
+        mk("title", {}, r).textContent = `thread group ${e.warp} uses tile ${e.tile} from buffer ${e.slot}` + (e.stale ? ": but the buffer already holds the next tile" : "");
         txt(svg, X(e.step) + 4, laneY(lanes.length - 1) + 15, `w${e.warp} k${e.tile}`, { fill: "#fff", "font-size": 10 });
       }
     }
@@ -186,11 +188,11 @@ window.ScheduleView = (() => {
     if (c.violation.pair && c.violation.pair.length === 2) {
       const [wr, rd] = c.violation.pair;
       const defn = steps.find(e => e.kind === "load" && e.slot === rd.slot && e.tile === rd.tile);
-      if (defn) { const y = laneY(1 + rd.slot) - 2; mk("path", { d: `M${X(defn.step) + 2},${y + 5} v-5 H${X(rd.step) + colW - 2} v5`, fill: "none", stroke: RED, "stroke-width": 1.5, "stroke-dasharray": "4 2" }, svg); txt(svg, X(wr.step) + colW / 2, y - 4, "✕ lifetime broken here", { fill: RED, "text-anchor": "middle", "font-size": 10, "font-weight": 700 }); }
+      if (defn) { const y = laneY(1 + rd.slot) - 2; mk("path", { d: `M${X(defn.step) + 2},${y + 5} v-5 H${X(rd.step) + colW - 2} v5`, fill: "none", stroke: RED, "stroke-width": 1.5, "stroke-dasharray": "4 2" }, svg); txt(svg, X(wr.step) + colW / 2, y - 4, "✕ overwritten while still in use", { fill: RED, "text-anchor": "middle", "font-size": 10, "font-weight": 700 }); }
     }
-    txt(svg, left, H - 8, `event model: ${c.event_model.warps} warps, ${c.event_model.phases} k-phases, S = ${Sn}; columns are the interleaving the checker found (${c.source})`, {});
-    const pairText = c.violation.pair && c.violation.pair.length === 2 ? `warp ${c.violation.pair[0].warp}'s LOAD k-tile ${c.violation.pair[0].tile} → slot ${c.violation.pair[0].slot} lands inside warp ${c.violation.pair[1].warp}'s COMPUTE k-tile ${c.violation.pair[1].tile} read of slot ${c.violation.pair[1].slot}.` : "";
-    box.append(svg, el("div", "bad", `${c.violation.obligation}: ${c.words}. ${pairText}`));
+    txt(svg, left, H - 8, `${c.event_model.warps} groups of threads, ${c.event_model.phases} steps, ${Sn} buffers; each column is one step, in the order the checker found`, {});
+    const pairText = c.violation.pair && c.violation.pair.length === 2 ? `Thread group ${c.violation.pair[0].warp} loads tile ${c.violation.pair[0].tile} into buffer ${c.violation.pair[0].slot} while thread group ${c.violation.pair[1].warp} is still using tile ${c.violation.pair[1].tile} from that same buffer.` : "";
+    box.append(svg, el("p", "bad", `The bug: ${c.words}. ${pairText}`));
     return box;
   }
   return { render, state };

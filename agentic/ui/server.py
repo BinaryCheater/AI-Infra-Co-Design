@@ -29,6 +29,20 @@ from ..ledger.story import story, story_entry
 STATIC = Path(__file__).resolve().parent / "static"
 
 
+CHIP = "spark-6951-gb10"      # the hardware is fixed: the measured GB10
+
+# The workloads the console offers. Each is a matrix multiplication C = A x B in single precision (FP32), with A of size
+# M x K and B of size K x N; all three were measured on the Spark, so a run on them can be checked against the card.
+WORKLOADS = [
+    {"name": "square_4096", "m": 4096, "n": 4096, "k": 4096, "dtype": "FP32", "title": "Square",
+     "why": "The classic case: enough work to keep all 48 SMs busy, and every piece of data is reused many times."},
+    {"name": "skinny_64x4096x4096", "m": 64, "n": 4096, "k": 4096, "dtype": "FP32", "title": "Skinny",
+     "why": "Only 64 rows of output: too few tiles to keep all 48 SMs busy."},
+    {"name": "ragged_1000x1000x1000", "m": 1000, "n": 1000, "k": 1000, "dtype": "FP32", "title": "Uneven",
+     "why": "The sizes do not divide evenly into tiles, so the tiles at the edges need extra checks."},
+]
+
+
 class Session:
     """One ledger, at most one live run, any number of browser clients."""
 
@@ -40,6 +54,7 @@ class Session:
         self.thread: threading.Thread | None = None
         self.loop: asyncio.AbstractEventLoop | None = None
         self.clients: set = set()
+        self.workload: str | None = None                # the workload chosen for the next run (None: not chosen yet)
         ledger.subscribe(self._on_event)
 
     # ---------------------------------------------------------------- run control
@@ -51,7 +66,15 @@ class Session:
             raise RuntimeError("a run is already live")
         self.ctl = Controller(mode, breakpoints=set(self.ctl.breakpoints))   # keep the architect's toggles
         self.run = run
-        self.orch = Orchestrator(self.ledger, run, formulator or ScriptedFormulator(), self.ctl)
+        if formulator is None and self.workload:
+            # the chosen workload, on the measured GB10 (fixed), starting at the graph level; speed checks use the simulator
+            from ..agents.formulator.graph_first import GraphFirstFormulator
+            from ..chips import load_chip, scope_chip
+            w = next(x for x in WORKLOADS if x["name"] == self.workload)
+            chip = scope_chip(load_chip(CHIP))
+            self.orch = Orchestrator(self.ledger, run, GraphFirstFormulator(w, chip), self.ctl, evaluator_backend="simulator", level=2)
+        else:
+            self.orch = Orchestrator(self.ledger, run, formulator or ScriptedFormulator(), self.ctl)
         self.thread = threading.Thread(target=self._guarded_run, name=f"run:{run}", daemon=True)
         self.thread.start()
 
@@ -71,7 +94,7 @@ class Session:
         ctl["error"] = self.orch.error if self.orch else None
         return {"run": self.run, "runs": self.ledger.runs(), "controller": ctl,
                 "timeline": timeline(self.ledger, self.run) if self.run else [],
-                "summary": self._summary()}
+                "summary": self._summary(), "workloads": WORKLOADS, "workload": self.workload}
 
     def _summary(self) -> dict:
         if not self.run:
@@ -91,6 +114,13 @@ class Session:
             self.start(msg.get("run") or f"run-{len(self.ledger.runs()) + 1:03d}", msg.get("mode", "step"))
         elif op == "select":
             self.run = msg["run"]
+        elif op == "workload":
+            name = msg.get("name") or None
+            if self.live():
+                return {"type": "error", "error": "a run is live; choose the workload before starting the next one"}
+            if name is not None and name not in {w["name"] for w in WORKLOADS}:
+                return {"type": "error", "error": f"unknown workload {name!r}"}
+            self.workload = name
         elif op == "mode":
             self.ctl.set_mode(msg["mode"])
         elif op == "breakpoints":
@@ -269,6 +299,10 @@ def api(session: Session, route: str, q: dict):
         return L.events(run, since=int(q.get("since", 0)))
     if route == "catalog":
         return catalog()
+    if route == "workloads":
+        return {"workloads": WORKLOADS, "chosen": session.workload}
+    if route == "methods":
+        return methods_view(L, run)
     if route == "calibration":
         return calibration_index()
     if route == "validation":
@@ -290,6 +324,47 @@ def api(session: Session, route: str, q: dict):
     if route == "checkpoints":
         return L.checkpoints(run)
     raise KeyError(route)
+
+
+def methods_view(L: Ledger, run: str | None) -> dict:
+    """The method list level by level, each method with its status in this run: used by which templates, a template exists
+    but this run did not use it, no template yet, does not apply to the workload, or fixed hardware."""
+    from ..agents.formulator import methods
+    from ..ledger.story import short_names
+    data = methods()
+    used: dict[str, list[str]] = {}
+    templates_in_run: set[str] = set()
+    if run:
+        names = short_names(L, run)
+        for e in L.events(run, kinds=["proposed"]):
+            T = L.get(e["artifact"])
+            templates_in_run.add(T["template"])
+            ids = T.get("methods") or [m["id"] for m in data["methods"] if m.get("template") == T["template"]]
+            for mid in ids:
+                used.setdefault(mid, [])
+                if names.get(e["artifact"]) not in used[mid]:
+                    used[mid].append(names.get(e["artifact"], "T?"))
+    levels = []
+    for num, name in data["levels"].items():
+        ms = []
+        for m in (x for x in data["methods"] if x["level"] == num):
+            fits = str(m.get("for_one_matmul", "applies"))
+            if m.get("fixed"):
+                status, words = "fixed", "hardware: fixed in this study"
+            elif m["id"] in used:
+                status, words = "used", "used by " + ", ".join(used[m["id"]])
+            elif fits.startswith("does not apply"):
+                status, words = "not_applicable", fits[0].upper() + fits[1:]
+            elif m.get("template"):
+                status, words = "available", f"a template exists ({m['template']}), not used in this run yet"
+            else:
+                status, words = "missing", "no template yet"
+            ms.append({**m, "status": status, "status_words": words, "used_by": used.get(m["id"], [])})
+        covered = sum(1 for x in ms if x["status"] == "used")
+        open_ = sum(1 for x in ms if x["status"] in ("used", "available", "missing"))
+        levels.append({"level": num, "name": name, "methods": ms, "used": covered, "applicable": open_,
+                       "fixed": all(x.get("fixed") for x in ms) and bool(ms)})
+    return {"levels": levels}
 
 
 async def ws_handler(session: Session, ws):

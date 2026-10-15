@@ -83,6 +83,13 @@ def story(ledger: Ledger, run: str) -> list[dict]:
             clauses.append({"station": "formulator", "text":
                             f"The agent proposed {p.get('refines') or 'a template'} for "
                             f"{display_name(e['template']['workload'])}, assuming {e['template']['regime']}."})
+        elif k == "note" and p.get("not_checked"):
+            e["outcome"] = "not_checked"
+            e["visits"].append({"station": "orchestrator", "verdict_text": "not checked yet", "time_s": None,
+                                "ok": True, "artifact": a, "seq": ev["seq"]})
+            clauses.append({"station": "orchestrator", "text": f"Not checked yet: there is no checker, solver or simulator "
+                                                               f"step for the level-{p.get('level')} template yet, so it stays "
+                                                               f"in the pool as proposed."})
         elif k in ("human_edit", "human_inject"):
             new = a
             T = ledger.get(new)

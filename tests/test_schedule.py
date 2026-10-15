@@ -65,7 +65,7 @@ def test_e0_t7_uncovered_and_t6_counterexample(demo):
     assert c is not None and c["violation"]["obligation"] == "lifetime"
     assert len(c["warps"]) == 2 and len(c["violation"]["pair"]) == 2
     assert c["violation"]["pair"][0]["kind"] == "load" and c["violation"]["pair"][1]["kind"] == "compute"
-    assert "slow warp" in c["words"]
+    assert "slow thread" in c["words"]
     s1 = schedule(L, T["T1"], run)
     g = s1["grid"]                      # T1 chose 128 x 256 tiles: 32 x 16 = 512 blocks, 4 waves on 128 SMs
     assert g["blocks"] == g["gm"] * g["gn"] == 512 and g["waves"] == -(-g["blocks"] // g["sms"]) == 4

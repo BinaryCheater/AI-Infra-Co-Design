@@ -29,10 +29,13 @@ window.MapView = (() => {
     const lg = mk("g", { class: "ladder" });
     text(lg, 20, 28, "levels", "", "start");
     LEVELS.forEach((name, i) => {
-      const g = mk("g", { class: "level" }, lg); ladder[i + 1] = g;
+      const g = mk("g", { class: "level", "data-level": i + 1 }, lg); ladder[i + 1] = g;
       mk("rect", { x: 14, y: 40 + i * 50, width: 130, height: 36, rx: 5, fill: "transparent" }, g);
       mk("line", { x1: 14, y1: 40 + i * 50 + 36, x2: 144, y2: 40 + i * 50 + 36, class: "rung" }, g);
       text(g, 24, 40 + i * 50 + 24, `${i + 1}  ${name}`, "", "start");
+      text(g, 140, 40 + i * 50 + 24, "", "count", "end");          // methods used / that apply, filled by methods.js
+      const title = mk("title", {}, g); title.textContent = "click to see the optimization methods at this level";
+      g.addEventListener("click", () => { if (window.Methods) Methods.open(i + 1); });
     });
     // arrows: F -> V, V -> S, S -> G, G -> E, E -> O, O -> F
     const f = STATIONS.formulator, v = STATIONS.verifier, s = STATIONS.solver, g = STATIONS.gate, e = STATIONS.evaluator, o = STATIONS.orchestrator;

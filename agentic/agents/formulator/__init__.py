@@ -18,6 +18,16 @@ def catalog() -> list[dict]:
     return yaml.safe_load((HERE / "catalog.yaml").read_text())
 
 
+@lru_cache(maxsize=None)
+def methods() -> dict:
+    """The optimization methods level by level (methods.yaml): the domain know-how a proposal chooses from."""
+    return yaml.safe_load((HERE / "methods.yaml").read_text())
+
+
+def method_entry(mid: str) -> dict | None:
+    return next((m for m in methods()["methods"] if m["id"] == mid), None)
+
+
 def catalog_entry(name: str) -> dict | None:
     return next((e for e in catalog() if e["name"] == name), None)
 
@@ -37,4 +47,10 @@ def well_formed(T: dict) -> list[str]:
         problems.append("structure.obligation is empty")
     if s.get("strength") not in ("proved", "observed"):
         problems.append("structure.strength must be proved or observed")
+    for mid in T.get("methods") or []:            # a proposal chooses from the method list; it cannot invent one
+        m = method_entry(mid)
+        if m is None:
+            problems.append(f"method {mid!r} is not in the method list (methods.yaml)")
+        elif m["level"] != T.get("level"):
+            problems.append(f"method {mid!r} belongs to level {m['level']}, not {T.get('level')}")
     return problems

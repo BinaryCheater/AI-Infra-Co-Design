@@ -3,78 +3,295 @@
   "$id": "agentic/contract",
   "title": "Template contract T = (O, X, C, Pre, P, pi, Sigma, J^, Gamma) plus structure, rationale and status",
   "type": "object",
-  "required": ["id", "level", "object", "scope", "template", "decisions", "constraints", "cost",
-               "preconditions", "program", "backward_map", "certificate_schema", "structure", "status", "provenance"],
+  "required": [
+    "id",
+    "level",
+    "object",
+    "scope",
+    "template",
+    "decisions",
+    "constraints",
+    "cost",
+    "preconditions",
+    "program",
+    "backward_map",
+    "certificate_schema",
+    "structure",
+    "status",
+    "provenance"
+  ],
   "additionalProperties": false,
   "properties": {
-    "id": {"type": "string"},
-    "parent": {"type": ["string", "null"]},
-    "level": {"type": "integer", "minimum": 0},
-    "object": {"type": "string", "description": "the new object O introduced at this level"},
+    "id": {
+      "type": "string"
+    },
+    "parent": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "level": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "object": {
+      "type": "string",
+      "description": "the new object O introduced at this level"
+    },
     "scope": {
-      "type": "object", "description": "Gamma: workloads and chip parameters the template applies to",
-      "required": ["workload", "chip"],
+      "type": "object",
+      "description": "Gamma: workloads and chip parameters the template applies to",
+      "required": [
+        "workload",
+        "chip"
+      ],
       "properties": {
-        "workload": {"type": "object"},
-        "chip": {"type": "object"},
-        "structure": {"type": "object", "description": "structural choices fixed by the template"}
+        "workload": {
+          "type": "object"
+        },
+        "chip": {
+          "type": "object"
+        },
+        "structure": {
+          "type": "object",
+          "description": "structural choices fixed by the template"
+        }
       }
     },
-    "signature": {"type": "string", "description": "structural hash for population search"},
-    "template": {"type": "string", "description": "backend family the solver/verifier services dispatch on"},
-
+    "signature": {
+      "type": "string",
+      "description": "structural hash for population search"
+    },
+    "template": {
+      "type": "string",
+      "description": "backend family the solver/verifier services dispatch on"
+    },
     "decisions": {
-      "type": "object", "description": "X: variables with domains",
+      "type": "object",
+      "description": "X: variables with domains",
       "additionalProperties": {
-        "type": "object", "required": ["domain"],
-        "properties": {"domain": {"type": "array"}, "kind": {"type": "string"}, "meaning": {"type": "string"}}
+        "type": "object",
+        "required": [
+          "domain"
+        ],
+        "properties": {
+          "domain": {
+            "type": "array"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "meaning": {
+            "type": "string"
+          }
+        }
       }
     },
     "constraints": {
-      "type": "array", "description": "C",
-      "items": {"type": "object", "required": ["id", "expr"],
-                "properties": {"id": {"type": "string"}, "expr": {"type": "string"}, "meaning": {"type": "string"}}}
-    },
-    "cost": {"type": "object", "description": "J^: predictive cost model", "required": ["model"]},
-    "decomposition": {"type": ["object", "null"]},
-
-    "preconditions": {
-      "type": "array", "description": "Pre: must be implied by C (K1)",
-      "items": {"type": "object", "required": ["id", "expr"],
-                "properties": {"id": {"type": "string"}, "expr": {"type": "string"},
-                               "mode": {"type": "string"}, "meaning": {"type": "string"}}}
-    },
-    "program": {"type": "string", "description": "P: next-level program"},
-    "backward_map": {"type": "string", "description": "pi"},
-    "certificate_schema": {
-      "type": "object", "description": "Sigma",
-      "required": ["relation", "rank", "obligations"],
-      "properties": {"relation": {"type": "string"}, "rank": {"type": "string"},
-                     "obligations": {"type": "array", "items": {"type": "object"}}}
-    },
-
-    "structure": {
-      "type": "object",
-      "required": ["name", "bucket", "regime", "move", "obligation", "strength"],
-      "properties": {
-        "name": {"type": "string"},
-        "bucket": {"type": "string", "enum": ["objective", "variables", "enumeration"]},
-        "regime": {"type": "string"},
-        "move": {"type": "string"},
-        "obligation": {"type": "string"},
-        "strength": {"type": "string", "enum": ["proved", "observed"]},
-        "evidence": {"type": "array", "items": {"type": "string"}}
+      "type": "array",
+      "description": "C",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "expr"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "expr": {
+            "type": "string"
+          },
+          "meaning": {
+            "type": "string"
+          }
+        }
       }
     },
-    "rationale": {"type": "string", "description": "free text; stored and shown, never parsed"},
-
-    "status": {"type": "string", "enum": ["proposed", "certified", "solved", "admitted", "refuted"]},
-    "certificate": {"type": ["string", "null"]},
+    "cost": {
+      "type": "object",
+      "description": "J^: predictive cost model",
+      "required": [
+        "model"
+      ]
+    },
+    "decomposition": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "preconditions": {
+      "type": "array",
+      "description": "Pre: must be implied by C (K1)",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "expr"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "expr": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "meaning": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "program": {
+      "type": "string",
+      "description": "P: next-level program"
+    },
+    "backward_map": {
+      "type": "string",
+      "description": "pi"
+    },
+    "certificate_schema": {
+      "type": "object",
+      "description": "Sigma",
+      "required": [
+        "relation",
+        "rank",
+        "obligations"
+      ],
+      "properties": {
+        "relation": {
+          "type": "string"
+        },
+        "rank": {
+          "type": "string"
+        },
+        "obligations": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "required": [
+        "name",
+        "bucket",
+        "regime",
+        "move",
+        "obligation",
+        "strength"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "bucket": {
+          "type": "string",
+          "enum": [
+            "objective",
+            "variables",
+            "enumeration"
+          ]
+        },
+        "regime": {
+          "type": "string"
+        },
+        "move": {
+          "type": "string"
+        },
+        "obligation": {
+          "type": "string"
+        },
+        "strength": {
+          "type": "string",
+          "enum": [
+            "proved",
+            "observed"
+          ]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "rationale": {
+      "type": "string",
+      "description": "free text; stored and shown, never parsed"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "proposed",
+        "certified",
+        "solved",
+        "admitted",
+        "refuted"
+      ]
+    },
+    "certificate": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "provenance": {
-      "type": "object", "required": ["formulator"],
-      "properties": {"formulator": {"type": "string"}, "model": {"type": ["string", "null"]},
-                     "prompt_hash": {"type": ["string", "null"]}, "run": {"type": ["string", "null"]},
-                     "edited_by": {"type": ["string", "null"]}, "derived_from": {"type": ["string", "null"]}}
+      "type": "object",
+      "required": [
+        "formulator"
+      ],
+      "properties": {
+        "formulator": {
+          "type": "string"
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prompt_hash": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "run": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "edited_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "derived_from": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "methods": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "the optimization methods this template applies (ids in agents/formulator/methods.yaml)"
     }
   }
 }

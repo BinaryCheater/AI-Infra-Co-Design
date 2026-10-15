@@ -23,13 +23,25 @@ def _backend(template: str):
     return importlib.import_module(f"agentic.templates.{template}.schedule")
 
 
+def _waves(n: int) -> str:
+    return "one wave" if n == 1 else f"{n} waves (rounds of up to one block per SM slot)"
+
+
 def schedule(ledger: Ledger, contract_id: str, run: str | None = None) -> dict:
     from .story import short_names
     names = short_names(ledger, run) if run else {}
     v = template_view(ledger, contract_id, run)
     T = v["contract"]
-    tpl = importlib.import_module(f"agentic.templates.{T['template']}")
-    be = _backend(T["template"])
+    try:
+        tpl = importlib.import_module(f"agentic.templates.{T['template']}")
+        be = _backend(T["template"])
+    except ModuleNotFoundError:
+        # a level without a timeline (the graph level): say what the steps are instead
+        return {"id": contract_id, "short": names.get(contract_id, "T?"), "block": None, "counterexample": None,
+                "note": ("There is no timeline at this level. A timeline shows how one block of threads runs on the chip, and "
+                         "blocks only exist once a template one level down (the tiling) has picked a design. At this level the "
+                         "work is a short list of steps: an optional transposed copy of B, the multiplication itself (possibly "
+                         "cut into pieces along K), and, if it is cut, a final step that adds the pieces up.")}
     x = _dedupe(v["assignments"])[-1] if v["assignments"] else None
     meas = _dedupe(v["measurements"])[-1] if v["measurements"] else None
     measured = None
@@ -71,7 +83,7 @@ def schedule(ledger: Ledger, contract_id: str, run: str | None = None) -> dict:
                                      "design": cex.get("design")}
 
     if x is None:
-        out["note"] = "no design was chosen (the template was rejected before the solver ran)"
+        out["note"] = "There is no timeline, because no design was chosen: the checker rejected the template before the solver ran."
         return out
     vals = x["values"]
     d = tpl.TilingDesign(vals["Tm"], vals["Tn"], vals["Tk"], vals["S"], vals["P"], bool(vals["beta"]),
@@ -84,18 +96,18 @@ def schedule(ledger: Ledger, contract_id: str, run: str | None = None) -> dict:
     shown = list(range(shown_n)) + ([KT - 1] if KT - 1 >= shown_n else [])
     dur = ev["durations"]
     out["design"] = {"Tm": d.tm, "Tn": d.tn, "Tk": d.tk, "S": S, "P": P, "beta": ev["beta"], "grid_rounding": d.grid_rounding}
-    formulas = (f"compute bar = block FLOPs / KT / per-SM rate = {dur['compute'] * 1e6:.3f} µs; "
-                f"load bar = tile bytes / (DRAM bandwidth / {ev['blocks_per_wave']} blocks per wave) = {dur['load'] * 1e6:.3f} µs; "
-                f"barrier tick = {dur['barrier'] * 1e9:.1f} ns. One block of {ev['waves']} wave{'s' if ev['waves'] != 1 else ''}.")
+    formulas = (f"Each dark bar is one step of arithmetic ({dur['compute'] * 1e6:.3f} µs). Each colored bar on the top line is one "
+                f"tile arriving from memory ({dur['load'] * 1e6:.3f} µs, sharing the memory bandwidth with the other blocks running "
+                f"at the same time, {ev['blocks_per_wave']} in all). Each red tick is a barrier, where all threads wait ({dur['barrier'] * 1e9:.1f} ns). "
+                f"The chip runs the blocks in {_waves(ev['waves'])}.")
     if measured:
-        pm = f"±{measured['half_width_rel'] * 100:.1f} %" if measured.get("half_width_rel") is not None else ""
         scale = (measured["time_us"] * 1e-6 / ev["waves"]) / ev["block_time"] if ev["block_time"] and ev["waves"] else 1.0
-        caption = (f"Structure modeled; total measured on {measured['host']}, {measured['reps']} runs, {pm}: "
-                   f"{measured['time_us']:.1f} µs against {measured['predicted_us']:.1f} µs predicted ({measured['discrepancy']:+.0%}); "
-                   f"the pipeline's block time is scaled ×{scale:.2f} to the measured kernel time. Per-phase durations: {formulas}")
+        caption = (f"The shape of this timeline comes from the time formula. The total time was measured on {measured['host']} "
+                   f"over {measured['reps']} runs: {measured['time_us']:.1f} µs, against {measured['predicted_us']:.1f} µs predicted "
+                   f"({measured['discrepancy']:+.0%}), so the timeline is stretched by ×{scale:.2f} to match. {formulas}")
     else:
         scale = 1.0
-        caption = "Modeled, not measured: " + formulas
+        caption = "This timeline comes from the time formula, not from a measurement. " + formulas
     out["axis"] = {
         "unit": "s", "phases": KT, "shown": shown, "block_time": ev["block_time"], "waves": ev["waves"], "modeled": measured is None,
         "measured_scale": scale, "caption": caption, "durations": dur}
@@ -138,5 +150,5 @@ def schedule(ledger: Ledger, contract_id: str, run: str | None = None) -> dict:
                                 "coverage": st("coverage"), "exact_once": st("exact_once"), "no_phantom": st("no_phantom")},
                      "index": {k: st(k) for k in ("coverage", "exact_once", "no_phantom")},
                      "instance_verdict": inst["verdict"] if inst else None}
-    out["lanes"] = (["memory"] + [f"slot {i}" for i in range(S)] + ["sync", "compute"])
+    out["lanes"] = (["loads from memory"] + [f"buffer {i}" for i in range(S)] + ["barriers", "arithmetic"])
     return out

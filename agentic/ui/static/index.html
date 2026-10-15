@@ -22,6 +22,13 @@
   <a class="ghost link" href="debug.html" title="the v1 ledger debugger">ledger</a>
 </header>
 
+<section id="workload-bar">
+  <span class="step-no">Step 1</span>
+  <label class="wl-label" for="wl-select">Workload</label>
+  <select id="wl-select"></select>
+  <span id="wl-desc" class="wl-desc"></span>
+</section>
+
 <section id="transport">
   <div class="row">
     <span class="seg">
@@ -76,6 +83,14 @@
   <div id="insp-body"></div>
 </aside>
 
+<aside id="methods-panel" class="inspector methods" hidden>
+  <div class="inspector-head">
+    <div><span id="mp-title" class="short"></span></div>
+    <button id="mp-close" class="ghost">close ✕</button>
+  </div>
+  <div id="mp-body"></div>
+</aside>
+
 <div id="toasts"></div>
 <script src="session.js"></script>
 <script src="glossary.js"></script>
@@ -86,6 +101,8 @@
 <script src="schedule.js"></script>
 <script src="inspector.js"></script>
 <script src="transport.js"></script>
+<script src="workload.js"></script>
+<script src="methods.js"></script>
 <script src="console.js"></script>
 </body>
 </html>

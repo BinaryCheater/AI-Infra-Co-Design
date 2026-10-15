@@ -7,9 +7,9 @@ smem_tiling:
     block rotates through, how far ahead to prefetch (P tiles), and whether to keep a trailing
     barrier (β)
   precondition_in_words:
-    exact: "prefetch may run at most S − 2 tiles ahead, one more if the trailing barrier is kept"
-    conservative: "the trailing barrier is always kept, and prefetch may run at most S − 1 tiles ahead"
-    unsound: "prefetch may run up to S − 1 tiles ahead regardless of the trailing barrier"
+    exact: "loading may run ahead by two steps fewer than the number of buffers, or one fewer if the barrier after each step is kept"
+    conservative: "the barrier after each step is always kept, and loading may run ahead by one step fewer than the number of buffers"
+    unsound: "loading may run ahead by one step fewer than the number of buffers, even without the barrier after each step"
   # how strict each prefetch rule is, to say "looser" or "stricter" than the parent
   precondition_strictness: {conservative: 0, exact: 1, unsound: 2}
   precondition_label:
@@ -18,21 +18,21 @@ smem_tiling:
     unsound: "loose"
   structure_in_words:
     grid_rounding:
-      ceil: "partial tail tiles are kept and guarded"
-      floor: "the tail tiles are dropped (the grid is rounded down)"
+      ceil: "the blocks at the edges that only partly cover C are kept"
+      floor: "the blocks at the edges that only partly cover C are dropped, so part of C is never computed"
     leading_barrier:
-      "true": "a barrier separates each tile's loads from its compute"
-      "false": "no barrier separates a tile's loads from its compute"
+      "true": "all threads wait after a tile has loaded and before they use it"
+      "false": "threads do not wait between loading a tile and using it"
     guard:
-      bounded: "tail elements are guarded by index < extent"
-      unguarded: "tail elements are not guarded"
+      bounded: "every read and write at the edges checks that it stays inside the matrix"
+      unguarded: "reads and writes at the edges do not check the matrix bounds"
   failure_in_words:
-    lifetime: "a slow warp can still be reading a slot when the prefetch for a later tile overwrites it"
-    readiness: "a warp reads a slot before the load into it has completed"
-    coverage: "part of the output is never computed (the tail tiles are dropped)"
-    exact_once: "some output elements are computed twice"
-    no_phantom: "the program reads or writes past the end of a tensor"
-    terminal_agreement: "the replayed execution does not compute the reference product"
+    lifetime: "a slow thread can still be reading a buffer when the next tile is loaded over it"
+    readiness: "a thread reads a buffer before its tile has finished loading"
+    coverage: "part of C is never computed, because the blocks at the edges were dropped"
+    exact_once: "some values of C are computed twice"
+    no_phantom: "the design reads or writes past the end of a matrix"
+    terminal_agreement: "running the design step by step does not give A × B"
   decision_order: [Tm, Tn, Tk, S, P, beta]
   # how to say a decision's value and what changing it means
   decision_units:
@@ -44,10 +44,10 @@ smem_tiling:
     beta: ""
   decision_change_in_words:
     beta:
-      "1->0": "the trailing barrier could be dropped"
-      "0->1": "a trailing barrier was added"
-    S: "{new} slots instead of {old}"
-    P: "prefetch {new} instead of {old}"
+      "1->0": "the barrier after each step could be dropped"
+      "0->1": "a barrier after each step was added"
+    S: "{new} buffers instead of {old}"
+    P: "loading {new} steps ahead instead of {old}"
     Tm: "tile rows {new} instead of {old}"
     Tn: "tile columns {new} instead of {old}"
     Tk: "reduction tile {new} instead of {old}"
@@ -59,3 +59,47 @@ smem_tiling:
     - scope.structure.leading_barrier
     - scope.structure.guard
     - scope.workload.name
+  # ---- plain words for the inspector (agentic/ledger/plain.py)
+  intro_in_words: >-
+    It decides how each block of threads computes its piece of C: how big the piece is, how the matching slices of A and B
+    are brought into the block's fast on-chip memory (shared memory), and how far ahead the next slices are loaded so the
+    loads overlap the arithmetic.
+  decision_words:
+    Tm: {label: "Tile height", unit: "rows of C per block"}
+    Tn: {label: "Tile width", unit: "columns of C per block"}
+    Tk: {label: "Slice of K per step", unit: "values of K loaded per step"}
+    S: {label: "Buffers per block", unit: "buffers in shared memory"}
+    P: {label: "Load ahead", unit: "steps ahead"}
+    beta: {label: "Barrier after each step", values: {0: "dropped", 1: "kept"}}
+  meaning_in_words:
+    Tm: "how many rows of C one block computes"
+    Tn: "how many columns of C one block computes"
+    Tk: "how much of the shared dimension K one step brings in"
+    S: "how many tile buffers each block rotates through in shared memory"
+    P: "how many steps ahead the next tiles are loaded"
+    beta: "whether all threads wait for each other after every step"
+  goal_in_words: "Make the whole multiplication finish as fast as possible, as estimated by a simple time formula."
+  cost_in_words:
+    - "Arithmetic time: the multiply-adds of all blocks, at the chip's measured FP32 speed, in as many rounds (waves) as the 48 SMs need, plus the barriers."
+    - "Memory time: every byte read from or written to DRAM, at the chip's measured bandwidth. A is read once for each column of blocks, B once for each row of blocks."
+    - "With loading ahead, the two overlap, so the time is the larger of the two. Without it, they add up."
+  constraints_in_words:
+    C1: "The A and B tiles, times the number of buffers, must fit in the block's shared memory."
+    C2: "Each thread holds its part of the C tile in registers, so the tile must have at least 256 values and no more than the registers can hold."
+    C3: "The safety rule: loading may run ahead only as far as the buffers allow (at most S − 2 steps, or S − 1 with the barrier after each step kept)."
+  obligations_in_words:
+    coverage: "Every value of C is computed by some block."
+    exact_once: "No value of C is computed twice."
+    no_phantom: "Nothing outside the matrices is read or written."
+    readiness: "A thread reads a buffer only after its tile has finished loading."
+    lifetime: "A buffer is not overwritten while a thread is still reading it."
+    agreement: "Running the design step by step gives exactly A × B."
+    terminal_agreement: "Running the chosen design step by step on a small example gives exactly A × B."
+  obligations_by_dimension_in_words:
+    coverage: {M: "Every row of C is computed by some block.", N: "Every column of C is computed by some block.", K: "Every slice of K is added into the result."}
+    exact_once: {M: "No row of C is computed twice.", N: "No column of C is computed twice.", K: "No slice of K is added twice."}
+    no_phantom: {M: "Nothing past the last row of A or C is touched.", N: "Nothing past the last column of B or C is touched.", K: "Nothing past the end of K is read."}
+  family_check_in_words: >-
+    the checker tried every combination of buffers, load-ahead distance and barrier on a small 16 × 16 × 8 tile, and for each
+    one it went through every order in which two groups of threads could take turns.
+  point_in_words: "{S} buffers, loading {P} steps ahead, barrier after each step {beta}"
