@@ -1,6 +1,6 @@
 # The Microarchitecture View: Seeing a Kernel Run on the Chip
 
-*Design note, v0.1 · October 15, 2026 · Li Shang, drafted with Claude. For Claude Code. Companion to `schedule_view_design.md` (the time view) and `gb10_microarchitecture.md` (the chip).*
+*Design note, v0.2 · October 15, 2026 · Li Shang, drafted with Claude. For Claude Code. Companion to `schedule_view_design.md` (the time view) and `gb10_microarchitecture.md` (the chip).*
 
 ---
 
@@ -18,36 +18,47 @@ The audience is a person learning or checking the hardware model: Li, a student,
 2. **One SM in detail, never more.** Every warp, every queue, every shared-memory slot of one SM, for one block, one phase at a time. The other 47 SMs are a strip of 48 small squares at the top, colored by what each is waiting on. The picture must fit in the eye.
 3. **Every pixel traces to an event.** Click anything and you get the event behind it: `warp 3, LDS.128, 8-way conflict, 4 wavefronts, waited 11 cycles behind warp 1`. Nothing is drawn that the trace did not say.
 
-## 3. The drawing
+## 3. The drawing is generated from the chip config
 
-A hand-drawn SVG, `agentic/ui/static/gb10.svg`, with named elements. No layout engine. Top to bottom, following the data path:
+The simulator already takes the chip as data: `sim/config/<chip>.yaml`, validated by `schema/chip.json`. Every count, capacity, latency and rate is there, and the kernel is scheduled against it. The drawing must come from the same file. Change the config, and the drawing, the trace, the schedule and the chip view all change together. A hand-drawn picture would be a second copy of the chip that drifts.
+
+**Four kinds of component.** Every component in the config gets a `kind`, and each kind has one way of being drawn and one way of showing state:
+
+| kind | what it is | drawn as | state shown |
+|---|---|---|---|
+| `queue` | something that holds requests until a stage accepts them: the MIO queue, the copy engine's in-flight chunks, the L2 request queue, the DRAM queue, a barrier's arrival count | a bar of cells, filled from the left; capacity from the config, or unbounded with a soft mark at the measured depth | depth |
+| `pipe` | something that is busy or not: a scheduler, the FMA pipe, the LSU, a tensor core | a cell that lights | busy, and for how many more cycles |
+| `storage` | something with slots that hold data: shared-memory slots, L1, L2, DRAM, the register file as a capacity | slots, each `empty / in flight / ready / consumed`; for a cache, a hit-rate bar instead of slots | fill and a rate |
+| `link` | something data travels along: scheduler to LSU, LSU to shared memory, SM to L2, L2 to DRAM | an arrow; a dot travels along it for an event's duration | traffic |
+
+Warps are the one thing that is not a component. They are the actors. A warp is a dot that sits in its scheduler's box and changes color by what it waits on.
+
+**Layout rule.** The config also says how components nest and in what order they appear on the data path. The layout is: the chip is a row of SM squares grouped as the config groups them (6 × 8 for the GB10, from the dispatch order in `block_dispatch_order`); below it, one SM drawn in detail, its components top to bottom in data-path order (schedulers, pipes, the queue into the LSU, the LSU, storage, copy engines, barrier); below that, each level of the memory hierarchy as one box with its queue, down to DRAM. Links are drawn between consecutive levels. That rule is the book's figure, written once as code in `agentic/ui/static/floorplan.js`, and it draws any chip whose config follows the schema.
+
+For the GB10 it produces:
 
 ```
 ┌──────────────────────────── chip strip: 48 SMs ───────────────────────────┐
 │ ■■■■■■■■ ■■■■■■■■ ■■■■■■■■ ■■■■■■■■ ■■■■■■■■ ■■■■■■■■   (6 groups of 8)  │
 └────────────────────────────────────────────────────────────────────────────┘
 ┌────────────────────────── SM 17 (the one in detail) ───────────────────────┐
-│  sched0   sched1   sched2   sched3        ← 4 sub-partitions               │
-│  [w0 w4]  [w1 w5]  [w2 w6]  [w3 w7]       ← warps of the block, by scheduler│
-│     │        │        │        │                                            │
-│  FMA pipe (4×)         MIO queue ▮▮▮▮░░░░  →  LSU: wavefronts/cycle ▮       │
-│                                   │                                         │
-│  shared memory 100 KB: [slot0: A B][slot1: A B][slot2: ...]   L1 64 KB      │
-│  cp.async engine: chunks in flight ▮▮▮▮▮▮▮▮░░░   TMA                        │
-│  barrier: 5/8 arrived                                                       │
+│  sched0   sched1   sched2   sched3        ← pipes                          │
+│  [w0 w4]  [w1 w5]  [w2 w6]  [w3 w7]       ← warps, by scheduler            │
+│  FMA pipe (4×)         MIO queue ▮▮▮▮░░░░  →  LSU ▮        ← pipe, queue, pipe│
+│  shared memory 100 KB: [slot0][slot1][slot2]     L1 64 KB  ← storage        │
+│  copy engine ▮▮▮▮▮▮▮▮░░░   TMA              barrier 5/8    ← queues         │
 └───────────────────────────────┬────────────────────────────────────────────┘
-                                │ 32 B sectors
-┌───────────────────────────────┴────────────────────────────────────────────┐
-│  L2  24 MiB   hits ▮▮▮▮▮▮▮░  queue ▮▮░░   1.0 TB/s                         │
-└───────────────────────────────┬────────────────────────────────────────────┘
-┌───────────────────────────────┴────────────────────────────────────────────┐
-│  LPDDR5X  235 GB/s read   queue ▮▮▮░░   shared with CPU                     │
-└────────────────────────────────────────────────────────────────────────────┘
+│  L2  24 MiB   hits ▮▮▮▮▮▮▮░  queue ▮▮░░   1.0 TB/s           ← storage + queue
+│  LPDDR5X  235 GB/s   queue ▮▮▮░░   shared with CPU           ← storage + queue
 ```
 
-Element ids are the resource names the simulator already uses, so the trace binds to the drawing by name and nothing else: `chip.sm[17]`, `sm.sched[2]`, `sm.warp[5]`, `sm.fma`, `sm.mio`, `sm.lsu`, `sm.smem.slot[1]`, `sm.copy`, `sm.tma`, `sm.barrier`, `l2`, `l2.queue`, `dram`, `dram.queue`. Arrows have ids too: `arrow.dram.l2`, `arrow.l2.sm`, `arrow.lsu.smem`, `arrow.smem.fma`.
+For a Ventus config (2 SMs, 1 scheduler each, a scratchpad, no L1, no L2) the same code draws two squares, one scheduler, one pipe, one scratchpad box, DRAM. Nothing in `floorplan.js` knows the word GB10.
 
-Static labels on the drawing are the book's numbers: `4.2 cyc/dispatch`, `1 wavefront/cyc`, `136 ns`, `235 GB/s`. They never change. What changes is color and fill.
+**Names.** Element ids are the resource names the simulator uses in the trace: `chip.sm[17]`, `sm.sched[2]`, `sm.warp[5]`, `sm.fma`, `sm.mio`, `sm.lsu`, `sm.smem.slot[1]`, `sm.copy`, `sm.tma`, `sm.barrier`, `l2`, `l2.queue`, `dram`, `dram.queue`, and `link.<from>.<to>`. The config, the simulator and the drawing share one namespace. That is the only binding.
+
+**Labels.** Each box carries its config numbers as static text: `4.2 cyc/dispatch`, `1 wavefront/cyc`, `24 MiB`, `136 ns`, `235 GB/s`. They come from the config, so a hypothetical chip shows its own numbers, marked `simulated` where the config marks them as not measured.
+
+**Schema change.** `schema/chip.json` gains, per component: `kind` (one of the four), `capacity` (cells for a queue, slots for storage; absent means unbounded), `parent` (which component contains it), and `order` (position on the data path). `fit.py` writes them for the GB10 from the structure the benchmarks found. A config without them fails validation, so no chip can be simulated that cannot be drawn.
 
 ## 4. The trace
 
@@ -127,15 +138,22 @@ A toggle that replaces the controls with a six-step tour of one phase of one blo
 
 ## 10. How it is built
 
-One file, `agentic/ui/static/microarch.html`, no framework, served by the existing console next to `/schedule`, `/calibration`, `/validation`. It loads `gb10.svg` inline and `trace.json` for the selected run from the existing run endpoint. State is a plain object keyed by element id; rendering sets `fill`, `stroke`, a `data-state` attribute and the text of a few `<text>` nodes. Dots on arrows are SVG `<animateMotion>` along the arrow's path, started on the event and removed at `t + dur`. Breakpoints are a 60-line parser into a predicate function. Total under 1500 lines. The schedule view's cursor is shared through one URL hash parameter, `#t=184233`, so either page can be opened at a time and the two pages stay in step in two tabs.
+Two files under `agentic/ui/static`, no framework, served by the existing console next to `/schedule`, `/calibration` and `/validation`:
 
-A trace of a 4096³ GEMM is too big to load whole. The simulator already caps simulation by block-phases; the view loads one SM's events for a window of phases (default: the detailed SM, all phases of one block), and the chip strip is driven by a per-SM summary the simulator writes alongside the trace (state per SM per 1000 cycles). Two files, not one.
+- `floorplan.js`: reads the chip config and emits the SVG. One function per component kind (`drawQueue`, `drawPipe`, `drawStorage`, `drawLink`) and one layout function that walks the config in data-path order. Under 400 lines.
+- `microarch.html`: loads the config and the trace for the selected run, calls `floorplan.js`, then drives state. State is a plain object keyed by element id; rendering sets `fill`, `stroke`, a `data-state` attribute and the text of a few `<text>` nodes. Dots on links are SVG `<animateMotion>` along the link's path, started on the event and removed at `t + dur`. Breakpoints are a 60-line parser into a predicate function. Under 1100 lines.
+
+The schedule view's cursor is shared through one URL hash parameter, `#t=184233`, so the two pages stay in step in two tabs.
+
+A trace of a 4096³ GEMM is too big to load whole. The view loads one SM's events for a window of phases (default: the detailed SM, all phases of one block), and the chip strip is driven by a per-SM summary the simulator writes beside the trace (state per SM per 1000 cycles). Two files, not one.
+
+**Changing the chip.** Edit the YAML or let the solver emit one, rerun the simulator, reload the page. The drawing, the labels, the trace, the schedule and the regime word all follow. That is the loop the co-design needs: the solver changes the chip every iteration, and the architect sees each iteration on its own floorplan.
 
 ## 11. Build order
 
 | Stage | Deliverable | Done when |
 |---|---|---|
-| V0 | `gb10.svg` with every id in §3, static labels from the book; `microarch.html` loads it and the trace, and draws the state at one fixed `t` | Li opens it and names every box without a legend |
+| V0 | `kind`, `capacity`, `parent`, `order` in `schema/chip.json` and the GB10 config; `floorplan.js` draws the GB10 from it with every id in §3 and its labels; `microarch.html` loads it and the trace and draws the state at one fixed `t` | Li opens it and names every box without a legend; a config with 2 SMs and no L2 draws without code changes |
 | V1 | scrubber, step, play; warp dots, MIO and LSU bars, shared-memory slot states, arrow dots | the six-step tour of T5 can be followed by hand |
 | V2 | the regime word and dimming; the chip strip; SM selection | the 16×32×8 design shows `load-bound` with the MIO bar pinned; T5 shows `scheduler-bound` |
 | V3 | the link to the schedule view (shared cursor, click-through both ways); the inspector's "behind" sentence | click a wait on either page, read what it waited behind |
@@ -145,4 +163,4 @@ Review after V2: Li scrubs through one phase of T5 and one of 16×32×8 and says
 
 ## 12. What this is not
 
-Not a replacement for the schedule view; the two are one tool. Not a general GPU visualizer; it draws this chip from this book and the trace from this simulator. Not for the agent; the agent reads the trace's numbers directly. When the chip changes (the 5090, Ventus), the SVG is redrawn from that chip's book, and nothing else changes.
+Not a replacement for the schedule view; the two are one tool. Not a general GPU visualizer; it draws this chip from this book and the trace from this simulator. Not for the agent; the agent reads the trace's numbers directly. When the chip changes (the 5090, Ventus, a chip the solver proposed), its config is the only thing that changes; the drawing follows from it.
