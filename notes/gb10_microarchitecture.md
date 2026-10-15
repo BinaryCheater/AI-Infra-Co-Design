@@ -1,4 +1,4 @@
-# The GB10 GPU: A Microarchitecture Reference from Measurement
+# The GB10 GPU: Microarchitecture and Instruction Set, from Measurement
 
 *The NVIDIA GB10 in the DGX Spark, as seen from user space through 40 microbenchmarks, three composite kernels and the hardware counters. Every number in this book comes from a benchmark named in brackets, e.g. [B5]; the kernels are in `calibration/suite/bench/`, the raw records in `calibration/spark-6951/raw/`. Where a statement rests on NVIDIA's public documentation instead of a measurement, the text says so. Written October 2026 for the host spark-6951: driver 580.159.03, CUDA 13.0, `sm_121`.*
 
@@ -8,11 +8,13 @@
 
 A GPU kernel's time is set by a chain of stages. Instructions are fetched and issued by warp schedulers. Math instructions go to arithmetic pipes. Memory instructions go through a queue to a load/store unit, then to shared memory or L1, then to L2, then to DRAM. Between every pair of stages there is a queue, and a kernel is slow when one of those queues is full.
 
-The chapters follow that chain from the chip down to DRAM. Each chapter gives the structure, the numbers, and how the numbers were obtained. The last chapter lists what is not known.
+Part I (Chapters 1–9) follows that chain from the chip down to DRAM. Each chapter gives the structure, the numbers, and how the numbers were obtained, and Chapter 9 lists what is not known. Part II (Chapters 10–15) is the instruction set: how to read the machine code the compiler emits, how dependencies work on a machine without register renaming, what each instruction costs, three real kernels read line by line, and what the compiler does on the way.
 
 Clock conversions use the sustained clock under load, 2.44–2.48 GHz [B22]. One nanosecond is about 2.46 cycles.
 
 ---
+
+# Part I. The machine
 
 ## Chapter 1. The chip
 
@@ -243,6 +245,255 @@ Managed memory costs a constant **1.45×** against device memory, with the CPU i
 10. **Clock behaviour under heavier thermal load** than a 60 s FMA burst at 79 W.
 
 Each of these is one benchmark. None of them changes the numbers in Chapters 1-8; they bound how far those numbers can be extrapolated.
+
+---
+
+# Part II. The instruction set
+
+Part I described the machine. Part II describes what the machine is asked to do: the instructions the compiler emits for it, as NVIDIA's disassembler prints them. NVIDIA does not publish this instruction set. What follows is built from three sources, always named: the text that `cuobjdump -sass` prints for the 44 kernels we compiled for `sm_121`, the benchmarks of Part I that put a cost on each instruction, and, for the hidden control bits, published reverse engineering of earlier generations. An instruction that none of our kernels uses is not described.
+
+---
+
+## Chapter 10. Reading SASS
+
+**One line, one instruction.** Every instruction is 16 bytes. The disassembler prints it on one line:
+
+```
+/*1090*/        FFMA R20, R48, R86, R20 ;
+/*0550*/        LDGSTS.E.BYPASS.128.ZFILL [R13], desc[UR8][R8.64], P2 ;
+/*0af0*/  @!P1  STG.E desc[UR10][R12.64], R55 ;
+```
+
+Left to right: the byte address inside the kernel; an optional **guard predicate** (`@P0` runs the instruction in lanes where P0 is true, `@!P0` where it is false); the **opcode** with its **modifiers** after dots (`LDS.128` is a 128-bit shared load, `HMMA.16816.F32.BF16` is a tensor multiply of shape m16n8k16 with BF16 inputs and FP32 accumulators); then the operands, destination first.
+
+**Operands.** The kinds that appear in our kernels:
+
+| Written as | What it is |
+|---|---|
+| `R0` … `R254`, `RZ` | the per-thread registers; `RZ` reads as zero and discards writes |
+| `R48.reuse` | the same register, with a hint to keep it in the operand cache for the next instruction; no change in meaning |
+| `-R11`, `\|R4\|` | negated or absolute operand, free |
+| `P0` … `P6`, `PT` | predicate registers, one bit per lane; `PT` is always true |
+| `UR4`, `URZ`, `UP0` | the **uniform** registers and predicates: one value per warp, not per lane |
+| `c[0x0][0x160]` | a word in a constant bank: kernel arguments and launch constants |
+| `[R36+UR5+-0x2000]` | a shared-memory address: register plus uniform register plus offset |
+| `desc[UR8][R8.64]` | a global address: the 64-bit register pair R8:R9, through a memory descriptor held in UR8 |
+| `0x1f`, `1.4426950216293334961` | immediates |
+
+A wide operation names only its first register. `LDS.128 R48` writes R48, R49, R50 and R51. `HMMA.16816.F32.BF16 R64, R80, R62, R64` writes four accumulator registers R64–R67, reads four A registers from R80, two B registers from R62 and the four accumulators.
+
+**Two datapaths.** Most instructions run once per lane, 32 lanes per warp. The uniform instructions (`UIADD3`, `UMOV`, `ULEA`, `USHF`, `UISETP`, `R2UR`, `S2UR`, `LDCU`) compute one value for the whole warp on a separate, narrow datapath. The compiler uses them for addresses that every lane shares: tile bases, loop counters, TMA descriptors. They take an issue slot and leave the per-lane pipes free.
+
+**The control word.** Each 16-byte instruction carries, besides its operation, about 21 bits that the compiler fills to tell the hardware how to schedule it. `cuobjdump` prints them only as part of the raw hex. They are not documented by NVIDIA. Published reverse engineering of the Volta and Turing generations (Jia et al. 2018, 2019) found this layout in the top bits of the second 8 bytes:
+
+| Field | Bits | Meaning |
+|---|---|---|
+| stall | 4 | cycles to wait before issuing the next instruction of this warp |
+| yield | 1 | a hint about switching warps |
+| write barrier | 3 | which of six dependency counters this instruction's result will release (7 = none) |
+| read barrier | 3 | which counter releases when this instruction has read its source registers |
+| wait mask | 6 | which counters must be clear before this instruction issues |
+| reuse | 4 | operand-cache flags, the `.reuse` in the text |
+
+We decoded a handful of `sm_121` words with that layout and they are self-consistent. In the copy loop of a GEMM kernel, `LDGSTS ... [R13]` sets read barrier 1, and the very next instruction, `IADD3 R13, ...`, which overwrites R13, has wait mask bit 1 set: the hardware will not let the address register be overwritten until the copy has read it. A constant load `LDCU` sets write barrier 1 because its latency is not fixed. That is enough to say the scheme survives on Blackwell; it is not a full decode. The simulator does not read these bits (Chapter 11).
+
+---
+
+## Chapter 11. Dependencies without renaming
+
+**The register in the text is the register in the hardware.** A GPU has no register renaming. When an instruction writes R5, it writes the physical R5 of its thread, and a later instruction that reads R5 depends on it. Two values that are alive at the same time must be in different registers, and the compiler, not the hardware, makes sure of that (Chapter 14). For a reader this is good news: every true dependency is visible in the printed register names.
+
+**Two kinds of latency.** Instructions fall into two groups by how their results become ready:
+
+- **Fixed latency.** FP32 and integer math, moves, compares, predicate logic. The result is ready a fixed number of cycles after issue, 4 on this chip [B17, B27]. The compiler knows the number and encodes the wait in the *stall* field; no counter is used. When a warp waits on one of these, the profiler calls it `wait` (the stall count) or `short_scoreboard` (for the shorter variable-latency group below).
+- **Variable latency.** Everything that goes through a queue: shared and global loads, `ldmatrix`, shuffles, constant loads, the SFU, conversions, the tensor pipe, copies. The result time depends on what else is in the queue, so the compiler cannot count cycles. It gives the instruction a **write barrier**, and puts that barrier in the *wait mask* of the first consumer. The profiler calls the wait `short_scoreboard` for the on-SM units (shared memory, SFU, shuffles) and `long_scoreboard` for anything that leaves the SM (global and local memory).
+
+**Write-after-read.** A variable-latency instruction may read its source registers late. Overwriting a source before it has been read would corrupt the operation, so the instruction also gets a **read barrier**, and the next writer of that register waits on it. The `LDGSTS`/`IADD3` pair of Chapter 10 is this case.
+
+**Predicates** are registers too. `ISETP` writes P0 four cycles after issue, a guarded instruction reads it.
+
+**Memory order** inside shared memory is not tracked by registers. Between warps it is enforced only by `BAR.SYNC` (all threads of the block arrive, then all proceed, 37 cycles at 256 threads [B7]) and, for copies, by waiting on copy groups (`DEPBAR`) or mbarriers (`SYNCS`). Within a warp a load after a store to the same address sees the store. Global and local memory follow the same pattern with fences.
+
+**How the simulator uses this.** It does not read the control bits. It rebuilds every dependency from the register names, charges the measured latency of the producer's class (Chapter 12), and lets the four schedulers pick among ready warps. Where the compiler chose a stall longer than the dependency needs, the card is a little slower than the model; that is visible as a small positive error and is not corrected by fitting.
+
+---
+
+## Chapter 12. The instructions, by pipe
+
+Every opcode our 44 kernels contain, grouped by the unit that executes it. **Cost** is the cycles one warp instruction keeps that unit busy on one sub-partition; **latency** is issue to result ready. Both are in SM cycles at the sustained clock. The benchmark is in brackets; "not measured" means the simulator uses the stated stand-in.
+
+**FP32 and the FMA pipe.**
+
+| Opcode | Does | Cost | Latency |
+|---|---|---|---|
+| `FFMA` | a·b+c in FP32 | 1.07 [B2] | 4.2 [B27] |
+| `FADD`, `FMUL` | add, multiply | 1.13, 1.16 [B21] | 4.2 |
+| `FMNMX` | min or max | as `FADD`, not measured | 4.2 |
+| `FSETP`, `FSEL` | compare to predicate, select | as `FADD`, not measured | 4.2 |
+| `HFMA2` | two FP16 FMAs in one register; the compiler also uses `HFMA2.MMA R, -RZ, RZ, 0, 0` to zero a register | as `FFMA` | 4.2 |
+| `IMAD` | integer multiply-add, also used for moves (`IMAD.MOV`) and shifts (`IMAD.SHL`) | 1.88 [B21] | 4.2 |
+
+**Integer and address arithmetic.**
+
+| Opcode | Does | Cost | Latency |
+|---|---|---|---|
+| `IADD3` | three-input add | 3.9 [B21] | 4.2 |
+| `LEA`, `LEA.HI.X` | shift-and-add for addresses; the `.HI.X` half carries into the upper word of a 64-bit address | as `IMAD` | 4.2 |
+| `LOP3` | any three-input bitwise function, given by an 8-bit table | 2.8 [B21] | 4.2 |
+| `SHF` | funnel shift | 2.3 [B21] | 4.2 |
+| `ISETP`, `PLOP3` | integer compare to predicate; predicate logic | as `IADD3` | 4.2 |
+| `SEL`, `VIMNMX`, `PRMT` | select, integer min/max, byte permute | as `IADD3`, `LOP3` | 4.2 |
+| `MOV`, `CS2R`, `S2R` | move; read a special register (`SR_TID.X`, the clock) | 1, not measured | 4.2 |
+
+These rates came from B21's throughput kernels. The same kernel pattern over-read the SFU and shuffle rates by 1.6× and 16× because not all of its blocks ran at once (gap 34); the integer rates have not yet been re-read from the pipe counters, and may be high in the same way.
+
+**The uniform datapath.** `UMOV`, `UIADD3`, `ULEA`, `USHF`, `UISETP`, `ULOP3`, `UIMAD`, `R2UR` (register to uniform register), `S2UR`, `CS2UR`, `VOTEU`. One issue slot each; no per-lane pipe. Not measured beyond that.
+
+**The SFU and conversions (XU pipe).**
+
+| Opcode | Does | Cost | Latency |
+|---|---|---|---|
+| `MUFU.EX2`, `.RCP`, `.RSQ`, `.LG2`, `.TANH` | 2ˣ, 1/x, 1/√x, log₂, tanh, approximate | 8 [B38] | 18; `RCP` 20 [B38] |
+| `MUFU.RCP64H` | the seed of an FP64 reciprocal | not measured | not measured |
+| `F2FP.BF16.F32.PACK_AB` | two FP32 to two BF16 in one register | 8 [B38] | about 10 [B38] |
+| `F2F`, `F2I`, `I2F` | conversions | 8 [B38] | `I2F` 4.6 [B38] |
+| `I2FP` | integer to float on the ALU, not the SFU | as `IADD3` | 4.2 |
+
+A warp that issues a `MUFU` cannot issue again for about 8 cycles [B38], so one warp alone fills its sub-partition's SFU.
+
+**The tensor pipe.**
+
+| Opcode | Does | Cost | Latency |
+|---|---|---|---|
+| `HMMA.16816.F32.BF16` and `.F16` | m16n8k16 multiply-accumulate, FP32 accumulators | 16.1 [B31] | 30.1 [B31] |
+| `HMMA.1688.F32.TF32` | m16n8k8 in TF32 | 16.1 [B31] | 30.1 |
+| `QMMA` (FP8 e4m3, m16n8k32) | | 16.1 [B31] | 30.1 |
+| `IMMA` (INT8, m16n8k32) | | 19.6 [B31] | 81.6 [B31] |
+
+The cost is also the time the issuing warp waits: an `HMMA` holds its warp for 16 cycles, and another warp's FFMAs on the same sub-partition take some of those cycles from it (Chapter 3, [B34]). Two independent `HMMA` in flight per warp reach the pipe's rate [B31]. The datacenter Blackwell's `wgmma` and `tcgen05` instructions do not exist on `sm_121` [preflight].
+
+**Shared memory, through the load/store queue (Chapter 5).**
+
+| Opcode | Does | Cost | Latency |
+|---|---|---|---|
+| `LDS`, `LDS.64`, `LDS.128` | shared load, 4, 8 or 16 bytes per lane | one dispatch per 4.2 cycles per sub-partition, then 1, 2 or 4 wavefronts × conflict degree at one wavefront per cycle per SM [B30] | 27 [B27] |
+| `STS`, `STS.128` | shared store | as loads | — |
+| `LDSM.16.M88.4` | `ldmatrix.x4`: four 8×8 BF16 fragments into four registers per lane, in the layout `HMMA` wants | in the same queue; 12 cycles alone, 36 behind a burst of loads [B30] | 47 [B32] |
+| `SHFL.BFLY`, `.UP`, `.IDX` | exchange a register between lanes | one shared-memory wavefront; one per 8 cycles per sub-partition [B39] | 27; `IDX` 35 [B39] |
+| `ATOMS` | shared-memory atomic; `ATOMS.CAS` as a spin lock | not measured as an instruction | 54 ns ≈ 133 [B24] |
+
+**Global, local and constant memory.**
+
+| Opcode | Does | Latency |
+|---|---|---|
+| `LDG.E` | global load | 44 on an L1 hit, ≈ 336 from L2, ≈ 740 from DRAM [B5, B17] |
+| `STG.E`, `STG.E.64` | global store | — |
+| `LDL`, `STL` | local memory: spills and stack; lives in L1 | ≈ 38 [B19] |
+| `LDC`, `LDCU` | constant bank to a register or a uniform register | not measured; the simulator uses the L1 hit latency |
+
+**Copies.**
+
+| Opcode | Does | Cost |
+|---|---|---|
+| `LDGSTS.E.BYPASS.128.ZFILL [Rs], desc[UR][Rg.64], P` | `cp.async`: 16 bytes from global into shared memory, past the registers and past L1; `ZFILL` writes zeros where the predicate turns the copy off | 6.8 cycles of the warp per chunk [B30]; completion from the copy engine (Chapter 5) |
+| `LDGDEPBAR` | `cp.async.commit_group`: closes the current group | an issue slot |
+| `DEPBAR.LE SB0, n` | `cp.async.wait_group n`: wait until at most n groups are pending | waits |
+| `UTMALDG.2D [URs], [URd]` | a TMA load: one instruction, one thread, a whole tile, described by a tensor map | an issue slot; completion from the TMA engine (Chapter 5) |
+| `SYNCS.ARRIVE.TRANS64`, `SYNCS.PHASECHK.TRANS64.TRYWAIT`, `SYNCS.EXCH.64` | mbarrier arrive with an expected byte count, test-and-wait on its phase, initialize | round trip 75 cycles at 1 or 32 arrivals, 111 at 256 [B37] |
+
+**Synchronization and control.**
+
+| Opcode | Does | Cost |
+|---|---|---|
+| `BAR.SYNC.DEFER_BLOCKING 0x0` | `__syncthreads` | 27–97 cycles by block size [B7] |
+| `BSSY Bn`, `BSYNC Bn` | mark and close a region where lanes may diverge, so they reconverge | an issue slot |
+| `WARPSYNC`, `ELECT`, `VOTE`, `VOTEU` | warp-level sync; pick one lane (TMA issue uses `ELECT`); vote | an issue slot |
+| `BRA`, `EXIT`, `CALL`, `RET`, `LEPC`, `BREAK` | branch, end, call, return, read the program counter | an issue slot; branch cost not measured |
+| `NOP`, `YIELD` | nothing; a hint to switch warps | an issue slot |
+
+---
+
+## Chapter 13. Three kernels, read line by line
+
+**The FP32 GEMM inner loop** (the T5 tile, 8×8 register block per thread, here the TMA variant C2). A k-step is sixteen shared loads, a mix of 32-bit `LDS` and 128-bit `LDS.128`, followed by the 64 FFMAs of an 8×8 outer product:
+
+```
+LDS      R86, [R30+-0x7c0]            ; 32-bit loads ...
+LDS.128  R48, [R36+UR5+-0x2000]       ; ... and 128-bit loads, interleaved
+...
+FFMA     R20, R48, R86, R20           ; the first FFMA waits 27 cycles for its loads
+FFMA     R18, R48.reuse, R84, R18     ; R48 stays in the operand cache
+...                                   ; 64 FFMAs per k-step
+```
+
+The compiler issues all the loads of a step before the first FFMA, so their 27-cycle latencies overlap. Counted from the real addresses, the step costs 12 wavefronts on the shared-memory pipe, and the counter agrees exactly [gap 20]: several of the loads are broadcasts, so far fewer than their widths suggest. Twelve wavefronts against 64 FFMAs per warp: the FFMAs win, and this loop is scheduler-bound (`not_selected`, Chapter 2).
+
+**The BF16 tensor loop** (C1). One k-step of the 128×128×32 tile, per warp:
+
+```
+LDSM.16.M88.4  R84, [R76+0x4000]      ; four A fragments
+HMMA.16816.F32.BF16 R64, R80, R62, R64
+LDSM.16.M88.4  R60, [R0+0x6400]       ; next B fragments, one step ahead
+MOV  R80, R72
+MOV  R81, R74
+HMMA.16816.F32.BF16 R56, R84, R80, R56
+...
+```
+
+In the loop body we read, 17 `HMMA`, 5 `LDSM` and **30 `MOV`**. The MOVs are the compiler's doing: `HMMA` wants its two B registers adjacent, and the fragments `LDSM` returned are not, so it copies them into place before each multiply. Seventeen `HMMA` hold the warp for 17 × 16 = 272 cycles; the thirty MOVs cannot issue during those holds from the same warp, so they add about 30 cycles, 11 % of the step. That may be part of C1's compute-only miss at one block (+15 %, gap 28). A layout that lands the fragments where `HMMA` wants them would remove them.
+
+**The softmax row** (C3). One row of 128 values, four per lane:
+
+```
+SHFL.BFLY PT, R10, R9, 0x2, 0x1f      ; row max: 5 shuffle-and-FMNMX steps
+FMNMX     R10, R9, R10, !PT
+...
+FADD  R4, R4, -R11                    ; x - max, four values
+FMUL  R4, R4, 1.4426950216293334961   ; times log2(e)
+MUFU.EX2  R4, R4                      ; 2^(...), four of these
+FADD  R3, R4, R5                      ; local sum
+SHFL.BFLY PT, R3, R2, 0x10, 0x1f      ; row sum: 5 shuffle-and-FADD steps
+...
+MUFU.RCP  R12, R12                    ; 1 / sum
+FMUL  R4, R4, R12                     ; normalize
+F2FP.BF16.F32.PACK_AB R5, R5, R4      ; to BF16
+STG.E desc[UR8][R2.64], R5
+```
+
+Two dependent chains of five shuffles each: 10 × (27 + 4) ≈ 310 cycles of latency per row with nothing to overlap it in one row. Four `MUFU.EX2` at 8 cycles each plus one `RCP`. The compiler, given two rows per loop pass, interleaves them, so the second row's shuffles fill the first row's waits. That is why the in-order model was 60 % slow at one block and close at six, where other warps fill the waits instead [C3].
+
+The binary also holds a double-precision reciprocal sequence (`MUFU.RCP64H` and `DFMA`), the compiler's expansion of a division in the source it could not prove was single precision. FP64 is not measured on this chip.
+
+---
+
+## Chapter 14. What the compiler does between CUDA and SASS
+
+A template writes CUDA; `nvcc` turns it into PTX; `ptxas` turns PTX into SASS. Everything in the list below was seen in our own binaries, and each one changes the numbers the simulator must use.
+
+1. **Unrolling.** Fixed-count loops become straight code. The T5 k-loop body is one k-step with 64 FFMAs; the copy loops are unrolled by the number of chunks per thread.
+2. **Address strength reduction.** Row × stride becomes a pointer plus a constant. The address and guard code around each `cp.async` chunk is about 120 cycles of instructions per chunk in the GEMM kernels, against 6.8 for the copy itself [B15, B30]. An early benchmark charged all of it to the copy.
+3. **Load widening and keeping values in registers.** Adjacent 32-bit loads become one `LDS.128`. In the 32×128×32 tile the compiler kept some B values in registers across k-steps and issued 5.7 shared loads per step where the template has 8.5 (gap 20).
+4. **Scheduling.** Loads move as early as dependencies allow, so their latencies overlap (Chapter 13, the GEMM loop). Independent work is interleaved (the softmax rows).
+5. **Register allocation and spills.** The compiler assigns every value a physical register. When the block's register cap is too low it spills to local memory (`STL`, `LDL`), and the loop falls off a cliff: 7× slower for the FP32 GEMM at 64 registers, 3.6× for the tensor loop with 128 accumulators at a 128 cap [B19, B34]. `nvcc` ignores `-maxrregcount` when the kernel has a `__launch_bounds__`.
+6. **Register shuffling for operand layout.** The 30 MOVs per step in the tensor loop (Chapter 13).
+7. **Instruction selection.** `IMAD` is used for plain moves and shifts; `HFMA2.MMA` zeroes registers; division becomes a reciprocal and a correction.
+8. **Padding and dead code.** Before each copy loop the compiler emits several `@!PT LDS RZ, [RZ]`, loads guarded by "never", which take an issue slot and do nothing. A TMA kernel carries a fallback path (`LEPC`, `CALL.ABS.NOINC`) that never runs in practice. Synchronous copy code the template never selects is still compiled in unless the template removes it; for small tiles that was half the static instruction count (gap 19).
+9. **Dependency hints.** The control word of every instruction (Chapter 10).
+
+For the simulator this means one rule: model the SASS, never the CUDA. The template says what was meant; the SASS says what the chip is asked to do.
+
+---
+
+## Chapter 15. The instruction set: what is not known
+
+1. **The integer rates.** IMAD, IADD3, LOP3, SHF, I2F rates come from the B21 pattern that over-read the SFU and shuffles (gap 34). They should be re-read from `sm__inst_executed_pipe_*` per cycle.
+2. **Unmeasured opcodes**: `MOV`, `CS2R`, `S2R`, the uniform datapath, `LDC`/`LDCU` latency, the FP compares and min/max, `ATOMS` as an instruction, branches, FP64 (`DFMA`, `MUFU.RCP64H`). The simulator uses stated stand-ins for each.
+3. **The control-word layout on Blackwell.** Only spot-checked. A full decode would show where the compiler's stalls are longer than the dependencies need, which is the one place the simulator is expected to be too fast.
+4. **Which pipe each integer opcode uses.** We follow the profiling guide's FMA/ALU split; only IMAD on the FMA pipe is consistent with our rates.
+5. **The operand cache** (`.reuse`): its size and whether a missed reuse costs a register-bank conflict. Register-bank conflicts are not measurable from CUDA or PTX [B19.3].
+6. **The arbiter** between an eligible FFMA warp and an `HMMA` or `MUFU` warp on one sub-partition (gaps 27, 35).
+
+Each of these is one benchmark or one counter read.
 
 ---
 
