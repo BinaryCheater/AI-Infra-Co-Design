@@ -11,18 +11,18 @@
  "method": "ncu: B21: the same for R2 32x32x32",
  "benchmark": "bx_counters",
  "arch": "sm_121",
- "timestamp": "2026-10-14T22:13:15Z",
+ "timestamp": "2026-10-15T00:32:19Z",
  "detail": {
   "kernel": "inner_R2",
   "a": 0,
   "b": 0,
   "metrics": {
    "gpu__time_duration.sum": [
-    141152.0,
+    143168.0,
     "ns"
    ],
    "sm__cycles_active.avg": [
-    283361.33,
+    283399.08,
     "cycle"
    ],
    "sm__inst_executed_pipe_alu.sum": [
@@ -78,7 +78,7 @@
     "inst"
    ],
    "smsp__warps_active.avg": [
-    571563.92,
+    571459.42,
     "warp"
    ]
   },

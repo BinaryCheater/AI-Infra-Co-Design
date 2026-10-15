@@ -11,14 +11,14 @@
  "method": "ncu: B13.1 fill granularity: L2 sectors per request and DRAM (miss) sectors per request at each stride",
  "benchmark": "bx_counters",
  "arch": "sm_121",
- "timestamp": "2026-10-14T22:12:44Z",
+ "timestamp": "2026-10-15T00:31:48Z",
  "detail": {
   "kernel": "strided",
   "a": 512,
   "b": 0,
   "metrics": {
    "gpu__time_duration.sum": [
-    568032.0,
+    555200.0,
     "ns"
    ],
    "lts__t_requests_srcunit_tex.sum": [
@@ -26,7 +26,7 @@
     "request"
    ],
    "lts__t_sector_hit_rate.pct": [
-    0.12,
+    0.1,
     "%"
    ],
    "lts__t_sectors_op_read_lookup_hit.sum": [
@@ -34,7 +34,7 @@
     "sector"
    ],
    "lts__t_sectors_op_read_lookup_miss.sum": [
-    2098202.0,
+    2098361.0,
     "sector"
    ],
    "lts__t_sectors_srcunit_tex.sum": [
@@ -48,6 +48,6 @@
   },
   "measured": true,
   "reason": null,
-  "seconds": 2.0
+  "seconds": 1.9
  }
 }

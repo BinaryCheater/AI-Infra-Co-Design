@@ -1,0 +1,68 @@
+{
+ "quantity": "lds_dispatch_instr_per_cycle_per_sm[width=4,warps_per_smsp=4]",
+ "unit": "instr/cycle",
+ "samples": [
+  0.472666541,
+  0.470634902,
+  0.469932325,
+  0.47311055,
+  0.473288379,
+  0.473555353,
+  0.469932325,
+  0.470459061,
+  0.473466301,
+  0.474090246,
+  0.492395235,
+  0.488690898,
+  0.485404371,
+  0.487681978,
+  0.484860902,
+  0.488048383,
+  0.48832357,
+  0.484860902,
+  0.486768366,
+  0.484951417,
+  0.472021301,
+  0.472996539,
+  0.470170589,
+  0.472641434,
+  0.472641434,
+  0.473263239,
+  0.473085419,
+  0.476757573,
+  0.473441151,
+  0.473797459
+ ],
+ "detail": {
+  "width_bytes": 4,
+  "warps_per_smsp": 4,
+  "blocks_per_sm": 4,
+  "burst": 32,
+  "method": "one wave of w blocks of 4 warps per SM, wall time by cudaEvent at the probed clock",
+  "sm_clock_mhz": 2541.3
+ },
+ "value": 0.473453726,
+ "ci95": 0.012482659181776098,
+ "n": 30,
+ "repeat_policy": "to_ci",
+ "method": "the scheduler-to-LSU queue: depth per sub-partition (burst issue), drain rate by width and stride, cp.async/ldmatrix sharing (B30_plus.md)",
+ "benchmark": "b30_mio_queue",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 4.26,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2476.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 46.0,
+   "power_w": 20.92,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T00:36:04Z",
+ "arch": "sm_121"
+}

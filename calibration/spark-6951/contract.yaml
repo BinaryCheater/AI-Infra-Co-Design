@@ -139,6 +139,96 @@ lds_wavefronts_per_instruction:
   width=8,stride=1: 2.01
 lsu_drain_wavefronts_per_cycle_per_sm: 0.983
 lsu_min_cycles_per_instruction: 2.08
+lds_dispatch_rate_by_warps_per_smsp:
+  width=16:
+    '1': &id004
+      instr_per_cycle_per_sm: 0.232
+      instr_per_cycle_per_smsp: 0.0581
+      wavefronts_per_cycle_per_sm: 0.93
+      issue_active: 0.308
+      mio_throttle_per_issue_active: 0.07
+      short_scoreboard_per_issue_active: 1.79
+    '2': &id002
+      instr_per_cycle_per_sm: 0.244
+      instr_per_cycle_per_smsp: 0.0609
+      wavefronts_per_cycle_per_sm: 0.975
+      issue_active: 0.319
+      mio_throttle_per_issue_active: 2.04
+      short_scoreboard_per_issue_active: 2.14
+    '4': &id003
+      instr_per_cycle_per_sm: 0.246
+      instr_per_cycle_per_smsp: 0.0616
+      wavefronts_per_cycle_per_sm: 0.986
+      issue_active: 0.32
+      mio_throttle_per_issue_active: 5.31
+      short_scoreboard_per_issue_active: 2.15
+    '8': &id006
+      instr_per_cycle_per_sm: 0.248
+      instr_per_cycle_per_smsp: 0.062
+      wavefronts_per_cycle_per_sm: 0.993
+      issue_active: 0.321
+      mio_throttle_per_issue_active: 10.02
+      short_scoreboard_per_issue_active: 2.17
+    '12': &id005
+      instr_per_cycle_per_sm: 0.249
+      instr_per_cycle_per_smsp: 0.0622
+      wavefronts_per_cycle_per_sm: 0.995
+      issue_active: 0.321
+      mio_throttle_per_issue_active: 15.21
+      short_scoreboard_per_issue_active: 2.17
+  width=4:
+    '1': &id009
+      instr_per_cycle_per_sm: 0.41
+      instr_per_cycle_per_smsp: 0.1026
+      wavefronts_per_cycle_per_sm: 0.411
+      issue_active: 0.431
+      mio_throttle_per_issue_active: 0.09
+      short_scoreboard_per_issue_active: 0.85
+    '2': &id007
+      instr_per_cycle_per_sm: 0.469
+      instr_per_cycle_per_smsp: 0.1172
+      wavefronts_per_cycle_per_sm: 0.469
+      issue_active: 0.488
+      mio_throttle_per_issue_active: 1.21
+      short_scoreboard_per_issue_active: 0.76
+    '4': &id008
+      instr_per_cycle_per_sm: 0.492
+      instr_per_cycle_per_smsp: 0.123
+      wavefronts_per_cycle_per_sm: 0.493
+      issue_active: 0.508
+      mio_throttle_per_issue_active: 2.88
+      short_scoreboard_per_issue_active: 0.77
+    '8': &id011
+      instr_per_cycle_per_sm: 0.495
+      instr_per_cycle_per_smsp: 0.1238
+      wavefronts_per_cycle_per_sm: 0.496
+      issue_active: 0.511
+      mio_throttle_per_issue_active: 5.55
+      short_scoreboard_per_issue_active: 0.77
+    '12': &id010
+      instr_per_cycle_per_sm: 0.496
+      instr_per_cycle_per_smsp: 0.1241
+      wavefronts_per_cycle_per_sm: 0.497
+      issue_active: 0.511
+      mio_throttle_per_issue_active: 8.5
+      short_scoreboard_per_issue_active: 0.77
+lsu_instr_floor_cycles_by_warps_per_sm:
+  '4': 2.44
+  '8': 2.13
+  '16': 2.03
+  '32': 2.02
+  '48': 2.02
+lds_dispatch_instr_per_cycle_per_sm_clock:
+  width=16,warps_per_smsp=1: 0.445
+  width=4,warps_per_smsp=8: 0.488
+  width=16,warps_per_smsp=2: 0.478
+  width=16,warps_per_smsp=4: 0.485
+  width=4,warps_per_smsp=1: 0.399
+  width=16,warps_per_smsp=8: 0.491
+  width=4,warps_per_smsp=12: 0.488
+  width=16,warps_per_smsp=12: 0.492
+  width=4,warps_per_smsp=2: 0.456
+  width=4,warps_per_smsp=4: 0.473
 cp_async_issue_cycles_per_chunk: 6.75
 ldmatrix_issue_cycles: 12.0
 mio_shared_with_cp_async: false
@@ -149,7 +239,7 @@ scoreboard_latency_cycles:
 issue_bound_fraction:
   a=1,w=1,L=4: 0.0603
   a=1,w=2,L=4: 0.1206
-  a=1,w=4,L=4: 0.2346
+  a=1,w=4,L=4: 0.2347
   a=1,w=8,L=4: 0.2493
   a=1,w=1,L=8: 0.0604
   a=1,w=2,L=8: 0.1207
@@ -165,12 +255,12 @@ issue_bound_fraction:
   a=1,w=8,L=32: 0.2495
   a=1,w=1,L=64: 0.0604
   a=1,w=2,L=64: 0.1208
-  a=1,w=4,L=64: 0.2344
+  a=1,w=4,L=64: 0.2345
   a=1,w=8,L=64: 0.2495
   a=2,w=1,L=4: 0.1017
   a=2,w=2,L=4: 0.2033
   a=2,w=4,L=4: 0.2496
-  a=2,w=8,L=4: 0.2495
+  a=2,w=8,L=4: 0.2494
   a=2,w=1,L=8: 0.1014
   a=2,w=2,L=8: 0.2028
   a=2,w=4,L=8: 0.2497
@@ -202,21 +292,21 @@ issue_bound_fraction:
   a=4,w=1,L=32: 0.1989
   a=4,w=2,L=32: 0.2498
   a=4,w=4,L=32: 0.2498
-  a=4,w=8,L=32: 0.2499
+  a=4,w=8,L=32: 0.2498
   a=4,w=1,L=64: 0.1993
   a=4,w=2,L=64: 0.2497
   a=4,w=4,L=64: 0.2499
   a=4,w=8,L=64: 0.2499
   a=8,w=1,L=4: 0.2418
-  a=8,w=2,L=4: 0.2497
+  a=8,w=2,L=4: 0.2496
   a=8,w=4,L=4: 0.2499
   a=8,w=8,L=4: 0.2499
   a=8,w=1,L=8: 0.2418
-  a=8,w=2,L=8: 0.2497
+  a=8,w=2,L=8: 0.2496
   a=8,w=4,L=8: 0.2499
   a=8,w=8,L=8: 0.2499
   a=8,w=1,L=16: 0.2418
-  a=8,w=2,L=16: 0.2497
+  a=8,w=2,L=16: 0.2498
   a=8,w=4,L=16: 0.2499
   a=8,w=8,L=16: 0.2499
   a=8,w=1,L=32: 0.245
@@ -226,7 +316,7 @@ issue_bound_fraction:
   a=8,w=1,L=64: 0.2474
   a=8,w=2,L=64: 0.2498
   a=8,w=4,L=64: 0.2499
-  a=8,w=8,L=64: 0.25
+  a=8,w=8,L=64: 0.2499
   a=16,w=1,L=4: 0.241
   a=16,w=2,L=4: 0.2499
   a=16,w=4,L=4: 0.25
@@ -317,7 +407,7 @@ dependency_cycles_per_iter:
   a=8,w=4,L=8: 256.1
   a=8,w=8,L=8: 512.1
   a=8,w=1,L=16: 66.2
-  a=8,w=2,L=16: 128.2
+  a=8,w=2,L=16: 128.1
   a=8,w=4,L=16: 256.1
   a=8,w=8,L=16: 512.1
   a=8,w=1,L=32: 65.3
@@ -2342,31 +2432,31 @@ counter_crosscheck:
       hit_rate_pct: 0.01
     '64':
       l2_sectors_per_request: 2.0
-      dram_bytes_per_request: 64.0
-      hit_rate_pct: 0.03
+      dram_bytes_per_request: 64.1
+      hit_rate_pct: 0.02
     '128':
       l2_sectors_per_request: 1.0
       dram_bytes_per_request: 32.0
       hit_rate_pct: 0.05
     '256':
       l2_sectors_per_request: 1.0
-      dram_bytes_per_request: 32.1
-      hit_rate_pct: 0.08
+      dram_bytes_per_request: 32.0
+      hit_rate_pct: 0.07
     '512':
       l2_sectors_per_request: 1.0
       dram_bytes_per_request: 32.0
-      hit_rate_pct: 0.12
+      hit_rate_pct: 0.1
   l2_fill_bytes_per_request_at_128B_plus: 32.0
   l2_hit_rate_pct_by_footprint_mib:
-    '4': 87.52
-    '8': 87.86
+    '4': 87.5
+    '8': 87.9
     '12': 87.51
-    '16': 87.49
-    '20': 87.88
-    '24': 85.11
-    '28': 80.51
-    '32': 68.23
-    '48': 26.65
+    '16': 87.5
+    '20': 87.86
+    '24': 87.34
+    '28': 79.03
+    '32': 75.8
+    '48': 25.38
   l2_capacity_mib_from_counters: 24
   issue_by_warps:
     '1':
@@ -2380,7 +2470,7 @@ counter_crosscheck:
     '4':
       inst_issued_per_active_cycle_per_sm: 2.895
       issue_active_fraction: 0.724
-      fma_pipe_active_fraction: 0.694
+      fma_pipe_active_fraction: 0.693
     '8':
       inst_issued_per_active_cycle_per_sm: 3.481
       issue_active_fraction: 0.87
@@ -2391,9 +2481,9 @@ counter_crosscheck:
       fma_pipe_active_fraction: 0.866
   inner_loop:
     T1_128x256x16:
-      inst_issued_per_active_cycle_per_sm: 2.724
-      issue_active_fraction: 0.681
-      fma_pipe_active_fraction: 0.612
+      inst_issued_per_active_cycle_per_sm: 2.744
+      issue_active_fraction: 0.686
+      fma_pipe_active_fraction: 0.617
       pipe_share:
         fma: 0.87
         lsu: 0.122
@@ -2407,7 +2497,7 @@ counter_crosscheck:
         short_scoreboard: 0.11
         wait: 0.15
     T5_128x128x32:
-      inst_issued_per_active_cycle_per_sm: 2.632
+      inst_issued_per_active_cycle_per_sm: 2.631
       issue_active_fraction: 0.658
       fma_pipe_active_fraction: 0.596
       pipe_share:
@@ -3380,7 +3470,7 @@ micro_benchmarks:
 - b25_multi_kernel
 - b26_functional_probes
 provenance:
-  suite_commit: 1fc2c8b4d298d77eb6ec95e53dac977c791cde1c
+  suite_commit: 1b5e0dbb3fa77179cc0d7b34bb25fcf6caefaa90
   host: spark-6951
   driver: 580.159.03
   toolkit: Build cuda_13.0.r13.0/compiler.36424714_0
@@ -3395,7 +3485,7 @@ provenance:
       min: 208.0
       max: 2535.0
     max_sm_mhz: 3003.0
-  date: '2026-10-14T22:14:25Z'
+  date: '2026-10-15T00:36:04Z'
   raw: calibration/spark-6951/raw
   ci_target: 0.04
   max_reps: 50
@@ -3613,12 +3703,12 @@ provenance:
         width=16,stride=4:
           wavefronts_per_instruction: 16.01
           instr_per_cycle_per_sm: 0.062
-          wavefronts_per_cycle_per_sm: 0.996
+          wavefronts_per_cycle_per_sm: 0.995
           mio_throttle_per_issue_active: 54.77
         width=4,stride=8:
           wavefronts_per_instruction: 8.01
           instr_per_cycle_per_sm: 0.124
-          wavefronts_per_cycle_per_sm: 0.991
+          wavefronts_per_cycle_per_sm: 0.992
           mio_throttle_per_issue_active: 26.46
         width=16,stride=1:
           wavefronts_per_instruction: 4.01
@@ -3632,14 +3722,14 @@ provenance:
           mio_throttle_per_issue_active: 26.46
         width=4,stride=1:
           wavefronts_per_instruction: 1.01
-          instr_per_cycle_per_sm: 0.481
-          wavefronts_per_cycle_per_sm: 0.485
+          instr_per_cycle_per_sm: 0.48
+          wavefronts_per_cycle_per_sm: 0.484
           mio_throttle_per_issue_active: 5.18
         width=8,stride=2:
           wavefronts_per_instruction: 4.01
           instr_per_cycle_per_sm: 0.245
           wavefronts_per_cycle_per_sm: 0.982
-          mio_throttle_per_issue_active: 12.43
+          mio_throttle_per_issue_active: 12.44
         width=4,stride=4:
           wavefronts_per_instruction: 4.01
           instr_per_cycle_per_sm: 0.245
@@ -3648,7 +3738,7 @@ provenance:
         width=4,stride=2:
           wavefronts_per_instruction: 2.01
           instr_per_cycle_per_sm: 0.48
-          wavefronts_per_cycle_per_sm: 0.964
+          wavefronts_per_cycle_per_sm: 0.965
           mio_throttle_per_issue_active: 5.07
         width=8,stride=1:
           wavefronts_per_instruction: 2.01
@@ -3684,6 +3774,55 @@ provenance:
       - counter_lds_wavefronts[a=8,b=1]
       method: 'B30.2 (ncu): one-wavefront loads cap at 0.48 instructions per SM cycle:
         at least two LSU cycles per instruction'
+    lds_dispatch_rate_by_warps_per_smsp:
+      from:
+      - counter_lds_occupancy[a=16,b=2]
+      - counter_lds_occupancy[a=4,b=2]
+      - counter_lds_occupancy[a=16,b=4]
+      - counter_lds_occupancy[a=4,b=4]
+      - counter_lds_occupancy[a=16,b=1]
+      - counter_lds_occupancy[a=4,b=1]
+      - counter_lds_occupancy[a=4,b=12]
+      - counter_lds_occupancy[a=16,b=12]
+      - counter_lds_occupancy[a=4,b=8]
+      - counter_lds_occupancy[a=16,b=8]
+      - lds_dispatch_instr_per_cycle_per_sm[width=16,warps_per_smsp=1]
+      - lds_dispatch_instr_per_cycle_per_sm[width=4,warps_per_smsp=8]
+      - lds_dispatch_instr_per_cycle_per_sm[width=16,warps_per_smsp=2]
+      - lds_dispatch_instr_per_cycle_per_sm[width=16,warps_per_smsp=4]
+      - lds_dispatch_instr_per_cycle_per_sm[width=4,warps_per_smsp=1]
+      - lds_dispatch_instr_per_cycle_per_sm[width=16,warps_per_smsp=8]
+      - lds_dispatch_instr_per_cycle_per_sm[width=4,warps_per_smsp=12]
+      - lds_dispatch_instr_per_cycle_per_sm[width=16,warps_per_smsp=12]
+      - lds_dispatch_instr_per_cycle_per_sm[width=4,warps_per_smsp=2]
+      - lds_dispatch_instr_per_cycle_per_sm[width=4,warps_per_smsp=4]
+      method: 'B30 occupancy sweep (ncu): w blocks of 4 warps per SM (one warp per
+        sub-partition each), bursts of 32 conflict-free loads with independent consumers;
+        shared-load instructions per SM cycle and per sub-partition, wavefronts per
+        cycle, issue-active and mio_throttle at w = 1, 2, 4, 8, 12 warps per sub-partition'
+      inferred_from:
+        '16':
+          2: *id002
+          4: *id003
+          1: *id004
+          12: *id005
+          8: *id006
+        '4':
+          2: *id007
+          4: *id008
+          1: *id009
+          12: *id010
+          8: *id011
+    lsu_instr_floor_cycles_by_warps_per_sm:
+      from:
+      - counter_lds_occupancy[a=4,b=2]
+      - counter_lds_occupancy[a=4,b=4]
+      - counter_lds_occupancy[a=4,b=1]
+      - counter_lds_occupancy[a=4,b=12]
+      - counter_lds_occupancy[a=4,b=8]
+      method: 'B30 occupancy sweep: SM cycles per one-wavefront load (the inverse
+        of the 32-bit rate) by resident warps per SM; replaces the single 2.1-cycle
+        floor in the warp model'
     mio_shared_with_cp_async:
       from:
       - mio_share_issue_cycles[cp_async_after_lds_burst]
@@ -3745,7 +3884,7 @@ provenance:
         - 4
         - 4
         - 34.1
-        - 0.2346
+        - 0.2347
       - - 1
         - 8
         - 4
@@ -3825,7 +3964,7 @@ provenance:
         - 4
         - 64
         - 34.1
-        - 0.2344
+        - 0.2345
       - - 1
         - 8
         - 64
@@ -3850,7 +3989,7 @@ provenance:
         - 8
         - 4
         - 128.3
-        - 0.2495
+        - 0.2494
       - - 2
         - 1
         - 8
@@ -4010,7 +4149,7 @@ provenance:
         - 8
         - 32
         - 256.2
-        - 0.2499
+        - 0.2498
       - - 4
         - 1
         - 64
@@ -4040,7 +4179,7 @@ provenance:
         - 2
         - 4
         - 128.2
-        - 0.2497
+        - 0.2496
       - - 8
         - 4
         - 4
@@ -4060,7 +4199,7 @@ provenance:
         - 2
         - 8
         - 128.2
-        - 0.2497
+        - 0.2496
       - - 8
         - 4
         - 8
@@ -4079,8 +4218,8 @@ provenance:
       - - 8
         - 2
         - 16
-        - 128.2
-        - 0.2497
+        - 128.1
+        - 0.2498
       - - 8
         - 4
         - 16
@@ -4130,7 +4269,7 @@ provenance:
         - 8
         - 64
         - 512.1
-        - 0.25
+        - 0.2499
       - - 16
         - 1
         - 4
@@ -5881,7 +6020,7 @@ provenance:
         for a strided 4 B read over 1 GiB; at strides >= 128 B every request is its
         own line, so miss bytes per request is the DRAM fill granularity'
     counter_crosscheck.l2_hit_rate:
-      from: &id002
+      from: &id012
       - counter_l2_hit_rate[a=16,b=0]
       - counter_l2_hit_rate[a=4,b=0]
       - counter_l2_hit_rate[a=28,b=0]
@@ -5978,7 +6117,7 @@ provenance:
         references, stripped (global loads removed) and real, one wave of 48 x b blocks
         (b beyond the register-limited residency runs serialized), cycles per k-step
         per block from the wall time at the in-run clock, ncu issue and stall breakdown'
-    counter_crosscheck.l1_capacity: &id003
+    counter_crosscheck.l1_capacity: &id013
       from:
       - counter_l1_hit[a=32,b=98304]
       - counter_l1_hit[a=160,b=0]
@@ -6030,11 +6169,11 @@ provenance:
       method: 'ncu: L1 sector hit rate of a single-thread 128 B-stride chase (ld.global.ca)
         by footprint and shared-memory request; compare l1_bytes_by_carveout (B14)'
     l2_capacity_bytes:
-      from: *id002
+      from: *id012
       method: 'ncu: L2 capacity from the per-block cyclic-stream hit-rate curve (counter);
         B13''s single-warp chase (l2_chase_capacity_bytes) varies between 16 and 24
         MiB run to run and is secondary'
-    l1_bytes_by_carveout_counters: *id003
+    l1_bytes_by_carveout_counters: *id013
     dram_bytes_per_s_write:
       from:
       - bandwidth_write[1073741824]

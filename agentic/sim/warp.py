@@ -39,11 +39,13 @@ class WarpModel:
         self.schedulers = int(contract.get("schedulers_per_sm") or 4)
         # B30: the queue between a sub-partition's scheduler and the LSU. A sub-partition dispatches one shared-memory instruction
         # every mio_issue_cycles_per_load cycles (4.0); no depth limit appears within 64 back-to-back loads from one warp; the LSU,
-        # shared by the SM, drains lsu_drain_wavefronts_per_cycle_per_sm (1.0) with at least lsu_min_cycles_per_instruction (2.1)
-        # per instruction; wavefronts per instruction by width from the ncu table (32-bit 1, 64-bit 2, 128-bit 4, times the stride degree)
+        # shared by the SM, drains lsu_drain_wavefronts_per_cycle_per_sm (1.0) with a floor per instruction that B30's occupancy
+        # sweep gives as a function of resident warps per SM (2.4 cycles at 4 warps, 2.0 from 16 up); wavefronts per instruction by width from the ncu table (32-bit 1, 64-bit 2, 128-bit 4, times the stride degree)
         self.mio_issue = float(contract.get("mio_issue_cycles_per_load") or 4.0)
         self.lsu_drain_wf = float(contract.get("lsu_drain_wavefronts_per_cycle_per_sm") or 1.0)
-        self.lsu_min_cycles = float(contract.get("lsu_min_cycles_per_instruction") or 2.0)
+        # the floor by occupancy (B30 occupancy sweep): SM cycles per one-wavefront load vs resident warps per SM, interpolated
+        self.floor_by_warps = {int(k): float(v) for k, v in (contract.get("lsu_instr_floor_cycles_by_warps_per_sm") or {}).items()} or {1: float(contract.get("lsu_min_cycles_per_instruction") or 2.0)}
+        self.lsu_min_cycles = self.floor_by_warps[max(self.floor_by_warps)]
         wft = contract.get("lds_wavefronts_per_instruction") or {}
         self.wavefronts = {LDS32: float(wft.get("width=4,stride=1") or 1.0), LDS128: float(wft.get("width=16,stride=1") or 4.0)}
         # the template's A loads (ld.shared.128 with two distinct 16 B addresses per warp) move two 16 B segments: one wavefront
@@ -52,6 +54,16 @@ class WarpModel:
         self.mio_queue_depth = contract.get("mio_queue_depth_per_smsp")        # None: no depth limit observed (B30.1)
         self.fma_cost = 1.0 / min(1.0, float(contract["fp32_flops_per_s_per_sm"]) / 64.0 / hz / self.schedulers)
         self.penalty = {int(k): float(v) for k, v in (contract.get("bank_conflict_penalty") or {}).items()}
+
+    def floor(self, warps_per_sm: int) -> float:
+        keys = sorted(self.floor_by_warps)
+        if warps_per_sm <= keys[0]:
+            return self.floor_by_warps[keys[0]]
+        for a, b in zip(keys, keys[1:]):
+            if a <= warps_per_sm <= b:
+                f = (warps_per_sm - a) / (b - a)
+                return self.floor_by_warps[a] + f * (self.floor_by_warps[b] - self.floor_by_warps[a])
+        return self.floor_by_warps[keys[-1]]
 
     def degree(self, stride_words: int) -> float:
         if stride_words <= 1 or not self.penalty:
@@ -97,7 +109,7 @@ class WarpModel:
         mio_pending = [[] for _ in range(S)]                              # per sub-partition: drain times of dispatched entries (for the optional depth limit)
         fma_free = [0.0] * S
         hist = {"issued": 0, "scoreboard": 0, "not_selected": 0, "lsu": 0, "done": 0}
-        t = 0; alive = W; deg = self.degree(stride_words)
+        t = 0; alive = W; deg = self.degree(stride_words); floor = self.floor(W)
         age = list(range(W))
         while alive > 0 and t < 50_000_000:
             for s in range(S):
@@ -124,7 +136,7 @@ class WarpModel:
                     if cls in (LDS128, LDS32):
                         mio_free[s] = t + self.mio_issue
                         wf = (self.wavefronts_broadcast128 if cls == LDS128 else self.wavefronts[LDS32]) * deg
-                        start = max(float(t), lsu_free); lsu_free = start + max(self.lsu_min_cycles, wf / self.lsu_drain_wf)
+                        start = max(float(t), lsu_free); lsu_free = start + max(floor, wf / self.lsu_drain_wf)
                         done_at = lsu_free + self.lat[cls]
                         if self.mio_queue_depth:
                             mio_pending[s] = [c for c in mio_pending[s] if c > t] + [lsu_free]

@@ -11,14 +11,14 @@
  "method": "ncu: B13.4 / B4: L2 sector hit rate of an 8-pass per-block cyclic stream (L1 bypassed) vs total footprint: capacity from counters",
  "benchmark": "bx_counters",
  "arch": "sm_121",
- "timestamp": "2026-10-14T22:12:53Z",
+ "timestamp": "2026-10-15T00:31:57Z",
  "detail": {
   "kernel": "footprint",
   "a": 20,
   "b": 0,
   "metrics": {
    "gpu__time_duration.sum": [
-    246048.0,
+    233472.0,
     "ns"
    ],
    "lts__t_requests_srcunit_tex.sum": [
@@ -26,15 +26,15 @@
     "request"
    ],
    "lts__t_sector_hit_rate.pct": [
-    87.88,
+    87.86,
     "%"
    ],
    "lts__t_sectors_op_read_lookup_hit.sum": [
-    4751885.0,
+    4751457.0,
     "sector"
    ],
    "lts__t_sectors_op_read_lookup_miss.sum": [
-    656033.0,
+    656149.0,
     "sector"
    ],
    "lts__t_sectors_srcunit_tex.sum": [
@@ -48,6 +48,6 @@
   },
   "measured": true,
   "reason": null,
-  "seconds": 1.8
+  "seconds": 1.9
  }
 }

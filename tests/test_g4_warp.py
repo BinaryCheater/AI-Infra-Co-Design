@@ -78,7 +78,7 @@ def test_g4_spark001_kernels_median_10_worst_15_percent():
     assert errs[-1] <= 0.15, errs
 
 
-@pytest.mark.xfail(strict=True, reason="B27 streaming grid with the B30 queue: 7/20 within 10 % (a = 8 and 16 points over by 2-3x); notes/sim_gaps.md #10, #14")
+@pytest.mark.xfail(strict=True, reason="B27 streaming grid (addresses fixed) with the occupancy curve: 13/20 within 10 %, median 8 %; the one-warp a = 1, 2 points read 2x (compiler pipelining); notes/sim_gaps.md #17")
 def test_g4_b27_stream_grid_predicted_within_10_percent():
     from agentic.sim.check_warp import b27_stream_grid
     rows = b27_stream_grid(WarpModel(C, S))
@@ -86,7 +86,7 @@ def test_g4_b27_stream_grid_predicted_within_10_percent():
     assert all(abs(r["error"]) <= 0.10 for r in rows), sorted(round(r["error"], 2) for r in rows)
 
 
-@pytest.mark.xfail(strict=True, reason="B29 with the B30 queue: 8/19 within 10 %, median 13 %, family agreement 3/19; notes/sim_gaps.md #11, #14")
+@pytest.mark.xfail(strict=True, reason="B29 with the occupancy curve: 9/19 within 10 %, median 10 %, worst +105 %, family agreement 3/19; notes/sim_gaps.md #17")
 def test_g4_b29_ground_truth_within_10_percent():
     from agentic.sim.check_warp import b29
     rows = b29(WarpModel(C, S))
@@ -121,6 +121,7 @@ def test_g4_b30_queue_parameters_are_measured():
     m = WarpModel(C, S)
     assert C["mio_issue_cycles_per_load"] and C["lsu_drain_wavefronts_per_cycle_per_sm"] and C["lsu_min_cycles_per_instruction"]
     assert m.mio_issue == C["mio_issue_cycles_per_load"] and m.lsu_drain_wf == C["lsu_drain_wavefronts_per_cycle_per_sm"]
+    assert m.floor_by_warps == {int(k): v for k, v in C["lsu_instr_floor_cycles_by_warps_per_sm"].items()}
     assert "lsu_queue_instructions" not in S and "issue_overlap_by_warps_per_scheduler" not in S and not hasattr(m, "lsu_rate_by_blocks")
 
 

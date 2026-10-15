@@ -11,18 +11,18 @@
  "method": "ncu: B21: issue-active fraction, FMA pipe activity, LSU share and stall reasons of the T1 inner loop",
  "benchmark": "bx_counters",
  "arch": "sm_121",
- "timestamp": "2026-10-14T22:13:11Z",
+ "timestamp": "2026-10-15T00:32:15Z",
  "detail": {
   "kernel": "inner_T1",
   "a": 0,
   "b": 0,
   "metrics": {
    "gpu__time_duration.sum": [
-    654528.0,
+    652352.0,
     "ns"
    ],
    "sm__cycles_active.avg": [
-    1396399.96,
+    1386190.62,
     "cycle"
    ],
    "sm__inst_executed_pipe_alu.sum": [
@@ -46,7 +46,7 @@
     "cycle"
    ],
    "sm__pipe_fma_cycles_active.avg": [
-    6839867.08,
+    6841407.62,
     "cycle"
    ],
    "smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio": [
@@ -78,7 +78,7 @@
     "inst"
    ],
    "smsp__warps_active.avg": [
-    2766156.92,
+    2766454.01,
     "warp"
    ]
   },

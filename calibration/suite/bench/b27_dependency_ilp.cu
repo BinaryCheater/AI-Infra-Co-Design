@@ -30,7 +30,7 @@ template <int A, int L> __global__ void __launch_bounds__(1024) stream_kernel(fl
 #pragma unroll
     for (int k = 0; k < L; k++) { float s[A];
 #pragma unroll
-      for (int i = 0; i < A; i++) asm volatile("ld.shared.f32 %0, [%1];" : "=f"(s[i]) : "r"(base + ((off + k * A + i) & 63) * 128));
+      for (int i = 0; i < A; i++) asm volatile("ld.shared.f32 %0, [%1];" : "=f"(s[i]) : "r"(base + ((off + k * A + i) & 255) * 128));   // 256 distinct lines: no repeat within a 16 x 16 body
 #pragma unroll
       for (int i = 0; i < A; i++) acc[i] += s[i]; }
     asm volatile("" : "+r"(off)); off += L * A; }

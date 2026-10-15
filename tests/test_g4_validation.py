@@ -21,7 +21,7 @@ def test_g4_validation_set_recorded():
     assert all(r["measured_us"] and r["simulated_us"] and r["ncu"].get("ok") for r in v["rows"])
 
 
-@pytest.mark.xfail(strict=True, reason="G4 gate not passed with the B30 queue model: median 14.2%, worst 68%, non-compute agreement 0 %; notes/sim_gaps.md #13-#15")
+@pytest.mark.xfail(strict=True, reason="G4 gate not passed with the B30 occupancy curve: median 12.3%, worst 67%, non-compute agreement 0 %; notes/sim_gaps.md #16-#18")
 def test_g4_validation_error_gate():
     v = _rows(); s = v["summary"]
     assert s["median_abs_error"] <= 0.10, s

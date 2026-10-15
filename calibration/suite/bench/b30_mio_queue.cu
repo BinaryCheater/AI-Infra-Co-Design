@@ -42,6 +42,25 @@ template <int WIDTH, int STRIDE, int MASK> __global__ void __launch_bounds__(512
   long long t1 = clock64(); __shared__ long long smin, smax; if (threadIdx.x == 0) { smin = t0; smax = t1; } __syncthreads(); atomicMin(&smin, t0); atomicMax(&smax, t1); __syncthreads();
   float r = 0; for (int i = 0; i < 32; i++) r += acc[i]; if (r == 123456.789f) out[0] = r; if (threadIdx.x == 0) cyc[blockIdx.x] = smax - smin;
 }
+template <int WIDTH> __global__ void __launch_bounds__(128) drain_occ(float* out, long long* cyc, int trips) {
+  // one warp per sub-partition per block; bursts of 32 conflict-free loads with independent consumers; w resident blocks per SM
+  extern __shared__ __align__(16) char sb[]; for (int i = threadIdx.x; i < 2048; i += blockDim.x) ((float*)sb)[i] = i * 1e-6f; __syncthreads();
+  unsigned base = (unsigned)__cvta_generic_to_shared(sb) + (threadIdx.x & 31) * WIDTH; float acc[32]; for (int i = 0; i < 32; i++) acc[i] = 0;
+  asm volatile("" : "+r"(trips)); long long t0 = clock64();
+  for (int t = 0; t < trips; t++) { unsigned off = (t & 3) * 2048;
+    if (WIDTH == 4) { float s[32];
+#pragma unroll
+      for (int i = 0; i < 32; i++) asm volatile("ld.shared.f32 %0, [%1];" : "=f"(s[i]) : "r"(base + ((off + i * 128) & 8191)));
+#pragma unroll
+      for (int i = 0; i < 32; i++) acc[i] += s[i]; }
+    else { float4 s[32];
+#pragma unroll
+      for (int i = 0; i < 32; i++) asm volatile("ld.shared.v4.f32 {%0,%1,%2,%3}, [%4];" : "=f"(s[i].x), "=f"(s[i].y), "=f"(s[i].z), "=f"(s[i].w) : "r"(base + ((off + i * 512) & 8191)));
+#pragma unroll
+      for (int i = 0; i < 32; i++) acc[i] += s[i].x; }
+    asm volatile("" : "+f"(acc[0]), "+f"(acc[1]), "+f"(acc[2]), "+f"(acc[3]), "+f"(acc[4]), "+f"(acc[5]), "+f"(acc[6]), "+f"(acc[7]), "+f"(acc[8]), "+f"(acc[9]), "+f"(acc[10]), "+f"(acc[11]), "+f"(acc[12]), "+f"(acc[13]), "+f"(acc[14]), "+f"(acc[15]), "+f"(acc[16]), "+f"(acc[17]), "+f"(acc[18]), "+f"(acc[19]), "+f"(acc[20]), "+f"(acc[21]), "+f"(acc[22]), "+f"(acc[23]), "+f"(acc[24]), "+f"(acc[25]), "+f"(acc[26]), "+f"(acc[27]), "+f"(acc[28]), "+f"(acc[29]), "+f"(acc[30]), "+f"(acc[31])); }
+  long long t1 = clock64(); float r = 0; for (int i = 0; i < 32; i++) r += acc[i]; if (r == 123456.789f) out[0] = r; if (threadIdx.x == 0) cyc[blockIdx.x] = t1 - t0;
+}
 template <int MODE> __global__ void __launch_bounds__(32) share_probe(const char* __restrict__ g, float* out, long long* cyc, int trips) {
   // MODE 0: 8 cp.async alone; 1: 32 ld.shared then 8 cp.async; 2: 8 ldmatrix.x4 alone; 3: 32 ld.shared then 8 ldmatrix.x4
   extern __shared__ __align__(16) char sb[]; for (int i = threadIdx.x; i < 8192; i += blockDim.x) ((float*)sb)[i] = i * 1e-6f; __syncthreads();
@@ -88,6 +107,13 @@ int main(int argc, char** argv) {
   drain(drain_rate<8, 1, 65535>, 8, 1); drain(drain_rate<8, 2, 65535>, 8, 2); drain(drain_rate<8, 4, 65535>, 8, 4);
   drain(drain_rate<16, 1, 65535>, 16, 1); drain(drain_rate<16, 2, 65535>, 16, 2); drain(drain_rate<16, 4, 65535>, 16, 4);
   drain(drain_rate<4, 1, 8191>, 4, 1, 8192); drain(drain_rate<4, 1, 32767>, 4, 1, 32768); drain(drain_rate<8, 1, 8191>, 8, 1, 8192); drain(drain_rate<16, 1, 8191>, 16, 1, 8192);
+  // 2b. occupancy sweep: w warps per sub-partition (w blocks of 4 warps per SM, one wave), 32-bit and 128-bit conflict-free loads
+  { Timer tm; CK(cudaFuncSetAttribute(drain_occ<4>, cudaFuncAttributeMaxDynamicSharedMemorySize, 96 * 1024)); CK(cudaFuncSetAttribute(drain_occ<16>, cudaFuncAttributeMaxDynamicSharedMemorySize, 96 * 1024));
+    for (int width : {4, 16}) for (int w : {1, 2, 4, 8, 12}) { int pad = std::max(8192, (96 * 1024) / w); int grid = sms * w; int trips = 400; std::vector<double> s;
+      auto go = [&]() { if (width == 4) drain_occ<4><<<grid, 128, pad>>>(out, cyc, trips); else drain_occ<16><<<grid, 128, pad>>>(out, cyc, trips); CK(cudaGetLastError()); };
+      go(); CK(cudaDeviceSynchronize());
+      for (int r = 0; r < reps; r++) { tm.start(); go(); double ms = tm.stop_ms(); s.push_back((double)w * 4 * 32 * trips / (ms * 1e-3 * mhz * 1e6)); }   // instructions per SM cycle (one wave of w blocks per SM)
+      char q[96], d[2048]; snprintf(q, sizeof q, "lds_dispatch_instr_per_cycle_per_sm[width=%d,warps_per_smsp=%d]", width, w); snprintf(d, sizeof d, "{\"width_bytes\": %d, \"warps_per_smsp\": %d, \"blocks_per_sm\": %d, \"burst\": 32, \"method\": \"one wave of w blocks of 4 warps per SM, wall time by cudaEvent at the probed clock\"}", width, w, w); emit_clocked(q, "instr/cycle", s, d, mhz); } }
   // 4. sharing: cp.async / ldmatrix issue time alone and after a burst of 32 ld.shared, one warp per SM
   auto share = [&](auto kern, const char* name) { CK(cudaFuncSetAttribute(kern, cudaFuncAttributeMaxDynamicSharedMemorySize, 96 * 1024)); kern<<<sms, 32, SMEM>>>(g, out, cyc, 200); CK(cudaGetLastError()); CK(cudaDeviceSynchronize()); std::vector<double> s;
     for (int r = 0; r < reps; r++) { kern<<<sms, 32, SMEM>>>(g, out, cyc, 200); CK(cudaDeviceSynchronize()); std::vector<long long> h(sms); CK(cudaMemcpy(h.data(), cyc, sms * 8, cudaMemcpyDeviceToHost)); std::sort(h.begin(), h.end()); s.push_back((double)h[sms / 2] / 8); }

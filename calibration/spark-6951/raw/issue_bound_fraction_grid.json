@@ -2,9 +2,9 @@
  "quantity": "issue_bound_fraction_grid",
  "unit": "fraction",
  "samples": [
-  0.24997914,
-  0.24997914,
-  0.24997914
+  0.249979081,
+  0.249979259,
+  0.249979081
  ],
  "detail": {
   "grid_a_w_L_cyclesPerIter_fraction": [
@@ -27,7 +27,7 @@
     4,
     4,
     34.1,
-    0.2346
+    0.2347
    ],
    [
     1,
@@ -139,7 +139,7 @@
     4,
     64,
     34.1,
-    0.2344
+    0.2345
    ],
    [
     1,
@@ -174,7 +174,7 @@
     8,
     4,
     128.3,
-    0.2495
+    0.2494
    ],
    [
     2,
@@ -398,7 +398,7 @@
     8,
     32,
     256.2,
-    0.2499
+    0.2498
    ],
    [
     4,
@@ -440,7 +440,7 @@
     2,
     4,
     128.2,
-    0.2497
+    0.2496
    ],
    [
     8,
@@ -468,7 +468,7 @@
     2,
     8,
     128.2,
-    0.2497
+    0.2496
    ],
    [
     8,
@@ -495,8 +495,8 @@
     8,
     2,
     16,
-    128.2,
-    0.2497
+    128.1,
+    0.2498
    ],
    [
     8,
@@ -566,7 +566,7 @@
     8,
     64,
     512.1,
-    0.25
+    0.2499
    ],
    [
     16,
@@ -710,10 +710,10 @@
    ]
   ],
   "method": "dep variant over the (a, w, L) grid: per warp, a independent chains of ld.shared -> dependent IMAD (4-cycle class, standing in for the FFMA that consumes a load), L iterations unrolled, 4w warps per SM; cycles per iteration per warp; fraction = warp-instructions issued per scheduler cycle (bound 1). The grid is the first check of the warp model (B27_plus.md \u00a71)",
-  "sm_clock_mhz": 2541.4
+  "sm_clock_mhz": 2541.1
  },
- "value": 0.24997914,
- "ci95": 0.0,
+ "value": 0.249979081,
+ "ci95": 3.56029791183469e-07,
  "n": 3,
  "repeat_policy": "to_ci",
  "method": "dependency chains vs ILP vs TLP on one scheduler: loads-then-FFMA iterations over (a, w, L); FFMA and LDS latency references (B27_plus.md)",
@@ -722,18 +722,18 @@
   "before": {
    "sm_mhz": 208.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 41.0,
-   "power_w": 4.18,
+   "temp_c": 40.0,
+   "power_w": 4.61,
    "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2515.0,
+   "sm_mhz": 2450.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 50.0,
-   "power_w": 34.78,
+   "temp_c": 49.0,
+   "power_w": 35.75,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T20:38:51Z",
+ "timestamp": "2026-10-15T00:31:36Z",
  "arch": "sm_121"
 }

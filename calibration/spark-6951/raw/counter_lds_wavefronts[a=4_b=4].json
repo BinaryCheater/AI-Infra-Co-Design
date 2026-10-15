@@ -11,14 +11,14 @@
  "method": "ncu: B30.3: shared-memory wavefronts per ld.shared instruction by width (a, bytes) and word stride (b), 16 warps per SM, with the mio_throttle stall",
  "benchmark": "bx_counters",
  "arch": "sm_121",
- "timestamp": "2026-10-14T22:13:32Z",
+ "timestamp": "2026-10-15T00:32:35Z",
  "detail": {
   "kernel": "lds_width",
   "a": 4,
   "b": 4,
   "metrics": {
    "gpu__time_duration.sum": [
-    131360.0,
+    130784.0,
     "ns"
    ],
    "l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum": [
@@ -30,7 +30,7 @@
     ""
    ],
    "sm__cycles_active.avg": [
-    261274.46,
+    261164.44,
     "cycle"
    ],
    "sm__sass_data_bytes_mem_shared.sum": [
@@ -52,6 +52,6 @@
   },
   "measured": true,
   "reason": null,
-  "seconds": 1.9
+  "seconds": 1.8
  }
 }

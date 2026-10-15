@@ -43,6 +43,23 @@ template <int WIDTH> __global__ void lds_width(float* out, int iters, int stride
       else { float4 v; asm volatile("ld.shared.v4.f32 {%0,%1,%2,%3}, [%4];" : "=f"(v.x), "=f"(v.y), "=f"(v.z), "=f"(v.w) : "r"(a)); acc[i] += v.x; } } }
   float r = 0; for (int i = 0; i < 8; i++) r += acc[i]; if (r == 123456.789f) out[0] = r;
 }
+template <int WIDTH> __global__ void __launch_bounds__(128) lds_occ(float* out, int trips) {
+  extern __shared__ __align__(16) char sb[]; for (int i = threadIdx.x; i < 2048; i += blockDim.x) ((float*)sb)[i] = i * 1e-6f; __syncthreads();
+  unsigned base = (unsigned)__cvta_generic_to_shared(sb) + (threadIdx.x & 31) * WIDTH; float acc[32]; for (int i = 0; i < 32; i++) acc[i] = 0; asm volatile("" : "+r"(trips));
+  for (int t = 0; t < trips; t++) { unsigned off = (t & 3) * 2048;
+    if (WIDTH == 4) { float s[32];
+#pragma unroll
+      for (int i = 0; i < 32; i++) asm volatile("ld.shared.f32 %0, [%1];" : "=f"(s[i]) : "r"(base + ((off + i * 128) & 8191)));
+#pragma unroll
+      for (int i = 0; i < 32; i++) acc[i] += s[i]; }
+    else { float4 s[32];
+#pragma unroll
+      for (int i = 0; i < 32; i++) asm volatile("ld.shared.v4.f32 {%0,%1,%2,%3}, [%4];" : "=f"(s[i].x), "=f"(s[i].y), "=f"(s[i].z), "=f"(s[i].w) : "r"(base + ((off + i * 512) & 8191)));
+#pragma unroll
+      for (int i = 0; i < 32; i++) acc[i] += s[i].x; }
+    asm volatile("" : "+f"(acc[0]), "+f"(acc[7]), "+f"(acc[15]), "+f"(acc[31])); }
+  float r = 0; for (int i = 0; i < 32; i++) r += acc[i]; if (r == 123456.789f) out[0] = r;
+}
 __global__ void l1_chase(const unsigned* __restrict__ next, int steps, unsigned* out) {
   extern __shared__ char pad[]; unsigned p = 0; for (int i = 0; i < steps; i++) { unsigned v; asm volatile("ld.global.ca.u32 %0, [%1];" : "=r"(v) : "l"(next + p)); p = v; } out[0] = p; if (p == 0xFFFFFFFF) pad[0] = 1;
 }
@@ -66,6 +83,9 @@ int main(int argc, char** argv) {
   else if (!strcmp(kernel, "lds_width")) {   // --a width bytes (4, 8, 16), --b stride words; 16 warps per SM
     CK(cudaFuncSetAttribute(lds_width<4>, cudaFuncAttributeMaxDynamicSharedMemorySize, 96 * 1024)); CK(cudaFuncSetAttribute(lds_width<8>, cudaFuncAttributeMaxDynamicSharedMemorySize, 96 * 1024)); CK(cudaFuncSetAttribute(lds_width<16>, cudaFuncAttributeMaxDynamicSharedMemorySize, 96 * 1024));
     for (int r = 0; r < 2; r++) { if (a1 == 4) lds_width<4><<<sms, 512, 90 * 1024>>>(out, 4000, (int)a2); else if (a1 == 8) lds_width<8><<<sms, 512, 90 * 1024>>>(out, 4000, (int)a2); else lds_width<16><<<sms, 512, 90 * 1024>>>(out, 4000, (int)a2); CK(cudaGetLastError()); CK(cudaDeviceSynchronize()); } }
+  else if (!strcmp(kernel, "lds_occ")) {     // --a width bytes (4 or 16), --b warps per sub-partition (blocks of 4 warps, padded)
+    CK(cudaFuncSetAttribute(lds_occ<4>, cudaFuncAttributeMaxDynamicSharedMemorySize, 96 * 1024)); CK(cudaFuncSetAttribute(lds_occ<16>, cudaFuncAttributeMaxDynamicSharedMemorySize, 96 * 1024)); int pad = std::max(8192L, (96L * 1024) / a2);
+    for (int r = 0; r < 2; r++) { if (a1 == 4) lds_occ<4><<<sms * (int)a2, 128, pad>>>(out, 400); else lds_occ<16><<<sms * (int)a2, 128, pad>>>(out, 400); CK(cudaGetLastError()); CK(cudaDeviceSynchronize()); } }
   else if (!strcmp(kernel, "l1_chase")) {    // --a footprint KiB at 128 B stride, --b dynamic smem bytes
     size_t bytes = (size_t)a1 << 10; unsigned* d; CK(cudaMalloc(&d, bytes)); std::vector<unsigned> h(bytes / 4); size_t n = bytes / 128; for (size_t i = 0; i < n; i++) h[i * 32] = (unsigned)(((i + 1) % n) * 32); CK(cudaMemcpy(d, h.data(), bytes, cudaMemcpyHostToDevice));
     CK(cudaFuncSetAttribute(l1_chase, cudaFuncAttributeMaxDynamicSharedMemorySize, 96 * 1024)); int carve = a2 ? std::min(100, (int)(100.0 * a2 / (100 * 1024))) : 0; CK(cudaFuncSetAttribute(l1_chase, cudaFuncAttributePreferredSharedMemoryCarveout, carve));

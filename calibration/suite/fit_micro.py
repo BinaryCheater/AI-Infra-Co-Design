@@ -673,6 +673,25 @@ def fit_b30(recs):
         s["lds_wavefronts_per_instruction"] = {"from": [q for q in recs if q.startswith("counter_lds_wavefronts[")], "method": "B30.3 (ncu): l1tex shared-memory wavefronts per ld.shared instruction by width and stride, 16 warps per SM in bursts of 8", "inferred_from": wf}
         s["lsu_drain_wavefronts_per_cycle_per_sm"] = {"from": [q for q in recs if q.startswith("counter_lds_wavefronts[")], "method": "B30.2 (ncu): wavefronts per active SM cycle, mean over the configurations needing two or more wavefronts per instruction (every one of them drains at 0.96-1.0)"}
         s["lsu_min_cycles_per_instruction"] = {"from": [q for q in recs if q.startswith("counter_lds_wavefronts[")], "method": "B30.2 (ncu): one-wavefront loads cap at 0.48 instructions per SM cycle: at least two LSU cycles per instruction"}
+    # occupancy sweep (ncu): shared-load instructions per cycle vs warps per sub-partition, 32-bit and 128-bit conflict-free
+    occ = {}
+    for q, r in recs.items():
+        m = re.fullmatch(r"counter_lds_occupancy\[a=(\d+),b=(\d+)\]", q)
+        if m and r["detail"].get("measured"):
+            mt = {k: v[0] for k, v in r["detail"]["metrics"].items()}; cyc = mt.get("sm__cycles_active.avg"); ins = mt.get("sm__sass_inst_executed_op_shared_ld.sum"); w = mt.get("l1tex__data_pipe_lsu_wavefronts_mem_shared.sum")
+            ia, sc = mt.get("smsp__issue_active.avg"), mt.get("smsp__cycles_active.avg")
+            occ.setdefault(m.group(1), {})[int(m.group(2))] = {"instr_per_cycle_per_sm": round(ins / 48 / cyc, 3), "instr_per_cycle_per_smsp": round(ins / 48 / cyc / 4, 4), "wavefronts_per_cycle_per_sm": round(w / 48 / cyc, 3),
+                                                                "issue_active": round(ia / sc, 3) if ia and sc else None, "mio_throttle_per_issue_active": mt.get("smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio"),
+                                                                "short_scoreboard_per_issue_active": mt.get("smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio")}
+    clk = keyed(recs, "lds_dispatch_instr_per_cycle_per_sm")
+    if occ:
+        f["lds_dispatch_rate_by_warps_per_smsp"] = {f"width={wd}": {str(w): v for w, v in sorted(d.items())} for wd, d in occ.items()}
+        if "4" in occ:
+            f["lsu_instr_floor_cycles_by_warps_per_sm"] = {str(4 * w): round(1.0 / v["instr_per_cycle_per_sm"], 2) for w, v in sorted(occ["4"].items())}
+        s["lds_dispatch_rate_by_warps_per_smsp"] = {"from": [q for q in recs if q.startswith("counter_lds_occupancy[")] + [r["quantity"] for r in clk.values()], "method": "B30 occupancy sweep (ncu): w blocks of 4 warps per SM (one warp per sub-partition each), bursts of 32 conflict-free loads with independent consumers; shared-load instructions per SM cycle and per sub-partition, wavefronts per cycle, issue-active and mio_throttle at w = 1, 2, 4, 8, 12 warps per sub-partition", "inferred_from": {k: v for k, v in occ.items()}}
+        s["lsu_instr_floor_cycles_by_warps_per_sm"] = {"from": [q for q in recs if q.startswith("counter_lds_occupancy[a=4")], "method": "B30 occupancy sweep: SM cycles per one-wavefront load (the inverse of the 32-bit rate) by resident warps per SM; replaces the single 2.1-cycle floor in the warp model"}
+    if clk:
+        f["lds_dispatch_instr_per_cycle_per_sm_clock"] = {k: round(r["value"], 3) for k, r in clk.items()}
     sh = keyed(recs, "mio_share_issue_cycles")
     if sh:
         g = lambda k: _val(sh.get(k))

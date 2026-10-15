@@ -30,6 +30,8 @@ CHECKS = [
     ("smem_banks", "smem_stride", SMEM, [(1, 0), (2, 0), (4, 0), (8, 0), (16, 0), (32, 0)], "B6 / B26.6: shared-memory wavefronts and bank conflicts per instruction vs word stride"),
     ("lds_wavefronts", "lds_width", SMEM + ",sm__cycles_active.avg,smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio,smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio",
      [(4, 1), (4, 2), (4, 4), (4, 8), (8, 1), (8, 2), (8, 4), (16, 1), (16, 2), (16, 4)], "B30.3: shared-memory wavefronts per ld.shared instruction by width (a, bytes) and word stride (b), 16 warps per SM, with the mio_throttle stall"),
+    ("lds_occupancy", "lds_occ", SMEM + ",sm__cycles_active.avg,smsp__issue_active.avg,smsp__cycles_active.avg,smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio,smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio,smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio",
+     [(4, 1), (4, 2), (4, 4), (4, 8), (4, 12), (16, 1), (16, 2), (16, 4), (16, 8), (16, 12)], "B30 occupancy sweep: shared-load instructions per cycle, issue-active and mio_throttle at w warps per sub-partition (a = width bytes, b = w)"),
     ("l1_hit", "l1_chase", L1, [(16, 0), (32, 0), (48, 0), (64, 0), (96, 0), (112, 0), (128, 0), (160, 0), (16, 16384), (32, 16384), (64, 16384), (96, 16384), (16, 49152), (32, 49152), (64, 49152), (16, 65536), (24, 65536), (32, 65536), (16, 98304), (24, 98304), (32, 98304)], "B14.1: L1 sector hit rate of a 128 B-stride chase at footprint KiB (a) and smem request bytes (b)"),
 ]
 

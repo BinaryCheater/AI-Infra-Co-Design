@@ -1,0 +1,69 @@
+{
+ "quantity": "counter_lds_occupancy[a=16,b=1]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B30 occupancy sweep: shared-load instructions per cycle, issue-active and mio_throttle at w warps per sub-partition (a = width bytes, b = w)",
+ "benchmark": "bx_counters",
+ "arch": "sm_121",
+ "timestamp": "2026-10-15T00:33:00Z",
+ "detail": {
+  "kernel": "lds_occ",
+  "a": 16,
+  "b": 1,
+  "metrics": {
+   "gpu__time_duration.sum": [
+    75872.0,
+    "ns"
+   ],
+   "l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum": [
+    3686400.0,
+    ""
+   ],
+   "l1tex__data_pipe_lsu_wavefronts_mem_shared.sum": [
+    4918704.0,
+    ""
+   ],
+   "sm__cycles_active.avg": [
+    110223.58,
+    "cycle"
+   ],
+   "sm__sass_data_bytes_mem_shared.sum": [
+    157679616.0,
+    "byte"
+   ],
+   "sm__sass_inst_executed_op_shared_ld.sum": [
+    1228800.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio": [
+    0.07,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio": [
+    0.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio": [
+    1.79,
+    "inst"
+   ],
+   "smsp__cycles_active.avg": [
+    107257.92,
+    "cycle"
+   ],
+   "smsp__issue_active.avg": [
+    32995.0,
+    "cycle"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 1.9
+ }
+}

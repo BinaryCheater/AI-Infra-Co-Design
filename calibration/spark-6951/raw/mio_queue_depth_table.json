@@ -70,7 +70,7 @@
    ]
   ],
   "method": "one warp (or two on the same sub-partition) issues n back-to-back independent ld.shared.32; clock64 before the first and after the last issue, cycles per load; the n where it jumps is the queue depth",
-  "sm_clock_mhz": 2541.0
+  "sm_clock_mhz": 2541.3
  },
  "value": 0,
  "ci95": 0.0,
@@ -82,18 +82,18 @@
   "before": {
    "sm_mhz": 208.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 43.0,
-   "power_w": 4.22,
-   "sw_power_cap": "Active"
+   "temp_c": 41.0,
+   "power_w": 4.26,
+   "sw_power_cap": "Not Active"
   },
   "after": {
-   "sm_mhz": 2457.0,
+   "sm_mhz": 2476.0,
    "max_sm_mhz": 3003.0,
-   "temp_c": 45.0,
-   "power_w": 18.59,
+   "temp_c": 46.0,
+   "power_w": 20.92,
    "sw_power_cap": "Not Active"
   }
  },
- "timestamp": "2026-10-14T22:12:33Z",
+ "timestamp": "2026-10-15T00:36:04Z",
  "arch": "sm_121"
 }
