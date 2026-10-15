@@ -19,6 +19,65 @@ from collections import OrderedDict
 from .run import Engine, Fifo, Memory
 
 
+class TmaEngine:
+    """Round 2, group 2 (B35-B37): TMA as a second copy engine on the per-SM path. One bulk copy per tile completes after B35's
+    measured p50 for that tile size and residency (every SM copying at once, so the chip's share is inside the number); a per-SM
+    rate cap from the same trials; 2-D tensor-map copies scaled by B36 (c); the issue is one thread's two instructions plus the
+    mbarrier round trip (B37). Nothing is fitted: the tables are the contract's."""
+    def __init__(self, contract: dict):
+        c = contract; self.hz = float(c.get("clock_hz_sustained") or 2.4e9)
+        self.lat = {}                                     # (tile, resident) -> p50 cycles
+        for k, v in (c.get("tma_latency_dist") or {}).items():
+            kv = dict(x.split("=") for x in k.split(",")); self.lat[(int(kv["tile"]), int(kv["resident"]))] = float(v["p50_cycles"])
+        self.rate = {}
+        for k, v in (c.get("tma_bytes_per_s_per_sm_by_residency") or {}).items():
+            kv = dict(x.split("=") for x in k.split(",")); self.rate[(int(kv["tile"]), int(kv["resident"]))] = float(v)
+        self.ratio_2d = float(c.get("tma_2d_vs_1d_ratio") or 1.0)
+        mb = c.get("mbarrier_cycles") or {}
+        self.mbarrier_cycles = float(mb.get("arrivals=1") or (float(c["mbarrier_s"]) * self.hz if c.get("mbarrier_s") else 100.0))
+        self.single = {"16384": float(c["tma_bulk_latency_s"]["16384"]) * self.hz} if c.get("tma_bulk_latency_s") else {}
+        self.chip_rate = {}
+        for k, v in (c.get("tma_latency_dist") or {}).items():
+            kv = dict(x.split("=") for x in k.split(",")); self.chip_rate[(int(kv["tile"]), int(kv["resident"]))] = float(v.get("chip_bytes_per_s") or 0)
+        self.chip_q = Fifo()
+
+    def _interp(self, table: dict, tile: int, resident: int):
+        if not table:
+            return None
+        res = sorted({r for _, r in table})
+        r = max([x for x in res if x <= resident] or [res[0]])
+        pts = sorted((t, v) for (t, rr), v in table.items() if rr == r)
+        if tile <= pts[0][0]: return pts[0][1] * tile / pts[0][0] if len(pts) == 1 else pts[0][1]
+        if tile >= pts[-1][0]: return pts[-1][1]
+        for (a, va), (b, vb) in zip(pts, pts[1:]):
+            if a <= tile <= b: return va + (vb - va) * (tile - a) / (b - a)
+        return pts[-1][1]
+
+    def latency_cycles(self, tile_bytes: int, resident: int, two_d: bool = False) -> float:
+        lat = self._interp(self.lat, tile_bytes, resident)
+        if lat is None:
+            lat = self.single.get("16384", 1200.0) * tile_bytes / 16384
+        return lat / (self.ratio_2d if two_d else 1.0)
+
+    def rate_bytes_per_s(self, tile_bytes: int, resident: int) -> float | None:
+        return self._interp(self.rate, tile_bytes, resident)
+
+    def chip_bytes_per_s(self) -> float | None:
+        """B35: the chip's TMA copy bandwidth, the largest chip rate the trials reached (tiles of 16 KB and up at any residency)."""
+        rates = [v for (t, r), v in self.chip_rate.items() if t >= 16384]
+        return max(rates) if rates else None
+
+    def complete(self, sm: int, now: float, tile_bytes: int, resident: int, two_d: bool = False, sms: int = 48) -> float:
+        """Completion time of a tile issued at `now` on SM `sm`. B35's per-SM rate at a residency is the chip's share of its copy
+        bandwidth (16 KB x 48 SMs per 1176 cycles = 1.5 TB/s at one block, 1.9 at two), so the rule is: the tile lands after the
+        one-block latency for its size, and no sooner than the chip's copy queue has moved every SM's tiles issued before it
+        (`sms` identical SMs run the same program, so each tile costs sms x bytes of the queue). The C2 copy-only variant is the
+        check: 922 / 1833 / 2076 cycles per step measured against this rule."""
+        bw = self.chip_bytes_per_s()
+        _, served = self.chip_q.serve(now, sms * tile_bytes / bw if bw else 0.0)
+        return max(now + self.latency_cycles(tile_bytes, 1, two_d) / self.hz, served)
+
+
 class Hierarchy(Memory):
     def __init__(self, contract: dict, structural: dict, fixed: dict):
         super().__init__(contract, structural, fixed)
@@ -52,6 +111,20 @@ class Hierarchy(Memory):
         if lat4k:
             self.copy_overhead = max(0.0, float(lat4k) - self.copy_time(4096, self.lat_l2))
         self.windows: dict[int, Fifo] = {}
+        self.tma = TmaEngine(c)
+
+    def request_tma(self, engine: Engine, sm: int, src, bytes_: int, resident: int, done, two_d: bool = True):
+        """A TMA tile copy (round 2, group 2): L2/DRAM traffic is counted as for cp.async; completion comes from the TMA engine."""
+        now = engine.t
+        if isinstance(src, tuple) and src[0] == "block":
+            _, i, j, tile = src
+            for k, nb in ((("A", i, tile), self.a_bytes), (("B", tile, j), self.b_bytes)):
+                self.l2_bytes += nb
+                if not self.lookup(k, nb):
+                    self.dram_bytes += nb
+        else:
+            self.l2_bytes += bytes_
+        engine.at(self.tma.complete(sm, now, bytes_, resident, two_d, int(self.c.get("sms") or 48)), done)
 
     def copy_issue_s(self, bytes_block: int) -> float:
         """Serial issue time of one warp's share of a block-wide copy: chunks per thread x the measured issue cost per chunk."""

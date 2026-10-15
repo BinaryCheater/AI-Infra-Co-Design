@@ -1,0 +1,63 @@
+{
+ "quantity": "counter_b35_tma[probe=res1]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B35: bytes through L2 and the mbarrier wait family for 16 KB TMA trials at 1 and 4 resident blocks",
+ "benchmark": "b35_tma_residency",
+ "arch": "sm_121",
+ "timestamp": "2026-10-15T03:44:22Z",
+ "detail": {
+  "probe": "1",
+  "metrics": {
+   "gpu__time_duration.sum": [
+    147904.0,
+    "ns"
+   ],
+   "lts__t_requests_srcunit_tex.sum": [
+    1238400.0,
+    "request"
+   ],
+   "lts__t_sector_hit_rate.pct": [
+    99.3,
+    "%"
+   ],
+   "lts__t_sectors_op_read_lookup_hit.sum": [
+    4882820.0,
+    "sector"
+   ],
+   "lts__t_sectors_op_read_lookup_miss.sum": [
+    33520.0,
+    "sector"
+   ],
+   "lts__t_sectors_srcunit_tex.sum": [
+    4924800.0,
+    "sector"
+   ],
+   "lts__t_sectors_srcunit_tex_op_read.sum": [
+    4915200.0,
+    "sector"
+   ],
+   "sm__cycles_active.avg": [
+    295608.0,
+    "cycle"
+   ],
+   "smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio": [
+    0.61,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio": [
+    5.63,
+    "inst"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 1.9
+ }
+}

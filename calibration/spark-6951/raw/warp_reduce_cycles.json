@@ -1,0 +1,44 @@
+{
+ "quantity": "warp_reduce_cycles",
+ "unit": "cycles",
+ "samples": [
+  170.65975,
+  170.641,
+  171.49775,
+  170.6305,
+  170.63775,
+  170.65475,
+  170.6355,
+  170.5315,
+  170.5315,
+  170.5315
+ ],
+ "detail": {
+  "method": "32-lane butterfly: 5 shfl.bfly + 5 FADD + 1 FMUL, dependent, one warp per sub-partition, cycles per reduction",
+  "sm_clock_mhz": 2522.0
+ },
+ "value": 170.636625,
+ "ci95": 0.0003611475555145707,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "shuffles: latency, throughput, butterfly reduction, beside LDS, redux, block reduction (round 2, B39)",
+ "benchmark": "b39_shuffle_reduce",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 11.92,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 14.4,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:44:11Z",
+ "arch": "sm_121"
+}

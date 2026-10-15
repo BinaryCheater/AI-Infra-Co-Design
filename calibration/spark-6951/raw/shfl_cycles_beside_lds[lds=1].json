@@ -1,0 +1,45 @@
+{
+ "quantity": "shfl_cycles_beside_lds[lds=1]",
+ "unit": "cycles",
+ "samples": [
+  13.31225,
+  13.2934063,
+  13.2559063,
+  13.27925,
+  13.2905,
+  13.2905,
+  13.2789063,
+  13.2996562,
+  13.2783437,
+  13.2947812
+ ],
+ "detail": {
+  "lds_on": 1,
+  "method": "warps 0-3: 8 independent shfl.bfly per iteration; warps 4-7: 8 LDS.128 per iteration when lds=1, idle when 0; the shuffle warps' cycles per shuffle",
+  "sm_clock_mhz": 2522.0
+ },
+ "value": 13.2905,
+ "ci95": 0.0006630657236371876,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "shuffles: latency, throughput, butterfly reduction, beside LDS, redux, block reduction (round 2, B39)",
+ "benchmark": "b39_shuffle_reduce",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 11.92,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 14.4,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:44:11Z",
+ "arch": "sm_121"
+}

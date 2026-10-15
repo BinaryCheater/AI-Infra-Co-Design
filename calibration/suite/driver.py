@@ -45,6 +45,14 @@ METHODS = {
     "b33_mma_mio": "the tensor loop with LDS.128 / cp.async load blocks on the same SM, 1+1 to 3+3 (round 2, B33)",
     "b34_mixed_issue": "mma with FFMA from the same schedulers; tensor loop at 64/128/192 accumulators under -maxrregcount; the epilogue (round 2, B34)",
     "c1_tensor_tile": "group-1 composite: BF16 128x128x32 tile kernel, ldmatrix + mma, swizzled, double-buffered cp.async, 1-3 blocks per SM (round 2, a prediction check)",
+    "b35_tma_residency": "TMA 1-D completion distribution by tile size and residency; chip and per-SM bytes/s (round 2, B35)",
+    "b36_tma_contention": "TMA beside cp.async (1:1, 1:3, 3:1), beside LDS.128 loops, 2-D vs 1-D, TMA store beside load (round 2, B36)",
+    "b37_mbarrier_cluster": "mbarrier cost by arrivals and with expect_tx; phase flip; cluster multicast; DSMEM (round 2, B37)",
+    "c2_tma_tile": "group-2 composite: the T5 FP32 tile with 2-D TMA loads, 1-3 blocks per SM (round 2, a prediction check)",
+    "b38_sfu_convert": "SFU and conversion pipes: throughput, latency, ex2 beside FFMA (round 2, B38)",
+    "b39_shuffle_reduce": "shuffles: latency, throughput, butterfly reduction, beside LDS, redux, block reduction (round 2, B39)",
+    "b40_register_budget": "attention-shaped loop under -maxrregcount; local memory by warps; residency vs registers (round 2, B40)",
+    "c3_softmax": "group-3 composite: online softmax rows, shuffles + ex2 + rcp + bf16 convert, 1-6 blocks per SM (round 2, a prediction check)",
     "b28_lsu_port_contention": "LSU and shared-memory port sharing across resident blocks: T5-width ld.shared + cp.async pattern at 1-6 blocks per SM (B27_plus.md)",
     "b26_functional_probes": "in-flight cp.async visibility and chunk order, wait_group semantics, barrier/fence visibility, TMA early bytes, FP32 contraction/ftz/tensor rounding, bank map, independent thread scheduling",
 }
@@ -86,9 +94,10 @@ def build(name, arch, build_dir, flags=(), suffix=""):
     src = HERE / "bench" / f"{name}.cu"
     exe = build_dir / (name + suffix)
     log = build_dir / (name + suffix + ".ptxas")
-    if exe.exists() and exe.stat().st_mtime > src.stat().st_mtime and exe.stat().st_mtime > (HERE / "bench/common.cuh").stat().st_mtime:
+    deps = [HERE / "bench/common.cuh", HERE / "bench/tma_common.cuh"]
+    if exe.exists() and exe.stat().st_mtime > src.stat().st_mtime and all(exe.stat().st_mtime > d.stat().st_mtime for d in deps if d.exists()):
         return exe, (log.read_text() if log.exists() else "")
-    extra = {"b3_tensor": ["-lcublas"], "b20_tensor_detail": ["-lcublas", "-lcublasLt"], "b15_copy_queue": ["-lcuda"]}.get(name, [])
+    extra = {"b3_tensor": ["-lcublas"], "b20_tensor_detail": ["-lcublas", "-lcublasLt"], "b15_copy_queue": ["-lcuda"], "b35_tma_residency": ["-lcuda"], "b36_tma_contention": ["-lcuda"], "b37_mbarrier_cluster": ["-lcuda"], "c2_tma_tile": ["-lcuda"]}.get(name, [])
     r = sh(["nvcc", "-O3", f"-arch={arch}", "-std=c++17", "-Xptxas", "-v", "-o", str(exe), str(src)] + extra + list(flags))
     if r.returncode != 0:
         print(f"[build] {name}{suffix} FAILED:\n{r.stderr}", file=sys.stderr)
@@ -98,7 +107,8 @@ def build(name, arch, build_dir, flags=(), suffix=""):
 
 
 B19_CAPS = [255, 128, 96, 64, 48, 32]
-CAPS = {"b19_registers_local": ([255, 128, 96, 64, 48, 32], r"Function properties for _Z5acc64Pfi"), "b34_mixed_issue": ([255, 128, 96], r"Function properties for _Z11tensor_loopILi48ELi0EEvPfP13__nv_bfloat16iPx")}
+CAPS = {"b19_registers_local": ([255, 128, 96, 64, 48, 32], r"Function properties for _Z5acc64Pfi"), "b34_mixed_issue": ([255, 128, 96], r"Function properties for _Z11tensor_loopILi48ELi0EEvPfP13__nv_bfloat16iPx"),
+        "b40_register_budget": ([255, 160, 128, 96], r"Function properties for _Z14attention_loopILi40EEvPKfPfiPx")}
 # quantities in these units are inferred structure (a count, a yes/no, a knee), not a rate: the interval target does not apply
 STRUCTURAL_UNITS = {"bool", "count", "loads", "warps", "ways", "groups", "channels", "sms", "cycles_structural"}
 

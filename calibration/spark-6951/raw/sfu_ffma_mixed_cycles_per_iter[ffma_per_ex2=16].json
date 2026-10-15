@@ -1,0 +1,47 @@
+{
+ "quantity": "sfu_ffma_mixed_cycles_per_iter[ffma_per_ex2=16]",
+ "unit": "cycles",
+ "samples": [
+  222.12825,
+  222.128,
+  222.14125,
+  222.15,
+  222.1415,
+  222.13675,
+  222.14725,
+  222.026,
+  222.026,
+  222.026
+ ],
+ "detail": {
+  "ffma_per_ex2": 16,
+  "ex2_per_iter": 8,
+  "ffma_per_iter": 128,
+  "method": "one warp per sub-partition: 8 independent ex2 then 16 x 8 independent FFMAs per iteration",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 222.1325,
+ "ci95": 0.00025997996691163444,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "SFU and conversion pipes: throughput, latency, ex2 beside FFMA (round 2, B38)",
+ "benchmark": "b38_sfu_convert",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 46.0,
+   "power_w": 11.73,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 25.95,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:59:46Z",
+ "arch": "sm_121"
+}

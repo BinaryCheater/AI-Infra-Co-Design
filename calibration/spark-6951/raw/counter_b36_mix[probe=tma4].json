@@ -1,0 +1,55 @@
+{
+ "quantity": "counter_b36_mix[probe=tma4]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B36: L1 throughput, shared wavefronts and the throttle families with TMA beside cp.async and beside LDS loops",
+ "benchmark": "b36_tma_contention",
+ "arch": "sm_121",
+ "timestamp": "2026-10-15T03:44:30Z",
+ "detail": {
+  "probe": "tma4",
+  "metrics": {
+   "gpu__time_duration.sum": [
+    583520.0,
+    "ns"
+   ],
+   "l1tex__data_pipe_lsu_wavefronts_mem_shared.sum": [
+    4709.0,
+    ""
+   ],
+   "l1tex__throughput.avg.pct_of_peak_sustained_elapsed": [
+    32.64,
+    "%"
+   ],
+   "lts__t_sectors_srcunit_tex_op_read.sum": [
+    19660800.0,
+    "sector"
+   ],
+   "sm__cycles_active.avg": [
+    925474.54,
+    "cycle"
+   ],
+   "smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio": [
+    0.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio": [
+    12.19,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio": [
+    0.08,
+    "inst"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 2.0
+ }
+}

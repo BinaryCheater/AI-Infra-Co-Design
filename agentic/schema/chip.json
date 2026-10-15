@@ -768,6 +768,230 @@
         "null"
       ],
       "description": "C1 composite (not a calibration input): cycles per k-step of the 128x128x32 bf16 tile kernel by blocks per SM"
+    },
+    "tma_latency_dist": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B35: TMA 1-D completion cycles p1/p50/p99/max by tile and resident blocks"
+    },
+    "tma_bytes_per_s_per_sm_by_residency": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B35: TMA bytes/s per SM by tile and residency"
+    },
+    "tma_mix_bytes_per_s": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B36: chip copy bytes/s for each TMA / cp.async / LDS / store mix"
+    },
+    "tma_mix_cycles_per_tile": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B36: each role's cycles per 8 KB tile in the mix"
+    },
+    "tma_cp_async_mixed_ratio": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B36 (a): 1:1 mix bytes/s over the mean of the pure streams"
+    },
+    "tma_2d_vs_1d_ratio": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B36 (c): 2-D tensor-map stream over 1-D stream, bytes/s"
+    },
+    "tma_store_bytes_per_s": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B36 (d): TMA store streams, chip bytes/s"
+    },
+    "tma_behind_lds_cycles": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B36 (b): extra cycles per TMA tile beside LDS.128 loop blocks"
+    },
+    "mbarrier_cycles": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B37 (a): mbarrier round trip by arriving threads and with expect_tx"
+    },
+    "mbarrier_phase_flip_cycles": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B37 (b): one thread's arrive to try_wait success"
+    },
+    "tma_multicast_supported": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "B37 (c): cluster multicast TMA launches and runs"
+    },
+    "tma_multicast_cycles_per_tile": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B37 (c): cycles per 16 KB tile, unicast vs multicast, clusters of 2 and 4 (or the refusal text)"
+    },
+    "dsmem_latency_cycles": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B37 (d): dependent remote shared load"
+    },
+    "dsmem_bytes_per_s_per_sm": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B37 (d): remote shared stream per reading SM"
+    },
+    "sfu_throughput_per_sm": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B38: ex2/rcp/rsqrt/lg2/tanh thread-ops per second per SM"
+    },
+    "cvt_throughput_per_sm": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B38: F2F, F2FP packed, I2F thread-ops per second per SM"
+    },
+    "sfu_latency_cycles": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B38: dependent-chain latency per op"
+    },
+    "sfu_ffma_mixed_cycles_per_iter": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B38: 8 ex2 + N x 8 FFMAs per iteration from one warp"
+    },
+    "sfu_ffma_overlap": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B38: fraction of the FFMAs issued in the SFU's shadow"
+    },
+    "shfl_latency_cycles": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B39 (a): shuffle latency by mode"
+    },
+    "shfl_throughput_per_sm": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B39 (a): warp shuffles per second per SM by mode"
+    },
+    "shfl_cycles_beside_lds": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B39 (c): cycles per shuffle alone and beside LDS.128 loop warps"
+    },
+    "shfl_in_lsu_queue": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "B39 (c): shuffles slow by more than 15 % beside shared loads"
+    },
+    "shfl_lsu_counters": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B39 (ncu): LSU instructions and wavefronts per shuffle"
+    },
+    "warp_reduce_cycles": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B39 (b): 32-lane butterfly reduction"
+    },
+    "redux_cycles": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B39 (d): redux.sync chain"
+    },
+    "redux_supported": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "B39 (d)"
+    },
+    "block_reduce_cycles": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B39 (e): 256-thread block reduction through shared memory"
+    },
+    "attention_spill_curve": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B40 (a): the attention loop's cycles per step and registers / local bytes by tile and cap"
+    },
+    "local_mem_bytes_per_s_per_sm_by_warps": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B40 (b): local-memory stream by warps per SM"
+    },
+    "max_blocks_per_sm_by_regs": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B40 (c): measured residency vs the occupancy API by registers per thread"
+    },
+    "max_blocks_per_sm_by_regs_matches_api": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "B40 (c)"
     }
   },
   "if": {

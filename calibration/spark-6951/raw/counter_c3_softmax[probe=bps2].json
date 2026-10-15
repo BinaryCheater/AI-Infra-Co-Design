@@ -1,0 +1,95 @@
+{
+ "quantity": "counter_c3_softmax[probe=bps2]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: C3 composite: issue, FMA and XU pipe activity, shuffles and stall families of the softmax rows at 1-6 blocks per SM",
+ "benchmark": "c3_softmax",
+ "arch": "sm_121",
+ "timestamp": "2026-10-15T03:44:57Z",
+ "detail": {
+  "probe": "2",
+  "metrics": {
+   "gpu__time_duration.sum": [
+    117216.0,
+    "ns"
+   ],
+   "l1tex__data_pipe_lsu_wavefronts.sum": [
+    2878920.0,
+    ""
+   ],
+   "sm__cycles_active.avg": [
+    242121.17,
+    "cycle"
+   ],
+   "sm__inst_executed_pipe_alu.sum": [
+    2461440.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_fma.sum": [
+    3379584.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_lsu.sum": [
+    1997952.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_xu.sum": [
+    768000.0,
+    "inst"
+   ],
+   "sm__inst_issued.sum": [
+    8924160.0,
+    "inst"
+   ],
+   "sm__issue_active.avg": [
+    46480.0,
+    "cycle"
+   ],
+   "sm__pipe_fma_cycles_active.avg": [
+    147073.5,
+    "cycle"
+   ],
+   "smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio": [
+    0.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio": [
+    4.98,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio": [
+    0.02,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio": [
+    0.2,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio": [
+    0.11,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio": [
+    2.55,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_wait_per_issue_active.ratio": [
+    1.16,
+    "inst"
+   ],
+   "smsp__warps_active.avg": [
+    466231.05,
+    "warp"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 2.0
+ }
+}

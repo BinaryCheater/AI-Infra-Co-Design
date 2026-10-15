@@ -1,0 +1,48 @@
+{
+ "quantity": "tma_multicast_cycles_per_tile[cluster=2,unicast]",
+ "unit": "cycles",
+ "samples": [
+  1988,
+  1983,
+  1982,
+  1985,
+  1980,
+  1979,
+  1986,
+  1986,
+  1981,
+  1980
+ ],
+ "detail": {
+  "cluster": 2,
+  "multicast": 0,
+  "tile_bytes": 16384,
+  "blocks": 48,
+  "method": "16 KB per block per iteration; multicast: rank 0 issues one copy into every block of the cluster",
+  "sm_clock_mhz": 2522.0
+ },
+ "value": 1982.5,
+ "ci95": 0.0015132408575031526,
+ "n": 10,
+ "repeat_policy": "once",
+ "method": "mbarrier cost by arrivals and with expect_tx; phase flip; cluster multicast; DSMEM (round 2, B37)",
+ "benchmark": "b37_mbarrier_cluster",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 4.53,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 50.0,
+   "power_w": 29.58,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:59:43Z",
+ "arch": "sm_121"
+}

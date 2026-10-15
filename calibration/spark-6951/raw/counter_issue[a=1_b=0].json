@@ -11,18 +11,18 @@
  "method": "ncu: B17.4: instructions issued per active SM cycle and issue-active fraction vs warps",
  "benchmark": "bx_counters",
  "arch": "sm_121",
- "timestamp": "2026-10-15T00:32:06Z",
+ "timestamp": "2026-10-15T03:16:06Z",
  "detail": {
   "kernel": "fma_issue",
   "a": 1,
   "b": 0,
   "metrics": {
    "gpu__time_duration.sum": [
-    131360.0,
+    120864.0,
     "ns"
    ],
    "sm__cycles_active.avg": [
-    248704.23,
+    248760.98,
     "cycle"
    ],
    "sm__inst_executed_pipe_alu.sum": [
@@ -50,7 +50,7 @@
     "cycle"
    ],
    "smsp__warps_active.avg": [
-    62171.56,
+    62185.74,
     "warp"
    ]
   },

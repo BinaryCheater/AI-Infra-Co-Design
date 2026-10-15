@@ -1,0 +1,95 @@
+{
+ "quantity": "counter_c2_tile[probe=bps2]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: C2 composite: issue, pipe and stall families of the T5 tile with TMA loads at 1-3 blocks per SM",
+ "benchmark": "c2_tma_tile",
+ "arch": "sm_121",
+ "timestamp": "2026-10-15T03:44:38Z",
+ "detail": {
+  "probe": "2",
+  "metrics": {
+   "gpu__time_duration.sum": [
+    1106944.0,
+    "ns"
+   ],
+   "lts__t_sectors_srcunit_tex_op_read.sum": [
+    12585852.0,
+    "sector"
+   ],
+   "sm__cycles_active.avg": [
+    2344236.21,
+    "cycle"
+   ],
+   "sm__inst_executed_pipe_alu.sum": [
+    10287678.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_fma.sum": [
+    201588576.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_lsu.sum": [
+    32298876.0,
+    "inst"
+   ],
+   "sm__inst_issued.sum": [
+    253319423.0,
+    "inst"
+   ],
+   "sm__issue_active.avg": [
+    1319371.99,
+    "cycle"
+   ],
+   "sm__pipe_fma_cycles_active.avg": [
+    9227729.71,
+    "cycle"
+   ],
+   "smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio": [
+    0.72,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio": [
+    0.01,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio": [
+    0.21,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio": [
+    0.01,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio": [
+    0.56,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio": [
+    1.88,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio": [
+    0.14,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_wait_per_issue_active.ratio": [
+    0.33,
+    "inst"
+   ],
+   "smsp__warps_active.avg": [
+    8097938.52,
+    "warp"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 2.0
+ }
+}

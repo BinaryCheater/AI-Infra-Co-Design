@@ -1,0 +1,51 @@
+{
+ "quantity": "attention_loop_cycles_per_step[tq=56,maxrreg=96]",
+ "unit": "cycles",
+ "samples": [
+  1795.1835,
+  1793.624,
+  1794.991,
+  1951.638,
+  1858.5285,
+  1794.4855,
+  1799.0375,
+  1791.708,
+  1796.5635,
+  1793.058
+ ],
+ "detail": {
+  "tq": 56,
+  "maxrregcount": 96,
+  "regs_used": 96,
+  "local_bytes_per_thread": 104,
+  "spill_bytes_ptxas_tq40": 0,
+  "ffma_per_step": 112,
+  "ex2_per_step": 57,
+  "method": "one warp per sub-partition; per step TQ scores, online max/ex2/sum, TQ P.V FFMAs; cycles per step",
+  "sm_clock_mhz": 2522.1
+ },
+ "value": 1795.08725,
+ "ci95": 0.009793117298337414,
+ "n": 10,
+ "repeat_policy": "once",
+ "method": "attention-shaped loop under -maxrregcount; local memory by warps; residency vs registers (round 2, B40)",
+ "benchmark": "b40_register_budget",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 4.43,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2522.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 21.34,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T04:03:36Z",
+ "arch": "sm_121"
+}

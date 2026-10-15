@@ -4,8 +4,11 @@ One row per mechanism. Error = the composite check of the model as a prediction 
 
 | mechanism | benchmarks | composite-check error (prediction) | templates that depend on it |
 |---|---|---|---|
-| cp.async (copy path under residency) | B8, B15, B28, B30.4 | B28 copy-only mix 2-3x too fast at every residency; B15 p50 within 15 % on 2 of 8 (gaps 23-25) | smem_tiling (every design with P = 0 or many resident blocks) |
+| cp.async completion under load | B8, B15, B28, B30.4, C1, C2 | the one mechanism two checks point at: the thirty-design GEMM copy/barrier designs (gaps 23-24: B28 copy-only mix 2-3x too fast, B15 p50 within 15 % on 2 of 8) and the tensor composite (gap 29: C1 -12 % / -15 % at 1 and 2 blocks, copies and compute do not overlap on the card; C2 shows the same with TMA, gap 30). Copies alone are within 5 % (C1) and 20 % (C2) | smem_tiling (P = 0 or many resident blocks), tensor, attention |
+| SFU (ex2, rcp, rsqrt, lg2, tanh; F2F, F2FP converts on the same pipe) | B21, B38, C3 | one MUFU per 8 cycles per sub-partition by the counter (gap 34); ex2 + FFMA mixes -2 % to +18 % (gap 35); C3 softmax +64 % at 1 block to +10 % at 6 (gap 32: the compiler overlaps rows, the model does not) | attention |
 | LSU queue (scheduler to load/store unit) | B27, B28, B30 | B29 stripped loops: 16/19 within 10 %, median 5 %, worst +27 % (gap 21); B28 load mix -24 % at 1 block, +56 % at 6 (gap 22) | smem_tiling, tensor (ldmatrix), attention (shuffles if in the queue) |
+| shuffle (shfl.sync, butterflies; in the LSU queue, one wavefront each) | B39, C3 | butterfly reduction -7 %; beside LDS loads -31 % (gap 33); C3 as above | attention |
+| TMA (bulk copy engine, 2-D maps, mbarrier) | B8, B15, B26.4, B35, B36, B37, C2 | C2 copy-only +20 % / +17 % / +3 % at 1 / 2 blocks and TK = 32 (the engine: one-block latency by size, a chip-wide 1.9 TB/s queue); C2 kernel -14.5 % / -16.6 % / -6 % (gap 30, the overlap); B36 mix: the engines do not share a path (gap 31); mbarrier 75 cycles for 1-32 arrivals, 111 for 256 (B15's 114 within 3 %); multicast is 500x slower than unicast with double the L2 traffic (gap 36); DSMEM readings not understood (gap 37) | tensor, attention |
 | tensor (mma pipe per sub-partition, latency, hold, ldmatrix path) | B20, B31, B32, B33, B34, C1 | C1 128x128x32 bf16 tile: -12 % at 1 block, -15 % at 2 (gap 29: copies and compute do not overlap on the card); compute-only +15 % / +2 % (gap 28); copy-only +5 % / +1 %; B31 grid within 8 %, B32 pipelined within 6 %, B33 under load within 6 %, B34 split -39 % (gap 27) | tensor, attention |
 | issue (four schedulers, in-order warps) | B17, B21, B27, B29 | B29 T1/T5 within 6 %; B27 streaming grid 13/20 within 10 % (gap 17) | all |
 | scoreboard (latencies FFMA 4, LDS 27) | B17, B27 | B27 dependent chains: latency points within 2 cycles; one-warp a = 1, 2 streaming points 2x (compiler pipelining, gap 17) | all |
@@ -13,7 +16,4 @@ One row per mechanism. Error = the composite check of the model as a prediction 
 | banks (32 x 4 B, wavefront rule) | B6, B26.6, B30.3 | wavefronts per load from addresses: 5 of 6 B29 kernels within 1 %, 32x128x32 +50 % (compiler, gap 20) | smem_tiling, tensor (ldmatrix) |
 | DRAM (235 GB/s read, hashed channels) | B4, B18 | B4 large plateau within 5 % (G2 test); channel count not inferable (gap, B18) | smem_tiling |
 | L1 (64 KB at <= 16 KB smem, bypassed by copies) | B5, B14, counters | pointer chase within 5 % (G2 test); capacity by counters, no composite | none directly (copies bypass it) |
-| registers (allocation, spills) | B9, B19 | occupancy table exact (G1 test); spill curve measured, no composite yet (B40 adds the attention loop) | tensor, attention |
-| TMA (bulk copy engine) | B8 (one block, 16 KB), B15 (2-D), B26.4 | not modeled under load: B35-B37 this round | tensor, attention |
-| SFU (ex2, rcp, rsqrt) | B21 (rsqrt rate only) | not modeled: B38 this round | attention |
-| shuffle (shfl.sync, reductions) | none | not measured: B39 this round | attention |
+| registers (allocation, spills, residency by registers) | B9, B19, B34, B40 | residency by registers: 9 of 10 points equal the occupancy API, one reads 5 against 6 (gap 38); tensor spill cliff measured (128 accumulators at cap 128: 3.6x; 192: 12x); attention loop spills only at 56 tiles under cap 96 (2x); no composite depends on a spill | tensor, attention |

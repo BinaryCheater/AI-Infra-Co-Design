@@ -27,6 +27,7 @@ import math
 from functools import lru_cache
 
 LDS128, LDS32, FFMA, ALU, COPY = 0, 1, 2, 3, 4
+SFU, SHFL, CVT = 5, 6, 7          # round 2, group 3 (B38, B39): the XU pipe, warp shuffles, conversions
 
 
 class WarpModel:
@@ -63,6 +64,52 @@ class WarpModel:
         self.copy_path = str(structural.get("copy_path", "shared"))
         self.fma_cost = 1.0 / min(1.0, float(contract["fp32_flops_per_s_per_sm"]) / 64.0 / hz / self.schedulers)
         self.penalty = {int(k): float(v) for k, v in (contract.get("bank_conflict_penalty") or {}).items()}
+        # B38: the SFU (XU) pipe per sub-partition: issue cost in cycles per warp instruction = 32 lanes / (thread-ops per cycle per SM / 4),
+        # latency from the dependent chain less the loop's cycle; B39: shuffles the same way; conversions on their own rate
+        def per_warp_cost(ops_per_s):
+            return 32.0 / max(1e-9, float(ops_per_s) / hz / self.schedulers) if ops_per_s else None
+        sfu_tp = contract.get("sfu_throughput_per_sm") or {}; sfu_lat = contract.get("sfu_latency_cycles") or {}
+        self.sfu_cost = {op: per_warp_cost(v) for op, v in sfu_tp.items()}
+        # the counter reading of the XU pipe (B38 ncu: one MUFU per 8 cycles per sub-partition) overrides the clock64 table, whose
+        # eight-concurrent-blocks assumption the counter contradicts
+        xu = contract.get("sfu_warp_instr_per_cycle_per_smsp")
+        if xu:
+            self.sfu_cost = {op: 1.0 / float(xu) for op in (list(sfu_tp) or ["ex2", "rcp", "rsqrt", "lg2", "tanh"])}
+        self.sfu_lat = {op: max(1.0, float(v) - 1.0) for op, v in sfu_lat.items()}
+        cvt_tp = contract.get("cvt_throughput_per_sm") or {}
+        self.cvt_cost = {op: per_warp_cost(v) for op, v in cvt_tp.items()}
+        if xu:
+            self.cvt_cost = {op: (1.0 / float(xu) if op.startswith("f2") else c) for op, c in self.cvt_cost.items()}
+        shfl_tp = contract.get("shfl_throughput_per_sm") or {}; shfl_lat = contract.get("shfl_latency_cycles") or {}
+        self.shfl_cost = {m: (1.0 / max(1e-9, float(v) / hz / self.schedulers)) for m, v in shfl_tp.items()}       # warp instructions per cycle per sub-partition
+        sh = contract.get("shfl_warp_instr_per_cycle_per_smsp")
+        if sh:
+            self.shfl_cost = {m: 1.0 / float(sh) for m in (list(shfl_tp) or ["bfly", "up", "idx"])}
+        self.shfl_wavefronts = float(contract.get("shfl_wavefronts_per_instruction") or 1.0)
+        self.shfl_lat = {m: max(1.0, float(v) - 1.0) for m, v in shfl_lat.items()}
+        self.shfl_in_lsu_queue = bool(contract.get("shfl_in_lsu_queue", False))
+        # B38 / B39: one warp issues an SFU or shuffle instruction only every so many cycles (8.3 for ex2, 8.7 for shfl.bfly), while
+        # the pipe's aggregate rate above needs several warps; the warp is held for that interval (as the mma hold, B34)
+        self.sfu_hold = float(contract.get("sfu_issue_cycles_one_warp") or 0.0)
+        self.shfl_hold = float(contract.get("shfl_issue_cycles_one_warp") or 0.0)
+        self.sfu_ffma_overlap = contract.get("sfu_ffma_overlap")
+        # B40 (c) / B9: the register budget: blocks per SM by registers per thread (measured table), else the allocation rule
+        self.blocks_by_regs = {int(k): int(v["measured"] if isinstance(v, dict) else v) for k, v in (contract.get("max_blocks_per_sm_by_regs") or {}).items()}
+        g = contract.get("reg_alloc_granularity")
+        self.reg_granularity = int(g) if isinstance(g, (int, float)) else int((g or {}).get("granularity") or 8)
+        self.regs_per_sm = int(contract.get("regs_per_sm") or contract.get("registers_per_sm") or 65536)
+
+    def blocks_per_sm_by_regs(self, regs_per_thread: int, threads_per_block: int) -> int:
+        """The residency the register file allows (B40 (c): the measured table where it has a point, else the allocation rule with
+        the B19 granularity), before shared memory and the block limit are applied."""
+        if self.blocks_by_regs:
+            keys = sorted(self.blocks_by_regs)
+            at = [k for k in keys if k >= regs_per_thread]
+            if at:
+                return self.blocks_by_regs[at[0]]
+        g = self.reg_granularity
+        per_warp = ((regs_per_thread * 32 + g * 32 - 1) // (g * 32)) * g * 32
+        return max(1, self.regs_per_sm // (per_warp * (threads_per_block // 32)))
 
     def floor(self, warps_per_sm: int) -> float:
         keys = sorted(self.floor_by_warps)

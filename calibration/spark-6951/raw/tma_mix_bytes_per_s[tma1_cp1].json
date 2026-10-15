@@ -1,0 +1,53 @@
+{
+ "quantity": "tma_mix_bytes_per_s[tma1_cp1]",
+ "unit": "byte/s",
+ "samples": [
+  1936261660000.0,
+  1937979270000.0,
+  1938361490000.0,
+  1939700100000.0,
+  1939891530000.0,
+  1940082830000.0,
+  1940082830000.0,
+  1950863280000.0,
+  1951831700000.0,
+  1955520250000.0
+ ],
+ "detail": {
+  "roles_by_wave": [
+   "tma",
+   "cp_async",
+   "tma",
+   "cp_async"
+  ],
+  "tile_bytes": 8192,
+  "resident_blocks_per_sm": 4,
+  "sms_with_all_four_blocks": 48,
+  "what": "(a) TMA : cp.async = 1 : 1 at four resident",
+  "sm_clock_mhz": 2537.0
+ },
+ "value": 1939987180000.0,
+ "ci95": 0.0033469293338319896,
+ "n": 10,
+ "repeat_policy": "once",
+ "method": "TMA beside cp.async (1:1, 1:3, 3:1), beside LDS.128 loops, 2-D vs 1-D, TMA store beside load (round 2, B36)",
+ "benchmark": "b36_tma_contention",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 10.88,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2437.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 12.91,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:39:40Z",
+ "arch": "sm_121"
+}

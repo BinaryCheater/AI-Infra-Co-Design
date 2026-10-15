@@ -1,0 +1,40 @@
+{
+ "quantity": "max_blocks_per_sm_by_regs[regs=40]",
+ "unit": "count",
+ "samples": [
+  5
+ ],
+ "detail": {
+  "regs": 40,
+  "min_blocks_bound": 6,
+  "threads": 256,
+  "occupancy_api": 6,
+  "measured": 5,
+  "method": "__launch_bounds__(256, MINB); API vs the most blocks co-resident on one SM by clock64 overlap (%smid)",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 5,
+ "ci95": 1.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "attention-shaped loop under -maxrregcount; local memory by warps; residency vs registers (round 2, B40)",
+ "benchmark": "b40_register_budget",
+ "clocks": {
+  "before": {
+   "sm_mhz": 721.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 5.22,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 52.0,
+   "power_w": 22.85,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:53:19Z",
+ "arch": "sm_121"
+}

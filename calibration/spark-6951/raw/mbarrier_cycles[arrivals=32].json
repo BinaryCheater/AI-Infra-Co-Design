@@ -1,0 +1,46 @@
+{
+ "quantity": "mbarrier_cycles[arrivals=32]",
+ "unit": "cycles",
+ "samples": [
+  128,
+  128,
+  128,
+  128,
+  128,
+  128,
+  128,
+  128,
+  128,
+  128
+ ],
+ "detail": {
+  "arrivals": 32,
+  "threads": 256,
+  "method": "arrive by the first 32 threads + try_wait.parity by all + __syncthreads, nothing pending, cycles per round trip; arrivals=0 is the loop with the __syncthreads alone (the reference to subtract)",
+  "sm_clock_mhz": 2522.0
+ },
+ "value": 128.0,
+ "ci95": 0.0,
+ "n": 10,
+ "repeat_policy": "once",
+ "method": "mbarrier cost by arrivals and with expect_tx; phase flip; cluster multicast; DSMEM (round 2, B37)",
+ "benchmark": "b37_mbarrier_cluster",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 4.53,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 50.0,
+   "power_w": 29.58,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:59:43Z",
+ "arch": "sm_121"
+}

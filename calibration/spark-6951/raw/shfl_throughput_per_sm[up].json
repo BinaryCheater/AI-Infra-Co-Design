@@ -1,0 +1,45 @@
+{
+ "quantity": "shfl_throughput_per_sm[up]",
+ "unit": "instr/s",
+ "samples": [
+  20088133800.0,
+  20090540400.0,
+  20090040300.0,
+  20158694900.0,
+  20159938000.0,
+  20089196400.0,
+  20160740700.0,
+  20099750100.0,
+  20100188200.0,
+  20100876500.0
+ ],
+ "detail": {
+  "mode": "up",
+  "method": "ILP 8, 8 blocks x 256 threads per SM, warp-instructions per second per SM",
+  "sm_clock_mhz": 2522.0
+ },
+ "value": 20099969150.0,
+ "ci95": 0.001712104617832212,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "shuffles: latency, throughput, butterfly reduction, beside LDS, redux, block reduction (round 2, B39)",
+ "benchmark": "b39_shuffle_reduce",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 11.92,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 14.4,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:44:11Z",
+ "arch": "sm_121"
+}

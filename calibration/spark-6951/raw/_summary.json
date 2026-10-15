@@ -6,14 +6,14 @@
  "nvcc": "Build cuda_13.0.r13.0/compiler.36424714_0",
  "driver": "580.159.03",
  "ncu": "/usr/local/cuda/bin/ncu",
- "started": "2026-10-15T03:19:29Z",
+ "started": "2026-10-15T04:03:28Z",
  "benchmarks": {
-  "c1_tensor_tile": {
-   "quantities": 9,
-   "seconds": 0.5,
+  "b40_register_budget": {
+   "quantities": 35,
+   "seconds": 2.1,
    "reps": 10,
-   "worst_ci95": 0.002407605186238424
+   "worst_ci95": 1.0
   }
  },
- "finished": "2026-10-15T03:19:31Z"
+ "finished": "2026-10-15T04:03:36Z"
 }

@@ -1,0 +1,57 @@
+{
+ "quantity": "tma_latency_dist[tile=8192,resident=4]",
+ "unit": "cycles",
+ "samples": [
+  1285,
+  1273,
+  1282,
+  1285,
+  1268,
+  1274,
+  1280,
+  1277,
+  1278,
+  1281
+ ],
+ "detail": {
+  "tile_bytes": 8192,
+  "resident_blocks_per_sm": 4,
+  "trials": 1920000,
+  "p1_cycles": 817,
+  "p50_cycles": 1281,
+  "p99_cycles": 2039,
+  "max_cycles": 3815,
+  "p1_s": 3.215e-07,
+  "p50_s": 5.04e-07,
+  "p99_s": 8.023e-07,
+  "max_s": 1.501e-06,
+  "chip_bytes_per_s": 1436100000000.0,
+  "bytes_per_s_per_sm": 29918000000.0,
+  "method": "one 1-D cp.async.bulk per trial with an mbarrier, issue to try_wait return, every block on every SM at once",
+  "sm_clock_mhz": 2541.5
+ },
+ "value": 1279.0,
+ "ci95": 0.003127443315089914,
+ "n": 10,
+ "repeat_policy": "once",
+ "method": "TMA 1-D completion distribution by tile size and residency; chip and per-SM bytes/s (round 2, B35)",
+ "benchmark": "b35_tma_residency",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 38.0,
+   "power_w": 4.24,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2444.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 42.0,
+   "power_w": 18.69,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:39:39Z",
+ "arch": "sm_121"
+}

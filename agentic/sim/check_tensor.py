@@ -28,7 +28,7 @@ def val(q):
 
 
 def dominant(hist):
-    fam = {k: v for k, v in hist.items() if k not in ("issued", "done")}
+    fam = {k: v for k, v in hist.items() if k not in ("issued", "done") and isinstance(v, (int, float))}
     return max(fam, key=fam.get) if fam else "-"
 
 

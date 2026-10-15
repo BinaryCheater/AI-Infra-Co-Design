@@ -1,0 +1,63 @@
+{
+ "quantity": "tma_mix_cycles_per_tile[tma1_cp1,role=tma]",
+ "unit": "cycles",
+ "samples": [
+  1980,
+  1979,
+  1967,
+  1970,
+  1976,
+  1976,
+  1972,
+  1975,
+  1959,
+  1967,
+  1980,
+  1982,
+  1983,
+  1986,
+  1968,
+  1967,
+  1973,
+  1977,
+  1982,
+  1982
+ ],
+ "detail": {
+  "roles_by_wave": [
+   "tma",
+   "cp_async",
+   "tma",
+   "cp_async"
+  ],
+  "tile_bytes": 8192,
+  "resident_blocks_per_sm": 4,
+  "sms_with_all_four_blocks": 48,
+  "what": "(a) TMA : cp.async = 1 : 1 at four resident",
+  "sm_clock_mhz": 2537.0
+ },
+ "value": 1976.0,
+ "ci95": 0.002277327935222672,
+ "n": 20,
+ "repeat_policy": "once",
+ "method": "TMA beside cp.async (1:1, 1:3, 3:1), beside LDS.128 loops, 2-D vs 1-D, TMA store beside load (round 2, B36)",
+ "benchmark": "b36_tma_contention",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 10.88,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2437.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 12.91,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:39:40Z",
+ "arch": "sm_121"
+}

@@ -1,0 +1,83 @@
+{
+ "quantity": "tma_mix_cycles_per_tile[cp4,role=cp_async]",
+ "unit": "cycles",
+ "samples": [
+  1476,
+  1486,
+  1500,
+  712,
+  1484,
+  1494,
+  1507,
+  656,
+  1476,
+  1483,
+  1498,
+  739,
+  1475,
+  1486,
+  1500,
+  728,
+  1482,
+  1490,
+  1504,
+  662,
+  1478,
+  1490,
+  1503,
+  691,
+  1480,
+  1488,
+  1503,
+  716,
+  1478,
+  1489,
+  1503,
+  669,
+  1475,
+  1484,
+  1500,
+  747,
+  1481,
+  1492,
+  1508,
+  711
+ ],
+ "detail": {
+  "roles_by_wave": [
+   "cp_async",
+   "cp_async",
+   "cp_async",
+   "cp_async"
+  ],
+  "tile_bytes": 8192,
+  "resident_blocks_per_sm": 4,
+  "sms_with_all_four_blocks": 22,
+  "what": "(a) four cp.async streams per SM: the reference",
+  "sm_clock_mhz": 2537.0
+ },
+ "value": 1483.5,
+ "ci95": 0.004044489383215369,
+ "n": 40,
+ "repeat_policy": "once",
+ "method": "TMA beside cp.async (1:1, 1:3, 3:1), beside LDS.128 loops, 2-D vs 1-D, TMA store beside load (round 2, B36)",
+ "benchmark": "b36_tma_contention",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 10.88,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2437.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 12.91,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:39:40Z",
+ "arch": "sm_121"
+}

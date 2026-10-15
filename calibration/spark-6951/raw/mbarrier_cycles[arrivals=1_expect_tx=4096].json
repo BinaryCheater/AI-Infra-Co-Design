@@ -1,0 +1,46 @@
+{
+ "quantity": "mbarrier_cycles[arrivals=1,expect_tx=4096]",
+ "unit": "cycles",
+ "samples": [
+  675,
+  675,
+  673,
+  672,
+  675,
+  675,
+  675,
+  672,
+  672,
+  672
+ ],
+ "detail": {
+  "arrivals": 1,
+  "expect_tx_bytes": 4096,
+  "method": "expect_tx + a 4 KB bulk copy by one thread, try_wait by all, then __syncthreads: the mbarrier with a transaction pending (= the 4 KB TMA latency plus the reference loop)",
+  "sm_clock_mhz": 2522.0
+ },
+ "value": 674.0,
+ "ci95": 0.002225519287833828,
+ "n": 10,
+ "repeat_policy": "once",
+ "method": "mbarrier cost by arrivals and with expect_tx; phase flip; cluster multicast; DSMEM (round 2, B37)",
+ "benchmark": "b37_mbarrier_cluster",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 4.53,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 50.0,
+   "power_w": 29.58,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:59:43Z",
+ "arch": "sm_121"
+}

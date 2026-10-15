@@ -1,0 +1,45 @@
+{
+ "quantity": "shfl_latency_cycles[idx]",
+ "unit": "cycles",
+ "samples": [
+  36.153,
+  36.17725,
+  36.1665,
+  36.15875,
+  36.1485,
+  36.17275,
+  36.16575,
+  36.048,
+  36.048,
+  36.048
+ ],
+ "detail": {
+  "mode": "idx",
+  "method": "dependent chain, one warp per sub-partition, cycles per shuffle (the loop adds about one cycle)",
+  "sm_clock_mhz": 2522.0
+ },
+ "value": 36.155874999999995,
+ "ci95": 0.0016387378261485499,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "shuffles: latency, throughput, butterfly reduction, beside LDS, redux, block reduction (round 2, B39)",
+ "benchmark": "b39_shuffle_reduce",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 11.92,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 14.4,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:44:11Z",
+ "arch": "sm_121"
+}

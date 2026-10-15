@@ -828,7 +828,182 @@ def fit_b34(recs):
     return f, s
 
 
-FITTERS = [("b31_mma_issue", fit_b31), ("b32_ldmatrix_mma", fit_b32), ("b33_mma_mio", fit_b33), ("b34_mixed_issue", fit_b34), ("b30_mio_queue", fit_b30), ("b27_dependency_ilp", fit_b27), ("b28_lsu_port_contention", fit_b28), ("b13_l2_structure", fit_b13), ("b14_l1_carveout", fit_b14), ("b15_copy_queue", fit_b15), ("b16_block_scheduler", fit_b16),
+
+# ------------------------------------------------------------------------------------------------ round 2, groups 2 and 3
+def fit_b35(recs):
+    f, s = {}, {}
+    ld = keyed(recs, "tma_latency_dist")
+    if ld:
+        f["tma_latency_dist"] = {k: {kk: r["detail"].get(kk) for kk in ("p1_cycles", "p50_cycles", "p99_cycles", "max_cycles", "p1_s", "p50_s", "p99_s", "max_s", "chip_bytes_per_s") if kk in r["detail"]} for k, r in sorted(ld.items())}
+        s["tma_latency_dist"] = {"from": [r["quantity"] for r in ld.values()], "method": "B35: one 1-D cp.async.bulk + mbarrier per trial, 10 000 trials per block, every SM at once, issue-to-try_wait cycles by tile and resident blocks"}
+    bw = keyed(recs, "tma_bytes_per_s_per_sm_by_residency")
+    if bw:
+        f["tma_bytes_per_s_per_sm_by_residency"] = {k: round(r["value"], -6) for k, r in sorted(bw.items())}
+        s["tma_bytes_per_s_per_sm_by_residency"] = {"from": [r["quantity"] for r in bw.values()], "method": "B35: the trial loop's bytes over its wall time, per SM"}
+    return f, s
+
+
+def fit_b36(recs):
+    f, s = {}, {}
+    bw = keyed(recs, "tma_mix_bytes_per_s"); cy = keyed(recs, "tma_mix_cycles_per_tile")
+    if bw:
+        f["tma_mix_bytes_per_s"] = {k: round(r["value"], -6) for k, r in sorted(bw.items())}
+        s["tma_mix_bytes_per_s"] = {"from": [r["quantity"] for r in bw.values()], "method": "B36: four 8 KB streams per SM with roles by wave; the chip's copy bytes/s (loads and stores) for each mix"}
+        t4, c4, m11 = (bw.get(k, {}).get("value") for k in ("tma4", "cp4", "tma1_cp1"))
+        if t4 and c4 and m11:
+            f["tma_cp_async_mixed_ratio"] = round(m11 / ((t4 + c4) / 2), 3)
+            s["tma_cp_async_mixed_ratio"] = {"from": ["tma_mix_bytes_per_s[tma4]", "tma_mix_bytes_per_s[cp4]", "tma_mix_bytes_per_s[tma1_cp1]"], "method": "B36 (a): the 1:1 mix's bytes/s over the mean of the two pure streams (1.0 = the two engines add, no shared path)"}
+        a, b = bw.get("tma1d_1", {}).get("value"), bw.get("tma2d_1", {}).get("value")
+        if a and b:
+            f["tma_2d_vs_1d_ratio"] = round(b / a, 3); s["tma_2d_vs_1d_ratio"] = {"from": ["tma_mix_bytes_per_s[tma1d_1]", "tma_mix_bytes_per_s[tma2d_1]"], "method": "B36 (c): one 2-D tensor-map stream's bytes/s over one 1-D stream's, 8 KB boxes"}
+        st = bw.get("tmastore2_idle2", {}).get("value")
+        if st:
+            f["tma_store_bytes_per_s"] = round(st, -6); s["tma_store_bytes_per_s"] = {"from": ["tma_mix_bytes_per_s[tmastore2_idle2]"], "method": "B36 (d): two TMA store streams per SM, chip bytes/s"}
+    if cy:
+        f["tma_mix_cycles_per_tile"] = {k: round(r["value"], 1) for k, r in sorted(cy.items())}
+        s["tma_mix_cycles_per_tile"] = {"from": [r["quantity"] for r in cy.values()], "method": "B36: each role's median block cycles per 8 KB tile (or per LDS.128 step) in the mix"}
+        alone, beside = cy.get("tma2_idle2,role=tma", {}).get("value"), cy.get("tma2_lds2,role=tma", {}).get("value")
+        if alone and beside:
+            f["tma_behind_lds_cycles"] = round(beside - alone, 1); s["tma_behind_lds_cycles"] = {"from": ["tma_mix_cycles_per_tile[tma2_idle2,role=tma]", "tma_mix_cycles_per_tile[tma2_lds2,role=tma]"], "method": "B36 (b): extra cycles per 8 KB TMA tile when two LDS.128 loop blocks share the SM"}
+    return f, s
+
+
+def fit_b37(recs):
+    f, s = {}, {}
+    mb = keyed(recs, "mbarrier_cycles")
+    if mb:
+        ref = mb.get("arrivals=0", {}).get("value") or 0.0
+        f["mbarrier_cycles"] = {k: round(r["value"] - (ref if k != "arrivals=0" else 0.0), 1) for k, r in sorted(mb.items())}
+        s["mbarrier_cycles"] = {"from": [r["quantity"] for r in mb.values()], "method": "B37 (a): arrive by the first N threads + try_wait.parity by all 256 + a __syncthreads per round, less the same loop with the __syncthreads alone (arrivals=0, kept as the reference); with expect_tx: one thread's 4 KB bulk copy pending"}
+    pf = recs.get("mbarrier_phase_flip_cycles")
+    if pf:
+        f["mbarrier_phase_flip_cycles"] = round(pf["value"], 1); s["mbarrier_phase_flip_cycles"] = _nm(pf, "mbarrier_phase_flip_cycles", "B37 (b): one arriving thread, its arrive to its own try_wait success")
+    mc = keyed(recs, "tma_multicast_cycles_per_tile")
+    if mc:
+        meas = {k: r for k, r in mc.items() if r["detail"].get("measured", True) and r.get("value") is not None}
+        f["tma_multicast_cycles_per_tile"] = {k: round(r["value"], 1) for k, r in sorted(meas.items())} if meas else {k: r["detail"].get("reason") for k, r in mc.items()}
+        u2, m2 = meas.get("cluster=2,unicast", {}).get("value"), meas.get("cluster=2,multicast", {}).get("value")
+        # supported means usable: the multicast tile lands within 10x of a unicast tile. On this chip it lands after about 500x
+        # (the barrier completes, eventually) and the counter reads twice the L2 sectors, so it is not
+        f["tma_multicast_supported"] = bool(u2 and m2 and m2 < 10 * u2)
+        f["tma_multicast_slowdown"] = round(m2 / u2, 1) if u2 and m2 else None
+        s["tma_multicast_supported"] = {"from": [r["quantity"] for r in mc.values()], "method": "B37 (c): a __cluster_dims__ launch with a .multicast::cluster bulk copy into every block of the cluster; supported = the multicast tile completes within 10x of a unicast tile (it launches and completes on sm_121 but about 500x slower, with the L2 traffic of two unicast loads by the counter)"}
+    for q, r in recs.items():
+        if q.startswith("counter_b37_cluster[") and r["detail"].get("measured"):
+            mt = {k: v[0] for k, v in r["detail"]["metrics"].items()}
+            f.setdefault("tma_multicast_counters", {})[q.split("probe=")[1].rstrip("]")] = {"l2_read_sectors": mt.get("lts__t_sectors_srcunit_tex_op_read.sum"), "sm_cycles": mt.get("sm__cycles_active.avg")}
+    if f.get("tma_multicast_counters"):
+        u, m = f["tma_multicast_counters"].get("unicast", {}).get("l2_read_sectors"), f["tma_multicast_counters"].get("multicast", {}).get("l2_read_sectors")
+        if u and m:
+            f["tma_multicast_l2_traffic_ratio"] = round(m / u, 2)
+            s["tma_multicast_l2_traffic_ratio"] = {"from": ["counter_b37_cluster[probe=multicast]", "counter_b37_cluster[probe=unicast]"], "method": "B37 (c, ncu): L2 read sectors of the cluster-of-2 multicast run over the unicast run (0.5 would mean the multicast halves the traffic)"}
+    for q, name, m in (("dsmem_latency_cycles", "dsmem_latency_cycles", "B37 (d): dependent 4 B loads from the other block's shared memory"), ("dsmem_bytes_per_s_per_sm", "dsmem_bytes_per_s_per_sm", "B37 (d): 8 independent remote shared loads per step, 256 threads")):
+        r = recs.get(q)
+        if r and r.get("value") is not None:
+            f[name] = round(r["value"], 1 if "cycles" in name else -6); s[name] = _nm(r, q, m)
+    return f, s
+
+
+def fit_b38(recs):
+    f, s = {}, {}
+    tp = keyed(recs, "sfu_throughput_per_sm"); lt = keyed(recs, "sfu_latency_cycles"); mx = keyed(recs, "sfu_ffma_mixed_cycles_per_iter")
+    if tp:
+        f["sfu_throughput_per_sm"] = {k: round(r["value"], -7) for k, r in sorted(tp.items()) if k in ("ex2", "rcp", "rsqrt", "lg2", "tanh")}
+        f["cvt_throughput_per_sm"] = {k: round(r["value"], -7) for k, r in sorted(tp.items()) if k not in ("ex2", "rcp", "rsqrt", "lg2", "tanh")}
+        s["sfu_throughput_per_sm"] = {"from": [r["quantity"] for k, r in tp.items() if k in f["sfu_throughput_per_sm"]], "method": "B38: B2's pattern (ILP 8, 8 blocks x 256 threads per SM), thread-ops per second per SM"}
+        s["cvt_throughput_per_sm"] = {"from": [r["quantity"] for k, r in tp.items() if k in f["cvt_throughput_per_sm"]], "method": "B38: the same for F2F (fp32 -> bf16 -> fp32, two converts per op), F2FP packed bf16x2 (plus the unpack), I2F"}
+    cnt = {}
+    for q, r in recs.items():
+        if q.startswith("counter_b38_sfu[") and r["detail"].get("measured"):
+            mt = {k: v[0] for k, v in r["detail"]["metrics"].items()}; cyc = mt.get("sm__cycles_active.avg"); xu = mt.get("sm__inst_executed_pipe_xu.sum"); n = mt.get("sm__inst_executed.sum")
+            cnt[q.split("probe=")[1].rstrip("]")] = {"xu_warp_instr_per_cycle_per_sm": round(xu / 48 / cyc, 4) if xu and cyc else None, "instr_per_cycle_per_sm": round(n / 48 / cyc, 3) if n and cyc else None, "issue_active": round(mt.get("smsp__issue_active.avg", 0) / mt.get("smsp__cycles_active.avg", 1), 3)}
+    if cnt:
+        f["sfu_counters"] = cnt
+        s["sfu_counters"] = {"from": [q for q in recs if q.startswith("counter_b38_sfu[")], "method": "B38 (ncu): XU pipe warp-instructions per cycle per SM for the ex2 throughput kernel (8 blocks x 256 threads), the ex2 + 4 FFMA mix (one warp per sub-partition) and the F2F kernel"}
+        ex2 = cnt.get("ex2", {}).get("xu_warp_instr_per_cycle_per_sm")
+        if ex2:
+            f["sfu_warp_instr_per_cycle_per_smsp"] = round(ex2 / 4, 4)
+            s["sfu_warp_instr_per_cycle_per_smsp"] = {"from": ["counter_b38_sfu[probe=ex2]"], "method": "B38 (ncu): the XU pipe's rate with 8 blocks per SM issuing ex2, per sub-partition (0.125 = one MUFU per 8 cycles = 4 lanes per cycle); the clock64 throughput table above assumes eight concurrent blocks and reads 1.6x higher, so the counter is the model's input"}
+    if lt:
+        f["sfu_latency_cycles"] = {k: round(r["value"], 1) for k, r in sorted(lt.items())}
+        s["sfu_latency_cycles"] = {"from": [r["quantity"] for r in lt.values()], "method": "B38: one dependent chain per thread, one warp per sub-partition, cycles per link (about one cycle of loop included; the rcp link carries an FADD, 4 cycles by B27, so rcp's own latency is the record less 4)"}
+        if "rcp" in f["sfu_latency_cycles"] and f["sfu_latency_cycles"]["rcp"] > 8:
+            f["sfu_latency_cycles"]["rcp"] = round(f["sfu_latency_cycles"]["rcp"] - 4.2, 1)
+    if mx:
+        f["sfu_ffma_mixed_cycles_per_iter"] = {k: round(r["value"], 1) for k, r in sorted(mx.items())}
+        s["sfu_ffma_mixed_cycles_per_iter"] = {"from": [r["quantity"] for r in mx.values()], "method": "B38: one warp per sub-partition, 8 independent ex2 then N x 8 independent FFMAs per iteration"}
+        c0 = mx.get("ffma_per_ex2=0", {}).get("value"); c16 = mx.get("ffma_per_ex2=16", {}).get("value")
+        if c0:
+            # one warp per sub-partition issuing 8 independent ex2 per iteration: cycles per ex2 from one warp (the pipe's aggregate rate
+            # needs several warps; the B2-pattern throughput above is that aggregate)
+            f["sfu_issue_cycles_one_warp"] = round(c0 / 8.0, 2)
+            s["sfu_issue_cycles_one_warp"] = {"from": ["sfu_ffma_mixed_cycles_per_iter[ffma_per_ex2=0]"], "method": "B38: cycles per iteration of 8 independent ex2 from one warp per sub-partition, over 8 (the loop's cycle included)"}
+        if c0 and c16:
+            # the 128 FFMAs cost at least 128 x the FFMA issue cycles; overlap = 1 - (extra cycles) / (that floor)
+            extra = c16 - c0; f["sfu_ffma_overlap"] = round(max(0.0, min(1.0, 1.0 - extra / 128.0)), 3)
+            s["sfu_ffma_overlap"] = {"from": ["sfu_ffma_mixed_cycles_per_iter[ffma_per_ex2=0]", "sfu_ffma_mixed_cycles_per_iter[ffma_per_ex2=16]"], "method": "B38: 1 - (cycles the 128 FFMAs added) / 128; 1 = the FFMAs issued entirely in the SFU's shadow"}
+    return f, s
+
+
+def fit_b39(recs):
+    f, s = {}, {}
+    lt = keyed(recs, "shfl_latency_cycles"); tp = keyed(recs, "shfl_throughput_per_sm"); bl = keyed(recs, "shfl_cycles_beside_lds")
+    if lt:
+        f["shfl_latency_cycles"] = {k: round(r["value"], 1) for k, r in sorted(lt.items())}; s["shfl_latency_cycles"] = {"from": [r["quantity"] for r in lt.values()], "method": "B39 (a): dependent chain, one warp per sub-partition, cycles per shuffle (about one cycle of loop included)"}
+    if tp:
+        f["shfl_throughput_per_sm"] = {k: round(r["value"], -7) for k, r in sorted(tp.items())}; s["shfl_throughput_per_sm"] = {"from": [r["quantity"] for r in tp.values()], "method": "B39 (a): ILP 8, 8 blocks x 256 threads per SM, warp shuffle instructions per second per SM"}
+    for q, name, m in (("warp_reduce_cycles", "warp_reduce_cycles", "B39 (b): 32-lane butterfly, 5 shfl.bfly + 5 FADD + 1 FMUL dependent"), ("redux_cycles", "redux_cycles", "B39 (d): redux.sync.add.s32 dependent chain"), ("block_reduce_cycles", "block_reduce_cycles", "B39 (e): 256 threads to one value through shared memory")):
+        r = recs.get(q)
+        if r and r.get("value") is not None:
+            f[name] = round(r["value"], 1); s[name] = _nm(r, q, m)
+    if recs.get("redux_cycles"):
+        f["redux_supported"] = True
+    if bl:
+        a, b = bl.get("lds=0", {}).get("value"), bl.get("lds=1", {}).get("value")
+        f["shfl_cycles_beside_lds"] = {k: round(r["value"], 2) for k, r in sorted(bl.items())}
+        if a and b:
+            f["shfl_in_lsu_queue"] = bool(b / a > 1.15)
+        if a:
+            f["shfl_issue_cycles_one_warp"] = round(a, 2)
+            s["shfl_issue_cycles_one_warp"] = {"from": ["shfl_cycles_beside_lds[lds=0]"], "method": "B39 (c) with the load warps idle: cycles per shuffle from one warp per sub-partition issuing 8 independent shfl.bfly per iteration"}
+        s["shfl_in_lsu_queue"] = {"from": [r["quantity"] for r in bl.values()], "method": "B39 (c): shuffle warps' cycles per shuffle with LDS.128 loop warps on the same sub-partitions over alone; true when the slowdown exceeds 15 % (the ncu cross-check reads whether shuffles count as LSU wavefronts)"}
+    wf = {}
+    for q, r in recs.items():
+        if q.startswith("counter_b39_shfl[") and r["detail"].get("measured"):
+            mt = {k: v[0] for k, v in r["detail"]["metrics"].items()}; sh = mt.get("smsp__inst_executed_op_shfl.sum"); w = mt.get("l1tex__data_pipe_lsu_wavefronts.sum"); lsu = mt.get("sm__inst_executed_pipe_lsu.sum")
+            wf[q.split("probe=")[1].rstrip("]")] = {"shfl_instructions": sh, "lsu_pipe_instructions": lsu, "lsu_wavefronts": w, "wavefronts_per_shfl": round(w / sh, 3) if sh and w else None, "lsu_instr_per_shfl": round(lsu / sh, 3) if sh and lsu else None}
+    if wf:
+        f["shfl_lsu_counters"] = wf; s["shfl_lsu_counters"] = {"from": [q for q in recs if q.startswith("counter_b39_shfl[")], "method": "B39 (ncu): LSU pipe instructions and wavefronts per shuffle instruction"}
+        for q, r in recs.items():
+            if q == "counter_b39_shfl[probe=shfl]" and r["detail"].get("measured"):
+                mt = {k: v[0] for k, v in r["detail"]["metrics"].items()}; sh = mt.get("smsp__inst_executed_op_shfl.sum"); cyc = mt.get("sm__cycles_active.avg"); w = mt.get("l1tex__data_pipe_lsu_wavefronts_mem_shared.sum")
+                if sh and cyc:
+                    f["shfl_warp_instr_per_cycle_per_smsp"] = round(sh / 48 / cyc / 4, 4)
+                    s["shfl_warp_instr_per_cycle_per_smsp"] = {"from": [q], "method": "B39 (ncu): shuffles per cycle per sub-partition with 8 blocks per SM issuing shfl.bfly (0.125 = one per 8 cycles); the clock64 throughput table assumes eight concurrent blocks and reads 16x higher, so the counter is the model's input"}
+                if sh and w:
+                    f["shfl_wavefronts_per_instruction"] = round(w / sh, 2); f["shfl_in_lsu_queue"] = True
+                    s["shfl_wavefronts_per_instruction"] = {"from": [q], "method": "B39 (ncu): shared-memory LSU wavefronts per shuffle instruction (1.0: every shuffle is an LSU-pipe instruction with one wavefront, so shuffles sit in the B30 queue with the loads)"}
+    return f, s
+
+
+def fit_b40(recs):
+    f, s = {}, {}
+    at = keyed(recs, "attention_loop_cycles_per_step")
+    if at:
+        f["attention_spill_curve"] = {k: {"cycles_per_step": round(r["value"], 2), "regs_used": r["detail"].get("regs_used"), "local_bytes_per_thread": r["detail"].get("local_bytes_per_thread"), "ffma_per_step": r["detail"].get("ffma_per_step"), "ex2_per_step": r["detail"].get("ex2_per_step")} for k, r in sorted(at.items())}
+        s["attention_spill_curve"] = {"from": [r["quantity"] for r in at.values()], "method": "B40 (a): an attention-shaped loop (TQ scores, online max/ex2/sum, TQ P.V FFMAs per step) at each -maxrregcount; registers and local bytes from the function attributes"}
+    lm = keyed(recs, "local_mem_bytes_per_s_per_sm_by_warps")
+    if lm:
+        f["local_mem_bytes_per_s_per_sm_by_warps"] = {k: round(r["value"], -7) for k, r in sorted(lm.items())}; s["local_mem_bytes_per_s_per_sm_by_warps"] = {"from": [r["quantity"] for r in lm.values()], "method": "B40 (b): B19's local stream with 4, 8, 16 warps per SM at once"}
+    rb = keyed(recs, "max_blocks_per_sm_by_regs")
+    if rb:
+        f["max_blocks_per_sm_by_regs"] = {k.split("=")[1]: {"measured": int(r["value"]), "occupancy_api": r["detail"].get("occupancy_api"), "min_blocks_bound": r["detail"].get("min_blocks_bound")} for k, r in sorted(rb.items(), key=lambda kv: int(kv[0].split("=")[1]))}
+        f["max_blocks_per_sm_by_regs_matches_api"] = all(int(r["value"]) == r["detail"].get("occupancy_api") for r in rb.values())
+        s["max_blocks_per_sm_by_regs"] = {"from": [r["quantity"] for r in rb.values()], "method": "B40 (c): 256-thread kernels at each __launch_bounds__ min-blocks; the most blocks co-resident on one SM by clock64 overlap vs the occupancy API"}
+    return f, s
+
+
+FITTERS = [("b35_tma_residency", fit_b35), ("b36_tma_contention", fit_b36), ("b37_mbarrier_cluster", fit_b37), ("b38_sfu_convert", fit_b38), ("b39_shuffle_reduce", fit_b39), ("b40_register_budget", fit_b40), ("b31_mma_issue", fit_b31), ("b32_ldmatrix_mma", fit_b32), ("b33_mma_mio", fit_b33), ("b34_mixed_issue", fit_b34), ("b30_mio_queue", fit_b30), ("b27_dependency_ilp", fit_b27), ("b28_lsu_port_contention", fit_b28), ("b13_l2_structure", fit_b13), ("b14_l1_carveout", fit_b14), ("b15_copy_queue", fit_b15), ("b16_block_scheduler", fit_b16),
            ("b17_latency_hiding", None), ("b18_dram", fit_b18), ("b19_registers_local", fit_b19), ("b20_tensor_detail", fit_b20),
            ("b21_compute_block", fit_b21), ("b22_clock_governor", fit_b22), ("b23_unified_mechanics", fit_b23), ("b24_atomics_reductions", fit_b24),
            ("b25_multi_kernel", fit_b25), ("b26_functional_probes", fit_b26)]

@@ -1,0 +1,45 @@
+{
+ "quantity": "sfu_latency_cycles[tanh]",
+ "unit": "cycles",
+ "samples": [
+  18.1565,
+  18.15025,
+  18.15075,
+  18.17575,
+  18.16325,
+  18.156,
+  18.15625,
+  18.05225,
+  18.05225,
+  18.05225
+ ],
+ "detail": {
+  "op": "tanh",
+  "method": "one dependent chain per thread, one warp per sub-partition, cycles per link (the loop adds about one cycle)",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 18.153374999999997,
+ "ci95": 0.0029643248156334227,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "SFU and conversion pipes: throughput, latency, ex2 beside FFMA (round 2, B38)",
+ "benchmark": "b38_sfu_convert",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 46.0,
+   "power_w": 11.73,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 25.95,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:59:46Z",
+ "arch": "sm_121"
+}

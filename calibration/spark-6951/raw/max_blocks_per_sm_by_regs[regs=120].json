@@ -1,0 +1,40 @@
+{
+ "quantity": "max_blocks_per_sm_by_regs[regs=120]",
+ "unit": "count",
+ "samples": [
+  2
+ ],
+ "detail": {
+  "regs": 120,
+  "live_floats": 112,
+  "threads": 256,
+  "occupancy_api": 2,
+  "measured": 2,
+  "method": "256-thread kernel with R live FMA accumulators; API vs the most blocks co-resident on one SM by clock64 overlap (%smid), grid 12 x SMs",
+  "sm_clock_mhz": 2541.4
+ },
+ "value": 2,
+ "ci95": 1.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "attention-shaped loop under -maxrregcount; local memory by warps; residency vs registers (round 2, B40)",
+ "benchmark": "b40_register_budget",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 4.43,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2522.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 21.34,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T04:03:36Z",
+ "arch": "sm_121"
+}

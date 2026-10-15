@@ -1,0 +1,55 @@
+{
+ "quantity": "counter_b38_sfu[probe=f2f]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B38: the XU (SFU) pipe's active cycles and instructions for ex2, for ex2 with 4 FFMAs each, and for the F2F convert",
+ "benchmark": "b38_sfu_convert",
+ "arch": "sm_121",
+ "timestamp": "2026-10-15T03:59:56Z",
+ "detail": {
+  "probe": "f2f",
+  "metrics": {
+   "sm__cycles_active.avg": [
+    5422615.02,
+    "cycle"
+   ],
+   "sm__inst_executed.sum": [
+    1029287808.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_fma.sum": [
+    34176.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_xu.sum": [
+    61440000.0,
+    "inst"
+   ],
+   "sm__pipe_fma_cycles_active.avg": [
+    1457.88,
+    "cycle"
+   ],
+   "smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio": [
+    0.36,
+    "inst"
+   ],
+   "smsp__cycles_active.avg": [
+    5388033.55,
+    "cycle"
+   ],
+   "smsp__issue_active.avg": [
+    5360874.0,
+    "cycle"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 1.9
+ }
+}

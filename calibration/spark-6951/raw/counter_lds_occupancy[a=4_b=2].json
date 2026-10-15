@@ -11,14 +11,14 @@
  "method": "ncu: B30 occupancy sweep: shared-load instructions per cycle, issue-active and mio_throttle at w warps per sub-partition (a = width bytes, b = w)",
  "benchmark": "bx_counters",
  "arch": "sm_121",
- "timestamp": "2026-10-15T00:32:52Z",
+ "timestamp": "2026-10-15T03:16:53Z",
  "detail": {
   "kernel": "lds_occ",
   "a": 4,
   "b": 2,
   "metrics": {
    "gpu__time_duration.sum": [
-    108576.0,
+    110752.0,
     "ns"
    ],
    "l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum": [
@@ -30,7 +30,7 @@
     ""
    ],
    "sm__cycles_active.avg": [
-    218482.52,
+    218365.44,
     "cycle"
    ],
    "sm__sass_data_bytes_mem_shared.sum": [
@@ -54,7 +54,7 @@
     "inst"
    ],
    "smsp__cycles_active.avg": [
-    215637.35,
+    215616.6,
     "cycle"
    ],
    "smsp__issue_active.avg": [
@@ -64,6 +64,6 @@
   },
   "measured": true,
   "reason": null,
-  "seconds": 2.0
+  "seconds": 1.8
  }
 }

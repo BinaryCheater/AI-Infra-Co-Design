@@ -11,14 +11,14 @@
  "method": "ncu: B14.1: L1 sector hit rate of a 128 B-stride chase at footprint KiB (a) and smem request bytes (b)",
  "benchmark": "bx_counters",
  "arch": "sm_121",
- "timestamp": "2026-10-15T00:33:34Z",
+ "timestamp": "2026-10-15T03:17:35Z",
  "detail": {
   "kernel": "l1_chase",
   "a": 32,
   "b": 49152,
   "metrics": {
    "gpu__time_duration.sum": [
-    525344.0,
+    537472.0,
     "ns"
    ],
    "l1tex__t_requests.sum": [
@@ -36,6 +36,6 @@
   },
   "measured": true,
   "reason": null,
-  "seconds": 1.8
+  "seconds": 1.9
  }
 }

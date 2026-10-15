@@ -1,0 +1,45 @@
+{
+ "quantity": "local_mem_bytes_per_s_per_sm_by_warps[warps=4]",
+ "unit": "byte/s",
+ "samples": [
+  10309582000.0,
+  10342200900.0,
+  10320186500.0,
+  10329239300.0,
+  10232361500.0,
+  9571269240.0,
+  9861604250.0,
+  10345119900.0,
+  10172044800.0,
+  10307427900.0
+ ],
+ "detail": {
+  "warps_per_sm": 4,
+  "method": "B19's local stream (8 independent 4 B local loads per step per thread), one block of 4 warps per SM",
+  "sm_clock_mhz": 2541.4
+ },
+ "value": 10308504950.0,
+ "ci95": 0.013690463669030881,
+ "n": 10,
+ "repeat_policy": "once",
+ "method": "attention-shaped loop under -maxrregcount; local memory by warps; residency vs registers (round 2, B40)",
+ "benchmark": "b40_register_budget",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 4.43,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2522.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 21.34,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T04:03:36Z",
+ "arch": "sm_121"
+}

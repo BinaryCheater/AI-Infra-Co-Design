@@ -1,0 +1,45 @@
+{
+ "quantity": "redux_cycles",
+ "unit": "cycles",
+ "samples": [
+  52.597,
+  52.604,
+  52.62125,
+  52.6095,
+  52.602,
+  52.5945,
+  52.61475,
+  52.491,
+  52.4905,
+  52.4905
+ ],
+ "detail": {
+  "supported": true,
+  "method": "redux.sync.add.s32 dependent chain, one warp per sub-partition, cycles per redux (plus an IADD and a LOP)",
+  "sm_clock_mhz": 2522.0
+ },
+ "value": 52.5995,
+ "ci95": 0.0011288130115305144,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "shuffles: latency, throughput, butterfly reduction, beside LDS, redux, block reduction (round 2, B39)",
+ "benchmark": "b39_shuffle_reduce",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 11.92,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 14.4,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:44:11Z",
+ "arch": "sm_121"
+}

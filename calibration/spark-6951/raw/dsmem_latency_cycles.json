@@ -1,0 +1,44 @@
+{
+ "quantity": "dsmem_latency_cycles",
+ "unit": "cycles",
+ "samples": [
+  3648,
+  3647,
+  3651,
+  3645,
+  3650,
+  3647,
+  3651,
+  3647,
+  3650,
+  3644
+ ],
+ "detail": {
+  "method": "dependent 4 B loads from the other block's shared memory (map_shared_rank), one thread per lane, cycles per load",
+  "sm_clock_mhz": 2522.0
+ },
+ "value": 3647.5,
+ "ci95": 0.0005483207676490747,
+ "n": 10,
+ "repeat_policy": "once",
+ "method": "mbarrier cost by arrivals and with expect_tx; phase flip; cluster multicast; DSMEM (round 2, B37)",
+ "benchmark": "b37_mbarrier_cluster",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 44.0,
+   "power_w": 4.53,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 50.0,
+   "power_w": 29.58,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:59:43Z",
+ "arch": "sm_121"
+}

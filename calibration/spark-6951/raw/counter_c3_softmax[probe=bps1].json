@@ -1,0 +1,95 @@
+{
+ "quantity": "counter_c3_softmax[probe=bps1]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: C3 composite: issue, FMA and XU pipe activity, shuffles and stall families of the softmax rows at 1-6 blocks per SM",
+ "benchmark": "c3_softmax",
+ "arch": "sm_121",
+ "timestamp": "2026-10-15T03:44:55Z",
+ "detail": {
+  "probe": "1",
+  "metrics": {
+   "gpu__time_duration.sum": [
+    112416.0,
+    "ns"
+   ],
+   "l1tex__data_pipe_lsu_wavefronts.sum": [
+    1415868.0,
+    ""
+   ],
+   "sm__cycles_active.avg": [
+    221529.23,
+    "cycle"
+   ],
+   "sm__inst_executed_pipe_alu.sum": [
+    1230720.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_fma.sum": [
+    1689792.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_lsu.sum": [
+    998976.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_xu.sum": [
+    384000.0,
+    "inst"
+   ],
+   "sm__inst_issued.sum": [
+    4462080.0,
+    "inst"
+   ],
+   "sm__issue_active.avg": [
+    23240.0,
+    "cycle"
+   ],
+   "sm__pipe_fma_cycles_active.avg": [
+    73594.0,
+    "cycle"
+   ],
+   "smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio": [
+    0.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio": [
+    4.69,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio": [
+    0.01,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio": [
+    0.15,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio": [
+    0.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio": [
+    2.4,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_wait_per_issue_active.ratio": [
+    1.15,
+    "inst"
+   ],
+   "smsp__warps_active.avg": [
+    229354.71,
+    "warp"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 2.0
+ }
+}

@@ -11,18 +11,18 @@
  "method": "ncu: B21: the same for T5 128x128x32",
  "benchmark": "bx_counters",
  "arch": "sm_121",
- "timestamp": "2026-10-15T00:32:17Z",
+ "timestamp": "2026-10-15T03:16:17Z",
  "detail": {
   "kernel": "inner_T5",
   "a": 0,
   "b": 0,
   "metrics": {
    "gpu__time_duration.sum": [
-    690880.0,
+    690592.0,
     "ns"
    ],
    "sm__cycles_active.avg": [
-    1464574.4,
+    1464186.67,
     "cycle"
    ],
    "sm__inst_executed_pipe_alu.sum": [
@@ -46,7 +46,7 @@
     "cycle"
    ],
    "sm__pipe_fma_cycles_active.avg": [
-    6987273.19,
+    6987720.48,
     "cycle"
    ],
    "smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio": [
@@ -78,12 +78,12 @@
     "inst"
    ],
    "smsp__warps_active.avg": [
-    2923394.51,
+    2922969.53,
     "warp"
    ]
   },
   "measured": true,
   "reason": null,
-  "seconds": 1.9
+  "seconds": 1.8
  }
 }

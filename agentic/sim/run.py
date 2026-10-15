@@ -220,7 +220,10 @@ class Simulator:
                     _, hist = self.issue.phase(wpb, blocks_resident, nxt.k_steps, nxt.ffma_per_step, nxt.lds32_per_step, nxt.lds128_per_step, nxt.other_per_phase, 1, nxt.smem_stride, nxt.a_wavefronts, nxt.b_wavefronts, nxt.copies_per_phase)
                     delay = hist.get("copy_dispatch_cycles", 0.0) / self.cfg.clock_hz
             shared = self.issue is not None and getattr(self.issue, "copy_path", "shared") == "shared"
-            self.memory.request(self.engine, b.sm, e.src, e.bytes, lambda t=None, b=b, w=w, g=e.group: self._copy_done(b, w, g), skip_issue=shared, delay=delay if shared else 0.0)
+            if getattr(e, "kind", "cp_async") == "tma" and hasattr(self.memory, "request_tma"):
+                self.memory.request_tma(self.engine, b.sm, e.src, e.bytes, max(1, len(self.sm_blocks[b.sm])), lambda t=None, b=b, w=w, g=e.group: self._copy_done(b, w, g))
+            else:
+                self.memory.request(self.engine, b.sm, e.src, e.bytes, lambda t=None, b=b, w=w, g=e.group: self._copy_done(b, w, g), skip_issue=shared, delay=delay if shared else 0.0)
             self._advance(b, w, now + cost, "issue_copy", e)
         elif isinstance(e, Wait):
             if (w, e.group) in b.groups_done:

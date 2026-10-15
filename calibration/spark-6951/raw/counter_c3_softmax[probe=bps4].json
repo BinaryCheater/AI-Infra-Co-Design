@@ -1,0 +1,95 @@
+{
+ "quantity": "counter_c3_softmax[probe=bps4]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: C3 composite: issue, FMA and XU pipe activity, shuffles and stall families of the softmax rows at 1-6 blocks per SM",
+ "benchmark": "c3_softmax",
+ "arch": "sm_121",
+ "timestamp": "2026-10-15T03:44:59Z",
+ "detail": {
+  "probe": "4",
+  "metrics": {
+   "gpu__time_duration.sum": [
+    145472.0,
+    "ns"
+   ],
+   "l1tex__data_pipe_lsu_wavefronts.sum": [
+    5937418.0,
+    ""
+   ],
+   "sm__cycles_active.avg": [
+    294182.02,
+    "cycle"
+   ],
+   "sm__inst_executed_pipe_alu.sum": [
+    4922880.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_fma.sum": [
+    6759168.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_lsu.sum": [
+    3995904.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_xu.sum": [
+    1536000.0,
+    "inst"
+   ],
+   "sm__inst_issued.sum": [
+    17848320.0,
+    "inst"
+   ],
+   "sm__issue_active.avg": [
+    92960.0,
+    "cycle"
+   ],
+   "sm__pipe_fma_cycles_active.avg": [
+    293600.83,
+    "cycle"
+   ],
+   "smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio": [
+    0.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio": [
+    6.17,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio": [
+    0.03,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio": [
+    0.31,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio": [
+    0.33,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio": [
+    2.99,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_wait_per_issue_active.ratio": [
+    1.19,
+    "inst"
+   ],
+   "smsp__warps_active.avg": [
+    1120607.4,
+    "warp"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 1.9
+ }
+}

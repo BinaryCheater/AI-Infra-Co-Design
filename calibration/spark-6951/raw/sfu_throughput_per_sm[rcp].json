@@ -1,0 +1,46 @@
+{
+ "quantity": "sfu_throughput_per_sm[rcp]",
+ "unit": "ops/s",
+ "samples": [
+  64426709800.0,
+  64433873200.0,
+  64427342700.0,
+  64428191600.0,
+  64426493900.0,
+  64429547900.0,
+  64428849700.0,
+  64430311400.0,
+  64431150400.0,
+  64431049900.0
+ ],
+ "detail": {
+  "op": "rcp",
+  "ops_per_iter_per_thread": 8,
+  "method": "B2 pattern: ILP 8, 8 blocks x 256 threads per SM, median block's clock64",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 64429198800.0,
+ "ci95": 3.1225361132381486e-05,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "SFU and conversion pipes: throughput, latency, ex2 beside FFMA (round 2, B38)",
+ "benchmark": "b38_sfu_convert",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 46.0,
+   "power_w": 11.73,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2515.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 25.95,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:59:46Z",
+ "arch": "sm_121"
+}

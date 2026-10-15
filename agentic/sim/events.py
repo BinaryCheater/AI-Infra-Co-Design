@@ -22,6 +22,7 @@ class IssueCopy(Event):
     bytes: int
     group: int                  # copy group id; completion and waits refer to it
     tile: int | None = None     # the k-tile this copy carries (for the tiling template)
+    kind: str = "cp_async"      # "cp_async" (per-thread chunks) or "tma" (one bulk copy per tile, round 2 group 2)
 
 
 @dataclass(frozen=True)

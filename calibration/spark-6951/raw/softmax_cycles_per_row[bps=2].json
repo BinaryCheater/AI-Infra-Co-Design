@@ -1,0 +1,60 @@
+{
+ "quantity": "softmax_cycles_per_row[bps=2]",
+ "unit": "cycles",
+ "samples": [
+  491.065,
+  490.8675,
+  491.4575,
+  490.4925,
+  491.75,
+  491.58,
+  489.9825,
+  490.76,
+  492.31,
+  491.46
+ ],
+ "detail": {
+  "blocks_per_sm": 2,
+  "warps_per_block": 4,
+  "keys_per_row": 128,
+  "regs": 29,
+  "per_row_per_warp": {
+   "ldg_128": 1,
+   "fmax": 8,
+   "shfl": 10,
+   "fadd": 8,
+   "fsub_fmul": 8,
+   "ex2": 4,
+   "rcp": 1,
+   "fmul": 4,
+   "cvt_bf16x2": 2,
+   "stg_64": 2
+  },
+  "method": "one warp per row, 4 keys per lane; cycles per row per block",
+  "sm_clock_mhz": 2522.2
+ },
+ "value": 491.26125,
+ "ci95": 0.0008587589597184796,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "group-3 composite: online softmax rows, shuffles + ex2 + rcp + bf16 convert, 1-6 blocks per SM (round 2, a prediction check)",
+ "benchmark": "c3_softmax",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2522.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 15.32,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2522.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 16.04,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:44:20Z",
+ "arch": "sm_121"
+}

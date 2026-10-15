@@ -1,0 +1,45 @@
+{
+ "quantity": "block_reduce_cycles",
+ "unit": "cycles",
+ "samples": [
+  352.3135,
+  352.3305,
+  352.308,
+  352.292,
+  352.3115,
+  352.36,
+  352.336,
+  352.0825,
+  352.0825,
+  352.0825
+ ],
+ "detail": {
+  "threads": 256,
+  "method": "warp butterfly, 8 partials through shared memory, two __syncthreads, a 3-step butterfly over the partials; cycles per block reduction",
+  "sm_clock_mhz": 2522.0
+ },
+ "value": 352.30975,
+ "ci95": 0.00035586582545620596,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "shuffles: latency, throughput, butterfly reduction, beside LDS, redux, block reduction (round 2, B39)",
+ "benchmark": "b39_shuffle_reduce",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 11.92,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2411.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 49.0,
+   "power_w": 14.4,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:44:11Z",
+ "arch": "sm_121"
+}

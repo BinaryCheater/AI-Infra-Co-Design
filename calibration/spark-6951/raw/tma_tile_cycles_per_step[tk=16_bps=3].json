@@ -1,0 +1,54 @@
+{
+ "quantity": "tma_tile_cycles_per_step[tk=16,bps=3]",
+ "unit": "cycles",
+ "samples": [
+  6473.13672,
+  6468.49219,
+  6469.12109,
+  6886.46094,
+  6646.87109,
+  6478.125,
+  6462.4375,
+  6469.45312,
+  6466.625,
+  6465.16797
+ ],
+ "detail": {
+  "tk": 16,
+  "blocks_per_sm": 3,
+  "resident_blocks_per_sm": 2,
+  "occupancy_limit_blocks": 2,
+  "stage_bytes": 16384,
+  "smem_bytes": 32768,
+  "regs": 128,
+  "threads": 256,
+  "RM": 8,
+  "RN": 8,
+  "design": "T5 128x128 FP32, S=2, P=1, TMA 2-D",
+  "sm_clock_mhz": 2521.9
+ },
+ "value": 6469.287104999999,
+ "ci95": 0.007217093899560327,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "group-2 composite: the T5 FP32 tile with 2-D TMA loads, 1-3 blocks per SM (round 2, a prediction check)",
+ "benchmark": "c2_tma_tile",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2522.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 50.0,
+   "power_w": 17.72,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2450.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 51.0,
+   "power_w": 20.08,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:44:04Z",
+ "arch": "sm_121"
+}

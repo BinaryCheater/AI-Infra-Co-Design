@@ -1,0 +1,53 @@
+{
+ "quantity": "tma_mix_bytes_per_s[tmastore2_idle2]",
+ "unit": "byte/s",
+ "samples": [
+  934004726000.0,
+  934537524000.0,
+  937389108000.0,
+  937567956000.0,
+  938373454000.0,
+  938821477000.0,
+  939000873000.0,
+  939449579000.0,
+  941970076000.0,
+  951175595000.0
+ ],
+ "detail": {
+  "roles_by_wave": [
+   "tma_store",
+   "idle",
+   "tma_store",
+   "idle"
+  ],
+  "tile_bytes": 8192,
+  "resident_blocks_per_sm": 4,
+  "sms_with_all_four_blocks": 48,
+  "what": "(d) two TMA store streams alone",
+  "sm_clock_mhz": 2537.0
+ },
+ "value": 938597465500.0,
+ "ci95": 0.0024808758126781878,
+ "n": 10,
+ "repeat_policy": "once",
+ "method": "TMA beside cp.async (1:1, 1:3, 3:1), beside LDS.128 loops, 2-D vs 1-D, TMA store beside load (round 2, B36)",
+ "benchmark": "b36_tma_contention",
+ "clocks": {
+  "before": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 10.88,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2437.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 41.0,
+   "power_w": 12.91,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:39:40Z",
+ "arch": "sm_121"
+}

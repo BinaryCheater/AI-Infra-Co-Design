@@ -1,6 +1,6 @@
 # The GB10 GPU: A Microarchitecture Reference from Measurement
 
-*The NVIDIA GB10 in the DGX Spark, as seen from user space through 29 microbenchmarks and the hardware counters. Every number in this book comes from a benchmark named in brackets, e.g. [B5]; the kernels are in `calibration/suite/bench/`, the raw records in `calibration/spark-6951/raw/`. Where a statement rests on NVIDIA's public documentation instead of a measurement, the text says so. Written October 2026 for the host spark-6951: driver 580.159.03, CUDA 13.0, `sm_121`.*
+*The NVIDIA GB10 in the DGX Spark, as seen from user space through 40 microbenchmarks, three composite kernels and the hardware counters. Every number in this book comes from a benchmark named in brackets, e.g. [B5]; the kernels are in `calibration/suite/bench/`, the raw records in `calibration/spark-6951/raw/`. Where a statement rests on NVIDIA's public documentation instead of a measurement, the text says so. Written October 2026 for the host spark-6951: driver 580.159.03, CUDA 13.0, `sm_121`.*
 
 ---
 
@@ -87,6 +87,12 @@ The chip-level cuBLAS numbers are 75–80 % of 48 × the per-SM peak, the usual 
 
 **Feeding the tensor core.** `ldmatrix` from shared memory delivers **351 GB/s per SM** when the tile is laid out with the swizzle that avoids bank conflicts, and **44 GB/s** without it: an 8× penalty for the wrong layout [B20].
 
+**The tensor path, instruction by instruction.** One `mma.sync` occupies its sub-partition's tensor pipe for **16.1 cycles**, the same for FP16, BF16, TF32 and FP8 e4m3 (four different SASS instructions, one rate; the FLOP rates differ only because the shapes do) [B31]. Its result is ready **30.1 cycles** after issue [B31]; INT8 m16n8k32 is the odd one at 19.6 cycles of pipe and 81.6 of latency [B31]. Two independent `mma` in flight per warp reach the pipe's rate, and a second warp on the sub-partition doubles the time per warp, so the pipe, not the warp, is the resource [B31]. The warp that issued an `mma` issues nothing else for those 16 cycles: 16 FFMAs placed between two `mma` add their full cost, 1.1 cycles each [B34]. A second warp's FFMAs do not fill that gap either: with one warp issuing `mma` and another issuing FFMAs on the same sub-partition, the FFMA warp keeps 95 % of its rate and the `mma` warp loses 43 % [B34].
+
+`ldmatrix.x4` returns **47 cycles** after issue in a chain through `mma` (81 per link less the `mma` latency and the address arithmetic) [B32]; a loop that loads the fragments one step ahead already runs at 90 % of the pipe (71 cycles per step of four `mma` and two `ldmatrix.x4`), and deeper register double-buffering buys nothing [B32]. The unswizzled layout costs 7 % inside that loop, not the 8× of the bare `ldmatrix` [B32]. A load-heavy block on the same SM, LDS.128 loops or `cp.async` streams or both, costs the tensor block at most 8 % [B33]. The accumulators are the register budget: a tensor loop with 128 accumulators per thread built at a 128-register cap runs 3.6× slower, with 192 accumulators 12× slower, from spills; 64 accumulators fit anywhere [B34]. The FP32-to-BF16 store epilogue of a 128 x 128 tile costs about 1 700 cycles per warp [B34].
+
+**The SFU.** `ex2`, `rcp`, `rsqrt`, `lg2` and `tanh` (`.approx`) all issue at **one warp instruction per 8 cycles per sub-partition** (four lanes per cycle) by the pipe counter, with a latency of 18 cycles (`rcp` 20) [B38]. The FP32-to-BF16 converts `F2F` and the packed `F2FP` go through the same pipe at the same rate; `I2F` has a 4.6-cycle latency [B38]. One warp alone issues an `ex2` every 8.3 cycles, so a single warp already saturates its sub-partition's SFU [B38]. FFMAs between SFU instructions from the same warp: a few hide in the SFU's shadow (32 FFMAs after 8 `ex2` cost 19 cycles), many do not (128 cost their full 155) [B38]. The clock64 throughput table of [B21] that gave `MUFU rsqrt` 0.15 of FFMA, and the same pattern in [B38], disagree with the counter by 1.6×; the counter's 8 cycles per instruction is the number to use (gap 34).
+
 **ISA features on `sm_121`.** Thread-block clusters and distributed shared memory work (`map_shared_rank` reads a peer block's shared memory correctly). `wgmma`, `tcgen05` and `setmaxnreg` are rejected by `ptxas`. This is a consumer-class Blackwell SM, not the datacenter one [preflight P0].
 
 ---
@@ -154,7 +160,13 @@ The slope is about 23 ns per KB, i.e. one SM pulls a tile at roughly 44 GB/s whi
 
 The data of a copy lands in shared memory **in issue order**, 16 bytes at a time, and no 16-byte chunk is ever observed half-written [B26.1]. After `wait_group N`, the N most recent groups may or may not be complete; in 155 of 2000 trials a later group had already landed [B26.2]. This is what makes a kernel that reads a tile before its wait a race rather than a certain failure: the window between the first and last chunk of a 32 KB tile is about 13 000 cycles when swept by a polling warp, and the first chunk lands after about 960 [B26.1].
 
-**TMA (`cp.async.bulk`).** A 16 KB 1-D bulk copy with an mbarrier completes in **500 ns**; a 2-D tensor-map copy in 455 ns; an mbarrier arrive-and-wait with nothing pending costs 46 ns [B8, B15]. TMA copies reach **1.90 TB/s** chip-wide, and running TMA and `cp.async` together gives 1.67 TB/s, less than either alone, so the two share a path [B15]. TMA does not allocate in L1 [B14]. Bytes of a TMA tile can be read in shared memory before the mbarrier reports completion, about 30 bytes per 16 KB tile on average [B26.4]; a program that polls the destination instead of the barrier will see partial data.
+**TMA (`cp.async.bulk`).** A 16 KB 1-D bulk copy with an mbarrier completes in **500 ns** with one block per SM [B8], 1 176 cycles median and 1 305 at the 99th percentile when every SM issues one [B35]. The completion grows with residency because the chip's copy bandwidth is shared, not because of a per-SM queue: 16 KB tiles take 1 943 cycles median at two resident blocks, 2 728 at four and 4 792 at six, while the chip moves 1.5 to 1.9 TB/s throughout [B35]. By tile size at one block: 681 cycles for 4 KB, 810 for 8, 1 176 for 16, 1 989 for 32, 2 988 for 48 [B35]. A 2-D tensor-map copy costs the same as a 1-D copy of the same bytes (ratio 1.00) [B36]. TMA does not allocate in L1 [B14]. Bytes of a TMA tile can be read in shared memory before the mbarrier reports completion, about 30 bytes per 16 KB tile on average [B26.4]; a program that polls the destination instead of the barrier will see partial data.
+
+**TMA under load.** TMA and `cp.async` do not share an issue path: four 8 KB TMA streams per SM move 1.48 TB/s, four `cp.async` streams 1.74, and two of each 1.94 TB/s, more than either alone [B36]. (B15's earlier reading of 1.67 TB/s for the mix, below both pure streams, is not reproduced; what the two engines share is the chip's 2 TB/s.) In the mix the TMA blocks take 1 976 cycles per 8 KB tile against the `cp.async` blocks' 1 008, so the bulk engine yields to the per-thread copies [B36]. TMA beside LDS.128 loop blocks loses 2.5 cycles per tile, nothing [B36]. TMA stores (shared to global) reach 0.94 TB/s and, run beside TMA loads, slow the loads from 1 098 to 2 193 cycles per tile [B36]. An mbarrier arrive-and-wait round trip costs **75 cycles** with 1 or 32 arriving threads and 111 with 256 (B15's 46 ns = 114 cycles) [B37]; with a 4 KB transaction pending it returns after 621 cycles, the TMA latency itself [B37]. Cluster multicast launches and completes but takes 500× longer than two unicast loads and reads the L2 twice; it saves nothing on this chip [B37]. Clusters and distributed shared memory launch; the DSMEM latency and bandwidth readings (3 648 cycles, 572 GB/s) do not fit one mechanism and are not relied on [B37] (gap 37).
+
+**Shuffles.** `shfl.sync` is a load/store-unit instruction: the counter reads one shared-memory wavefront per shuffle, and shuffles stall on `mio_throttle` like loads [B39]. One warp issues a shuffle every **8.7 cycles**, and the sub-partition's rate with many warps is the same, one per 8 cycles [B39]. Latency: 27 cycles for `bfly` and `up`, 35 for `idx` [B39]. A 32-lane butterfly reduction (5 shuffles and 5 FADDs, dependent) takes 171 cycles [B39]; `redux.sync` compiles on `sm_121` and a dependent chain of them runs at 53 cycles per link [B39]; a 256-thread block reduction through shared memory takes 352 cycles [B39]. Beside LDS.128 loop warps on the same sub-partition a shuffle slows from 8.7 to 13.3 cycles [B39].
+
+**The copy that does not overlap.** A 128 x 128 x 32 BF16 tensor tile kernel with `cp.async` double-buffering runs its compute alone in 1 126 cycles per k-step and its copies alone in 937; together they take 1 579, the larger half plus most of the smaller [C1]. The same T5 FP32 tile with 2-D TMA loads: compute 4 001, copies 922, together 4 879 [C2]. On both engines the copies of the next tile do not run under the compute of this one, and the warps sit at the copy wait (`long_scoreboard` 1.6 per issue-active in C1) with the tensor pipe 53 % busy against 91 % without copies [C1]. This is the mechanism behind the copy-bound GEMM designs of the test set and the tensor composite alike (gaps 23, 24, 29, 30); what serializes the copy against the loop has not been measured.
 
 **Barriers.** `__syncthreads` costs 11 ns for 128 threads, 15 for 256, 23 for 512, 40 for 1024 (27, 37, 57, 97 cycles) [B7]. A store to shared memory is visible to another warp after a barrier, after a named-barrier `arrive`/`sync` pair, or after `__threadfence_block` alone, the last within 243 cycles [B26.3].
 
@@ -213,21 +225,24 @@ Managed memory costs a constant **1.45×** against device memory, with the CPU i
 
 ---
 
-## Chapter 9. What is not known
+## Chapter 9. Measured for GEMM and attention; open
 
-In order of how much it matters to predicting a kernel's time on this chip.
+**What is measured.** Every stage a GEMM or an attention kernel passes through has a number from a benchmark in this book and a mechanism in the simulator that was checked as a prediction against a kernel it was not built from (`calibration/spark-6951/coverage.md` is the table): the schedulers and the scoreboard [B17, B27, B29], the queue to the load/store unit [B30, B28], shared-memory banks and wavefronts [B6, B26.6, B30], `cp.async` and TMA completion [B8, B15, B35, B36], the tensor pipe and `ldmatrix` [B31-B34, C1], the SFU and the converts [B38], shuffles [B39], the register budget [B9, B19, B34, B40], L1 [B5, B14], L2 [B4, B13], DRAM [B4, B18]. The compute halves of the composites predict within 5 % (GEMM T5 with TMA, C2) to 15 % (the BF16 tensor tile at one block, C1), the copy halves within 5 to 9 %.
 
-1. **The copy return path.** One 4 KB `cp.async` tile per SM every 520 cycles under a load-heavy loop, 19.6 GB/s against 44 for copies alone (Chapter 5). The copy-bound and barrier-bound GEMM designs in the test set wait on this, and the model has no mechanism for it. Four counters would show where the time goes: `l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ldgsts`, `_op_ld`, `_op_ldsm`, and `l1tex__m_xbar2l1tex_read_bytes`. If the first is non-zero and fills plus loads sit near one wavefront per cycle, the fills share the shared-memory pipe; if not, the limit is between L2 and the SM.
-2. **The scheduler's choice** among eligible warps: oldest-first, round-robin, or something else. The `not_selected` counts are consistent with either.
-3. **Register-file bank conflicts.** Operand register numbers cannot be controlled from CUDA C++ or PTX, so the penalty has not been measured [B19.3].
-4. **L2 internals:** the set hash, the number of slices, the replacement policy beyond "not LRU", and whether there are two partitions. The chip behaves like one 24 MiB cache with a 6 ns latency spread; that is all the outside view gives.
-5. **DRAM channel count and controller queues.** The channel hash hides the count; the controller hides page structure. Only the aggregate bandwidth and the CPU-sharing loss are known.
-6. **Outstanding-miss limits** beyond the Little's-law estimates (12 DRAM, 30 L2 requests per SM).
-7. **The front end** above the scheduler: instruction cache size and fetch bandwidth. No kernel so far has been limited by them.
-8. **The tensor core's operand path:** `ldmatrix` shares the queue with `LDS` [B30]; unknown is the operand collector depth that sets how many independent `mma.sync` a warp needs in flight (29 cycles of latency says at least 2–4).
-9. **Clock behaviour under heavier thermal load** than a 60 s FMA burst at 79 W; no cap was reached, so the governor's limits are unseen.
+**Open, in order of how much it costs a prediction.**
 
-Each of these is one benchmark. None of them changes the numbers in Chapters 1–8; they bound how far those numbers can be extrapolated.
+1. **The copy that does not overlap the loop.** With either engine, the next tile's copy and this tile's compute add instead of overlapping: C1 1 579 against max(1 126, 937), C2 4 879 against max(4 001, 922) [C1, C2]. This is the 12 to 17 % miss of both composites at one and two blocks (gaps 29, 30) and the unexplained 520-cycle copy of the GEMM test set (gaps 23, 24). The `op_ldgsts` wavefront counter reads zero on this chip, so the fills are not visible in the shared-memory pipe (gap 25); the next measurement is a clock64 stamp at the copy wait inside the loop, to say whether the copy is late or the loop is slow.
+2. **Issue cycles another warp can take.** An `mma` holds its warp 16 cycles and an FFMA warp beside it takes 8 of them [B34]; an SFU instruction holds 8 and a short run of FFMAs hides in it while a long one does not [B38]. The model holds the warp and gets the ends right and the middle wrong (gaps 27, 35). What the arbiter does between an eligible FFMA and an `mma` or `MUFU` in dispatch is the open question, and it is the one attention's softmax warps beside tensor warps will ask.
+3. **Software pipelining by the compiler.** The in-order reading over-predicts a low-occupancy kernel whose loop iterations are independent: the softmax rows at one block by 64 %, within 10 % at six [C3]; the streaming chains of B27 at one warp by 2× (gap 17). The model needs the SASS's reorder window, not the source order.
+4. **Shuffles beside loads.** A shuffle is one LSU wavefront, yet beside loads it slows more than the queue charges (13.3 against 9.2 predicted, gap 33).
+5. **The scheduler's choice** among eligible warps: the `mma` warp loses to the FFMA warp [B34], so it is not oldest-first; the rule is not measured.
+6. **Register-file bank conflicts.** Operand register numbers cannot be controlled from CUDA C++ or PTX, so the penalty has not been measured [B19.3].
+7. **L2 internals:** the set hash, the number of slices, the replacement policy beyond "not LRU", and whether there are two partitions.
+8. **DRAM channel count and controller queues.** The channel hash hides the count; the controller hides page structure.
+9. **DSMEM and multicast.** Multicast is 500× slower than unicast and saves no traffic [B37]; the DSMEM readings do not fit one path (gap 37). Neither matters until a template uses clusters.
+10. **Clock behaviour under heavier thermal load** than a 60 s FMA burst at 79 W.
+
+Each of these is one benchmark. None of them changes the numbers in Chapters 1-8; they bound how far those numbers can be extrapolated.
 
 ---
 
@@ -265,6 +280,19 @@ Each of these is one benchmark. None of them changes the numbers in Chapters 1�
 | B28 | LSU contention | 5 | load/store rate vs occupancy, arbitration |
 | B29 | inner-loop ground truth | 4 | the generated GEMM loops under counters |
 | B30 | scheduler-to-LSU queue | 2, 5 | dispatch slot, drain rate, wavefront costs, who shares the queue |
+| B31 | mma issue and latency | 3 | tensor pipe occupancy per `mma` by shape, latency, in-flight count |
+| B32 | ldmatrix to mma | 3 | `ldmatrix` latency, pipeline depth, swizzle cost in a loop |
+| B33 | tensor loop beside loads | 3, 5 | tensor block under LDS and `cp.async` blocks |
+| B34 | mixed issue | 2, 3 | FFMA beside `mma`, the accumulator spill cliff, the epilogue |
+| B35 | TMA residency | 5 | TMA completion by tile and residency, chip copy bandwidth |
+| B36 | TMA contention | 5 | TMA beside `cp.async`, LDS, stores; 2-D vs 1-D |
+| B37 | mbarrier and clusters | 5 | mbarrier cost by arrivals, multicast, DSMEM |
+| B38 | SFU and converts | 3 | SFU rate and latency per op, FFMA overlap |
+| B39 | shuffles | 5 | shuffle latency and rate, butterfly, beside loads, `redux` |
+| B40 | register budget | 2 | attention-loop spill curve, local memory by warps, residency by registers |
+| C1 | BF16 tensor tile | 3, 5 | the group-1 composite: compute, copies, both |
+| C2 | T5 tile with TMA | 5 | the group-2 composite |
+| C3 | softmax rows | 3, 5 | the group-3 composite |
 
 ## Appendix B. Public documentation used
 

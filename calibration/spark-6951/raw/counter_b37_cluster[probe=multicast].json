@@ -1,0 +1,55 @@
+{
+ "quantity": "counter_b37_cluster[probe=multicast]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B37: L2 sectors with a cluster-of-2 multicast TMA load vs two unicast loads",
+ "benchmark": "b37_mbarrier_cluster",
+ "arch": "sm_121",
+ "timestamp": "2026-10-15T03:59:48Z",
+ "detail": {
+  "probe": "multicast",
+  "metrics": {
+   "gpu__time_duration.sum": [
+    93136736.0,
+    "ns"
+   ],
+   "lts__t_requests_srcunit_tex.sum": [
+    9936048.0,
+    "request"
+   ],
+   "lts__t_sector_hit_rate.pct": [
+    97.74,
+    "%"
+   ],
+   "lts__t_sectors_op_read_lookup_hit.sum": [
+    9799684.0,
+    "sector"
+   ],
+   "lts__t_sectors_op_read_lookup_miss.sum": [
+    105061.0,
+    "sector"
+   ],
+   "lts__t_sectors_srcunit_tex.sum": [
+    9936048.0,
+    "sector"
+   ],
+   "lts__t_sectors_srcunit_tex_op_read.sum": [
+    9830400.0,
+    "sector"
+   ],
+   "sm__cycles_active.avg": [
+    195509402.54,
+    "cycle"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 2.4
+ }
+}

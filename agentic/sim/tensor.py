@@ -22,10 +22,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .warp import WarpModel, LDS128, LDS32, FFMA, ALU
+from .warp import WarpModel, LDS128, LDS32, FFMA, ALU, SFU, SHFL, CVT
 
-MMA, LDSM, COPY, BAR, WAIT = 10, 11, 12, 13, 14
-CLASS_NAME = {MMA: "mma", LDSM: "ldsm", FFMA: "ffma", ALU: "alu", LDS128: "lds128", LDS32: "lds32", COPY: "copy", BAR: "bar", WAIT: "wait"}
+MMA, LDSM, COPY, BAR, WAIT, GLOAD, GSTORE = 10, 11, 12, 13, 14, 15, 16
+CLASS_NAME = {MMA: "mma", LDSM: "ldsm", FFMA: "ffma", ALU: "alu", LDS128: "lds128", LDS32: "lds32", COPY: "copy", BAR: "bar", WAIT: "wait", SFU: "sfu", SHFL: "shfl", CVT: "cvt", GLOAD: "gload", GSTORE: "gstore"}
 
 
 @dataclass
@@ -39,6 +39,7 @@ class Instr:
     stage: int = 0             # for COPY/WAIT: the cp.async stage the chunk belongs to / the wait needs
     chunks: int = 1            # for COPY: 16 B chunks per thread issued by this instruction
     stage_bytes: int = 0       # for COPY: the whole block's bytes in this stage (sets the B8 latency and the chip-wide bandwidth share)
+    op: str = ""               # for SFU / CVT / SHFL: the op or mode (ex2, rcp, f2fp_bf16x2, bfly, ...)
 
 
 class TensorModel:
@@ -61,6 +62,9 @@ class TensorModel:
         else:
             self.ldsm_lat_source = "xor-link"
         self.ldsm_wf = {1: 1.0, 2: 2.0, 4: 4.0}
+        # group 3: the XU pipe per sub-partition (B38), shuffles (B39: through the LSU queue only if B39 (c) said so), conversions;
+        # global loads at the L2 latency through the LSU (lane-consecutive 16 B = 4 wavefronts), stores fire and forget
+        self.l2_lat_cycles = float(c["latency_ns"]["l2"]) * 1e-9 * hz
         self.mma_holds_warp = bool(structural.get("mma_holds_warp", True))
         self.copy_cycles_per_chunk = float(c.get("cp_async_issue_cycles_per_chunk") or 6.8)
         # a stage's data is complete this long after its chunks were issued: B8's cp.async group latency from L2 by group size (every SM
@@ -98,14 +102,14 @@ class TensorModel:
         Returns (cycles until every warp finished, histogram of warp-cycles by state)."""
         wm = self.wm; S = wm.schedulers; W = len(programs)
         pc = [0] * W; ready = [dict() for _ in range(W)]; hold = [0.0] * W; last_issue = [-1.0] * W
-        tensor_free = [0.0] * S; mio_free = [0.0] * S; fma_free = [0.0] * S; lsu_free = 0.0
+        tensor_free = [0.0] * S; mio_free = [0.0] * S; fma_free = [0.0] * S; lsu_free = 0.0; xu_free = [0.0] * S; shfl_free = [0.0] * S
         nblocks = (W + warps_per_block - 1) // warps_per_block
         bar_count = [dict() for _ in range(nblocks)]           # block -> barrier index -> arrivals
         bar_idx = [0] * W                                        # per warp: how many barriers it has passed
         stage_done = [dict() for _ in range(nblocks)]            # block -> stage -> cycle its data is complete
         stage_last = [dict() for _ in range(nblocks)]            # block -> stage -> last chunk issue cycle so far
         # resource times are fractional cycles; an issue at integer cycle t is allowed when the resource frees within the half cycle (as sim/warp.py)
-        hist = {k: 0 for k in ("issued", "scoreboard", "tensor", "mio", "fma", "not_selected", "barrier", "copy_wait", "hold", "done")}
+        hist = {k: 0 for k in ("issued", "scoreboard", "tensor", "mio", "fma", "xu", "not_selected", "barrier", "copy_wait", "hold", "done")}
         floor = wm.floor(W); alive = W; t = 0; n = [len(p) for p in programs]; bw_free = 0.0; bw_seen = [set() for _ in range(nblocks)]
         while alive > 0 and t < 20_000_000:
             for s in range(S):
@@ -137,6 +141,12 @@ class TensorModel:
                         hist["mio"] += 1; continue
                     if ins.cls == FFMA and fma_free[s] > t + 0.5:
                         hist["fma"] += 1; continue
+                    if ins.cls in (SFU, CVT) and xu_free[s] > t + 0.5:
+                        hist["xu"] += 1; continue
+                    if ins.cls == SHFL and (shfl_free[s] > t + 0.5 or (wm.shfl_in_lsu_queue and mio_free[s] > t + 0.5)):
+                        hist["mio"] += 1; continue
+                    if ins.cls == GLOAD and mio_free[s] > t + 0.5:
+                        hist["mio"] += 1; continue
                     if issued:
                         hist["not_selected"] += 1; continue
                     # issue
@@ -159,6 +169,27 @@ class TensorModel:
                         if ins.writes is not None: ready[w][ins.writes] = t + wm.lat[FFMA]
                     elif ins.cls == ALU:
                         if ins.writes is not None: ready[w][ins.writes] = t + wm.lat[ALU]
+                    elif ins.cls in (SFU, CVT):
+                        table = wm.sfu_cost if ins.cls == SFU else wm.cvt_cost
+                        cost = table.get(ins.op) or next(iter(table.values()), 8.0) or 8.0
+                        xu_free[s] = max(xu_free[s], float(t)) + cost
+                        lat = wm.sfu_lat.get(ins.op) or (next(iter(wm.sfu_lat.values()), 20.0) if ins.cls == SFU else wm.lat[ALU])
+                        if ins.writes is not None: ready[w][ins.writes] = t + lat
+                        if ins.cls == SFU and wm.sfu_hold: hold[w] = t + wm.sfu_hold
+                    elif ins.cls == SHFL:
+                        cost = wm.shfl_cost.get(ins.op) or next(iter(wm.shfl_cost.values()), 2.0)
+                        shfl_free[s] = max(shfl_free[s], float(t)) + cost
+                        if wm.shfl_in_lsu_queue:
+                            mio_free[s] = t + wm.mio_issue; start = max(float(t), lsu_free); lsu_free = start + max(floor, wm.shfl_wavefronts / wm.lsu_drain_wf)
+                        lat = wm.shfl_lat.get(ins.op) or next(iter(wm.shfl_lat.values()), 20.0)
+                        if ins.writes is not None: ready[w][ins.writes] = t + lat
+                        if wm.shfl_hold: hold[w] = t + wm.shfl_hold
+                    elif ins.cls == GLOAD:
+                        mio_free[s] = t + wm.mio_issue; wf = ins.wavefronts or 4.0
+                        start = max(float(t), lsu_free); lsu_free = start + max(floor, wf / wm.lsu_drain_wf)
+                        if ins.writes is not None: ready[w][ins.writes] = lsu_free + self.l2_lat_cycles
+                    elif ins.cls == GSTORE:
+                        mio_free[s] = t + wm.mio_issue
                     elif ins.cls == COPY:
                         # copy_path "separate": the chunks leave through their own path; the warp is held for the issue of its chunks
                         hold[w] = t + self.copy_cycles_per_chunk * ins.chunks
@@ -288,4 +319,26 @@ def prog_c1_warp(steps: int, passes: int, tk16: int = 2, m_tiles: int = 4, n_pai
                         p.append(Instr(MMA, reads=(f"a{i}", f"b{j // 2}", f"acc{i}_{j}"), writes=f"acc{i}_{j}"))
             p.append(Instr(BAR)); p.append(Instr(ALU))
             stage += 1
+    return p
+
+
+def prog_c3_row(rows: int) -> list[Instr]:
+    """C3: one warp per row of 128 keys: a 16 B global load per lane, 3 fmax, a 5-step butterfly (shfl + fmax), 4 fsub+fmul, 4 ex2,
+    3 fadd, a 5-step butterfly (shfl + fadd), rcp, 4 fmul, 2 packed bf16 converts, 2 stores, loop and address arithmetic."""
+    p = []
+    for r in range(rows):
+        p.append(Instr(ALU, writes="addr")); p.append(Instr(GLOAD, reads=("addr",), writes="v", wavefronts=4.0))
+        p.append(Instr(ALU, reads=("v",), writes="m"))
+        for _ in range(2): p.append(Instr(ALU, reads=("m",), writes="m"))
+        for d in range(5):
+            p.append(Instr(SHFL, reads=("m",), writes="mx", op="bfly")); p.append(Instr(ALU, reads=("m", "mx"), writes="m"))
+        for i in range(4):
+            p.append(Instr(FFMA, reads=("v", "m"), writes=f"e{i}")); p.append(Instr(SFU, reads=(f"e{i}",), writes=f"e{i}", op="ex2"))
+        p.append(Instr(FFMA, reads=("e0", "e1"), writes="sum")); p.append(Instr(FFMA, reads=("sum", "e2"), writes="sum")); p.append(Instr(FFMA, reads=("sum", "e3"), writes="sum"))
+        for d in range(5):
+            p.append(Instr(SHFL, reads=("sum",), writes="sx", op="bfly")); p.append(Instr(FFMA, reads=("sum", "sx"), writes="sum"))
+        p.append(Instr(SFU, reads=("sum",), writes="inv", op="rcp"))
+        for i in range(4): p.append(Instr(FFMA, reads=(f"e{i}", "inv"), writes=f"e{i}"))
+        p.append(Instr(CVT, reads=("e0", "e1"), writes="p0", op="f2fp_bf16x2")); p.append(Instr(CVT, reads=("e2", "e3"), writes="p1", op="f2fp_bf16x2"))
+        p.append(Instr(GSTORE, reads=("p0",))); p.append(Instr(GSTORE, reads=("p1",))); p.append(Instr(ALU))
     return p

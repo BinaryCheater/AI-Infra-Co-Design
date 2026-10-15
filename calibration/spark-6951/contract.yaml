@@ -109,6 +109,509 @@ unified_memory_penalty:
   managed_cpu_first_pass1: 1.455
 coherent_access_bytes_per_s: 200038414500.0
 suite_level: full+micro
+tma_latency_dist:
+  tile=16384,resident=1:
+    p1_cycles: 1077
+    p50_cycles: 1176
+    p99_cycles: 1305
+    max_cycles: 1676
+    p1_s: 4.238e-07
+    p50_s: 4.627e-07
+    p99_s: 5.135e-07
+    max_s: 6.595e-07
+    chip_bytes_per_s: 1495300000000.0
+  tile=16384,resident=2:
+    p1_cycles: 1390
+    p50_cycles: 1943
+    p99_cycles: 2713
+    max_cycles: 3842
+    p1_s: 5.469e-07
+    p50_s: 7.645e-07
+    p99_s: 1.067e-06
+    max_s: 1.512e-06
+    chip_bytes_per_s: 1876300000000.0
+  tile=16384,resident=4:
+    p1_cycles: 1519
+    p50_cycles: 2728
+    p99_cycles: 3790
+    max_cycles: 80058
+    p1_s: 5.977e-07
+    p50_s: 1.073e-06
+    p99_s: 1.491e-06
+    max_s: 3.15e-05
+    chip_bytes_per_s: 1459000000000.0
+  tile=16384,resident=6:
+    p1_cycles: 1423
+    p50_cycles: 4792
+    p99_cycles: 6082
+    max_cycles: 8926
+    p1_s: 5.599e-07
+    p50_s: 1.886e-06
+    p99_s: 2.393e-06
+    max_s: 3.512e-06
+    chip_bytes_per_s: 1418900000000.0
+  tile=32768,resident=1:
+    p1_cycles: 1770
+    p50_cycles: 1989
+    p99_cycles: 2479
+    max_cycles: 20213
+    p1_s: 6.964e-07
+    p50_s: 7.826e-07
+    p99_s: 9.754e-07
+    max_s: 7.953e-06
+    chip_bytes_per_s: 1837300000000.0
+  tile=32768,resident=2:
+    p1_cycles: 3448
+    p50_cycles: 3799
+    p99_cycles: 5417
+    max_cycles: 37764
+    p1_s: 1.357e-06
+    p50_s: 1.495e-06
+    p99_s: 2.131e-06
+    max_s: 1.486e-05
+    chip_bytes_per_s: 1858800000000.0
+  tile=4096,resident=1:
+    p1_cycles: 582
+    p50_cycles: 681
+    p99_cycles: 717
+    max_cycles: 2463
+    p1_s: 2.29e-07
+    p50_s: 2.68e-07
+    p99_s: 2.821e-07
+    max_s: 9.691e-07
+    chip_bytes_per_s: 588070000000.0
+  tile=4096,resident=2:
+    p1_cycles: 596
+    p50_cycles: 705
+    p99_cycles: 872
+    max_cycles: 1151
+    p1_s: 2.345e-07
+    p50_s: 2.774e-07
+    p99_s: 3.431e-07
+    max_s: 4.529e-07
+    chip_bytes_per_s: 1115100000000.0
+  tile=4096,resident=4:
+    p1_cycles: 607
+    p50_cycles: 744
+    p99_cycles: 1044
+    max_cycles: 1581
+    p1_s: 2.388e-07
+    p50_s: 2.927e-07
+    p99_s: 4.108e-07
+    max_s: 6.221e-07
+    chip_bytes_per_s: 1092200000000.0
+  tile=4096,resident=6:
+    p1_cycles: 661
+    p50_cycles: 1042
+    p99_cycles: 1655
+    max_cycles: 3492
+    p1_s: 2.601e-07
+    p50_s: 4.1e-07
+    p99_s: 6.512e-07
+    max_s: 1.374e-06
+    chip_bytes_per_s: 1335200000000.0
+  tile=49152,resident=1:
+    p1_cycles: 2661
+    p50_cycles: 2988
+    p99_cycles: 3482
+    max_cycles: 5861
+    p1_s: 1.047e-06
+    p50_s: 1.176e-06
+    p99_s: 1.37e-06
+    max_s: 2.306e-06
+    chip_bytes_per_s: 1888200000000.0
+  tile=49152,resident=2:
+    p1_cycles: 5129
+    p50_cycles: 6256
+    p99_cycles: 8102
+    max_cycles: 45809
+    p1_s: 2.018e-06
+    p50_s: 2.462e-06
+    p99_s: 3.188e-06
+    max_s: 1.802e-05
+    chip_bytes_per_s: 1848900000000.0
+  tile=8192,resident=1:
+    p1_cycles: 780
+    p50_cycles: 810
+    p99_cycles: 909
+    max_cycles: 1107
+    p1_s: 3.069e-07
+    p50_s: 3.187e-07
+    p99_s: 3.577e-07
+    max_s: 4.356e-07
+    chip_bytes_per_s: 992090000000.0
+  tile=8192,resident=2:
+    p1_cycles: 792
+    p50_cycles: 944
+    p99_cycles: 1321
+    max_cycles: 2801
+    p1_s: 3.116e-07
+    p50_s: 3.714e-07
+    p99_s: 5.198e-07
+    max_s: 1.102e-06
+    chip_bytes_per_s: 1725400000000.0
+  tile=8192,resident=4:
+    p1_cycles: 817
+    p50_cycles: 1281
+    p99_cycles: 2039
+    max_cycles: 3815
+    p1_s: 3.215e-07
+    p50_s: 5.04e-07
+    p99_s: 8.023e-07
+    max_s: 1.501e-06
+    chip_bytes_per_s: 1436100000000.0
+  tile=8192,resident=6:
+    p1_cycles: 936
+    p50_cycles: 2146
+    p99_cycles: 3940
+    max_cycles: 42735
+    p1_s: 3.683e-07
+    p50_s: 8.444e-07
+    p99_s: 1.55e-06
+    max_s: 1.682e-05
+    chip_bytes_per_s: 1407200000000.0
+tma_bytes_per_s_per_sm_by_residency:
+  tile=16384,resident=1: 31144000000.0
+  tile=16384,resident=2: 39069000000.0
+  tile=16384,resident=4: 30362000000.0
+  tile=16384,resident=6: 29518000000.0
+  tile=32768,resident=1: 38254000000.0
+  tile=32768,resident=2: 38663000000.0
+  tile=4096,resident=1: 12250000000.0
+  tile=4096,resident=2: 23231000000.0
+  tile=4096,resident=4: 22623000000.0
+  tile=4096,resident=6: 27802000000.0
+  tile=49152,resident=1: 39336000000.0
+  tile=49152,resident=2: 38500000000.0
+  tile=8192,resident=1: 20663000000.0
+  tile=8192,resident=2: 35870000000.0
+  tile=8192,resident=4: 29844000000.0
+  tile=8192,resident=6: 29313000000.0
+tma_mix_bytes_per_s:
+  cp4: 1744648000000.0
+  lds2_idle2: 0.0
+  tma1_cp1: 1939987000000.0
+  tma1_cp3: 1834886000000.0
+  tma1d_1: 1125919000000.0
+  tma2_idle2: 1741435000000.0
+  tma2_lds2: 1725237000000.0
+  tma2_store2: 1645335000000.0
+  tma2d_1: 1125017000000.0
+  tma3_cp1: 1527950000000.0
+  tma4: 1483011000000.0
+  tmastore2_idle2: 938597000000.0
+tma_cp_async_mixed_ratio: 1.202
+tma_2d_vs_1d_ratio: 0.999
+tma_store_bytes_per_s: 938597000000.0
+tma_mix_cycles_per_tile:
+  cp4,role=cp_async: 1483.5
+  lds2_idle2,role=idle: 0.0
+  lds2_idle2,role=lds128: 49.0
+  tma1_cp1,role=cp_async: 1008.0
+  tma1_cp1,role=tma: 1976.0
+  tma1_cp3,role=cp_async: 1262.0
+  tma1_cp3,role=tma: 2031.5
+  tma1d_1,role=idle: 0.0
+  tma1d_1,role=tma: 821.0
+  tma2_idle2,role=idle: 0.0
+  tma2_idle2,role=tma: 1098.0
+  tma2_lds2,role=lds128: 32.0
+  tma2_lds2,role=tma: 1100.5
+  tma2_store2,role=tma: 2193.0
+  tma2_store2,role=tma_store: 1180.0
+  tma2d_1,role=idle: 0.0
+  tma2d_1,role=tma_2d: 815.0
+  tma3_cp1,role=cp_async: 868.5
+  tma3_cp1,role=tma: 1573.0
+  tma4,role=tma: 1545.0
+  tmastore2_idle2,role=idle: 0.0
+  tmastore2_idle2,role=tma_store: 1974.5
+tma_behind_lds_cycles: 2.5
+mbarrier_cycles:
+  arrivals=0: 53.0
+  arrivals=1: 75.0
+  arrivals=1,expect_tx=4096: 621.0
+  arrivals=256: 111.0
+  arrivals=32: 75.0
+mbarrier_phase_flip_cycles: 95.0
+tma_multicast_cycles_per_tile:
+  cluster=2,multicast: 973667.5
+  cluster=2,unicast: 1982.5
+  cluster=4,multicast: 1024118.5
+  cluster=4,unicast: 2037.5
+tma_multicast_supported: false
+tma_multicast_slowdown: 491.1
+tma_multicast_counters:
+  multicast:
+    l2_read_sectors: 9830400.0
+    sm_cycles: 195509402.54
+  unicast:
+    l2_read_sectors: 4915200.0
+    sm_cycles: 488386.4
+tma_multicast_l2_traffic_ratio: 2.0
+dsmem_latency_cycles: 3647.5
+dsmem_bytes_per_s_per_sm: 571993000000.0
+sfu_throughput_per_sm:
+  ex2: 64370000000.0
+  lg2: 64370000000.0
+  rcp: 64430000000.0
+  rsqrt: 64370000000.0
+  tanh: 64370000000.0
+cvt_throughput_per_sm:
+  f2f_bf16: 235870000000.0
+  f2fp_bf16x2: 257390000000.0
+  i2f: 495700000000.0
+sfu_counters:
+  mix4:
+    xu_warp_instr_per_cycle_per_sm: 0.3691
+    instr_per_cycle_per_sm: 1.708
+    issue_active: 0.431
+  f2f:
+    xu_warp_instr_per_cycle_per_sm: 0.236
+    instr_per_cycle_per_sm: 3.954
+    issue_active: 0.995
+  ex2:
+    xu_warp_instr_per_cycle_per_sm: 0.4998
+    instr_per_cycle_per_sm: 0.547
+    issue_active: 0.137
+sfu_warp_instr_per_cycle_per_smsp: 0.125
+sfu_latency_cycles:
+  ex2: 18.2
+  f2f_bf16: 24.5
+  f2fp_bf16x2: 10.5
+  i2f: 4.6
+  lg2: 18.2
+  rcp: 20.3
+  rsqrt: 18.2
+  tanh: 18.2
+sfu_ffma_mixed_cycles_per_iter:
+  ffma_per_ex2=0: 66.6
+  ffma_per_ex2=1: 71.6
+  ffma_per_ex2=16: 222.1
+  ffma_per_ex2=4: 85.9
+sfu_issue_cycles_one_warp: 8.33
+sfu_ffma_overlap: 0.0
+shfl_latency_cycles:
+  bfly: 28.2
+  idx: 36.2
+  up: 28.2
+shfl_throughput_per_sm:
+  bfly: 20090000000.0
+  idx: 80380000000.0
+  up: 20100000000.0
+warp_reduce_cycles: 170.6
+redux_cycles: 52.6
+block_reduce_cycles: 352.3
+redux_supported: true
+shfl_cycles_beside_lds:
+  lds=0: 8.74
+  lds=1: 13.29
+shfl_in_lsu_queue: true
+shfl_issue_cycles_one_warp: 8.74
+shfl_lsu_counters:
+  shfl:
+    shfl_instructions: null
+    lsu_pipe_instructions: 61446528.0
+    lsu_wavefronts: 61446568.0
+    wavefronts_per_shfl: null
+    lsu_instr_per_shfl: null
+  beside_lds:
+    shfl_instructions: null
+    lsu_pipe_instructions: 12289152.0
+    lsu_wavefronts: 30721152.0
+    wavefronts_per_shfl: null
+    lsu_instr_per_shfl: null
+attention_spill_curve:
+  tq=16,maxrreg=128:
+    cycles_per_step: 328.7
+    regs_used: 64
+    local_bytes_per_thread: 0
+    ffma_per_step: 32
+    ex2_per_step: 17
+  tq=16,maxrreg=160:
+    cycles_per_step: 328.8
+    regs_used: 64
+    local_bytes_per_thread: 0
+    ffma_per_step: 32
+    ex2_per_step: 17
+  tq=16,maxrreg=255:
+    cycles_per_step: 328.71
+    regs_used: 64
+    local_bytes_per_thread: 0
+    ffma_per_step: 32
+    ex2_per_step: 17
+  tq=16,maxrreg=96:
+    cycles_per_step: 328.73
+    regs_used: 64
+    local_bytes_per_thread: 0
+    ffma_per_step: 32
+    ex2_per_step: 17
+  tq=24,maxrreg=128:
+    cycles_per_step: 430.72
+    regs_used: 96
+    local_bytes_per_thread: 0
+    ffma_per_step: 48
+    ex2_per_step: 25
+  tq=24,maxrreg=160:
+    cycles_per_step: 430.79
+    regs_used: 96
+    local_bytes_per_thread: 0
+    ffma_per_step: 48
+    ex2_per_step: 25
+  tq=24,maxrreg=255:
+    cycles_per_step: 430.72
+    regs_used: 96
+    local_bytes_per_thread: 0
+    ffma_per_step: 48
+    ex2_per_step: 25
+  tq=24,maxrreg=96:
+    cycles_per_step: 430.74
+    regs_used: 96
+    local_bytes_per_thread: 0
+    ffma_per_step: 48
+    ex2_per_step: 25
+  tq=32,maxrreg=128:
+    cycles_per_step: 537.71
+    regs_used: 127
+    local_bytes_per_thread: 0
+    ffma_per_step: 64
+    ex2_per_step: 33
+  tq=32,maxrreg=160:
+    cycles_per_step: 537.78
+    regs_used: 127
+    local_bytes_per_thread: 0
+    ffma_per_step: 64
+    ex2_per_step: 33
+  tq=32,maxrreg=255:
+    cycles_per_step: 537.71
+    regs_used: 127
+    local_bytes_per_thread: 0
+    ffma_per_step: 64
+    ex2_per_step: 33
+  tq=32,maxrreg=96:
+    cycles_per_step: 566.45
+    regs_used: 96
+    local_bytes_per_thread: 0
+    ffma_per_step: 64
+    ex2_per_step: 33
+  tq=40,maxrreg=128:
+    cycles_per_step: 684.82
+    regs_used: 128
+    local_bytes_per_thread: 0
+    ffma_per_step: 80
+    ex2_per_step: 41
+  tq=40,maxrreg=160:
+    cycles_per_step: 677.75
+    regs_used: 159
+    local_bytes_per_thread: 0
+    ffma_per_step: 80
+    ex2_per_step: 41
+  tq=40,maxrreg=255:
+    cycles_per_step: 682.72
+    regs_used: 151
+    local_bytes_per_thread: 0
+    ffma_per_step: 80
+    ex2_per_step: 41
+  tq=40,maxrreg=96:
+    cycles_per_step: 765.33
+    regs_used: 96
+    local_bytes_per_thread: 0
+    ffma_per_step: 80
+    ex2_per_step: 41
+  tq=56,maxrreg=128:
+    cycles_per_step: 1048.54
+    regs_used: 128
+    local_bytes_per_thread: 0
+    ffma_per_step: 112
+    ex2_per_step: 57
+  tq=56,maxrreg=160:
+    cycles_per_step: 922.85
+    regs_used: 160
+    local_bytes_per_thread: 0
+    ffma_per_step: 112
+    ex2_per_step: 57
+  tq=56,maxrreg=255:
+    cycles_per_step: 888.69
+    regs_used: 211
+    local_bytes_per_thread: 0
+    ffma_per_step: 112
+    ex2_per_step: 57
+  tq=56,maxrreg=96:
+    cycles_per_step: 1795.09
+    regs_used: 96
+    local_bytes_per_thread: 104
+    ffma_per_step: 112
+    ex2_per_step: 57
+  tq=8,maxrreg=128:
+    cycles_per_step: 168.49
+    regs_used: 48
+    local_bytes_per_thread: 0
+    ffma_per_step: 16
+    ex2_per_step: 9
+  tq=8,maxrreg=160:
+    cycles_per_step: 168.54
+    regs_used: 48
+    local_bytes_per_thread: 0
+    ffma_per_step: 16
+    ex2_per_step: 9
+  tq=8,maxrreg=255:
+    cycles_per_step: 168.49
+    regs_used: 48
+    local_bytes_per_thread: 0
+    ffma_per_step: 16
+    ex2_per_step: 9
+  tq=8,maxrreg=96:
+    cycles_per_step: 168.51
+    regs_used: 48
+    local_bytes_per_thread: 0
+    ffma_per_step: 16
+    ex2_per_step: 9
+local_mem_bytes_per_s_per_sm_by_warps:
+  warps=16: 4530000000.0
+  warps=4: 10310000000.0
+  warps=8: 10600000000.0
+max_blocks_per_sm_by_regs:
+  '24':
+    measured: 6
+    occupancy_api: 6
+    min_blocks_bound: null
+  '38':
+    measured: 6
+    occupancy_api: 6
+    min_blocks_bound: null
+  '40':
+    measured: 5
+    occupancy_api: 6
+    min_blocks_bound: 6
+  '56':
+    measured: 4
+    occupancy_api: 4
+    min_blocks_bound: 1
+  '64':
+    measured: 4
+    occupancy_api: 4
+    min_blocks_bound: null
+  '88':
+    measured: 2
+    occupancy_api: 2
+    min_blocks_bound: null
+  '120':
+    measured: 2
+    occupancy_api: 2
+    min_blocks_bound: null
+  '152':
+    measured: 1
+    occupancy_api: 1
+    min_blocks_bound: null
+  '185':
+    measured: 1
+    occupancy_api: 1
+    min_blocks_bound: null
+  '232':
+    measured: 1
+    occupancy_api: 1
+    min_blocks_bound: null
+max_blocks_per_sm_by_regs_matches_api: false
 mma_latency_cycles:
   tf32_m16n8k8: 30.1
   fp8_e4m3_m16n8k32: 30.1
@@ -356,37 +859,37 @@ lds_wavefronts_per_instruction:
   width=4,stride=4: 4.01
   width=4,stride=2: 2.01
   width=8,stride=1: 2.01
-lsu_drain_wavefronts_per_cycle_per_sm: 0.983
+lsu_drain_wavefronts_per_cycle_per_sm: 0.977
 lsu_min_cycles_per_instruction: 2.08
 lds_dispatch_rate_by_warps_per_smsp:
   width=16:
     '1': &id004
-      instr_per_cycle_per_sm: 0.232
-      instr_per_cycle_per_smsp: 0.0581
-      wavefronts_per_cycle_per_sm: 0.93
+      instr_per_cycle_per_sm: 0.212
+      instr_per_cycle_per_smsp: 0.053
+      wavefronts_per_cycle_per_sm: 0.848
       issue_active: 0.308
       mio_throttle_per_issue_active: 0.07
-      short_scoreboard_per_issue_active: 1.79
+      short_scoreboard_per_issue_active: 2.1
     '2': &id002
       instr_per_cycle_per_sm: 0.244
       instr_per_cycle_per_smsp: 0.0609
       wavefronts_per_cycle_per_sm: 0.975
-      issue_active: 0.319
-      mio_throttle_per_issue_active: 2.04
+      issue_active: 0.318
+      mio_throttle_per_issue_active: 2.03
       short_scoreboard_per_issue_active: 2.14
     '4': &id003
-      instr_per_cycle_per_sm: 0.246
-      instr_per_cycle_per_smsp: 0.0616
-      wavefronts_per_cycle_per_sm: 0.986
+      instr_per_cycle_per_sm: 0.241
+      instr_per_cycle_per_smsp: 0.0602
+      wavefronts_per_cycle_per_sm: 0.963
       issue_active: 0.32
       mio_throttle_per_issue_active: 5.31
-      short_scoreboard_per_issue_active: 2.15
+      short_scoreboard_per_issue_active: 2.45
     '8': &id006
       instr_per_cycle_per_sm: 0.248
       instr_per_cycle_per_smsp: 0.062
       wavefronts_per_cycle_per_sm: 0.993
       issue_active: 0.321
-      mio_throttle_per_issue_active: 10.02
+      mio_throttle_per_issue_active: 10.03
       short_scoreboard_per_issue_active: 2.17
     '12': &id005
       instr_per_cycle_per_sm: 0.249
@@ -400,43 +903,43 @@ lds_dispatch_rate_by_warps_per_smsp:
       instr_per_cycle_per_sm: 0.41
       instr_per_cycle_per_smsp: 0.1026
       wavefronts_per_cycle_per_sm: 0.411
-      issue_active: 0.431
+      issue_active: 0.429
       mio_throttle_per_issue_active: 0.09
       short_scoreboard_per_issue_active: 0.85
     '2': &id007
       instr_per_cycle_per_sm: 0.469
       instr_per_cycle_per_smsp: 0.1172
-      wavefronts_per_cycle_per_sm: 0.469
+      wavefronts_per_cycle_per_sm: 0.47
       issue_active: 0.488
       mio_throttle_per_issue_active: 1.21
       short_scoreboard_per_issue_active: 0.76
     '4': &id008
       instr_per_cycle_per_sm: 0.492
-      instr_per_cycle_per_smsp: 0.123
+      instr_per_cycle_per_smsp: 0.1231
       wavefronts_per_cycle_per_sm: 0.493
-      issue_active: 0.508
+      issue_active: 0.507
       mio_throttle_per_issue_active: 2.88
       short_scoreboard_per_issue_active: 0.77
     '8': &id011
       instr_per_cycle_per_sm: 0.495
-      instr_per_cycle_per_smsp: 0.1238
+      instr_per_cycle_per_smsp: 0.1239
       wavefronts_per_cycle_per_sm: 0.496
       issue_active: 0.511
-      mio_throttle_per_issue_active: 5.55
-      short_scoreboard_per_issue_active: 0.77
+      mio_throttle_per_issue_active: 5.56
+      short_scoreboard_per_issue_active: 0.78
     '12': &id010
-      instr_per_cycle_per_sm: 0.496
-      instr_per_cycle_per_smsp: 0.1241
+      instr_per_cycle_per_sm: 0.497
+      instr_per_cycle_per_smsp: 0.1242
       wavefronts_per_cycle_per_sm: 0.497
       issue_active: 0.511
-      mio_throttle_per_issue_active: 8.5
+      mio_throttle_per_issue_active: 8.51
       short_scoreboard_per_issue_active: 0.77
 lsu_instr_floor_cycles_by_warps_per_sm:
   '4': 2.44
   '8': 2.13
   '16': 2.03
   '32': 2.02
-  '48': 2.02
+  '48': 2.01
 lds_dispatch_instr_per_cycle_per_sm_clock:
   width=16,warps_per_smsp=1: 0.445
   width=4,warps_per_smsp=8: 0.488
@@ -2651,8 +3154,8 @@ counter_crosscheck:
       hit_rate_pct: 0.01
     '64':
       l2_sectors_per_request: 2.0
-      dram_bytes_per_request: 64.1
-      hit_rate_pct: 0.02
+      dram_bytes_per_request: 64.0
+      hit_rate_pct: 0.03
     '128':
       l2_sectors_per_request: 1.0
       dram_bytes_per_request: 32.0
@@ -2660,22 +3163,22 @@ counter_crosscheck:
     '256':
       l2_sectors_per_request: 1.0
       dram_bytes_per_request: 32.0
-      hit_rate_pct: 0.07
+      hit_rate_pct: 0.09
     '512':
       l2_sectors_per_request: 1.0
       dram_bytes_per_request: 32.0
       hit_rate_pct: 0.1
   l2_fill_bytes_per_request_at_128B_plus: 32.0
   l2_hit_rate_pct_by_footprint_mib:
-    '4': 87.5
-    '8': 87.9
-    '12': 87.51
-    '16': 87.5
-    '20': 87.86
-    '24': 87.34
-    '28': 79.03
-    '32': 75.8
-    '48': 25.38
+    '4': 87.51
+    '8': 87.88
+    '12': 87.5
+    '16': 87.49
+    '20': 85.81
+    '24': 82.83
+    '28': 80.43
+    '32': 74.54
+    '48': 25.18
   l2_capacity_mib_from_counters: 24
   issue_by_warps:
     '1':
@@ -2691,18 +3194,18 @@ counter_crosscheck:
       issue_active_fraction: 0.724
       fma_pipe_active_fraction: 0.693
     '8':
-      inst_issued_per_active_cycle_per_sm: 3.481
+      inst_issued_per_active_cycle_per_sm: 3.48
       issue_active_fraction: 0.87
       fma_pipe_active_fraction: 0.822
     '16':
-      inst_issued_per_active_cycle_per_sm: 3.654
+      inst_issued_per_active_cycle_per_sm: 3.655
       issue_active_fraction: 0.914
       fma_pipe_active_fraction: 0.866
   inner_loop:
     T1_128x256x16:
-      inst_issued_per_active_cycle_per_sm: 2.744
-      issue_active_fraction: 0.686
-      fma_pipe_active_fraction: 0.617
+      inst_issued_per_active_cycle_per_sm: 2.729
+      issue_active_fraction: 0.682
+      fma_pipe_active_fraction: 0.614
       pipe_share:
         fma: 0.87
         lsu: 0.122
@@ -2716,9 +3219,9 @@ counter_crosscheck:
         short_scoreboard: 0.11
         wait: 0.15
     T5_128x128x32:
-      inst_issued_per_active_cycle_per_sm: 2.631
+      inst_issued_per_active_cycle_per_sm: 2.632
       issue_active_fraction: 0.658
-      fma_pipe_active_fraction: 0.596
+      fma_pipe_active_fraction: 0.597
       pipe_share:
         fma: 0.861
         lsu: 0.135
@@ -2743,9 +3246,9 @@ counter_crosscheck:
         lg_throttle: 0.0
         long_scoreboard: 0.0
         math_pipe_throttle: 0.0
-        mio_throttle: 1.03
-        not_selected: 0.45
-        short_scoreboard: 1.51
+        mio_throttle: 0.97
+        not_selected: 0.46
+        short_scoreboard: 1.52
         wait: 1.15
   smem_wavefronts_by_stride:
     '1':
@@ -3671,6 +4174,12 @@ functional:
     128-bit per quarter-warp (max 8-way)
   independent_thread_scheduling: false
 micro_benchmarks:
+- b35_tma_residency
+- b36_tma_contention
+- b37_mbarrier_cluster
+- b38_sfu_convert
+- b39_shuffle_reduce
+- b40_register_budget
 - b31_mma_issue
 - b32_ldmatrix_mma
 - b33_mma_mio
@@ -3693,7 +4202,7 @@ micro_benchmarks:
 - b25_multi_kernel
 - b26_functional_probes
 provenance:
-  suite_commit: 9f4acadd05f9580b797b8564e5e6f87006433e95
+  suite_commit: 7f048c64052c98973a09c40d5f74b1ea79b3a081
   host: spark-6951
   driver: 580.159.03
   toolkit: Build cuda_13.0.r13.0/compiler.36424714_0
@@ -3708,7 +4217,7 @@ provenance:
       min: 208.0
       max: 2535.0
     max_sm_mhz: 3003.0
-  date: '2026-10-15T03:19:31Z'
+  date: '2026-10-15T04:03:36Z'
   raw: calibration/spark-6951/raw
   ci_target: 0.04
   max_reps: 50
@@ -3833,6 +4342,310 @@ provenance:
       note: penalty = device read bandwidth / this allocation's read bandwidth, 1
         GiB working set
       method: 'B12: GPU streaming read bandwidth by allocation kind, 1 GiB'
+    tma_latency_dist:
+      from:
+      - tma_latency_dist[tile=4096,resident=4]
+      - tma_latency_dist[tile=4096,resident=6]
+      - tma_latency_dist[tile=4096,resident=2]
+      - tma_latency_dist[tile=49152,resident=1]
+      - tma_latency_dist[tile=49152,resident=2]
+      - tma_latency_dist[tile=4096,resident=1]
+      - tma_latency_dist[tile=32768,resident=1]
+      - tma_latency_dist[tile=8192,resident=2]
+      - tma_latency_dist[tile=16384,resident=6]
+      - tma_latency_dist[tile=16384,resident=4]
+      - tma_latency_dist[tile=8192,resident=4]
+      - tma_latency_dist[tile=8192,resident=6]
+      - tma_latency_dist[tile=16384,resident=2]
+      - tma_latency_dist[tile=8192,resident=1]
+      - tma_latency_dist[tile=32768,resident=2]
+      - tma_latency_dist[tile=16384,resident=1]
+      method: 'B35: one 1-D cp.async.bulk + mbarrier per trial, 10 000 trials per
+        block, every SM at once, issue-to-try_wait cycles by tile and resident blocks'
+    tma_bytes_per_s_per_sm_by_residency:
+      from:
+      - tma_bytes_per_s_per_sm_by_residency[tile=16384,resident=2]
+      - tma_bytes_per_s_per_sm_by_residency[tile=16384,resident=6]
+      - tma_bytes_per_s_per_sm_by_residency[tile=8192,resident=1]
+      - tma_bytes_per_s_per_sm_by_residency[tile=32768,resident=1]
+      - tma_bytes_per_s_per_sm_by_residency[tile=16384,resident=4]
+      - tma_bytes_per_s_per_sm_by_residency[tile=8192,resident=4]
+      - tma_bytes_per_s_per_sm_by_residency[tile=16384,resident=1]
+      - tma_bytes_per_s_per_sm_by_residency[tile=8192,resident=6]
+      - tma_bytes_per_s_per_sm_by_residency[tile=8192,resident=2]
+      - tma_bytes_per_s_per_sm_by_residency[tile=32768,resident=2]
+      - tma_bytes_per_s_per_sm_by_residency[tile=49152,resident=1]
+      - tma_bytes_per_s_per_sm_by_residency[tile=4096,resident=1]
+      - tma_bytes_per_s_per_sm_by_residency[tile=4096,resident=2]
+      - tma_bytes_per_s_per_sm_by_residency[tile=49152,resident=2]
+      - tma_bytes_per_s_per_sm_by_residency[tile=4096,resident=4]
+      - tma_bytes_per_s_per_sm_by_residency[tile=4096,resident=6]
+      method: 'B35: the trial loop''s bytes over its wall time, per SM'
+    tma_mix_bytes_per_s:
+      from:
+      - tma_mix_bytes_per_s[tma2_store2]
+      - tma_mix_bytes_per_s[tma1_cp1]
+      - tma_mix_bytes_per_s[tma1_cp3]
+      - tma_mix_bytes_per_s[lds2_idle2]
+      - tma_mix_bytes_per_s[tma4]
+      - tma_mix_bytes_per_s[cp4]
+      - tma_mix_bytes_per_s[tma1d_1]
+      - tma_mix_bytes_per_s[tma3_cp1]
+      - tma_mix_bytes_per_s[tma2_lds2]
+      - tma_mix_bytes_per_s[tma2_idle2]
+      - tma_mix_bytes_per_s[tma2d_1]
+      - tma_mix_bytes_per_s[tmastore2_idle2]
+      method: 'B36: four 8 KB streams per SM with roles by wave; the chip''s copy
+        bytes/s (loads and stores) for each mix'
+    tma_cp_async_mixed_ratio:
+      from:
+      - tma_mix_bytes_per_s[tma4]
+      - tma_mix_bytes_per_s[cp4]
+      - tma_mix_bytes_per_s[tma1_cp1]
+      method: 'B36 (a): the 1:1 mix''s bytes/s over the mean of the two pure streams
+        (1.0 = the two engines add, no shared path)'
+    tma_2d_vs_1d_ratio:
+      from:
+      - tma_mix_bytes_per_s[tma1d_1]
+      - tma_mix_bytes_per_s[tma2d_1]
+      method: 'B36 (c): one 2-D tensor-map stream''s bytes/s over one 1-D stream''s,
+        8 KB boxes'
+    tma_store_bytes_per_s:
+      from:
+      - tma_mix_bytes_per_s[tmastore2_idle2]
+      method: 'B36 (d): two TMA store streams per SM, chip bytes/s'
+    tma_mix_cycles_per_tile:
+      from:
+      - tma_mix_cycles_per_tile[tma2_lds2,role=tma]
+      - tma_mix_cycles_per_tile[tma2_store2,role=tma]
+      - tma_mix_cycles_per_tile[tma3_cp1,role=tma]
+      - tma_mix_cycles_per_tile[tma1d_1,role=tma]
+      - tma_mix_cycles_per_tile[tma2d_1,role=tma_2d]
+      - tma_mix_cycles_per_tile[tmastore2_idle2,role=tma_store]
+      - tma_mix_cycles_per_tile[lds2_idle2,role=lds128]
+      - tma_mix_cycles_per_tile[tma2d_1,role=idle]
+      - tma_mix_cycles_per_tile[tma1d_1,role=idle]
+      - tma_mix_cycles_per_tile[tma3_cp1,role=cp_async]
+      - tma_mix_cycles_per_tile[tma2_idle2,role=tma]
+      - tma_mix_cycles_per_tile[tma1_cp3,role=tma]
+      - tma_mix_cycles_per_tile[tma1_cp1,role=cp_async]
+      - tma_mix_cycles_per_tile[tma1_cp3,role=cp_async]
+      - tma_mix_cycles_per_tile[tma2_lds2,role=lds128]
+      - tma_mix_cycles_per_tile[tma2_idle2,role=idle]
+      - tma_mix_cycles_per_tile[tmastore2_idle2,role=idle]
+      - tma_mix_cycles_per_tile[lds2_idle2,role=idle]
+      - tma_mix_cycles_per_tile[tma4,role=tma]
+      - tma_mix_cycles_per_tile[cp4,role=cp_async]
+      - tma_mix_cycles_per_tile[tma1_cp1,role=tma]
+      - tma_mix_cycles_per_tile[tma2_store2,role=tma_store]
+      method: 'B36: each role''s median block cycles per 8 KB tile (or per LDS.128
+        step) in the mix'
+    tma_behind_lds_cycles:
+      from:
+      - tma_mix_cycles_per_tile[tma2_idle2,role=tma]
+      - tma_mix_cycles_per_tile[tma2_lds2,role=tma]
+      method: 'B36 (b): extra cycles per 8 KB TMA tile when two LDS.128 loop blocks
+        share the SM'
+    mbarrier_cycles:
+      from:
+      - mbarrier_cycles[arrivals=256]
+      - mbarrier_cycles[arrivals=1,expect_tx=4096]
+      - mbarrier_cycles[arrivals=1]
+      - mbarrier_cycles[arrivals=32]
+      - mbarrier_cycles[arrivals=0]
+      method: 'B37 (a): arrive by the first N threads + try_wait.parity by all 256
+        + a __syncthreads per round, less the same loop with the __syncthreads alone
+        (arrivals=0, kept as the reference); with expect_tx: one thread''s 4 KB bulk
+        copy pending'
+    mbarrier_phase_flip_cycles:
+      from: mbarrier_phase_flip_cycles
+      method: 'B37 (b): one arriving thread, its arrive to its own try_wait success'
+      ci95: 0.0
+      n: 10
+    tma_multicast_supported:
+      from:
+      - tma_multicast_cycles_per_tile[cluster=2,multicast]
+      - tma_multicast_cycles_per_tile[cluster=4,unicast]
+      - tma_multicast_cycles_per_tile[cluster=4,multicast]
+      - tma_multicast_cycles_per_tile[cluster=2,unicast]
+      method: 'B37 (c): a __cluster_dims__ launch with a .multicast::cluster bulk
+        copy into every block of the cluster; supported = the multicast tile completes
+        within 10x of a unicast tile (it launches and completes on sm_121 but about
+        500x slower, with the L2 traffic of two unicast loads by the counter)'
+    tma_multicast_l2_traffic_ratio:
+      from:
+      - counter_b37_cluster[probe=multicast]
+      - counter_b37_cluster[probe=unicast]
+      method: 'B37 (c, ncu): L2 read sectors of the cluster-of-2 multicast run over
+        the unicast run (0.5 would mean the multicast halves the traffic)'
+    dsmem_latency_cycles:
+      from: dsmem_latency_cycles
+      method: 'B37 (d): dependent 4 B loads from the other block''s shared memory'
+      ci95: 0.0005483207676490747
+      n: 10
+    dsmem_bytes_per_s_per_sm:
+      from: dsmem_bytes_per_s_per_sm
+      method: 'B37 (d): 8 independent remote shared loads per step, 256 threads'
+      ci95: 0.004461295037036973
+      n: 10
+    sfu_throughput_per_sm:
+      from:
+      - sfu_throughput_per_sm[rsqrt]
+      - sfu_throughput_per_sm[ex2]
+      - sfu_throughput_per_sm[lg2]
+      - sfu_throughput_per_sm[rcp]
+      - sfu_throughput_per_sm[tanh]
+      method: 'B38: B2''s pattern (ILP 8, 8 blocks x 256 threads per SM), thread-ops
+        per second per SM'
+    cvt_throughput_per_sm:
+      from:
+      - sfu_throughput_per_sm[i2f]
+      - sfu_throughput_per_sm[f2f_bf16]
+      - sfu_throughput_per_sm[f2fp_bf16x2]
+      method: 'B38: the same for F2F (fp32 -> bf16 -> fp32, two converts per op),
+        F2FP packed bf16x2 (plus the unpack), I2F'
+    sfu_counters:
+      from:
+      - counter_b38_sfu[probe=mix4]
+      - counter_b38_sfu[probe=f2f]
+      - counter_b38_sfu[probe=ex2]
+      method: 'B38 (ncu): XU pipe warp-instructions per cycle per SM for the ex2 throughput
+        kernel (8 blocks x 256 threads), the ex2 + 4 FFMA mix (one warp per sub-partition)
+        and the F2F kernel'
+    sfu_warp_instr_per_cycle_per_smsp:
+      from:
+      - counter_b38_sfu[probe=ex2]
+      method: 'B38 (ncu): the XU pipe''s rate with 8 blocks per SM issuing ex2, per
+        sub-partition (0.125 = one MUFU per 8 cycles = 4 lanes per cycle); the clock64
+        throughput table above assumes eight concurrent blocks and reads 1.6x higher,
+        so the counter is the model''s input'
+    sfu_latency_cycles:
+      from:
+      - sfu_latency_cycles[f2fp_bf16x2]
+      - sfu_latency_cycles[f2f_bf16]
+      - sfu_latency_cycles[rcp]
+      - sfu_latency_cycles[lg2]
+      - sfu_latency_cycles[rsqrt]
+      - sfu_latency_cycles[tanh]
+      - sfu_latency_cycles[ex2]
+      - sfu_latency_cycles[i2f]
+      method: 'B38: one dependent chain per thread, one warp per sub-partition, cycles
+        per link (about one cycle of loop included; the rcp link carries an FADD,
+        4 cycles by B27, so rcp''s own latency is the record less 4)'
+    sfu_ffma_mixed_cycles_per_iter:
+      from:
+      - sfu_ffma_mixed_cycles_per_iter[ffma_per_ex2=16]
+      - sfu_ffma_mixed_cycles_per_iter[ffma_per_ex2=1]
+      - sfu_ffma_mixed_cycles_per_iter[ffma_per_ex2=4]
+      - sfu_ffma_mixed_cycles_per_iter[ffma_per_ex2=0]
+      method: 'B38: one warp per sub-partition, 8 independent ex2 then N x 8 independent
+        FFMAs per iteration'
+    sfu_issue_cycles_one_warp:
+      from:
+      - sfu_ffma_mixed_cycles_per_iter[ffma_per_ex2=0]
+      method: 'B38: cycles per iteration of 8 independent ex2 from one warp per sub-partition,
+        over 8 (the loop''s cycle included)'
+    sfu_ffma_overlap:
+      from:
+      - sfu_ffma_mixed_cycles_per_iter[ffma_per_ex2=0]
+      - sfu_ffma_mixed_cycles_per_iter[ffma_per_ex2=16]
+      method: 'B38: 1 - (cycles the 128 FFMAs added) / 128; 1 = the FFMAs issued entirely
+        in the SFU''s shadow'
+    shfl_latency_cycles:
+      from:
+      - shfl_latency_cycles[up]
+      - shfl_latency_cycles[idx]
+      - shfl_latency_cycles[bfly]
+      method: 'B39 (a): dependent chain, one warp per sub-partition, cycles per shuffle
+        (about one cycle of loop included)'
+    shfl_throughput_per_sm:
+      from:
+      - shfl_throughput_per_sm[bfly]
+      - shfl_throughput_per_sm[up]
+      - shfl_throughput_per_sm[idx]
+      method: 'B39 (a): ILP 8, 8 blocks x 256 threads per SM, warp shuffle instructions
+        per second per SM'
+    warp_reduce_cycles:
+      from: warp_reduce_cycles
+      method: 'B39 (b): 32-lane butterfly, 5 shfl.bfly + 5 FADD + 1 FMUL dependent'
+      ci95: 0.0003611475555145707
+      n: 10
+    redux_cycles:
+      from: redux_cycles
+      method: 'B39 (d): redux.sync.add.s32 dependent chain'
+      ci95: 0.0011288130115305144
+      n: 10
+    block_reduce_cycles:
+      from: block_reduce_cycles
+      method: 'B39 (e): 256 threads to one value through shared memory'
+      ci95: 0.00035586582545620596
+      n: 10
+    shfl_issue_cycles_one_warp:
+      from:
+      - shfl_cycles_beside_lds[lds=0]
+      method: 'B39 (c) with the load warps idle: cycles per shuffle from one warp
+        per sub-partition issuing 8 independent shfl.bfly per iteration'
+    shfl_in_lsu_queue:
+      from:
+      - shfl_cycles_beside_lds[lds=0]
+      - shfl_cycles_beside_lds[lds=1]
+      method: 'B39 (c): shuffle warps'' cycles per shuffle with LDS.128 loop warps
+        on the same sub-partitions over alone; true when the slowdown exceeds 15 %
+        (the ncu cross-check reads whether shuffles count as LSU wavefronts)'
+    shfl_lsu_counters:
+      from:
+      - counter_b39_shfl[probe=shfl]
+      - counter_b39_shfl[probe=beside_lds]
+      method: 'B39 (ncu): LSU pipe instructions and wavefronts per shuffle instruction'
+    attention_spill_curve:
+      from:
+      - attention_loop_cycles_per_step[tq=8,maxrreg=160]
+      - attention_loop_cycles_per_step[tq=32,maxrreg=96]
+      - attention_loop_cycles_per_step[tq=56,maxrreg=160]
+      - attention_loop_cycles_per_step[tq=16,maxrreg=128]
+      - attention_loop_cycles_per_step[tq=40,maxrreg=255]
+      - attention_loop_cycles_per_step[tq=40,maxrreg=128]
+      - attention_loop_cycles_per_step[tq=16,maxrreg=255]
+      - attention_loop_cycles_per_step[tq=32,maxrreg=160]
+      - attention_loop_cycles_per_step[tq=24,maxrreg=255]
+      - attention_loop_cycles_per_step[tq=56,maxrreg=96]
+      - attention_loop_cycles_per_step[tq=24,maxrreg=128]
+      - attention_loop_cycles_per_step[tq=16,maxrreg=96]
+      - attention_loop_cycles_per_step[tq=56,maxrreg=255]
+      - attention_loop_cycles_per_step[tq=40,maxrreg=160]
+      - attention_loop_cycles_per_step[tq=8,maxrreg=255]
+      - attention_loop_cycles_per_step[tq=24,maxrreg=96]
+      - attention_loop_cycles_per_step[tq=8,maxrreg=128]
+      - attention_loop_cycles_per_step[tq=16,maxrreg=160]
+      - attention_loop_cycles_per_step[tq=56,maxrreg=128]
+      - attention_loop_cycles_per_step[tq=32,maxrreg=255]
+      - attention_loop_cycles_per_step[tq=24,maxrreg=160]
+      - attention_loop_cycles_per_step[tq=8,maxrreg=96]
+      - attention_loop_cycles_per_step[tq=40,maxrreg=96]
+      - attention_loop_cycles_per_step[tq=32,maxrreg=128]
+      method: 'B40 (a): an attention-shaped loop (TQ scores, online max/ex2/sum, TQ
+        P.V FFMAs per step) at each -maxrregcount; registers and local bytes from
+        the function attributes'
+    local_mem_bytes_per_s_per_sm_by_warps:
+      from:
+      - local_mem_bytes_per_s_per_sm_by_warps[warps=16]
+      - local_mem_bytes_per_s_per_sm_by_warps[warps=8]
+      - local_mem_bytes_per_s_per_sm_by_warps[warps=4]
+      method: 'B40 (b): B19''s local stream with 4, 8, 16 warps per SM at once'
+    max_blocks_per_sm_by_regs:
+      from:
+      - max_blocks_per_sm_by_regs[regs=185]
+      - max_blocks_per_sm_by_regs[regs=120]
+      - max_blocks_per_sm_by_regs[regs=24]
+      - max_blocks_per_sm_by_regs[regs=64]
+      - max_blocks_per_sm_by_regs[regs=40]
+      - max_blocks_per_sm_by_regs[regs=38]
+      - max_blocks_per_sm_by_regs[regs=88]
+      - max_blocks_per_sm_by_regs[regs=56]
+      - max_blocks_per_sm_by_regs[regs=232]
+      - max_blocks_per_sm_by_regs[regs=152]
+      method: 'B40 (c): 256-thread kernels at each __launch_bounds__ min-blocks; the
+        most blocks co-resident on one SM by clock64 overlap vs the occupancy API'
     mma_latency_cycles:
       from:
       - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=1,w=1]
@@ -4215,23 +5028,23 @@ provenance:
           mio_throttle_per_issue_active: 54.77
         width=4,stride=8:
           wavefronts_per_instruction: 8.01
-          instr_per_cycle_per_sm: 0.124
-          wavefronts_per_cycle_per_sm: 0.992
+          instr_per_cycle_per_sm: 0.122
+          wavefronts_per_cycle_per_sm: 0.973
           mio_throttle_per_issue_active: 26.46
         width=16,stride=1:
           wavefronts_per_instruction: 4.01
-          instr_per_cycle_per_sm: 0.245
-          wavefronts_per_cycle_per_sm: 0.982
+          instr_per_cycle_per_sm: 0.236
+          wavefronts_per_cycle_per_sm: 0.946
           mio_throttle_per_issue_active: 12.44
         width=8,stride=4:
           wavefronts_per_instruction: 8.01
           instr_per_cycle_per_sm: 0.124
           wavefronts_per_cycle_per_sm: 0.991
-          mio_throttle_per_issue_active: 26.46
+          mio_throttle_per_issue_active: 26.48
         width=4,stride=1:
           wavefronts_per_instruction: 1.01
-          instr_per_cycle_per_sm: 0.48
-          wavefronts_per_cycle_per_sm: 0.484
+          instr_per_cycle_per_sm: 0.481
+          wavefronts_per_cycle_per_sm: 0.485
           mio_throttle_per_issue_active: 5.18
         width=8,stride=2:
           wavefronts_per_instruction: 4.01
