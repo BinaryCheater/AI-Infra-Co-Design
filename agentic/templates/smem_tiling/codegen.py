@@ -35,6 +35,8 @@ def codegen(T: dict, x: dict) -> str:
         "BETA": 1 if vals.get("beta") else 0,
         "GRID_CEIL": 1 if s.get("grid_rounding", "ceil") == "ceil" else 0,
         "GUARDED": 1 if s.get("guard", "bounded") == "bounded" else 0,
+        # the copy path is chosen at generation time (the workload is known): cp.async when every row stride is 16 B aligned
+        "USE_ASYNC": 1 if (int(T["scope"]["workload"]["k"]) % 4 == 0 and int(T["scope"]["workload"]["n"]) % 4 == 0 and int(vals["Tk"]) % 4 == 0 and int(vals["Tn"]) % 4 == 0) else 0,
     }
     if values["TM"] % 16 or values["TN"] % 16:
         raise ValueError("the FP32 kernel needs Tm and Tn to be multiples of 16")

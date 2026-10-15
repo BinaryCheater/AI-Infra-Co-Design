@@ -71,7 +71,9 @@ class Compute(Event):
     ffma_per_step: int = 0      # per warp per k-step: FFMA, ld.shared.32 and ld.shared.128 warp-instructions
     lds32_per_step: int = 0
     lds128_per_step: int = 0
-    other_per_phase: int = 0    # per warp per phase: copy-issue, guard, address and loop instructions outside the k-loop
+    other_per_phase: int = 0    # per warp per phase: copy-issue, guard, address and loop instructions outside the k-loop (from SASS)
+    a_wavefronts: tuple = ()    # wavefronts of each A load (128-bit, one per RM row per four k-steps) from its addresses
+    b_wavefronts: tuple = ()    # wavefronts of each B load (32-bit, one per RN column per k-step)
 
 
 @dataclass

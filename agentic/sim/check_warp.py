@@ -35,9 +35,12 @@ def b27_stream_grid(m: WarpModel):
 
 def b28_lds_curve(m: WarpModel, contract: dict):
     """B28's lds mix (4 x ld.shared.128 + 8 x ld.shared.32 per thread per step, one consumer, 8 steps per phase) at 1-6 blocks per SM."""
+    from ..templates.smem_tiling.events import wavefronts
+    # B28's addresses: the four 128-bit loads broadcast one address to the warp (lanes all equal), the eight 32-bit loads are lane-consecutive
+    a_wf = tuple(wavefronts([0] * 32, 16) for _ in range(4)); b_wf = tuple(wavefronts([l * 4 for l in range(32)], 4) for _ in range(8))
     rows = []
     for b, d in sorted(((int(k), v) for k, v in (contract.get("lds_rate_by_residency") or {}).items())):
-        cyc, hist = m.phase(8, b, 8, 1, 8, 4, 0, 0)
+        cyc, hist = m.phase(8, b, 8, 1, 8, 4, 0, 0, 1, a_wf, b_wf)
         sim = cyc / 8
         rows.append({"b": b, "measured": d["cycles_per_step_per_block"], "simulated": sim, "error": sim / d["cycles_per_step_per_block"] - 1})
     return rows
@@ -55,8 +58,19 @@ def b29(m: WarpModel):
             continue
         v = d["design"]; rm, rn = v["Tm"] // 16, v["Tn"] // 16; b = d["blocks_per_sm"]
         ffma, l32, l128 = m.counts(rm, rn)
-        tile = 4 * (v["Tm"] * v["Tk"] + v["Tk"] * v["Tn"]); chunks = tile // 256 // 16; other = 40 * chunks + 180
-        cyc, hist = m.phase(8, b, v["Tk"], ffma, l32, l128, other)
+        from ..templates.smem_tiling.events import inner_loop_wavefronts
+        from ..templates.smem_tiling import TilingDesign
+        from ..templates.smem_tiling.sass import sass_counts
+        from ..chips import load_chip, scope_chip
+        from ..examples.gemm_tiling import tiling_contract
+        from ..agents.evaluator.cuda import kernel_artifact
+        from ..templates.smem_tiling import Workload
+        WL = {"square_4096": (4096, 4096, 4096), "skinny_64x4096x4096": (64, 4096, 4096), "ragged_1000x1000x1000": (1000, 1000, 1000)}
+        des = TilingDesign(v["Tm"], v["Tn"], v["Tk"], v["S"], v["P"], bool(v["beta"])); wf = inner_loop_wavefronts(des)
+        T = tiling_contract(Workload(d["workload"], *WL[d["workload"]]), hw=scope_chip(load_chip("spark-6951-gb10")), precondition="exact"); T.setdefault("id", "t"); T.setdefault("template", "smem_tiling")
+        src = kernel_artifact(T, {"id": "k", "values": v})["source"]; cnt = sass_counts(src, v["Tm"], v["Tn"], v["Tk"], None)["counts"]
+        loop = v["Tk"] * (ffma + wf["instructions_per_step"] + 1); other = int(round(max(0.0, cnt["per_warp_per_phase"] - loop))) if cnt else 0
+        cyc, hist = m.phase(8, b, v["Tk"], ffma, l32, l128, other, 1, 1, tuple(wf["a_wavefronts_per_load"]), tuple(wf["b_wavefronts_per_load"]))
         sim = cyc / v["Tk"]
         tot = sum(hist[k] for k in WARP_FAMILY) or 1
         sim_f = max(WARP_FAMILY, key=lambda k: hist[k]) if tot else None

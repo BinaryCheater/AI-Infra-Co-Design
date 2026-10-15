@@ -86,7 +86,7 @@ def test_g4_b27_stream_grid_predicted_within_10_percent():
     assert all(abs(r["error"]) <= 0.10 for r in rows), sorted(round(r["error"], 2) for r in rows)
 
 
-@pytest.mark.xfail(strict=True, reason="B29 with the occupancy curve: 9/19 within 10 %, median 10 %, worst +105 %, family agreement 3/19; notes/sim_gaps.md #17")
+@pytest.mark.xfail(strict=True, reason="B29 with SASS counts and address wavefronts: 16/19 within 10 %, median 5 %, worst +27 %; fine-family agreement 3/19; notes/sim_gaps.md #21")
 def test_g4_b29_ground_truth_within_10_percent():
     from agentic.sim.check_warp import b29
     rows = b29(WarpModel(C, S))
@@ -130,3 +130,42 @@ def test_g4_b28_predicted_at_one_and_two_blocks():
     rows = b28_lds_curve(WarpModel(C, S), C)
     low = [r for r in rows if r["b"] <= 2]
     assert low and all(abs(r["error"]) <= 0.10 for r in low), [(r["b"], round(r["error"], 2)) for r in rows]
+
+
+def test_sass_instruction_count_within_10_percent_of_counter():
+    """B30_plus round 3, check 1: per-warp instructions per phase from cuobjdump vs sm__inst_issued on the six B29 kernels."""
+    from agentic.templates.smem_tiling.sass import sass_counts
+    from agentic.chips import load_chip, scope_chip
+    from agentic.examples.gemm_tiling import tiling_contract
+    from agentic.agents.evaluator.cuda import kernel_artifact
+    WL = {"square_4096": (4096, 4096, 4096), "skinny_64x4096x4096": (64, 4096, 4096), "ragged_1000x1000x1000": (1000, 1000, 1000)}
+    chip = scope_chip(load_chip("spark-6951-gb10")); rows = []
+    for f in sorted(RAW.iterdir()):
+        if f.name.startswith("inner_loop_ground_truth[") and "variant=real" in f.name and "b=1]" in f.name:
+            d = json.loads(f.read_text())["detail"]; raw = d["ncu"]["raw"]; v = d["design"]; m, n, k = WL[d["workload"]]
+            gx = -(-n // v["Tn"]); bx = min(gx, 48); blocks = bx * max(1, 48 // bx); meas = raw["sm__inst_issued.sum"] / (blocks * 8 * d["timing"]["KT"])
+            T = tiling_contract(Workload(d["workload"], m, n, k), hw=chip, precondition="exact"); T.setdefault("id", "t"); T.setdefault("template", "smem_tiling")
+            c = sass_counts(kernel_artifact(T, {"id": "k", "values": v})["source"], v["Tm"], v["Tn"], v["Tk"], None)["counts"]   # cached: no host
+            rows.append((d["kernel"], c["per_warp_per_phase"] / meas - 1))
+    if not rows:
+        pytest.skip("no B29 records")
+    assert len(rows) == 6 and all(abs(e) <= 0.10 for _, e in rows), rows
+
+
+def test_wavefronts_from_addresses_match_counter():
+    """Check 2: wavefronts per k-step from the template's addresses vs the profiler's wavefronts on the B29 stripped kernels; the
+    32x128x32 kernel is the known miss (the compiler keeps B values in registers), notes/sim_gaps.md #20."""
+    from agentic.templates.smem_tiling.events import inner_loop_wavefronts
+    rows = []
+    for f in sorted(RAW.iterdir()):
+        if f.name.startswith("inner_loop_ground_truth[") and "variant=stripped" in f.name and "b=1]" in f.name:
+            d = json.loads(f.read_text())["detail"]; raw = d["ncu"]["raw"]; v = d["design"]
+            gx = -(-{"square_4096": 4096, "skinny_64x4096x4096": 4096, "ragged_1000x1000x1000": 1000}[d["workload"]] // v["Tn"]); bx = min(gx, 48); blocks = bx * max(1, 48 // bx)
+            meas = raw["l1tex__data_pipe_lsu_wavefronts_mem_shared.sum"] / (blocks * 8 * d["timing"]["KT"]) / v["Tk"]
+            model = inner_loop_wavefronts(TilingDesign(v["Tm"], v["Tn"], v["Tk"], v["S"], v["P"], bool(v["beta"])))["wavefronts_per_step"]
+            rows.append((d["kernel"], model / meas - 1))
+    if not rows:
+        pytest.skip("no B29 records")
+    ok = [e for k, e in rows if abs(e) <= 0.10]
+    assert len(ok) >= 5, rows
+    assert all(abs(e) <= 0.10 for k, e in rows if "32x128x32" not in k), rows

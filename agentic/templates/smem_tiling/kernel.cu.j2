@@ -12,6 +12,7 @@
 #define TRAILING_BARRIER {{BETA}}
 #define GRID_CEIL {{GRID_CEIL}}          // 1: ceil(M/TM) x ceil(N/TN); 0: floor (drops the tail tiles)
 #define GUARDED {{GUARDED}}             // 1: tail elements guarded by index < extent
+#define USE_ASYNC {{USE_ASYNC}}         // 1: cp.async copies (row strides 16 B aligned, known at generation time); the sync path is not compiled
 #define THREADS 256
 #define TX 16
 #define TY 16
@@ -29,7 +30,8 @@ template <int N> __device__ __forceinline__ void cp_async_wait() { asm volatile(
 __device__ __forceinline__ void load_tile(float* As, float* Bs, const float* __restrict__ A, const float* __restrict__ B,
                                           int M, int N, int K, int row0, int col0, int u, int use_async) {
   const int k0 = u * TK;
-  if (use_async) {
+  (void)use_async;
+  if (USE_ASYNC) {
     // A: TM rows x TK cols, 16 B chunks along k
     for (int c = threadIdx.x; c < TM * TK / 4; c += THREADS) {
       int r = c / (TK / 4), kc = (c % (TK / 4)) * 4;
@@ -59,7 +61,7 @@ __device__ __forceinline__ void load_tile(float* As, float* Bs, const float* __r
   }
 }
 
-template <int PENDING> __device__ __forceinline__ void wait_pending(int use_async) { if (use_async) cp_async_wait<PENDING>(); }
+template <int PENDING> __device__ __forceinline__ void wait_pending(int use_async) { (void)use_async; if (USE_ASYNC) cp_async_wait<PENDING>(); }
 
 extern "C" __global__ void __launch_bounds__(THREADS)
 smem_tiling_gemm(const float* __restrict__ A, const float* __restrict__ B, float* __restrict__ C, int M, int N, int K, int use_async,

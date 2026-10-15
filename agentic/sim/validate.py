@@ -51,10 +51,22 @@ def dominant_families(sim_waits: dict, stalls: dict) -> tuple[str | None, str | 
     return (max(sim_f, key=sim_f.get) if sim_f else None), (max(ncu_f, key=ncu_f.get) if ncu_f else None), sim_f, ncu_f
 
 
-def simulate_row(row: dict, sc, C, S, F) -> dict:
+def instr_per_phase_for(row: dict, w, chip, host: str | None) -> float | None:
+    """Per-warp instructions per phase from the compiled kernel's SASS (templates/smem_tiling/sass.py), cached by source hash."""
+    from ..templates.smem_tiling.sass import sass_counts
+    d = row["design"]; v = {"Tm": d["tm"], "Tn": d["tn"], "Tk": d["tk"], "S": d["stages"], "P": d["prefetch"], "beta": int(d["trailing_barrier"])}
+    T = tiling_contract(w, hw=chip, precondition="exact"); T.setdefault("id", "tmpl_validation"); T.setdefault("template", "smem_tiling")
+    src = kernel_artifact(T, {"id": "val", "values": v})["source"]
+    c = sass_counts(src, v["Tm"], v["Tn"], v["Tk"], host)
+    row["sass_counts"] = c.get("counts")
+    return (c.get("counts") or {}).get("per_warp_per_phase")
+
+
+def simulate_row(row: dict, sc, C, S, F, chip=None, host: str | None = None) -> dict:
     """(Re)simulate one measured row with the current model; fills the sim_* fields and the family agreement."""
     w = next(x for x in WORKLOADS if x.name == row["workload"]); d = TilingDesign(**{k: v for k, v in row["design"].items() if k in TilingDesign.__dataclass_fields__})
-    sim = simulate_design(d, w, sc, Hierarchy(C, S, F), None, issue=WarpModel(C, S))
+    ipp = instr_per_phase_for(row, w, chip, host) if chip is not None else None
+    sim = simulate_design(d, w, sc, Hierarchy(C, S, F), None, issue=WarpModel(C, S), instr_per_phase=ipp)
     sim_dom, ncu_dom, sim_f, ncu_f = dominant_families(sim["waits_s"], (row.get("ncu") or {}).get("stalls_per_issue_active"))
     wf = sim.get("wait_families_s") or {}
     row.update({"simulated_us": sim["time_us"], "sim_error": (sim["time_us"] / row["measured_us"] - 1) if row.get("measured_us") else None,
@@ -120,7 +132,7 @@ def main():
     if a.resimulate:
         v = json.loads(Path(a.resimulate).read_text())
         for i, row in enumerate(v["rows"]):
-            simulate_row(row, sc, C, S, F)
+            simulate_row(row, sc, C, S, F, chip, a.host)
             print(f"[{i + 1:2d}] {row['workload']:<22} {row['design']['tm']}x{row['design']['tn']}x{row['design']['tk']} S{row['design']['stages']} P{row['design']['prefetch']}  measured {row['measured_us']} us  sim {row['simulated_us']:.1f} us ({(row['sim_error'] or 0) * 100:+.1f} %)  {row['sim_dominant_family']} / {row['ncu_dominant_family']} {'agree' if row['critical_agrees_with_stalls'] else 'DISAGREE'}", flush=True)
         v["summary"] = summarize(v["rows"]); v["resimulated"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         Path(a.out or a.resimulate).write_text(json.dumps(v, indent=1) + "\n"); print(json.dumps(v["summary"], indent=1)); return
@@ -151,7 +163,7 @@ def main():
                    "ran": bool(r.get("ran")), "reference_agrees": r.get("reference_agrees"), "measured_us": r.get("median_us"), "ci95_us": r.get("ci95_us"),
                    "sm_mhz_in_run": r.get("sm_clock_mhz_in_run"), "policy": r.get("policy"), "error": r.get("error"),
                    "ncu": {kk: vv for kk, vv in prof.items() if kk != "raw"}, "kernel_sha256": k["sha256"], "seconds": round(time.time() - t0, 1)}
-            simulate_row(row, sc, C, S, F)
+            simulate_row(row, sc, C, S, F, chip, a.host)
             rows.append(row)
             print(f"[{len(rows):2d}] {w.name:<22} {x['values']}  measured {row['measured_us']} us  sim {row['simulated_us']:.1f} us  "
                   f"({(row['sim_error'] or 0) * 100:+.1f} %)  {row['sim_dominant_family']} / {row['ncu_dominant_family']} {'agree' if row['critical_agrees_with_stalls'] else 'DISAGREE'}", flush=True)

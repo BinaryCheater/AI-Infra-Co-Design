@@ -26,11 +26,11 @@
   "designs": 30,
   "ran": 30,
   "reference_agrees": 30,
-  "median_abs_error": 0.12276350517802515,
-  "worst_abs_error": 0.6749950345303997,
-  "within_10": 12,
-  "within_20": 24,
-  "signed_median_error": 0.04987194181119703,
+  "median_abs_error": 0.08241485174393437,
+  "worst_abs_error": 0.414777417308861,
+  "within_10": 17,
+  "within_20": 26,
+  "signed_median_error": -0.040792742288407124,
   "critical_agreement": "25/30",
   "agreement_overall": 0.8333333333333334,
   "agreement_by_ncu_family": {
@@ -98,15 +98,15 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 11846.959103711273,
-   "sim_error": -0.12187298359109655,
+   "simulated_us": 11243.764254651638,
+   "sim_error": -0.1665833340262579,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "copy": 1,
-    "compute": 493,
-    "barrier": 18
+    "compute": 484,
+    "barrier": 27
    },
-   "sim_dram_bytes": 791187456,
+   "sim_dram_bytes": 782069760,
    "sim_waves": 43,
    "ncu": {
     "available": true,
@@ -138,9 +138,9 @@
    "kernel_sha256": "ccc8a60b58e57178d2306b6a7471df07f394028cc257df6713c4da01816568f5",
    "seconds": 90.0,
    "sim_wait_families_warp_s": {
-    "copy": 0.03719955285425625,
-    "barrier": 0.4049916308363386,
-    "compute": 20.642695494538348
+    "copy": 0.03830270546030141,
+    "barrier": 0.4125009954551423,
+    "compute": 19.90382564061826
    },
    "ncu_stall_families": {
     "barrier": 1.58,
@@ -150,13 +150,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 1.8833939595191884,
-    "scoreboard": 3.4973365978910778,
-    "not_selected": 7.34673939709517,
-    "lsu": 0.40330728798553456,
-    "done": 7.51191825335142
+    "issued": 1.490446241996368,
+    "scoreboard": 10.504901867136482,
+    "not_selected": 3.466340631246324,
+    "lsu": 0.3980641886596288,
+    "done": 4.044072711023365
    },
-   "sim_dominant_warp_stall": "not_selected"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 2,
+    "outside": 102.0,
+    "k_loop": 338,
+    "copy": 0.0,
+    "copy_straight_skipped": 18.0,
+    "per_warp_per_phase": 440.0,
+    "k_body_lds_per_step": 9.0
+   }
   },
   {
    "workload": "square_4096",
@@ -195,12 +205,12 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 32358.891856785267,
-   "sim_error": -0.06861031123054273,
+   "simulated_us": 30231.283410738226,
+   "sim_error": -0.12984950870236522,
    "sim_critical": "compute",
    "sim_critical_counts": {
-    "copy": 2,
-    "compute": 126
+    "copy": 4,
+    "compute": 124
    },
    "sim_dram_bytes": 5894569984,
    "sim_waves": 86,
@@ -234,9 +244,9 @@
    "kernel_sha256": "90887dd930401e3a9924147523354459e3e3cd02e552ea357c91995be32aa638",
    "seconds": 53.4,
    "sim_wait_families_warp_s": {
-    "copy": 2.749951477858064,
-    "barrier": 0.34790186407841034,
-    "compute": 9.211884148431354
+    "copy": 2.7565997917688447,
+    "barrier": 0.3539360168881052,
+    "compute": 8.388608000464734
    },
    "ncu_stall_families": {
     "barrier": 0.45,
@@ -246,13 +256,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 2.052730941133903,
-    "scoreboard": 5.376351304352199,
-    "not_selected": 0.4674535805951573,
-    "lsu": 0.8169852207840582,
-    "done": 0.4983631018411768
+    "issued": 1.7444510881155595,
+    "scoreboard": 5.389168313517797,
+    "not_selected": 0.26674858874450275,
+    "lsu": 0.6939697411341452,
+    "done": 0.2942702685074773
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 8,
+    "outside": 90.0,
+    "k_loop": 840,
+    "copy": 100.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 1030.0,
+    "k_body_lds_per_step": 8.5
+   }
   },
   {
    "workload": "square_4096",
@@ -291,8 +311,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 12703.900163385866,
-   "sim_error": 0.01240881263100424,
+   "simulated_us": 12036.316837558546,
+   "sim_error": -0.040792742288407124,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "copy": 11,
@@ -330,9 +350,9 @@
    "kernel_sha256": "b44c4ce930155c4bbf16174db40602b8fa613ed4b21c6ac03b56c6585f35ae10",
    "seconds": 38.7,
    "sim_wait_families_warp_s": {
-    "copy": 1.5340288128271382,
-    "barrier": 0.19638802391701857,
-    "compute": 11.633733166385733
+    "copy": 1.5094064821070703,
+    "barrier": 0.1970532707369563,
+    "compute": 11.396870362089654
    },
    "ncu_stall_families": {
     "barrier": 0.34,
@@ -342,13 +362,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 1.4330047280061,
-    "scoreboard": 5.665856722780994,
-    "not_selected": 1.9902581827595562,
-    "lsu": 0.35809345379208807,
-    "done": 2.186520079014044
+    "issued": 1.2814019497117457,
+    "scoreboard": 7.3121835996445546,
+    "not_selected": 1.1010342834950602,
+    "lsu": 0.34560854674757396,
+    "done": 1.356641982017609
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 4,
+    "outside": 69.0,
+    "k_loop": 1340,
+    "copy": 104.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 1513.0,
+    "k_body_lds_per_step": 17.0
+   }
   },
   {
    "workload": "square_4096",
@@ -387,8 +417,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 34208.43528570014,
-   "sim_error": 0.15694736550020982,
+   "simulated_us": 31968.526965778557,
+   "sim_error": 0.08119248200284734,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "copy": 3,
@@ -426,9 +456,9 @@
    "kernel_sha256": "be1083f3caa75ed4ea2384e85c7dc285f401034035f0ed64577a2daa373bcb09",
    "seconds": 76.3,
    "sim_wait_families_warp_s": {
-    "copy": 4.622003857018541,
-    "barrier": 0.3295581758202799,
-    "compute": 8.059975132802927
+    "copy": 4.635206522670928,
+    "barrier": 0.3200486391159678,
+    "compute": 7.202819309637255
    },
    "ncu_stall_families": {
     "barrier": 1.14,
@@ -438,13 +468,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 2.3434885681658124,
-    "scoreboard": 2.8252244775311333,
-    "not_selected": 1.0134233441168072,
-    "lsu": 0.8335131847134687,
-    "done": 1.0443255596074668
+    "issued": 1.7338239235267916,
+    "scoreboard": 3.0240327418573028,
+    "not_selected": 0.637485065771735,
+    "lsu": 0.9558043016230197,
+    "done": 0.8516732751778369
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 4,
+    "outside": 71.75,
+    "k_loop": 364,
+    "copy": 76.0,
+    "copy_straight_skipped": 23.2,
+    "per_warp_per_phase": 511.8,
+    "k_body_lds_per_step": 5.0
+   }
   },
   {
    "workload": "square_4096",
@@ -483,14 +523,14 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 48380.23518997183,
-   "sim_error": 0.1166728434586588,
+   "simulated_us": 45841.682662829764,
+   "sim_error": 0.0580800594917783,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "copy": 2,
     "compute": 254
    },
-   "sim_dram_bytes": 3051189248,
+   "sim_dram_bytes": 3059107840,
    "sim_waves": 86,
    "ncu": {
     "available": true,
@@ -522,9 +562,9 @@
    "kernel_sha256": "ec86902fd72740ef92207de4cb527b28d4c064cdd92ad19fc7478b1ea5c5e783",
    "seconds": 86.9,
    "sim_wait_families_warp_s": {
-    "copy": 5.002949837755607,
-    "barrier": 0.43895414520448406,
-    "compute": 31.29605319852944
+    "copy": 5.011183549406455,
+    "barrier": 0.4371387240376921,
+    "compute": 29.372033142087247
    },
    "ncu_stall_families": {
     "barrier": 0.85,
@@ -534,13 +574,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 2.99463848558183,
-    "scoreboard": 20.34839307643065,
-    "not_selected": 2.2764954980981993,
-    "lsu": 2.5617676560267517,
-    "done": 3.1147584800487094
+    "issued": 2.3984038923929556,
+    "scoreboard": 21.78302039112678,
+    "not_selected": 1.2062879686045782,
+    "lsu": 2.11752221070277,
+    "done": 1.8667986722608092
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 4,
+    "outside": 64.25,
+    "k_loop": 544,
+    "copy": 100.0,
+    "copy_straight_skipped": 24.8,
+    "per_warp_per_phase": 708.2,
+    "k_body_lds_per_step": 16.25
+   }
   },
   {
    "workload": "square_4096",
@@ -579,12 +629,12 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 35666.46205309422,
-   "sim_error": -0.07871284566940628,
+   "simulated_us": 33345.46437177031,
+   "sim_error": -0.13866567603008695,
    "sim_critical": "compute",
    "sim_critical_counts": {
-    "copy": 1,
-    "compute": 63
+    "copy": 6,
+    "compute": 58
    },
    "sim_dram_bytes": 7828144128,
    "sim_waves": 342,
@@ -618,9 +668,9 @@
    "kernel_sha256": "3dcf761b7222430d004f5ef53866548da4edbb2938835008a235ebc6fef7aeec",
    "seconds": 80.6,
    "sim_wait_families_warp_s": {
-    "copy": 5.690467254213041,
-    "barrier": 0.9560308849651528,
-    "compute": 34.306346559731296
+    "copy": 7.252492085532728,
+    "barrier": 3.0294104218113236,
+    "compute": 28.007204532779657
    },
    "ncu_stall_families": {
     "barrier": 2.12,
@@ -630,13 +680,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "copy",
    "sim_warp_histogram_s": {
-    "issued": 2.8862632659719183,
-    "scoreboard": 21.440643162598846,
-    "not_selected": 4.061996026728445,
-    "lsu": 1.4279575903491482,
-    "done": 4.489486517216519
+    "issued": 2.3272521325410285,
+    "scoreboard": 19.787273386978832,
+    "not_selected": 2.55543810992107,
+    "lsu": 0.7664160332917985,
+    "done": 2.570824863962607
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 16,
+    "outside": 69.0,
+    "k_loop": 528,
+    "copy": 90.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 687.0,
+    "k_body_lds_per_step": 2.5
+   }
   },
   {
    "workload": "square_4096",
@@ -675,13 +735,13 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 11527.83538086031,
-   "sim_error": -0.06376652504631186,
+   "simulated_us": 11123.901454475495,
+   "sim_error": -0.09657203024799343,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "copy": 1,
-    "compute": 117,
-    "barrier": 10
+    "compute": 108,
+    "barrier": 19
    },
    "sim_dram_bytes": 2348810240,
    "sim_waves": 43,
@@ -715,9 +775,9 @@
    "kernel_sha256": "77c27bca5377c9011cb0c5bc0bd8aee7313a355aed8a6304a03f65636e042dec",
    "seconds": 34.7,
    "sim_wait_families_warp_s": {
-    "copy": 0.022398938779028193,
-    "barrier": 0.06703056630111374,
-    "compute": 4.293402055075048
+    "copy": 0.025106614028386195,
+    "barrier": 0.0816507319933085,
+    "compute": 4.12146269457694
    },
    "ncu_stall_families": {
     "barrier": 0.1,
@@ -727,13 +787,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 1.4125038712918805,
-    "scoreboard": 1.1232073274928427,
-    "not_selected": 0.6951373593551775,
-    "lsu": 0.34963281526422396,
-    "done": 0.7129206814918188
+    "issued": 1.2626054813246246,
+    "scoreboard": 1.2357190131802345,
+    "not_selected": 0.6227287095048499,
+    "lsu": 0.32962386561802864,
+    "done": 0.6707856250158234
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 8,
+    "outside": 85.0,
+    "k_loop": 1272,
+    "copy": 134.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 1491.0,
+    "k_body_lds_per_step": 6.0
+   }
   },
   {
    "workload": "square_4096",
@@ -772,15 +842,15 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 24722.33823695087,
-   "sim_error": -0.16689161093231275,
+   "simulated_us": 22039.972881891114,
+   "sim_error": -0.2572835899767846,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "copy": 1,
-    "compute": 126,
-    "barrier": 1
+    "compute": 125,
+    "barrier": 2
    },
-   "sim_dram_bytes": 3981934592,
+   "sim_dram_bytes": 3983024128,
    "sim_waves": 171,
    "ncu": {
     "available": true,
@@ -812,9 +882,9 @@
    "kernel_sha256": "1672c533c919d162c2e971366c11198783dfbe6495d67a2f955f13a8a6bd0463",
    "seconds": 85.6,
    "sim_wait_families_warp_s": {
-    "copy": 0.10619358065776628,
-    "barrier": 0.33500041366040045,
-    "compute": 27.909183247671557
+    "copy": 0.10512180835293544,
+    "barrier": 0.3660278649252162,
+    "compute": 24.802388191082123
    },
    "ncu_stall_families": {
     "barrier": 6.78,
@@ -824,13 +894,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "copy",
    "sim_warp_histogram_s": {
-    "issued": 2.533892057789792,
-    "scoreboard": 16.945082975341656,
-    "not_selected": 3.7486611185094585,
-    "lsu": 1.006884432110825,
-    "done": 3.674662663076349
+    "issued": 2.069765328983213,
+    "scoreboard": 17.260700498285875,
+    "not_selected": 2.3019131505072337,
+    "lsu": 0.792363282268358,
+    "done": 2.3776459279267472
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 8,
+    "outside": 101.0,
+    "k_loop": 456,
+    "copy": 54.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 611.0,
+    "k_body_lds_per_step": 4.5
+   }
   },
   {
    "workload": "square_4096",
@@ -869,13 +949,13 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 12985.865863205632,
-   "sim_error": -0.10303343857598979,
+   "simulated_us": 12978.648018403077,
+   "sim_error": -0.10353199335097663,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "copy": 1,
-    "compute": 124,
-    "barrier": 3
+    "compute": 123,
+    "barrier": 4
    },
    "sim_dram_bytes": 3041918976,
    "sim_waves": 43,
@@ -909,9 +989,9 @@
    "kernel_sha256": "4ce973b88ea11422ae78d2c9f92b5afc003f4e8a6346dbd1012349427350fe43",
    "seconds": 37.5,
    "sim_wait_families_warp_s": {
-    "copy": 0.03289927770513103,
-    "barrier": 0.14728428932957652,
-    "compute": 4.75670663641123
+    "copy": 0.05946967597884517,
+    "barrier": 0.32497576481448065,
+    "compute": 4.550887599433954
    },
    "ncu_stall_families": {
     "barrier": 0.06,
@@ -921,13 +1001,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 1.493827756182513,
-    "scoreboard": 2.2904935507878887,
-    "not_selected": 0.3632948454774631,
-    "lsu": 0.25701628345978444,
-    "done": 0.35207420048876875
+    "issued": 1.3405387178170574,
+    "scoreboard": 2.4741323003724625,
+    "not_selected": 0.22928039031098293,
+    "lsu": 0.2591312998529337,
+    "done": 0.24780489091067578
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 8,
+    "outside": 87.0,
+    "k_loop": 1368,
+    "copy": 128.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 1583.0,
+    "k_body_lds_per_step": 9.0
+   }
   },
   {
    "workload": "square_4096",
@@ -966,15 +1056,15 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 8389.853278608807,
-   "sim_error": -0.166803082758487,
+   "simulated_us": 7959.781079556335,
+   "sim_error": -0.20951358299517497,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "copy": 1,
     "compute": 248,
     "barrier": 7
    },
-   "sim_dram_bytes": 881377280,
+   "sim_dram_bytes": 892895232,
    "sim_waves": 22,
    "ncu": {
     "available": true,
@@ -1006,9 +1096,9 @@
    "kernel_sha256": "e1d06a89b895d46f9544d8cc2401f3589265679774d168b482222fc41dc88b6f",
    "seconds": 38.2,
    "sim_wait_families_warp_s": {
-    "copy": 0.029278787272519567,
-    "barrier": 0.16050716534142753,
-    "compute": 5.991122772306449
+    "copy": 0.030478080122182293,
+    "barrier": 0.16875771829810823,
+    "compute": 5.672507592996183
    },
    "ncu_stall_families": {
     "barrier": 0.46,
@@ -1018,13 +1108,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 1.3041820403232742,
-    "scoreboard": 0.8792841231325158,
-    "not_selected": 1.858901726770994,
-    "lsu": 0.21897914042100178,
-    "done": 1.729775741596357
+    "issued": 1.1746014374836513,
+    "scoreboard": 0.9541469234061868,
+    "not_selected": 1.570068923696351,
+    "lsu": 0.354279812722759,
+    "done": 1.6194104957189897
    },
-   "sim_dominant_warp_stall": "not_selected"
+   "sim_dominant_warp_stall": "not_selected",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 4,
+    "outside": 83.0,
+    "k_loop": 1212,
+    "copy": 92.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 1387.0,
+    "k_body_lds_per_step": 10.0
+   }
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1063,12 +1163,12 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 1202.4787074375731,
-   "sim_error": 0.2942124886317947,
+   "simulated_us": 1071.8921616110772,
+   "sim_error": 0.1536638557033292,
    "sim_critical": "compute",
    "sim_critical_counts": {
-    "copy": 1,
-    "compute": 127
+    "copy": 4,
+    "compute": 124
    },
    "sim_dram_bytes": 246153216,
    "sim_waves": 11,
@@ -1102,9 +1202,9 @@
    "kernel_sha256": "49607c7dca928417d468b3912a28eb7fcfda50a55ab0a4f2b530080c6aab522c",
    "seconds": 25.7,
    "sim_wait_families_warp_s": {
-    "copy": 0.17031896515792444,
-    "barrier": 0.056688307815446023,
-    "compute": 1.028967250400272
+    "copy": 0.19342207583050683,
+    "barrier": 0.18575973970682977,
+    "compute": 0.7414981260056407
    },
    "ncu_stall_families": {
     "barrier": 5.49,
@@ -1114,13 +1214,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.08722187727361169,
-    "scoreboard": 0.6193453826392562,
-    "not_selected": 0.1376171301211848,
-    "lsu": 0.04806538153901479,
-    "done": 0.13671747882741744
+    "issued": 0.053768023023372975,
+    "scoreboard": 0.5527100284151192,
+    "not_selected": 0.05524147593609748,
+    "lsu": 0.02281095358035438,
+    "done": 0.05696764505824072
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 8,
+    "outside": 86.5,
+    "k_loop": 168,
+    "copy": 0.0,
+    "copy_straight_skipped": 15.5,
+    "per_warp_per_phase": 254.5,
+    "k_body_lds_per_step": 2.25
+   }
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1159,12 +1269,13 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 578.0060957068051,
-   "sim_error": 0.08478112370654367,
+   "simulated_us": 419.2514263533431,
+   "sim_error": -0.2131639497001998,
    "sim_critical": "compute",
    "sim_critical_counts": {
-    "compute": 511,
-    "barrier": 1
+    "copy": 1,
+    "compute": 509,
+    "barrier": 2
    },
    "sim_dram_bytes": 71303168,
    "sim_waves": 3,
@@ -1198,9 +1309,9 @@
    "kernel_sha256": "4d693539b24da4c003f4cab6e273931d1209a9b8d6dfe6e7c5601b4799c7924e",
    "seconds": 26.0,
    "sim_wait_families_warp_s": {
-    "copy": 0.0007407232025249159,
-    "barrier": 0.014803733104998218,
-    "compute": 0.530005195479563
+    "copy": 0.0007954817743533226,
+    "barrier": 0.015187043107796734,
+    "compute": 0.38299915993734707
    },
    "ncu_stall_families": {
     "barrier": 5.95,
@@ -1210,13 +1321,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "barrier",
    "sim_warp_histogram_s": {
-    "issued": 0.08212469128100845,
-    "scoreboard": 0.07804694169241305,
-    "not_selected": 0.18169391189407308,
-    "lsu": 0.011595086918752513,
-    "done": 0.17654456368835583
+    "issued": 0.0558701243947536,
+    "scoreboard": 0.10645326544373633,
+    "not_selected": 0.10032035049786021,
+    "lsu": 0.022188074444181378,
+    "done": 0.09816734515547969
    },
-   "sim_dominant_warp_stall": "not_selected"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 2,
+    "outside": 93.75,
+    "k_loop": 170,
+    "copy": 0.0,
+    "copy_straight_skipped": 26.2,
+    "per_warp_per_phase": 263.8,
+    "k_body_lds_per_step": 4.0
+   }
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1255,8 +1376,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 558.5423759930338,
-   "sim_error": 0.19493730744042637,
+   "simulated_us": 448.58680248739387,
+   "sim_error": -0.040300022062637164,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "compute": 128
@@ -1293,9 +1414,9 @@
    "kernel_sha256": "64197d574e8560cdffffc782329773f6a71d988b077918f6dbb642684ad23cb4",
    "seconds": 24.0,
    "sim_wait_families_warp_s": {
-    "copy": 0.00263685558838436,
-    "barrier": 0.0077557308801665704,
-    "compute": 0.8357680452326539
+    "copy": 0.002649099126348817,
+    "barrier": 0.007841435645916134,
+    "compute": 0.6773557059760082
    },
    "ncu_stall_families": {
     "barrier": 4.8,
@@ -1305,13 +1426,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.05462327478047521,
-    "scoreboard": 0.42606057858702784,
-    "not_selected": 0.16796775521298343,
-    "lsu": 0.02307287375554111,
-    "done": 0.16404356289934988
+    "issued": 0.03694348613583206,
+    "scoreboard": 0.48167325444359294,
+    "not_selected": 0.07326678615891324,
+    "lsu": 0.01340621857936881,
+    "done": 0.07206596065788466
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 8,
+    "outside": 101.0,
+    "k_loop": 248,
+    "copy": 0.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 349.0,
+    "k_body_lds_per_step": 2.5
+   }
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1350,12 +1481,12 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 1573.4233356364762,
-   "sim_error": 0.6749950345303997,
+   "simulated_us": 1092.9702651277025,
+   "sim_error": 0.16352651286801922,
    "sim_critical": "compute",
    "sim_critical_counts": {
-    "copy": 4,
-    "compute": 508
+    "copy": 8,
+    "compute": 504
    },
    "sim_dram_bytes": 136577024,
    "sim_waves": 11,
@@ -1389,9 +1520,9 @@
    "kernel_sha256": "40b48dbb96dfe61b5b956f9af2738846dd5bfaa9bb2b515356fce36223f7f3e6",
    "seconds": 40.4,
    "sim_wait_families_warp_s": {
-    "copy": 0.43414904356209577,
-    "barrier": 0.19289741376770556,
-    "compute": 2.35680712116164
+    "copy": 0.4429668352806616,
+    "barrier": 0.19354506070417782,
+    "compute": 1.4274156962944449
    },
    "ncu_stall_families": {
     "barrier": 15.18,
@@ -1401,13 +1532,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "barrier",
    "sim_warp_histogram_s": {
-    "issued": 0.19304310037751377,
-    "scoreboard": 0.26351042653231704,
-    "not_selected": 0.9355577912415897,
-    "lsu": 0.036048298835953334,
-    "done": 0.9286475041904019
+    "issued": 0.07787569263149549,
+    "scoreboard": 0.7437901382286037,
+    "not_selected": 0.28256313574406366,
+    "lsu": 0.027716189215053453,
+    "done": 0.2954705404870701
    },
-   "sim_dominant_warp_stall": "not_selected"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 2,
+    "outside": 49.625,
+    "k_loop": 42,
+    "copy": 0.0,
+    "copy_straight_skipped": 55.4,
+    "per_warp_per_phase": 91.6,
+    "k_body_lds_per_step": 2.25
+   }
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1446,8 +1587,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 905.2953591482915,
-   "sim_error": 0.1240654789170419,
+   "simulated_us": 744.7412396006349,
+   "sim_error": -0.07528751837572145,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "compute": 255,
@@ -1485,9 +1626,9 @@
    "kernel_sha256": "ff18ce692de2b07b7234652b316c4e742e44d62cab063e33be3bdab16f18a18a",
    "seconds": 27.0,
    "sim_wait_families_warp_s": {
-    "copy": 0.0017943437066789214,
-    "barrier": 0.01453831371318771,
-    "compute": 1.3736199289340607
+    "copy": 0.0018008892716964652,
+    "barrier": 0.014584132668310467,
+    "compute": 1.1392038352179024
    },
    "ncu_stall_families": {
     "barrier": 7.1,
@@ -1497,13 +1638,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.08045024079297079,
-    "scoreboard": 0.726808088955539,
-    "not_selected": 0.25999046021395356,
-    "lsu": 0.04203887136519292,
-    "done": 0.2643322675886166
+    "issued": 0.050385286495739506,
+    "scoreboard": 0.8194038162162248,
+    "not_selected": 0.11047040314867415,
+    "lsu": 0.03029382091110629,
+    "done": 0.12865050843481937
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 4,
+    "outside": 90.5,
+    "k_loop": 148,
+    "copy": 0.0,
+    "copy_straight_skipped": 25.5,
+    "per_warp_per_phase": 238.5,
+    "k_body_lds_per_step": 4.25
+   }
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1542,8 +1693,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 320.02276351650823,
-   "sim_error": -0.14009360620026812,
+   "simulated_us": 300.4815680399336,
+   "sim_error": -0.19260111769149402,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "copy": 1,
@@ -1582,8 +1733,8 @@
    "seconds": 22.5,
    "sim_wait_families_warp_s": {
     "copy": 0.00017494957511680266,
-    "barrier": 0.0018138313409702864,
-    "compute": 0.0789819967689172
+    "barrier": 0.0018138313409703619,
+    "compute": 0.07397945072707421
    },
    "ncu_stall_families": {
     "barrier": 0.66,
@@ -1593,13 +1744,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.02571876075694403,
-    "scoreboard": 0.03507885501388003,
-    "not_selected": 0.007577376658205032,
-    "lsu": 0.003912717846640367,
-    "done": 0.006694286493314198
+    "issued": 0.022146208962275225,
+    "scoreboard": 0.03597436004818796,
+    "not_selected": 0.004289670403831714,
+    "lsu": 0.005096670849883997,
+    "done": 0.006472540462827491
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 4,
+    "outside": 99.0,
+    "k_loop": 684,
+    "copy": 54.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 837.0,
+    "k_body_lds_per_step": 9.0
+   }
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1638,8 +1799,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 469.5569525721595,
-   "sim_error": -0.006657543468725713,
+   "simulated_us": 449.0490470228942,
+   "sim_error": -0.05004178720109376,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "copy": 1,
@@ -1677,9 +1838,9 @@
    "kernel_sha256": "9ff2fefbb2414011db8e7c890bffc1ddaef9519c351d81d0a8ecc6b5426d91ce",
    "seconds": 21.7,
    "sim_wait_families_warp_s": {
-    "copy": 0.030925369854544922,
-    "barrier": 0.003437039826962856,
-    "compute": 0.08548001292410014
+    "copy": 0.030928055733945657,
+    "barrier": 0.0034561917949296203,
+    "compute": 0.08018631340878662
    },
    "ncu_stall_families": {
     "barrier": 0.84,
@@ -1689,13 +1850,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.02524703787295159,
-    "scoreboard": 0.04459251448203558,
-    "not_selected": 0.005618722985738093,
-    "lsu": 0.0046759287255494185,
-    "done": 0.005345808857790484
+    "issued": 0.022520974492030145,
+    "scoreboard": 0.044825273921026504,
+    "not_selected": 0.003769484493783767,
+    "lsu": 0.00541522256807473,
+    "done": 0.0036553579338525675
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 16,
+    "outside": 70.0,
+    "k_loop": 1456,
+    "copy": 176.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 1702.0,
+    "k_body_lds_per_step": 5.0
+   }
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1734,15 +1905,15 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 1192.755587242783,
-   "sim_error": 0.1435026414694125,
+   "simulated_us": 1166.248941486069,
+   "sim_error": 0.1180905455098682,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "copy": 1,
-    "compute": 62,
-    "barrier": 1
+    "compute": 42,
+    "barrier": 21
    },
-   "sim_dram_bytes": 271499264,
+   "sim_dram_bytes": 271503360,
    "sim_waves": 11,
    "ncu": {
     "available": true,
@@ -1774,9 +1945,9 @@
    "kernel_sha256": "06cde50a4756785215e893d8996d43bf6e82b0afde057c9db6aa17b09a23dcae",
    "seconds": 23.8,
    "sim_wait_families_warp_s": {
-    "copy": 0.020436794816845436,
-    "barrier": 0.12216097840776295,
-    "compute": 0.715410403873502
+    "copy": 0.042369499978575684,
+    "barrier": 0.2750996383941891,
+    "compute": 0.5330446138927458
    },
    "ncu_stall_families": {
     "barrier": 3.48,
@@ -1786,13 +1957,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.07240688963441426,
-    "scoreboard": 0.47398030413267545,
-    "not_selected": 0.05685718325490167,
-    "lsu": 0.04627405694456435,
-    "done": 0.06589196991305601
+    "issued": 0.057266247371673476,
+    "scoreboard": 0.37382917517342157,
+    "not_selected": 0.03962161290953626,
+    "lsu": 0.022192105707199993,
+    "done": 0.04013547273239596
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 16,
+    "outside": 99.0,
+    "k_loop": 384,
+    "copy": 58.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 541.0,
+    "k_body_lds_per_step": 2.25
+   }
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1831,8 +2012,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 451.19633278724075,
-   "sim_error": 0.012122991859972343,
+   "simulated_us": 393.1931017694736,
+   "sim_error": -0.11798977601779836,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "compute": 256
@@ -1869,9 +2050,9 @@
    "kernel_sha256": "929fc3b06a637a0e2305c05673a4f785d803df7a7675319945a4bac5fa6e6ca5",
    "seconds": 23.4,
    "sim_wait_families_warp_s": {
-    "copy": 0.0007186531633231357,
-    "barrier": 0.007156164706437048,
-    "compute": 0.4165347463631568
+    "copy": 0.0007203495961721534,
+    "barrier": 0.007168039736380225,
+    "compute": 0.3607656219724327
    },
    "ncu_stall_families": {
     "barrier": 2.97,
@@ -1881,13 +2062,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.04699581900551836,
-    "scoreboard": 0.1995531840003677,
-    "not_selected": 0.07635894628373112,
-    "lsu": 0.01699001853552186,
-    "done": 0.07663677854076838
+    "issued": 0.03365779708386764,
+    "scoreboard": 0.2378772152506141,
+    "not_selected": 0.03606774542260171,
+    "lsu": 0.013304675273242049,
+    "done": 0.039858188941610063
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 4,
+    "outside": 98.5,
+    "k_loop": 220,
+    "copy": 0.0,
+    "copy_straight_skipped": 18.5,
+    "per_warp_per_phase": 318.5,
+    "k_body_lds_per_step": 4.5
+   }
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1926,8 +2117,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 970.6784518206306,
-   "sim_error": 0.12276350517802515,
+   "simulated_us": 844.0481554756282,
+   "sim_error": -0.02370711557118177,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "compute": 128
@@ -1964,9 +2155,9 @@
    "kernel_sha256": "cb612ec47b645b87383d6031d394d04ca5f5029e2797fa786afe0533c05c66f2",
    "seconds": 23.7,
    "sim_wait_families_warp_s": {
-    "copy": 0.11031666095862608,
-    "barrier": 0.013589529917536945,
-    "compute": 0.7972640000008135
+    "copy": 0.11804887855134971,
+    "barrier": 0.016180048841506065,
+    "compute": 0.6686647172848533
    },
    "ncu_stall_families": {
     "barrier": 7.71,
@@ -1976,13 +2167,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.06139854147240674,
-    "scoreboard": 0.5362571805654109,
-    "not_selected": 0.08009177407392808,
-    "lsu": 0.03777939922382332,
-    "done": 0.08173710466477191
+    "issued": 0.046365259650069456,
+    "scoreboard": 0.5017552451850082,
+    "not_selected": 0.04464084806070939,
+    "lsu": 0.028115076571017663,
+    "done": 0.047788287816833204
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 8,
+    "outside": 66.5,
+    "k_loop": 320,
+    "copy": 52.0,
+    "copy_straight_skipped": 15.5,
+    "per_warp_per_phase": 438.5,
+    "k_body_lds_per_step": 4.25
+   }
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2021,8 +2222,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 203.43669211432604,
-   "sim_error": 0.010714885305673771,
+   "simulated_us": 184.6915386409809,
+   "sim_error": -0.08241485174393437,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "copy": 1,
@@ -2061,9 +2262,9 @@
    "kernel_sha256": "339488053590971597c06d3549eb1ee9cb66d947d8d83d26c3a7e21a46bd4353",
    "seconds": 22.5,
    "sim_wait_families_warp_s": {
-    "copy": 0.0012053370563324252,
-    "barrier": 0.002146549833053334,
-    "compute": 0.10584100807748716
+    "copy": 0.0012121475976911104,
+    "barrier": 0.002194223622564148,
+    "compute": 0.09405664943463211
    },
    "ncu_stall_families": {
     "barrier": 0.57,
@@ -2073,13 +2274,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.02406852440623677,
-    "scoreboard": 0.020009423473485145,
-    "not_selected": 0.028712574174980774,
-    "lsu": 0.005450319896317505,
-    "done": 0.027600166126531288
+    "issued": 0.020603493583619525,
+    "scoreboard": 0.021436470970854066,
+    "not_selected": 0.022119597545904285,
+    "lsu": 0.006898763974684156,
+    "done": 0.022998323359540017
    },
-   "sim_dominant_warp_stall": "not_selected"
+   "sim_dominant_warp_stall": "not_selected",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 4,
+    "outside": 117.0,
+    "k_loop": 636,
+    "copy": 38.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 791.0,
+    "k_body_lds_per_step": 6.0
+   }
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2118,8 +2329,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 248.4031800295739,
-   "sim_error": 0.03916992984259493,
+   "simulated_us": 235.5939357798504,
+   "sim_error": -0.014416265981214815,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "compute": 122,
@@ -2157,9 +2368,9 @@
    "kernel_sha256": "3d2079879c467dbd83137ad8bec45abf9f931356f11e6aa8c1ab897d292c8389",
    "seconds": 23.2,
    "sim_wait_families_warp_s": {
-    "copy": 0.04121864915258994,
-    "barrier": 0.005692647387269049,
-    "compute": 0.18738337964479015
+    "copy": 0.041075810723676505,
+    "barrier": 0.005734709865882218,
+    "compute": 0.17573428109869552
    },
    "ncu_stall_families": {
     "barrier": 3.21,
@@ -2169,13 +2380,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.028735006865770883,
-    "scoreboard": 0.04047558288073283,
-    "not_selected": 0.0550706884870125,
-    "lsu": 0.005803717468899272,
-    "done": 0.0572983839422481
+    "issued": 0.022532779224362556,
+    "scoreboard": 0.09224404977191973,
+    "not_selected": 0.025313992614385553,
+    "lsu": 0.005909375771249457,
+    "done": 0.02973408371656402
    },
-   "sim_dominant_warp_stall": "not_selected"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 2,
+    "outside": 98.0,
+    "k_loop": 338,
+    "copy": 0.0,
+    "copy_straight_skipped": 18.0,
+    "per_warp_per_phase": 436.0,
+    "k_body_lds_per_step": 9.0
+   }
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2214,8 +2435,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 941.4588378568749,
-   "sim_error": 0.3470348739996949,
+   "simulated_us": 691.5564496117703,
+   "sim_error": -0.010524286874785016,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "compute": 32
@@ -2252,9 +2473,9 @@
    "kernel_sha256": "fd1b1af2f88cc819c1b553022e1bfad11531dee8263336d1b736b1649f2508ce",
    "seconds": 25.0,
    "sim_wait_families_warp_s": {
-    "copy": 0.008840948852791523,
-    "barrier": 0.0069683402578453076,
-    "compute": 1.062697392564763
+    "copy": 0.009415160301100324,
+    "barrier": 0.006962370268896372,
+    "compute": 0.7742870048495273
    },
    "ncu_stall_families": {
     "barrier": 4.54,
@@ -2264,13 +2485,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.0858601946974134,
-    "scoreboard": 0.6413027667639043,
-    "not_selected": 0.14490186551299172,
-    "lsu": 0.04733160114778472,
-    "done": 0.14330096445087423
+    "issued": 0.05501318692282373,
+    "scoreboard": 0.5670736932809638,
+    "not_selected": 0.06520242619124511,
+    "lsu": 0.02310171659947588,
+    "done": 0.06389598185307979
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 8,
+    "outside": 96.5,
+    "k_loop": 168,
+    "copy": 0.0,
+    "copy_straight_skipped": 15.5,
+    "per_warp_per_phase": 264.5,
+    "k_body_lds_per_step": 2.25
+   }
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2309,8 +2540,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 258.3322771258291,
-   "sim_error": 0.03564896217859648,
+   "simulated_us": 234.41952970745427,
+   "sim_error": -0.06021676672765286,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "compute": 120,
@@ -2348,9 +2579,9 @@
    "kernel_sha256": "4d228bc0066de20e5e542c12de902c0dcd4033cf34cda7e0b08ab598957bb610",
    "seconds": 22.2,
    "sim_wait_families_warp_s": {
-    "copy": 0.023671521779899795,
-    "barrier": 0.00243376273369223,
-    "compute": 0.08068016801291128
+    "copy": 0.023764916863717844,
+    "barrier": 0.0025769301096641222,
+    "compute": 0.07064065266555677
    },
    "ncu_stall_families": {
     "barrier": 0.55,
@@ -2360,13 +2591,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "copy",
    "sim_warp_histogram_s": {
-    "issued": 0.022221723598017384,
-    "scoreboard": 0.011270905140542907,
-    "not_selected": 0.022506861528954574,
-    "lsu": 0.003241842910500904,
-    "done": 0.021438834834893665
+    "issued": 0.01821576873781134,
+    "scoreboard": 0.012825892075657451,
+    "not_selected": 0.017204752607227737,
+    "lsu": 0.004731033748697891,
+    "done": 0.01766320549618523
    },
-   "sim_dominant_warp_stall": "not_selected"
+   "sim_dominant_warp_stall": "not_selected",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 2,
+    "outside": 103.0,
+    "k_loop": 602,
+    "copy": 0.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 705.0,
+    "k_body_lds_per_step": 10.0
+   }
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2405,8 +2646,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 773.7869298347224,
-   "sim_error": 0.1729162571466374,
+   "simulated_us": 708.593118897727,
+   "sim_error": 0.07409463356392942,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "compute": 32
@@ -2443,9 +2684,9 @@
    "kernel_sha256": "f2f7b10945169f732f469482bbe46bef93a2d554b880c309d9b51b4ddca8d4b8",
    "seconds": 22.5,
    "sim_wait_families_warp_s": {
-    "copy": 0.07726162383679351,
-    "barrier": 0.006216354212542607,
-    "compute": 0.7088752439423535
+    "copy": 0.07730842113537348,
+    "barrier": 0.006175721933789959,
+    "compute": 0.6418620484659835
    },
    "ncu_stall_families": {
     "barrier": 3.53,
@@ -2455,13 +2696,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.04772892145489918,
-    "scoreboard": 0.5134555355032755,
-    "not_selected": 0.05430151205371646,
-    "lsu": 0.035005392952388345,
-    "done": 0.05838388197631735
+    "issued": 0.03834955797581316,
+    "scoreboard": 0.5093925784947647,
+    "not_selected": 0.03016921603454871,
+    "lsu": 0.028994310309129856,
+    "done": 0.03495638565022354
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 8,
+    "outside": 60.0,
+    "k_loop": 576,
+    "copy": 100.0,
+    "copy_straight_skipped": 17.0,
+    "per_warp_per_phase": 736.0,
+    "k_body_lds_per_step": 8.25
+   }
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2500,8 +2751,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 500.1529989287827,
-   "sim_error": 0.20721257561786222,
+   "simulated_us": 412.0181480140606,
+   "sim_error": -0.0055173302356225085,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "compute": 16
@@ -2538,9 +2789,9 @@
    "kernel_sha256": "adde6dcc5cc644df9f4f04d0f3826d03f2fe30ba5186471f174c393384cd027b",
    "seconds": 22.7,
    "sim_wait_families_warp_s": {
-    "copy": 0.009756292428044214,
-    "barrier": 0.0035914358653079937,
-    "compute": 0.5316712148617613
+    "copy": 0.010085845801179707,
+    "barrier": 0.0035893179741777006,
+    "compute": 0.4338034507274693
    },
    "ncu_stall_families": {
     "barrier": 1.38,
@@ -2550,13 +2801,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.045097770893486364,
-    "scoreboard": 0.33222640112978197,
-    "not_selected": 0.0627605815258022,
-    "lsu": 0.022241420022236082,
-    "done": 0.06934504129191438
+    "issued": 0.036839596501242515,
+    "scoreboard": 0.3029647532141786,
+    "not_selected": 0.0411243097565985,
+    "lsu": 0.012403825230363793,
+    "done": 0.04047096602433069
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 16,
+    "outside": 78.0,
+    "k_loop": 528,
+    "copy": 90.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 696.0,
+    "k_body_lds_per_step": 2.5
+   }
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2595,12 +2856,12 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 549.0933919465501,
-   "sim_error": 0.4637182033890379,
+   "simulated_us": 530.7339412195769,
+   "sim_error": 0.414777417308861,
    "sim_critical": "compute",
    "sim_critical_counts": {
-    "copy": 1,
-    "compute": 31
+    "copy": 2,
+    "compute": 30
    },
    "sim_dram_bytes": 12451840,
    "sim_waves": 6,
@@ -2634,9 +2895,9 @@
    "kernel_sha256": "864c177cbb682e1637190081d052a6400aff879d5bf60e86511666c4ad430f2b",
    "seconds": 22.5,
    "sim_wait_families_warp_s": {
-    "copy": 0.06533595243787439,
-    "barrier": 0.002401326702890235,
-    "compute": 0.11677818416812032
+    "copy": 0.06536356128550834,
+    "barrier": 0.00240832205558029,
+    "compute": 0.1105771114699571
    },
    "ncu_stall_families": {
     "barrier": 0.39,
@@ -2646,13 +2907,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.03136313489590504,
-    "scoreboard": 0.04276939128506744,
-    "not_selected": 0.013200389209727506,
-    "lsu": 0.014053497737827755,
-    "done": 0.01539177103955724
+    "issued": 0.026726058037256313,
+    "scoreboard": 0.04627893066331795,
+    "not_selected": 0.010292527955156585,
+    "lsu": 0.014372419612186499,
+    "done": 0.01290717520223485
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 8,
+    "outside": 166.0,
+    "k_loop": 728,
+    "copy": 132.0,
+    "copy_straight_skipped": 47.0,
+    "per_warp_per_phase": 1026.0,
+    "k_body_lds_per_step": 5.0
+   }
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2691,13 +2962,12 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 383.1948597855524,
-   "sim_error": 0.04987194181119703,
+   "simulated_us": 346.8196442874513,
+   "sim_error": -0.04978836717667434,
    "sim_critical": "compute",
    "sim_critical_counts": {
-    "copy": 1,
-    "compute": 61,
-    "barrier": 1
+    "copy": 2,
+    "compute": 61
    },
    "sim_dram_bytes": 12321792,
    "sim_waves": 6,
@@ -2731,9 +3001,9 @@
    "kernel_sha256": "04e82d19b4c5b03b44fcbba37532ce9f59c0c0290e79ddfadabdb7b51409a052",
    "seconds": 22.3,
    "sim_wait_families_warp_s": {
-    "copy": 0.002071503873364466,
-    "barrier": 0.003615010860326122,
-    "compute": 0.12203232310184925
+    "copy": 0.0021942245831512728,
+    "barrier": 0.0036466089751115566,
+    "compute": 0.1096700743136284
    },
    "ncu_stall_families": {
     "barrier": 0.7,
@@ -2743,13 +3013,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.035481667053166056,
-    "scoreboard": 0.04277540569237189,
-    "not_selected": 0.015343770037026954,
-    "lsu": 0.012619834253571912,
-    "done": 0.015811646065729594
+    "issued": 0.026558718323665576,
+    "scoreboard": 0.04614449129599406,
+    "not_selected": 0.009683934215046413,
+    "lsu": 0.014452198315593488,
+    "done": 0.012830732163162923
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 4,
+    "outside": 78.25,
+    "k_loop": 364,
+    "copy": 76.0,
+    "copy_straight_skipped": 24.8,
+    "per_warp_per_phase": 518.2,
+    "k_body_lds_per_step": 5.0
+   }
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2788,8 +3068,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 219.4244225075369,
-   "sim_error": 0.008680965484043401,
+   "simulated_us": 211.79114544879423,
+   "sim_error": -0.026408753269370533,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "compute": 31,
@@ -2827,9 +3107,9 @@
    "kernel_sha256": "3ef044ac486b0a1e5834d4087b94ba551d0a3a32514fa1c3c8ac387ffc903c68",
    "seconds": 21.8,
    "sim_wait_families_warp_s": {
-    "copy": 0.016095894291244268,
-    "barrier": 0.0012699948346865922,
-    "compute": 0.0723115799676877
+    "copy": 0.016247511157782845,
+    "barrier": 0.0012261069063631746,
+    "compute": 0.068116678513728
    },
    "ncu_stall_families": {
     "barrier": 0.4,
@@ -2839,13 +3119,23 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.01918777753479288,
-    "scoreboard": 0.011633747192682623,
-    "not_selected": 0.019066405927498965,
-    "lsu": 0.00388441853971024,
-    "done": 0.018539230773005885
+    "issued": 0.017553386091193737,
+    "scoreboard": 0.011878776399711832,
+    "not_selected": 0.01696702691239253,
+    "lsu": 0.004683439853500852,
+    "done": 0.017034049256938216
    },
-   "sim_dominant_warp_stall": "not_selected"
+   "sim_dominant_warp_stall": "not_selected",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 8,
+    "outside": 61.0,
+    "k_loop": 2416,
+    "copy": 176.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 2653.0,
+    "k_body_lds_per_step": 10.0
+   }
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2884,8 +3174,8 @@
     "fma_contraction_default": true
    },
    "error": null,
-   "simulated_us": 952.8998221904691,
-   "sim_error": 0.3819435420202413,
+   "simulated_us": 729.5957768297818,
+   "sim_error": 0.0580967155156249,
    "sim_critical": "compute",
    "sim_critical_counts": {
     "compute": 16
@@ -2922,9 +3212,9 @@
    "kernel_sha256": "16c46b8bfe3f93fe71e5723a6179c25ecf2efec7b3f04722d345cbd0e7744396",
    "seconds": 22.4,
    "sim_wait_families_warp_s": {
-    "copy": 0.11834900133128848,
-    "barrier": 0.00942680055607553,
-    "compute": 1.6323505008137713
+    "copy": 0.11837968886719605,
+    "barrier": 0.009420718650962645,
+    "compute": 1.2182893828689891
    },
    "ncu_stall_families": {
     "barrier": 4.14,
@@ -2934,16 +3224,26 @@
    "sim_dominant_family": "compute",
    "ncu_dominant_family": "compute",
    "sim_warp_histogram_s": {
-    "issued": 0.0712815851797557,
-    "scoreboard": 1.1590949346125685,
-    "not_selected": 0.17695603958984588,
-    "lsu": 0.05036533918258504,
-    "done": 0.17465260224933293
+    "issued": 0.05293893008399714,
+    "scoreboard": 0.9340365971233247,
+    "not_selected": 0.10599451611341607,
+    "lsu": 0.02176338253034479,
+    "done": 0.10355595702286757
    },
-   "sim_dominant_warp_stall": "short_scoreboard"
+   "sim_dominant_warp_stall": "short_scoreboard",
+   "sass_counts": {
+    "unroll": 4,
+    "k_trips": 16,
+    "outside": 72.0,
+    "k_loop": 384,
+    "copy": 52.0,
+    "copy_straight_skipped": 0.0,
+    "per_warp_per_phase": 508.0,
+    "k_body_lds_per_step": 2.25
+   }
   }
  ],
- "resimulated": "2026-10-15T00:43:23Z",
+ "resimulated": "2026-10-15T02:12:13Z",
  "previous_summary_warp_model_without_queue": {
   "designs": 30,
   "ran": 30,
@@ -2991,6 +3291,44 @@
   "within_10": 12,
   "within_20": 23,
   "signed_median_error": 0.04616767081816753,
+  "critical_agreement": "25/30",
+  "agreement_overall": 0.8333333333333334,
+  "agreement_by_ncu_family": {
+   "compute": {
+    "designs": 25,
+    "agree": 25,
+    "fraction": 1.0
+   },
+   "copy": {
+    "designs": 3,
+    "agree": 0,
+    "fraction": 0.0
+   },
+   "barrier": {
+    "designs": 2,
+    "agree": 0,
+    "fraction": 0.0
+   }
+  },
+  "agreement_non_compute": 0.0,
+  "non_compute_designs": 5,
+  "gate": {
+   "median_abs_error": 0.1,
+   "worst_abs_error": 0.2,
+   "agreement_overall_min": 0.8,
+   "agreement_non_compute_min": 0.5
+  },
+  "gate_passed": false
+ },
+ "previous_summary_occupancy_curve_estimated_counts": {
+  "designs": 30,
+  "ran": 30,
+  "reference_agrees": 30,
+  "median_abs_error": 0.12276350517802515,
+  "worst_abs_error": 0.6749950345303997,
+  "within_10": 12,
+  "within_20": 24,
+  "signed_median_error": 0.04987194181119703,
   "critical_agreement": "25/30",
   "agreement_overall": 0.8333333333333334,
   "agreement_by_ncu_family": {

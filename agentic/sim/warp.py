@@ -71,13 +71,12 @@ class WarpModel:
         keys = sorted(self.penalty)
         return self.penalty[max([x for x in keys if x <= stride_words] or [keys[0]])]
 
-    @staticmethod
-    def counts(rm: int, rn: int) -> tuple[int, int, int]:
-        return rm * rn, rn, int(math.ceil(rm / 4))
-
     @lru_cache(maxsize=8192)
-    def phase(self, warps_per_block: int, blocks: int, k_steps: int, ffma: int, lds32: int, lds128: int, other: int = 0, alu: int = 1, stride_words: int = 1):
-        """Cycles for one phase with `blocks` resident blocks of `warps_per_block` warps starting together, and the wait histogram."""
+    def phase(self, warps_per_block: int, blocks: int, k_steps: int, ffma: int, lds32: int, lds128: int, other: int = 0, alu: int = 1, stride_words: int = 1,
+              a_wavefronts: tuple = (), b_wavefronts: tuple = ()):
+        """Cycles for one phase with `blocks` resident blocks of `warps_per_block` warps starting together, and the wait histogram.
+        a_wavefronts: one entry per A load (128-bit, one per RM row per unrolled body of four steps); b_wavefronts: per B load per step
+        (32-bit). When absent, the width table applies (lds128 loads per step at 4 wavefronts, lds32 at 1)."""
         S = self.schedulers
         # the compiler's schedule (SASS of the generated kernels, #pragma unroll 4): per body of U k-steps, a burst of the A loads
         # (ld.shared.128, one per 4 steps per RM row) plus step 0's B loads, then the FFMAs of each step with the next step's B
@@ -86,19 +85,26 @@ class WarpModel:
         prog = []                                     # (class, dep_step): the k-step whose loads this FFMA needs, else -1
         for _ in range(other):
             prog.append((ALU, -1))
+        a_wf = list(a_wavefronts) if a_wavefronts else [self.wavefronts[LDS128]] * (lds128 * U)
+        b_wf = list(b_wavefronts) if b_wavefronts else [self.wavefronts[LDS32]] * lds32
+        wfs = []                                      # wavefronts per program entry (loads only)
         for k0 in range(0, k_steps, U):
             steps = list(range(k0, min(k0 + U, k_steps)))
-            prog += [(LDS128, steps[0])] * (lds128 * len(steps)) + [(LDS32, steps[0])] * lds32
+            prog += [(LDS128, steps[0])] * len(a_wf) + [(LDS32, steps[0])] * len(b_wf)
+            wfs += list(a_wf) + list(b_wf)
             for idx, k in enumerate(steps):
                 nxt = steps[idx + 1] if idx + 1 < len(steps) else None
-                pending = [(LDS32, nxt)] * lds32 if nxt is not None else []
+                pending = [(LDS32, nxt)] * len(b_wf) if nxt is not None else []
+                pending_wf = list(b_wf) if nxt is not None else []
                 gap = max(1, ffma // max(1, len(pending))) if pending else ffma + 1
                 for f in range(ffma):
                     prog.append((FFMA, k))
                     if pending and (f + 1) % gap == 0:
-                        prog.append(pending.pop(0))
-                prog += pending + [(ALU, -1)] * alu
+                        prog.append(pending.pop(0)); wfs.append(pending_wf.pop(0))
+                prog += pending; wfs += pending_wf; prog += [(ALU, -1)] * alu
         n = len(prog)
+        load_wf = iter(wfs)                           # wavefronts in load program order (identical for every warp)
+        per_warp_wf = [list(wfs) for _ in range(warps_per_block * blocks)]
         W = warps_per_block * blocks
         pc = [0] * W; sched = [w % S for w in range(W)]
         step_loads_ready = [[0.0] * k_steps for _ in range(W)]           # per warp per step: when the last load the step depends on returns
@@ -135,7 +141,7 @@ class WarpModel:
                     # issue
                     if cls in (LDS128, LDS32):
                         mio_free[s] = t + self.mio_issue
-                        wf = (self.wavefronts_broadcast128 if cls == LDS128 else self.wavefronts[LDS32]) * deg
+                        wf = (per_warp_wf[w].pop(0) if per_warp_wf[w] else self.wavefronts[cls]) * deg
                         start = max(float(t), lsu_free); lsu_free = start + max(floor, wf / self.lsu_drain_wf)
                         done_at = lsu_free + self.lat[cls]
                         if self.mio_queue_depth:
@@ -160,6 +166,10 @@ class WarpModel:
 
     def phase_cycles(self, warps_per_block: int, blocks: int, k_steps: int, ffma: int, lds32: int, lds128: int, other: int = 0, stride_words: int = 1) -> float:
         return self.phase(warps_per_block, blocks, k_steps, ffma, lds32, lds128, other, 1, stride_words)[0]
+
+    @staticmethod
+    def counts(rm: int, rn: int) -> tuple[int, int, int]:
+        return rm * rn, rn, int(math.ceil(rm / 4))
 
     def wait_families(self, warps_per_block: int, blocks: int, k_steps: int, ffma: int, lds32: int, lds128: int, other: int = 0, stride_words: int = 1) -> dict:
         return self.phase(warps_per_block, blocks, k_steps, ffma, lds32, lds128, other, 1, stride_words)[1]

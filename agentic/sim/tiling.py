@@ -8,14 +8,14 @@ from .events import Program
 from .run import Memory, SimConfig, Simulator
 
 
-def design_programs(d: TilingDesign, w: Workload, threads: int = 256) -> tuple[list[Program], dict]:
+def design_programs(d: TilingDesign, w: Workload, threads: int = 256, instr_per_phase: float | None = None) -> tuple[list[Program], dict]:
     KT = ceil_div(w.k, d.tk)
     gm = ceil_div(w.m, d.tm) if d.grid_rounding == "ceil" else w.m // d.tm
     gn = ceil_div(w.n, d.tn) if d.grid_rounding == "ceil" else w.n // d.tn
     tile_bytes = 4 * (d.tm * d.tk + d.tk * d.tn)
     warps = threads // 32
     flops_per_phase = 2.0 * d.tm * d.tn * d.tk
-    base = warp_programs(d, warps, KT, tile_bytes // warps, flops_per_phase / warps, store_bytes=4 * d.tm * d.tn // warps)   # each warp copies its share
+    base = warp_programs(d, warps, KT, tile_bytes // warps, flops_per_phase / warps, store_bytes=4 * d.tm * d.tn // warps, instr_per_phase=instr_per_phase)   # each warp copies its share
     progs = []
     for i in range(gm):
         for j in range(gn):
@@ -36,8 +36,8 @@ def design_programs(d: TilingDesign, w: Workload, threads: int = 256) -> tuple[l
 
 
 def simulate_design(d: TilingDesign, w: Workload, cfg: SimConfig, memory: Memory | None = None, smem=None,
-                    record_trace: bool = False, amplify: tuple | None = None, issue=None) -> dict:
-    progs, meta = design_programs(d, w)
+                    record_trace: bool = False, amplify: tuple | None = None, issue=None, instr_per_phase: float | None = None) -> dict:
+    progs, meta = design_programs(d, w, instr_per_phase=instr_per_phase)
     sim = Simulator(cfg, memory, smem, amplify, issue)
     if memory is not None and hasattr(memory, "bind"):
         memory.bind(d, w, meta)

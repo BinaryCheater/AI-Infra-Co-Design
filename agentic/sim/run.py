@@ -240,7 +240,7 @@ class Simulator:
                 # with a scoreboard and the shared LSU; every resident block's warps take part, so no separate FMA or smem pipe
                 blocks_resident = max(1, len(self.sm_blocks[b.sm]))
                 wpb = len(b.program.warps)
-                cycles, hist = self.issue.phase(wpb, blocks_resident, e.k_steps, e.ffma_per_step, e.lds32_per_step, e.lds128_per_step, e.other_per_phase, 1, e.smem_stride)
+                cycles, hist = self.issue.phase(wpb, blocks_resident, e.k_steps, e.ffma_per_step, e.lds32_per_step, e.lds128_per_step, e.other_per_phase, 1, e.smem_stride, e.a_wavefronts, e.b_wavefronts)
                 service = cycles / self.cfg.clock_hz
                 self.compute[b.sm].busy += service / blocks_resident
                 tot = sum(hist.values()) or 1
