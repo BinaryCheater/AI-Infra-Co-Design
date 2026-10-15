@@ -11,3 +11,4 @@ __pycache__/
 calibration/suite/build/
 runs/*.db
 runs/*.db-journal
+runs/microtrace/

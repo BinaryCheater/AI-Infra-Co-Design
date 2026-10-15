@@ -39,7 +39,7 @@ structural:
                                        #     dispatch per sub-partition, 1 wavefront per cycle drain, 2 cycles per instruction floor),
                                        #     FMA pipe per scheduler (B2). No table and no tuned number.
   issue_model_justified_by: [B17, B27, B30, B21]
-  copy_path: shared                    # M4/M7: "shared" = cp.async chunks go through the sub-partition slot and the LSU entry with the
+  copy_path: separate                   # M4/M7: "shared" = cp.async chunks go through the sub-partition slot and the LSU entry with the
                                        #     shared loads (B30_plus round 4 §1, as specified); "separate" = they do not (what B30.4 measured:
                                        #     6.4 cycles per chunk after a 32-load burst, 6.8 alone). Thirty designs: shared median 13.0 %,
                                        #     separate 8.2 % (notes/sim_gaps.md #23-#24).
