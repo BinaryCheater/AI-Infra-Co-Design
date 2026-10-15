@@ -9,7 +9,7 @@ kinds:
              smem_bytes_per_s_per_sm, bank_conflict_penalty, barrier_s, async_copy_latency_s, async_copy_bytes_per_s,
              launch_s, clock_hz_sustained, max_blocks_per_sm_measured]
   structural: [sms, smem_bytes_per_sm, banks, bank_bytes, ports, l2_region_bytes, l2_policy, copy_throughput_window_chunks, copy_chunk_bytes,
-               scheduler, issue_cycles, issue_model, copy_path]
+               scheduler, issue_cycles, issue_model, copy_path, input]
   fixed: [line_bytes, warp_size, bytes_per_element]
 
 structural:
@@ -43,6 +43,9 @@ structural:
                                        #     shared loads (B30_plus round 4 §1, as specified); "separate" = they do not (what B30.4 measured:
                                        #     6.4 cycles per chunk after a 32-load burst, 6.8 alone). Thirty designs: shared median 13.0 %,
                                        #     separate 8.2 % (notes/sim_gaps.md #23-#24).
+  input: counts                        # M7: "counts" = each compute phase built from per-step instruction counts (the G4 warp model);
+                                       #     "stream" = the kernel's SASS instruction stream (sim/sass.py, notes/instruction_stream.md)
+                                       #     through the same scheduler, scoreboard, LSU queue and pipes. Both are kept; check with validate --input
   issue_overhead_per_chunk: 40         # M7 (G4): instructions per cp.async chunk (16 B per thread) issued per phase outside the k-loop
   issue_overhead_per_phase: 180        #     (address, guard, wait, barrier, loop control); from the SASS of the six spark-001 kernels:
                                        #     per-phase non-loop instructions 663/391/301/467/280/354 at 12/6/5/6/3/3 chunks per thread

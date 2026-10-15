@@ -99,6 +99,125 @@ class WarpModel:
         self.reg_granularity = int(g) if isinstance(g, (int, float)) else int((g or {}).get("granularity") or 8)
         self.regs_per_sm = int(contract.get("regs_per_sm") or contract.get("registers_per_sm") or 65536)
 
+        # the instruction-level input (notes/instruction_stream.md): "counts" builds each phase from per-step instruction counts;
+        # "stream" runs the kernel's SASS stream (sim/sass.py) through the same schedulers, scoreboard, LSU queue and pipes
+        self.input = str(structural.get("input", "counts"))
+        self._stream = None
+        self._costs = None
+
+    def set_stream(self, block_streams: list, costs) -> None:
+        """The per-warp phase streams of one block (sim/sass.gemm_phase_stream) and the pipe costs (sim/isa.PipeCosts)."""
+        self._stream = block_streams
+        self._costs = costs
+
+    def run_stream(self, block_streams: list, warps_per_block: int, blocks: int, costs, *, mode: str = "phase", a_wavefronts: tuple = (),
+                   b_wavefronts: tuple = (), deg: float = 1.0, copy_rule=None, stage_bytes: int = 0, trace=None) -> tuple[float, dict]:
+        """The stream front end. Each warp issues its instructions in order: an instruction issues when the registers it reads (and
+        the ones it writes) are ready, its sub-partition's pipe is free, and the scheduler picks it (one per sub-partition per cycle,
+        oldest warp first). Pipes per sub-partition: FMA (FFMA, FADD, FMUL, IMAD... at the B21 rate relative to FFMA), ALU (IADD3,
+        LOP3, SHF, ISETP... at their B21 rates), XU (MUFU and the F2F/F2FP converts, one per 8 cycles, B38), tensor (16.1 cycles per
+        HMMA, B31), the shuffle unit (one per 8 cycles, B39); shared and global memory instructions and shuffles dispatch through the
+        B30 queue (one per 4.2 cycles per sub-partition) and drain at the SM's LSU, one wavefront per cycle with the occupancy floor.
+        Latencies by scoreboard class from isa.PipeCosts. mode "phase": barriers, copy waits and copy issue are issue slots only (the
+        event-level simulator does them); mode "kernel": BAR waits for the block, LDGSTS/LDGDEPBAR/DEPBAR keep copy groups whose
+        completion comes from `copy_rule(stage_bytes) -> (latency cycles, chip service cycles)`."""
+        from .isa import FMA as P_FMA, ALU as P_ALU, LSU as P_LSU, TENSOR as P_TEN, XU as P_XU, COPY as P_COPY, BAR as P_BAR, WAIT as P_WAIT, CONST as P_CONST
+        S = self.schedulers; W = warps_per_block * blocks
+        streams = [block_streams[w % warps_per_block] for w in range(W)]
+        n = [len(x) for x in streams]
+        lat = costs.latency
+        pc = [0] * W; ready = [dict() for _ in range(W)]; hold = [0.0] * W; last = [-1] * W
+        fma_free = [0.0] * S; alu_free = [0.0] * S; xu_free = [0.0] * S; ten_free = [0.0] * S; shfl_free = [0.0] * S; mio_free = [0.0] * S; lsu_free = 0.0
+        floor = self.floor(W)
+        hist = {"issued": 0, "scoreboard": 0, "not_selected": 0, "lsu": 0, "tensor": 0, "xu": 0, "hold": 0, "barrier": 0, "copy_wait": 0, "done": 0}
+        bar_arr = [dict() for _ in range(blocks)]; bar_idx = [0] * W
+        grp_open = [0] * W; grp_last = [dict() for _ in range(blocks)]; grp_done = [dict() for _ in range(blocks)]; bw_seen = [set() for _ in range(blocks)]; bw_free = 0.0
+        width_wf = {1: 1.0, 2: 1.0, 4: 1.0, 8: 2.0, 16: 4.0}
+        alive = W; t = 0
+        while alive > 0 and t < 20_000_000:
+            for s in range(S):
+                issued = False
+                for w in range(s, W, S):
+                    if pc[w] >= n[w]:
+                        continue
+                    if last[w] >= t or hold[w] > t + 0.5:
+                        hist["hold"] += 1 if hold[w] > t + 0.5 else 0; continue
+                    ins = streams[w][pc[w]]; b = w // warps_per_block; rw = ready[w]
+                    if any(rw.get(r, 0.0) > t + 0.5 for r in ins.src) or any(rw.get(r, 0.0) > t + 0.5 for r in ins.dst):
+                        hist["scoreboard"] += 1; continue
+                    p = ins.pipe
+                    if mode == "kernel" and p == P_BAR:
+                        k = bar_idx[w]; arr = bar_arr[b].setdefault(k, set()); arr.add(w)
+                        if len(arr) < min(warps_per_block, W - b * warps_per_block):
+                            hist["barrier"] += 1; continue
+                    if mode == "kernel" and p == P_WAIT:
+                        g = grp_open[w] - ins.count - 1
+                        if g >= 0 and grp_done[b].get(g, 0.0) > t + 0.5:
+                            hist["copy_wait"] += 1; continue
+                    if p == P_FMA and fma_free[s] > t + 0.5:
+                        hist["not_selected"] += 1; continue
+                    if p == P_ALU and alu_free[s] > t + 0.5:
+                        hist["not_selected"] += 1; continue
+                    if p == P_XU and xu_free[s] > t + 0.5:
+                        hist["xu"] += 1; continue
+                    if p == P_TEN and ten_free[s] > t + 0.5:
+                        hist["tensor"] += 1; continue
+                    if p == P_LSU and (mio_free[s] > t + 0.5 or (ins.sb_class == "shfl" and shfl_free[s] > t + 0.5)):
+                        hist["lsu"] += 1; continue
+                    if issued:
+                        hist["not_selected"] += 1; continue
+                    # issue
+                    cls = ins.sb_class
+                    if p == P_FMA:
+                        fma_free[s] = max(fma_free[s], float(t)) + ins.cost
+                    elif p == P_ALU:
+                        alu_free[s] = max(alu_free[s], float(t)) + ins.cost
+                    elif p == P_XU:
+                        xu_free[s] = max(xu_free[s], float(t)) + ins.cost
+                    elif p == P_TEN:
+                        ten_free[s] = t + ins.cost
+                    if p == P_LSU:
+                        if cls == "shfl":
+                            shfl_free[s] = max(shfl_free[s], float(t)) + ins.cost; wf = 1.0
+                        elif cls == "ldsm":
+                            wf = 4.0 if ".X4" in ins.opcode else (2.0 if ".X2" in ins.opcode else 1.0)
+                        elif ins.pattern == "template:A" and a_wavefronts:
+                            wf = a_wavefronts[ins.tidx % len(a_wavefronts)] * deg
+                        elif ins.pattern == "template:B" and b_wavefronts:
+                            wf = b_wavefronts[ins.tidx % len(b_wavefronts)] * deg
+                        elif cls == "mbar":
+                            wf = 1.0
+                        else:
+                            wf = width_wf.get(ins.width_bytes or 4, 1.0) * (deg if cls in ("lds", "sts") else 1.0)
+                        mio_free[s] = t + self.mio_issue
+                        start = max(float(t), lsu_free); lsu_free = start + max(floor, wf / self.lsu_drain_wf)
+                        done_at = lsu_free + lat.get(cls, 0.0)
+                    else:
+                        done_at = t + lat.get(cls, lat["alu"])
+                    for r in ins.dst:
+                        rw[r] = done_at
+                    if ins.hold and not (p == P_COPY and mode == "phase"):
+                        hold[w] = t + ins.hold
+                    if mode == "kernel":
+                        if p == P_BAR:
+                            bar_idx[w] += 1
+                        elif p == P_COPY:
+                            g = grp_open[w]; grp_last[b][g] = max(grp_last[b].get(g, 0.0), t + ins.hold)
+                        elif ins.opcode.startswith("LDGDEPBAR"):
+                            g = grp_open[w]; grp_open[w] += 1
+                            lat_c, service = copy_rule(stage_bytes) if copy_rule else (0.0, 0.0)
+                            if g not in bw_seen[b]:
+                                bw_seen[b].add(g); bw_free = max(bw_free, float(t)) + service
+                            grp_done[b][g] = max(grp_last[b].get(g, float(t)) + lat_c, bw_free)
+                    pc[w] += 1; last[w] = t; hist["issued"] += 1; issued = True
+                    if trace: trace(t, w, s, ins)
+                    if pc[w] >= n[w]:
+                        alive -= 1
+            hist["done"] += sum(1 for w in range(W) if pc[w] >= n[w])
+            t += 1
+        hist["copy_dispatch_cycles"] = 0.0; hist["copy_dispatch_by_block"] = ()
+        return float(t), hist
+
     def blocks_per_sm_by_regs(self, regs_per_thread: int, threads_per_block: int) -> int:
         """The residency the register file allows (B40 (c): the measured table where it has a point, else the allocation rule with
         the B19 granularity), before shared memory and the block limit are applied."""
@@ -133,6 +252,9 @@ class WarpModel:
         """Cycles for one phase with `blocks` resident blocks of `warps_per_block` warps starting together, and the wait histogram.
         a_wavefronts: one entry per A load (128-bit, one per RM row per unrolled body of four steps); b_wavefronts: per B load per step
         (32-bit). When absent, the width table applies (lds128 loads per step at 4 wavefronts, lds32 at 1)."""
+        if self.input == "stream" and self._stream is not None:
+            return self.run_stream(self._stream, warps_per_block, blocks, self._costs, mode="phase", a_wavefronts=tuple(a_wavefronts),
+                                   b_wavefronts=tuple(b_wavefronts), deg=self.degree(stride_words))
         S = self.schedulers
         # the compiler's schedule (SASS of the generated kernels, #pragma unroll 4): per body of U k-steps, a burst of the A loads
         # (ld.shared.128, one per 4 steps per RM row) plus step 0's B loads, then the FFMAs of each step with the next step's B

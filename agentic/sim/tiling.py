@@ -36,7 +36,12 @@ def design_programs(d: TilingDesign, w: Workload, threads: int = 256, instr_per_
 
 
 def simulate_design(d: TilingDesign, w: Workload, cfg: SimConfig, memory: Memory | None = None, smem=None,
-                    record_trace: bool = False, amplify: tuple | None = None, issue=None, instr_per_phase: float | None = None) -> dict:
+                    record_trace: bool = False, amplify: tuple | None = None, issue=None, instr_per_phase: float | None = None,
+                    stream: list | None = None, costs=None) -> dict:
+    """stream: the per-warp phase streams from the kernel's SASS (sim/sass.gemm_phase_stream); used when the warp model's input
+    switch is "stream" (the counts path ignores it)."""
+    if issue is not None and stream is not None:
+        issue.set_stream(stream, costs)
     progs, meta = design_programs(d, w, instr_per_phase=instr_per_phase)
     sim = Simulator(cfg, memory, smem, amplify, issue)
     if memory is not None and hasattr(memory, "bind"):

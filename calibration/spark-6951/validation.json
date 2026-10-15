@@ -166,7 +166,8 @@
     "copy_straight_skipped": 18.0,
     "per_warp_per_phase": 440.0,
     "k_body_lds_per_step": 9.0
-   }
+   },
+   "sass_key": "72fb708ccd53"
   },
   {
    "workload": "square_4096",
@@ -272,7 +273,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 1030.0,
     "k_body_lds_per_step": 8.5
-   }
+   },
+   "sass_key": "ac0199174c39"
   },
   {
    "workload": "square_4096",
@@ -378,7 +380,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 1513.0,
     "k_body_lds_per_step": 17.0
-   }
+   },
+   "sass_key": "245306ea5d03"
   },
   {
    "workload": "square_4096",
@@ -484,7 +487,8 @@
     "copy_straight_skipped": 23.2,
     "per_warp_per_phase": 511.8,
     "k_body_lds_per_step": 5.0
-   }
+   },
+   "sass_key": "1598b8cbff4f"
   },
   {
    "workload": "square_4096",
@@ -590,7 +594,8 @@
     "copy_straight_skipped": 24.8,
     "per_warp_per_phase": 708.2,
     "k_body_lds_per_step": 16.25
-   }
+   },
+   "sass_key": "6c0da6669d6a"
   },
   {
    "workload": "square_4096",
@@ -696,7 +701,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 687.0,
     "k_body_lds_per_step": 2.5
-   }
+   },
+   "sass_key": "666108d8f9e1"
   },
   {
    "workload": "square_4096",
@@ -803,7 +809,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 1491.0,
     "k_body_lds_per_step": 6.0
-   }
+   },
+   "sass_key": "e3ef42d4788b"
   },
   {
    "workload": "square_4096",
@@ -910,7 +917,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 611.0,
     "k_body_lds_per_step": 4.5
-   }
+   },
+   "sass_key": "c5dfbcc1856e"
   },
   {
    "workload": "square_4096",
@@ -1017,7 +1025,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 1583.0,
     "k_body_lds_per_step": 9.0
-   }
+   },
+   "sass_key": "05deabb8469b"
   },
   {
    "workload": "square_4096",
@@ -1124,7 +1133,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 1387.0,
     "k_body_lds_per_step": 10.0
-   }
+   },
+   "sass_key": "bd88f7641f83"
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1230,7 +1240,8 @@
     "copy_straight_skipped": 15.5,
     "per_warp_per_phase": 254.5,
     "k_body_lds_per_step": 2.25
-   }
+   },
+   "sass_key": "7e5fc08835e0"
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1337,7 +1348,8 @@
     "copy_straight_skipped": 26.2,
     "per_warp_per_phase": 263.8,
     "k_body_lds_per_step": 4.0
-   }
+   },
+   "sass_key": "c49e3f5b2e64"
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1444,7 +1456,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 349.0,
     "k_body_lds_per_step": 2.5
-   }
+   },
+   "sass_key": "b91b55804c5a"
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1550,7 +1563,8 @@
     "copy_straight_skipped": 55.4,
     "per_warp_per_phase": 91.6,
     "k_body_lds_per_step": 2.25
-   }
+   },
+   "sass_key": "fa089b848770"
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1656,7 +1670,8 @@
     "copy_straight_skipped": 25.5,
     "per_warp_per_phase": 238.5,
     "k_body_lds_per_step": 4.25
-   }
+   },
+   "sass_key": "0b2563b17fa0"
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1762,7 +1777,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 837.0,
     "k_body_lds_per_step": 9.0
-   }
+   },
+   "sass_key": "d1aa7521567c"
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1868,7 +1884,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 1702.0,
     "k_body_lds_per_step": 5.0
-   }
+   },
+   "sass_key": "64623c0cd092"
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -1975,7 +1992,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 541.0,
     "k_body_lds_per_step": 2.25
-   }
+   },
+   "sass_key": "932f1fa6b88b"
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -2081,7 +2099,8 @@
     "copy_straight_skipped": 18.5,
     "per_warp_per_phase": 318.5,
     "k_body_lds_per_step": 4.5
-   }
+   },
+   "sass_key": "55173bcb953e"
   },
   {
    "workload": "skinny_64x4096x4096",
@@ -2187,7 +2206,8 @@
     "copy_straight_skipped": 15.5,
     "per_warp_per_phase": 438.5,
     "k_body_lds_per_step": 4.25
-   }
+   },
+   "sass_key": "3e9e2d5246c9"
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2294,7 +2314,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 791.0,
     "k_body_lds_per_step": 6.0
-   }
+   },
+   "sass_key": "d6d279d668c1"
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2400,7 +2421,8 @@
     "copy_straight_skipped": 18.0,
     "per_warp_per_phase": 436.0,
     "k_body_lds_per_step": 9.0
-   }
+   },
+   "sass_key": "815140e69b37"
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2506,7 +2528,8 @@
     "copy_straight_skipped": 15.5,
     "per_warp_per_phase": 264.5,
     "k_body_lds_per_step": 2.25
-   }
+   },
+   "sass_key": "aeeb26489b5b"
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2612,7 +2635,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 705.0,
     "k_body_lds_per_step": 10.0
-   }
+   },
+   "sass_key": "b4f323670f16"
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2717,7 +2741,8 @@
     "copy_straight_skipped": 17.0,
     "per_warp_per_phase": 736.0,
     "k_body_lds_per_step": 8.25
-   }
+   },
+   "sass_key": "a82190bb9ba0"
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2823,7 +2848,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 696.0,
     "k_body_lds_per_step": 2.5
-   }
+   },
+   "sass_key": "c4063112c027"
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -2929,7 +2955,8 @@
     "copy_straight_skipped": 47.0,
     "per_warp_per_phase": 1026.0,
     "k_body_lds_per_step": 5.0
-   }
+   },
+   "sass_key": "061bbd419be1"
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -3035,7 +3062,8 @@
     "copy_straight_skipped": 24.8,
     "per_warp_per_phase": 518.2,
     "k_body_lds_per_step": 5.0
-   }
+   },
+   "sass_key": "b0b7fd6a0ee8"
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -3141,7 +3169,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 2653.0,
     "k_body_lds_per_step": 10.0
-   }
+   },
+   "sass_key": "2d9659f70143"
   },
   {
    "workload": "ragged_1000x1000x1000",
@@ -3246,7 +3275,8 @@
     "copy_straight_skipped": 0.0,
     "per_warp_per_phase": 508.0,
     "k_body_lds_per_step": 2.25
-   }
+   },
+   "sass_key": "653aa26a2d32"
   }
  ],
  "resimulated": "2026-10-15T02:40:17Z",
