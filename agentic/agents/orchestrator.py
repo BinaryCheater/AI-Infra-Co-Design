@@ -414,7 +414,7 @@ class Orchestrator:
             self._checkpoint("regime_flip", m)          # the architect's stay / descend decision is taken here
             strength = self._handle_regime(T, X, M, views)
         elif strength == "observed":
-            pr = evaluator_svc.probe(T)
+            pr = evaluator_svc.probe(T, backend)
             if pr["regime_holds_as_bound"] and pr["regime"] == actual:
                 strength = "proved"
             self._append("regime_bound", {"regime": pr["regime"], "holds_as_bound": pr["regime_holds_as_bound"],
@@ -487,7 +487,7 @@ class Orchestrator:
     def _handle_regime(self, T: dict, X: dict, M: dict, views: dict) -> str:
         """Bound, constraint, probe, budget (design §2.4). Returns the template's final strength."""
         tid, actual = T["id"], regime_of(M["dominant_resource"])
-        pr = evaluator_svc.probe(T)
+        pr = evaluator_svc.probe(T, self.backend if T["scope"]["chip"].get("kind") == "measured" else "roofline")
         if pr["regime_holds_as_bound"] and pr["regime"] == actual:
             self._append("regime_bound", {"regime": actual, "holds_as_bound": True, "strength_now": "proved",
                                           "feasible_designs": pr["feasible_designs"], "note": pr["note"]}, tid)
@@ -526,9 +526,16 @@ class Orchestrator:
         # 4. probe the sibling with a budget and a stated confidence (rule of three)
         wins = n = 0
         B, delta = self.params["B"], self.params["delta"]
+        use_sim = self.backend == evaluator_svc.SIMULATOR and T["scope"]["chip"].get("kind") == "measured"
         for d in sorted(others, key=lambda d: d["time_us"])[:B]:
             n += 1
-            md = d["time_us"]            # roofline backend: measurement is the model itself
+            if use_sim:                  # G5: the sibling's measurement is the simulator's time, labeled by its coverage rows
+                from ..templates.smem_tiling import TilingDesign, Workload
+                e = evaluator_svc.simulate(TilingDesign(**{k: v for k, v in d["design"].items() if k in TilingDesign.__dataclass_fields__}), Workload(**T["scope"]["workload"]), T["scope"]["chip"])
+                md = e["time_us"]
+                self._append("sibling_simulated", {"design": d["design"], "roofline_us": d["time_us"], "simulated_us": md, "dominant_resource": e["dominant_resource"], "coverage": e["coverage"]}, tid)
+            else:
+                md = d["time_us"]        # roofline backend: measurement is the model itself
             self.optimism.update(d["time_us"], md)
             if md < incumbent:
                 wins += 1

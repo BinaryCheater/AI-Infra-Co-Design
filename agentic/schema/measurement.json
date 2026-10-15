@@ -111,6 +111,13 @@
         "object",
         "null"
       ]
+    },
+    "coverage": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "G5: for the simulator backend, each reported number -> the coverage rows it rests on (mechanism, benchmarks, prediction error from calibration/<host>/coverage.md); null for the roofline"
     }
   }
 }

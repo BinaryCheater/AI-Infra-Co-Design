@@ -128,7 +128,7 @@ def main(argv=None):
     r = sub.add_parser("run"); r.add_argument("--ledger", required=True); r.add_argument("--run", required=True)
     r.add_argument("--mode", default="observe", choices=["observe", "step", "drive"])
     r.add_argument("--chip", default=None, help="hardware contract name, e.g. spark-6951-gb10 (default: illustrative)")
-    r.add_argument("--evaluator", default="roofline", help="roofline or cuda:<ssh-alias>")
+    r.add_argument("--evaluator", default="roofline", help="roofline, simulator (the GB10 model, needs --chip of a measured contract; every number labeled by its coverage row) or cuda:<ssh-alias>")
     r.add_argument("--extrapolation", action="store_true", help="append a step that changes a fixed chip field")
     r.add_argument("--export", default=None, help="write a JSON summary of the run here"); r.set_defaults(fn=cmd_run)
     i = sub.add_parser("inspect"); i.add_argument("--ledger", required=True); i.add_argument("--run")
