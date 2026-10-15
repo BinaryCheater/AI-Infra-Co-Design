@@ -267,3 +267,14 @@ def summarize(stream: list[Instr]) -> dict:
     for i in stream:
         k = i.opcode.split(".")[0]; h[k] = h.get(k, 0) + 1
     return {"instructions": len(stream), "by_opcode": dict(sorted(h.items(), key=lambda kv: -kv[1]))}
+
+
+def design_sass_key(d, w, chip: dict) -> str:
+    """The cache key of the kernel the tiling template generates for design `d` on workload `w` and chip `chip` (the first 12 hex
+    digits of the source's sha256, as calibration/spark-6951/sass/<key>.sass and validate.py use)."""
+    import hashlib
+    from ..agents.evaluator.cuda import kernel_artifact
+    from ..examples.gemm_tiling import tiling_contract
+    T = tiling_contract(w, hw=chip, precondition="exact"); T.setdefault("id", "tmpl_validation"); T.setdefault("template", "smem_tiling")
+    x = {"id": "val", "values": {"Tm": d.tm, "Tn": d.tn, "Tk": d.tk, "S": d.stages, "P": d.prefetch, "beta": int(d.trailing_barrier)}}
+    return hashlib.sha256(kernel_artifact(T, x)["source"].encode()).hexdigest()[:12]

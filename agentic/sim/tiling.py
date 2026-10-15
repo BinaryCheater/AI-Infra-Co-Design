@@ -37,11 +37,26 @@ def design_programs(d: TilingDesign, w: Workload, threads: int = 256, instr_per_
 
 def simulate_design(d: TilingDesign, w: Workload, cfg: SimConfig, memory: Memory | None = None, smem=None,
                     record_trace: bool = False, amplify: tuple | None = None, issue=None, instr_per_phase: float | None = None,
-                    stream: list | None = None, costs=None) -> dict:
+                    stream: list | None = None, costs=None, chip: dict | None = None, sass_key: str | None = None) -> dict:
     """stream: the per-warp phase streams from the kernel's SASS (sim/sass.gemm_phase_stream); used when the warp model's input
-    switch is "stream" (the counts path ignores it)."""
-    if issue is not None and stream is not None:
-        issue.set_stream(stream, costs)
+    switch is "stream" (the counts path ignores it). When the switch is "stream" and no stream is given, it is built from the
+    design's SASS dump (`sass_key`, or the key of the kernel the template generates for `chip`); with no dump on disk the phase
+    falls back to counts and the result's "input" says so."""
+    used = None
+    if issue is not None and getattr(issue, "input", "counts") == "stream":
+        from .isa import PipeCosts
+        costs = costs or PipeCosts(cfg.contract)
+        if stream is None:
+            from .sass import design_sass_key, gemm_phase_stream, SASS_DIR
+            key = sass_key or (design_sass_key(d, w, chip) if chip else None)
+            if key and (SASS_DIR / f"{key}.sass").exists():
+                stream = gemm_phase_stream(key, d.tm, d.tn, d.tk, costs)[0]
+        if stream is not None:
+            issue.set_stream(stream, costs); used = "stream"
+        else:
+            used = "counts (no SASS dump for this design)"
+    elif issue is not None:
+        used = "counts"
     progs, meta = design_programs(d, w, instr_per_phase=instr_per_phase)
     sim = Simulator(cfg, memory, smem, amplify, issue)
     if memory is not None and hasattr(memory, "bind"):
@@ -49,4 +64,5 @@ def simulate_design(d: TilingDesign, w: Workload, cfg: SimConfig, memory: Memory
     r = sim.launch(progs, meta["threads"], meta["smem_bytes"], record_trace)
     r.update(meta)
     r["waves"] = -(-meta["blocks"] // int(cfg.contract["sms"]))
+    r["input"] = used
     return r

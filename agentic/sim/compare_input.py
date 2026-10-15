@@ -16,7 +16,7 @@ from pathlib import Path
 from .config import load
 from .isa import PipeCosts
 from .memory import Hierarchy
-from .run import SimConfig, Fifo
+from .run import SimConfig, Fifo, block_waves
 from .sass import Function, function_text, read_dump, gemm_phase_stream
 from .tensor import TensorModel, prog_c1_warp, prog_c3_row
 from .tiling import simulate_design
@@ -107,14 +107,23 @@ def c1_rows(C, S, costs):
     stream = one_pass * 2
     wm = WarpModel(C, dict(S, input="stream"))
     out = []
+    per_res = {}                                       # residency -> (counts, stream) cycles per step
     for bps in (1, 2, 3):
         r = raw(f"tensor_tile_cycles_per_step[bps={bps}]")
         if not r: continue
         res = r["detail"].get("resident_blocks_per_sm", bps)
-        cc, _ = tm.run([prog_c1_warp(16, 2) for _ in range(8 * res)], 8)
-        cs, hs = wm.run_stream([stream] * 8, 8, res, costs, mode="kernel", copy_rule=tm.stage_cycles, stage_bytes=16384)
-        out.append({"kind": "C1", "name": f"C1 bf16 tile bps={bps} (resident {res})", "measured": r["value"], "unit": "cycles/step", "counts": cc / 32, "stream": cs / 32,
-                    "stream_hist": {k2: v for k2, v in hs.items() if isinstance(v, (int, float))}})
+        if res not in per_res:
+            cc, _ = tm.run([prog_c1_warp(16, 2) for _ in range(8 * res)], 8)
+            cs, hs = wm.run_stream([stream] * 8, 8, res, costs, mode="kernel", copy_rule=tm.stage_cycles, stage_bytes=16384)
+            per_res[res] = (cc / 32, cs / 32)
+        if bps > res:                                  # more blocks than fit: the block scheduler runs the rest as a second wave
+            steps = 8 * 32
+            dc = block_waves(bps, res, steps, {k: v[0] for k, v in per_res.items()}); ds = block_waves(bps, res, steps, {k: v[1] for k, v in per_res.items()})
+            med = lambda xs: sorted(xs)[len(xs) // 2]
+            out.append({"kind": "C1", "name": f"C1 bf16 tile bps={bps} (resident {res}, second wave)", "measured": r["value"], "unit": "cycles/step",
+                        "counts": med(dc) / steps, "stream": med(ds) / steps, "block_durations_stream": [x / steps for x in ds]})
+        else:
+            out.append({"kind": "C1", "name": f"C1 bf16 tile bps={bps} (resident {res})", "measured": r["value"], "unit": "cycles/step", "counts": per_res[res][0], "stream": per_res[res][1]})
     # the kernel's two halves (the C1 no-copy and copy-only variants are compiled kernels of their own)
     for variant, fn, kw in (("no_copy_", "tensor_tileILi2EE", {"copies": False}), ("copy_only_", "tensor_tileILi1EE", {"compute": False})):
         G = Function(function_text(read_dump("c1_tensor_tile"), fn))
@@ -141,7 +150,7 @@ def c2_rows(C, S, costs):
     the TMA engine's stage time, as check_round2 composes them."""
     h = Hierarchy(C, S, {}); t = h.tma
     barrier = 2 * float(C["barrier_s"]["256"] if isinstance(C["barrier_s"], dict) else C["barrier_s"]) * t.hz
-    out = []
+    out = []; c2_res = {}
     for tk in (16, 32):
         F = Function(function_text(read_dump("c2_tma_tile"), f"tma_tileILi{tk}ELi0EE"))
         kk = F.inner_loop(("FFMA",), exclude=("BAR",)); step = F.enclosing(kk)
@@ -158,8 +167,17 @@ def c2_rows(C, S, costs):
             for _ in range(2 * res):
                 end = max(end, t.complete(0, 0.0, stage // 2, res, two_d=True))
             copy_c = end * t.hz + t.mbarrier_cycles
+            per = {"counts": max(cc + barrier, copy_c), "stream": max(cs + barrier, copy_c)}
+            c2_res[(tk, res)] = per
+            if bps > res and (tk, 1) in c2_res:            # a second wave, with the one-block step time for the blocks that run alone
+                steps = (4 if tk == 16 else 2) * (1024 // tk); med = lambda xs: sorted(xs)[len(xs) // 2]
+                tab = lambda m: {rr: c2_res[(tk, rr)][m] for rr in (1, res) if (tk, rr) in c2_res}
+                dc = block_waves(bps, res, steps, tab("counts")); ds = block_waves(bps, res, steps, tab("stream"))
+                out.append({"kind": "C2", "name": f"C2 T5+TMA tk={tk} bps={bps} (resident {res}, second wave)", "measured": r["value"], "unit": "cycles/step",
+                            "counts": med(dc) / steps, "stream": med(ds) / steps, "block_durations_stream": [x / steps for x in ds]})
+                continue
             out.append({"kind": "C2", "name": f"C2 T5+TMA tk={tk} bps={bps} (resident {res})", "measured": r["value"], "unit": "cycles/step",
-                        "counts": max(cc + barrier, copy_c), "stream": max(cs + barrier, copy_c), "compute_counts": cc + barrier, "compute_stream": cs + barrier, "copy": copy_c})
+                        "counts": per["counts"], "stream": per["stream"], "compute_counts": cc + barrier, "compute_stream": cs + barrier, "copy": copy_c})
             rc = raw(f"tma_tile_compute_only_cycles_per_step[tk={tk},bps={bps}]")
             if rc and bps < 3:
                 G = Function(function_text(read_dump("c2_tma_tile"), f"tma_tileILi{tk}ELi2EE"))
@@ -198,6 +216,7 @@ def _composite(name: str):
 def main():
     import argparse
     ap = argparse.ArgumentParser(); ap.add_argument("--jobs", type=int, default=1, help="processes: the designs and composites run in parallel")
+    ap.add_argument("--composites-only", action="store_true", help="rerun C1-C3 only; the GEMM rows are taken from input_comparison.json")
     a = ap.parse_args()
     cfg = load("spark-6951-gb10"); C, S, F = cfg["contract"], cfg["structural"], cfg["fixed"]; sc = SimConfig(C, S, F, "spark-6951-gb10")
     costs = PipeCosts(C); chip = scope_chip(load_chip("spark-6951-gb10"))
@@ -206,7 +225,10 @@ def main():
         from concurrent.futures import ProcessPoolExecutor
         with ProcessPoolExecutor(max_workers=3) as ex:
             fut = {n: ex.submit(_composite, n) for n in ("c1", "c2", "c3")}
-            rows = gemm_rows(C, S, F, sc, costs, chip, jobs=max(1, a.jobs - 3))
+            if a.composites_only:
+                rows = [r for r in json.loads(OUT.read_text())["rows"] if r["kind"] == "gemm"]
+            else:
+                rows = gemm_rows(C, S, F, sc, costs, chip, jobs=max(1, a.jobs - 3))
             (c1, c1_info), (c2, _), (c3, c3_info) = fut["c1"].result(), fut["c2"].result(), fut["c3"].result()
     else:
         rows = gemm_rows(C, S, F, sc, costs, chip)

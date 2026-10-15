@@ -84,7 +84,7 @@ def simulate(d: TilingDesign, w: Workload, chip: dict) -> dict:
     from ...sim.warp import WarpModel
     name = chip["name"]
     C, S, F, sc = _sim_context(name)
-    r = simulate_design(d, w, sc, Hierarchy(C, S, F), issue=WarpModel(C, S))
+    r = simulate_design(d, w, sc, Hierarchy(C, S, F), issue=WarpModel(C, S), chip=chip)
     t = r["time_us"] * 1e-6
     counts = dict(r.get("critical_counts") or {})
     fam = max(counts, key=counts.get) if counts else "compute"
@@ -98,7 +98,8 @@ def simulate(d: TilingDesign, w: Workload, chip: dict) -> dict:
               **{f"utilizations.{k}": rests_on(name, "DRAM" if k == "DRAM" else ("compute" if k.startswith("compute") else k)) for k in util}}
     return {"time_us": r["time_us"], "utilizations": util, "dominant_resource": dom, "critical_counts": counts, "dram_bytes": r["dram_bytes"],
             "l2_bytes": r.get("l2_bytes"), "waves": r.get("waves"), "blocks": r.get("blocks"), "coverage": labels,
-            "simulator": f"mechanistic simulator ({name}: contract + warp model + memory hierarchy; every number labeled by its coverage row)"}
+            "input": r.get("input"),
+            "simulator": f"mechanistic simulator ({name}: contract + warp model ({r.get('input')}) + memory hierarchy; every number labeled by its coverage row)"}
 
 
 def _evaluate(d: TilingDesign, w: Workload, hw: HardwareContract) -> dict:

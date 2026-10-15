@@ -397,19 +397,6 @@
    "unit": "cycles/step",
    "counts": 1389.5625,
    "stream": 1723.625,
-   "stream_hist": {
-    "issued": 53712,
-    "scoreboard": 107752,
-    "not_selected": 42175,
-    "lsu": 0,
-    "tensor": 50464,
-    "xu": 0,
-    "hold": 129408,
-    "barrier": 41216,
-    "copy_wait": 16504,
-    "done": 25,
-    "copy_dispatch_cycles": 0.0
-   },
    "counts_error": -0.11981412678682368,
    "stream_error": 0.09178995238937504
   },
@@ -420,42 +407,21 @@
    "unit": "cycles/step",
    "counts": 2380.34375,
    "stream": 2958.71875,
-   "stream_hist": {
-    "issued": 107424,
-    "scoreboard": 207258,
-    "not_selected": 153132,
-    "lsu": 30,
-    "tensor": 285882,
-    "xu": 0,
-    "hold": 258816,
-    "barrier": 165983,
-    "copy_wait": 54753,
-    "done": 281602,
-    "copy_dispatch_cycles": 0.0
-   },
    "counts_error": -0.1457705438628042,
    "stream_error": 0.061789797660704915
   },
   {
    "kind": "C1",
-   "name": "C1 bf16 tile bps=3 (resident 2)",
+   "name": "C1 bf16 tile bps=3 (resident 2, second wave)",
    "measured": 2321.74609,
    "unit": "cycles/step",
    "counts": 2380.34375,
    "stream": 2958.71875,
-   "stream_hist": {
-    "issued": 107424,
-    "scoreboard": 207258,
-    "not_selected": 153132,
-    "lsu": 30,
-    "tensor": 285882,
-    "xu": 0,
-    "hold": 258816,
-    "barrier": 165983,
-    "copy_wait": 54753,
-    "done": 281602,
-    "copy_dispatch_cycles": 0.0
-   },
+   "block_durations_stream": [
+    2958.71875,
+    2958.71875,
+    1723.625
+   ],
    "counts_error": 0.025238616854954987,
    "stream_error": 0.2743506978405206
   },
@@ -547,14 +513,16 @@
   },
   {
    "kind": "C2",
-   "name": "C2 T5+TMA tk=16 bps=3 (resident 2)",
+   "name": "C2 T5+TMA tk=16 bps=3 (resident 2, second wave)",
    "measured": 6469.287104999999,
    "unit": "cycles/step",
    "counts": 7010.0437972228,
    "stream": 6923.0437972228,
-   "compute_counts": 7010.0437972228,
-   "compute_stream": 6923.0437972228,
-   "copy": 2137.4993454083256,
+   "block_durations_stream": [
+    6923.0437972228,
+    6923.0437972228,
+    3874.0437972228
+   ],
    "counts_error": 0.08358829704819559,
    "stream_error": 0.07014013829624277
   },

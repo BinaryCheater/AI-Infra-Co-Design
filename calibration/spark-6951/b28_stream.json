@@ -1,0 +1,102 @@
+[
+ {
+  "mix": "copy",
+  "blocks": 1,
+  "measured_cycles_per_tile_per_sm": 535.9062504,
+  "stream_cycles_per_tile_per_sm": 337.875,
+  "stream_instructions_only": 41.5,
+  "instructions_per_phase": 13.0,
+  "copy_and_loop_instructions_per_phase": 10.0,
+  "copy_wait_share": 0.917282020444979
+ },
+ {
+  "mix": "copy",
+  "blocks": 2,
+  "measured_cycles_per_tile_per_sm": 536.4843739999999,
+  "stream_cycles_per_tile_per_sm": 321.4375,
+  "stream_instructions_only": 36.40625,
+  "instructions_per_phase": 13.0,
+  "copy_and_loop_instructions_per_phase": 10.0,
+  "copy_wait_share": 0.9556630029113389
+ },
+ {
+  "mix": "copy",
+  "blocks": 3,
+  "measured_cycles_per_tile_per_sm": 541.2942706666666,
+  "stream_cycles_per_tile_per_sm": 324.4375,
+  "stream_instructions_only": 35.4375,
+  "instructions_per_phase": 13.0,
+  "copy_and_loop_instructions_per_phase": 10.0,
+  "copy_wait_share": 0.9669367385630362
+ },
+ {
+  "mix": "copy",
+  "blocks": 4,
+  "measured_cycles_per_tile_per_sm": 397.71875,
+  "stream_cycles_per_tile_per_sm": 325.9375,
+  "stream_instructions_only": 34.96875,
+  "instructions_per_phase": 13.0,
+  "copy_and_loop_instructions_per_phase": 10.0,
+  "copy_wait_share": 0.972554442854872
+ },
+ {
+  "mix": "copy",
+  "blocks": 6,
+  "measured_cycles_per_tile_per_sm": 428.27994800000005,
+  "stream_cycles_per_tile_per_sm": 327.4375,
+  "stream_instructions_only": 34.479166666666664,
+  "instructions_per_phase": 13.0,
+  "copy_and_loop_instructions_per_phase": 10.0,
+  "copy_wait_share": 0.9781595154261368
+ },
+ {
+  "mix": "both",
+  "blocks": 1,
+  "measured_cycles_per_tile_per_sm": 1757.1328119999998,
+  "stream_cycles_per_tile_per_sm": 1752.875,
+  "stream_instructions_only": 1752.875,
+  "instructions_per_phase": 248.0,
+  "copy_and_loop_instructions_per_phase": 61.0,
+  "copy_wait_share": 0.0
+ },
+ {
+  "mix": "both",
+  "blocks": 2,
+  "measured_cycles_per_tile_per_sm": 1690.3281259999999,
+  "stream_cycles_per_tile_per_sm": 1562.71875,
+  "stream_instructions_only": 1562.71875,
+  "instructions_per_phase": 248.0,
+  "copy_and_loop_instructions_per_phase": 61.0,
+  "copy_wait_share": 0.0
+ },
+ {
+  "mix": "both",
+  "blocks": 3,
+  "measured_cycles_per_tile_per_sm": 1177.9166666666667,
+  "stream_cycles_per_tile_per_sm": 1557.6666666666667,
+  "stream_instructions_only": 1557.6666666666667,
+  "instructions_per_phase": 248.0,
+  "copy_and_loop_instructions_per_phase": 61.0,
+  "copy_wait_share": 0.0
+ },
+ {
+  "mix": "both",
+  "blocks": 4,
+  "measured_cycles_per_tile_per_sm": 1095.765625,
+  "stream_cycles_per_tile_per_sm": 1553.203125,
+  "stream_instructions_only": 1553.203125,
+  "instructions_per_phase": 248.0,
+  "copy_and_loop_instructions_per_phase": 61.0,
+  "copy_wait_share": 0.0
+ },
+ {
+  "mix": "both",
+  "blocks": 6,
+  "measured_cycles_per_tile_per_sm": 862.4505213333333,
+  "stream_cycles_per_tile_per_sm": 1544.90625,
+  "stream_instructions_only": 1544.90625,
+  "instructions_per_phase": 248.0,
+  "copy_and_loop_instructions_per_phase": 61.0,
+  "copy_wait_share": 0.0
+ }
+]

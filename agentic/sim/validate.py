@@ -66,10 +66,10 @@ def simulate_row(row: dict, sc, C, S, F, chip=None, host: str | None = None) -> 
     """(Re)simulate one measured row with the current model; fills the sim_* fields and the family agreement."""
     w = next(x for x in WORKLOADS if x.name == row["workload"]); d = TilingDesign(**{k: v for k, v in row["design"].items() if k in TilingDesign.__dataclass_fields__})
     ipp = instr_per_phase_for(row, w, chip, host) if chip is not None else None
-    sim = simulate_design(d, w, sc, Hierarchy(C, S, F), None, issue=WarpModel(C, S), instr_per_phase=ipp)
+    sim = simulate_design(d, w, sc, Hierarchy(C, S, F), None, issue=WarpModel(C, S), instr_per_phase=ipp, chip=chip, sass_key=row.get("sass_key"))
     sim_dom, ncu_dom, sim_f, ncu_f = dominant_families(sim["waits_s"], (row.get("ncu") or {}).get("stalls_per_issue_active"))
     wf = sim.get("wait_families_s") or {}
-    row.update({"simulated_us": sim["time_us"], "sim_error": (sim["time_us"] / row["measured_us"] - 1) if row.get("measured_us") else None,
+    row.update({"simulated_us": sim["time_us"], "sim_input": sim.get("input"), "sim_error": (sim["time_us"] / row["measured_us"] - 1) if row.get("measured_us") else None,
                 "sim_critical": max(sim["critical_counts"], key=sim["critical_counts"].get) if sim["critical_counts"] else None, "sim_critical_counts": sim["critical_counts"],
                 "sim_dram_bytes": sim["dram_bytes"], "sim_waves": sim["waves"], "sim_wait_families_warp_s": sim_f, "ncu_stall_families": ncu_f,
                 "sim_dominant_family": sim_dom, "ncu_dominant_family": ncu_dom, "critical_agrees_with_stalls": (sim_dom == ncu_dom) if (sim_dom and ncu_dom) else None,

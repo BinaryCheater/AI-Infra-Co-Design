@@ -355,3 +355,24 @@ def _brief(e) -> dict:
 def simulate(programs: list[Program], cfg: SimConfig, threads: int, smem_bytes: int, memory: Memory | None = None,
              smem=None, record_trace: bool = False, amplify: tuple | None = None) -> dict:
     return Simulator(cfg, memory, smem, amplify).launch(programs, threads, smem_bytes, record_trace)
+
+
+def block_waves(blocks_per_sm: int, capacity: int, steps: int, step_cycles: dict) -> list[float]:
+    """A composite kernel's blocks on one SM with the block scheduler (M8; B9 sets `capacity`, B16 the refill order): `capacity`
+    blocks start together; when one finishes, the next waiting block takes its slot (a second wave). Every running block advances
+    at 1 / step_cycles[r] k-steps per cycle, r = the blocks running at that moment. Returns each block's own duration in cycles,
+    which is what the composite benchmarks time (clock64 from the block's first to last instruction)."""
+    waiting = list(range(blocks_per_sm)); running = {}; durations = []; t = 0.0
+    while waiting and len(running) < capacity:
+        b = waiting.pop(0); running[b] = [float(steps), t]
+    while running:
+        r = len(running); rate = 1.0 / step_cycles[min(r, max(step_cycles))]
+        b_next = min(running, key=lambda b: running[b][0]); dt = running[b_next][0] / rate
+        t += dt
+        for b in running:
+            running[b][0] -= dt * rate
+        for b in [b for b in running if running[b][0] <= 1e-9]:
+            durations.append(t - running[b][1]); del running[b]
+            if waiting:
+                nb = waiting.pop(0); running[nb] = [float(steps), t]
+    return durations
