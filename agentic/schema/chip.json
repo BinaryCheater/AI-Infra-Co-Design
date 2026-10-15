@@ -434,7 +434,12 @@
         "null"
       ]
     },
-    "ld_shared_instr_per_s_per_sm": {"type": ["object", "null"]},
+    "ld_shared_instr_per_s_per_sm": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
     "clock_warmup_s": {
       "type": [
         "number",
@@ -623,6 +628,146 @@
         "null"
       ],
       "description": "B4 knee; l2_structure_confirmed (B13) says whether ways x sets x line agrees with the declared size"
+    },
+    "mma_latency_cycles": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B31 (a): cycles per mma.sync in a dependent accumulator chain, by shape"
+    },
+    "mma_issue_cycles": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B31 (b): cycles between back-to-back independent mma from one warp at saturation (the tensor pipe occupancy per instruction per sub-partition), by shape"
+    },
+    "mma_in_flight_to_saturate": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B31 (b): independent mma one warp needs in flight to reach the pipe's rate, by shape"
+    },
+    "mma_rate_warp_per_cycle_per_smsp": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B31: mma instructions per cycle per sub-partition at saturation, by shape"
+    },
+    "mma_cycles_grid": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B31: the full (accumulators, warps per sub-partition) grid of cycles per mma per warp, by shape"
+    },
+    "ldmatrix_mma_cycles_per_step": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B32: cycles per k-step per warp (2 ldmatrix.x4 + 4 mma bf16) by pipeline depth, swizzle, blocks per SM"
+    },
+    "ldmatrix_mma_dependent_cycles": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B32 (a): cycles per link of the chain ldmatrix -> mma -> next ldmatrix address"
+    },
+    "mma_pipeline_depth_to_saturate": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "B32 (b): smallest register double-buffer depth within 10 % of the best"
+    },
+    "ldmatrix_latency_cycles": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B32: ldmatrix.x1/.x2/.x4 latency (result consumed before the next load), plus about 4 cycles of XOR and loop"
+    },
+    "ldmatrix_wavefronts": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B32 (ncu): shared-memory wavefronts per cycle per SM while one warp per sub-partition issues ldmatrix.xN"
+    },
+    "tensor_rate_under_lds_load": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B33: the tensor block's cycles per k-step with LDS.128 / cp.async / both load blocks on the same SM"
+    },
+    "tensor_slowdown_under_load": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B33: tensor block cycles per step under load divided by the same residency of tensor-only blocks"
+    },
+    "load_block_cycles_under_tensor": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B33: the load block's cycles per step while tensor blocks run on the same SM"
+    },
+    "mma_ffma_cycles_per_mma": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B34 (a): cycles per mma with 0/1/4/16 independent FFMAs between mma from the same warp"
+    },
+    "mma_ffma_overlap": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B34 (a): fraction of the FFMA issue slots that overlapped the mma from the same warp (0 = none)"
+    },
+    "mma_ffma_split": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B34 (a2): cycles per mma and per FFMA when one warp per sub-partition issues mma and another issues FFMAs, alone and together"
+    },
+    "mma_ffma_overlap_across_warps": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "B34 (a2): 1 - the larger slowdown when the two warps run together; 1 = another warp's FFMAs fully overlap an mma in the pipe"
+    },
+    "tensor_spill_curve": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B34 (b): the tensor loop's cycles per mma and registers/spill bytes at 64/128/192 accumulators under -maxrregcount 255/128/96"
+    },
+    "epilogue_cycles_per_tile": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "B34 (c): cycles of the FP32 -> BF16 store epilogue per warp tile, by accumulator count"
+    },
+    "tensor_tile_cycles_per_step": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "C1 composite (not a calibration input): cycles per k-step of the 128x128x32 bf16 tile kernel by blocks per SM"
     }
   },
   "if": {

@@ -1,0 +1,83 @@
+{
+ "quantity": "counter_b33_mix[probe=both]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B33: tensor pipe activity, shared wavefronts and stalls with one tensor block and one load block per SM",
+ "benchmark": "b33_mma_mio",
+ "arch": "sm_121",
+ "timestamp": "2026-10-15T03:15:26Z",
+ "detail": {
+  "probe": "both",
+  "metrics": {
+   "l1tex__data_pipe_lsu_wavefronts_mem_shared.sum": [
+    5543082.0,
+    ""
+   ],
+   "l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum": [
+    3686453.0,
+    ""
+   ],
+   "sm__cycles_active.avg": [
+    292319.62,
+    "cycle"
+   ],
+   "sm__inst_executed.sum": [
+    12719712.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_tensor.sum": [
+    2457600.0,
+    "inst"
+   ],
+   "sm__pipe_fma_cycles_active.avg": [
+    26552.46,
+    "cycle"
+   ],
+   "sm__pipe_tensor_cycles_active.avg": [
+    819200.0,
+    "cycle"
+   ],
+   "smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio": [
+    2.64,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio": [
+    0.01,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio": [
+    0.29,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio": [
+    0.12,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio": [
+    0.24,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_wait_per_issue_active.ratio": [
+    3.48,
+    "inst"
+   ],
+   "smsp__cycles_active.avg": [
+    293624.2,
+    "cycle"
+   ],
+   "smsp__issue_active.avg": [
+    66248.5,
+    "cycle"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 1.9
+ }
+}

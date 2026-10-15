@@ -109,6 +109,225 @@ unified_memory_penalty:
   managed_cpu_first_pass1: 1.455
 coherent_access_bytes_per_s: 200038414500.0
 suite_level: full+micro
+mma_latency_cycles:
+  tf32_m16n8k8: 30.1
+  fp8_e4m3_m16n8k32: 30.1
+  bf16_m16n8k16: 30.1
+  fp16_m16n8k16: 30.1
+  int8_m16n8k32: 81.6
+mma_issue_cycles:
+  tf32_m16n8k8: 16.08
+  fp8_e4m3_m16n8k32: 16.08
+  bf16_m16n8k16: 16.08
+  fp16_m16n8k16: 16.08
+  int8_m16n8k32: 19.61
+mma_in_flight_to_saturate:
+  tf32_m16n8k8: 2
+  fp8_e4m3_m16n8k32: 2
+  bf16_m16n8k16: 2
+  fp16_m16n8k16: 2
+  int8_m16n8k32: 4
+mma_rate_warp_per_cycle_per_smsp:
+  tf32_m16n8k8: 0.0622
+  fp8_e4m3_m16n8k32: 0.0622
+  bf16_m16n8k16: 0.0622
+  fp16_m16n8k16: 0.0622
+  int8_m16n8k32: 0.051
+mma_cycles_grid:
+  tf32_m16n8k8:
+    a=1,w=1: 30.1
+    a=1,w=2: 33.2
+    a=1,w=4: 65.5
+    a=2,w=1: 17.9
+    a=4,w=1: 17.5
+    a=4,w=2: 32.3
+    a=4,w=4: 64.4
+    a=8,w=1: 17.8
+    a=16,w=1: 17.4
+    a=16,w=2: 32.2
+    a=16,w=4: 64.3
+  fp8_e4m3_m16n8k32:
+    a=1,w=1: 30.1
+    a=1,w=2: 33.2
+    a=1,w=4: 65.5
+    a=2,w=1: 17.9
+    a=4,w=1: 17.5
+    a=4,w=2: 32.3
+    a=4,w=4: 64.4
+    a=8,w=1: 17.8
+    a=16,w=1: 17.4
+    a=16,w=2: 32.2
+    a=16,w=4: 64.3
+  bf16_m16n8k16:
+    a=1,w=1: 30.1
+    a=1,w=2: 33.2
+    a=1,w=4: 65.5
+    a=2,w=1: 17.9
+    a=4,w=1: 17.5
+    a=4,w=2: 32.3
+    a=4,w=4: 64.4
+    a=8,w=1: 17.8
+    a=16,w=1: 17.4
+    a=16,w=2: 32.2
+    a=16,w=4: 64.3
+  fp16_m16n8k16:
+    a=1,w=1: 30.1
+    a=1,w=2: 33.2
+    a=1,w=4: 65.5
+    a=2,w=1: 17.9
+    a=4,w=1: 17.5
+    a=4,w=2: 32.3
+    a=4,w=4: 64.4
+    a=8,w=1: 17.8
+    a=16,w=1: 17.4
+    a=16,w=2: 32.2
+    a=16,w=4: 64.3
+  int8_m16n8k32:
+    a=1,w=1: 81.6
+    a=1,w=4: 103.2
+    a=4,w=1: 45.8
+    a=4,w=4: 78.5
+ldmatrix_mma_cycles_per_step:
+  swizzled_depth3,bps=2: 128.6
+  dependent_unswizzled,bps=1: 98.7
+  swizzled_depth3,bps=4: 131.6
+  swizzled_depth3,bps=1: 71.3
+  dependent_swizzled,bps=1: 81.0
+  swizzled_depth1,bps=1: 71.3
+  unswizzled_depth2,bps=1: 76.4
+  swizzled_depth2,bps=4: 131.6
+  swizzled_depth2,bps=2: 128.6
+  unswizzled_depth2,bps=2: 129.4
+  swizzled_depth1,bps=2: 128.6
+  unswizzled_depth2,bps=4: 136.7
+  swizzled_depth1,bps=4: 131.5
+  swizzled_depth2,bps=1: 71.3
+ldmatrix_mma_dependent_cycles: 81.0
+mma_pipeline_depth_to_saturate: 1
+ldmatrix_latency_cycles:
+  x4: 80.12
+  x2: 69.64
+  x1: 54.29
+ldmatrix_wavefronts:
+  x1:
+    wavefronts_per_cycle_per_sm: 0.082
+  x4:
+    wavefronts_per_cycle_per_sm: 0.222
+  x2:
+    wavefronts_per_cycle_per_sm: 0.138
+tensor_rate_under_lds_load:
+  load=cp_async,tensor_blocks=2: 137.0
+  load=cp_async,tensor_blocks=3: 148.5
+  load=cp_async,tensor_blocks=1: 76.3
+  load=both,tensor_blocks=1: 77.0
+  load=both,tensor_blocks=3: 149.8
+  load=lds128,tensor_blocks=3: 147.9
+  load=tensor_only,tensor_blocks=2: 128.6
+  load=lds128,tensor_blocks=1: 74.5
+  load=both,tensor_blocks=2: 138.0
+  load=tensor_only,tensor_blocks=3: 131.8
+  load=lds128,tensor_blocks=2: 133.1
+  load=tensor_only,tensor_blocks=1: 71.3
+tensor_slowdown_under_load:
+  load=cp_async,tensor_blocks=2: 1.065
+  load=cp_async,tensor_blocks=3: 1.127
+  load=cp_async,tensor_blocks=1: 1.07
+  load=both,tensor_blocks=1: 1.08
+  load=both,tensor_blocks=3: 1.137
+  load=lds128,tensor_blocks=3: 1.122
+  load=lds128,tensor_blocks=1: 1.045
+  load=both,tensor_blocks=2: 1.073
+  load=lds128,tensor_blocks=2: 1.035
+load_block_cycles_under_tensor:
+  load=cp_async,tensor_blocks=3: 132.7
+  load=both,tensor_blocks=2: 141.1
+  load=cp_async,tensor_blocks=1: 73.4
+  load=lds128,tensor_blocks=3: 59.7
+  load=lds128,tensor_blocks=1: 38.6
+  load=both,tensor_blocks=1: 75.5
+  load=cp_async,tensor_blocks=2: 136.1
+  load=both,tensor_blocks=3: 142.7
+  load=lds128,tensor_blocks=2: 75.0
+mma_ffma_split:
+  mma_mma_alone: 18.65
+  mma_together: 26.76
+  ffma_ffma_alone: 1.53
+  ffma_together: 1.6
+mma_ffma_overlap_across_warps: 0.565
+mma_ffma_cycles_per_mma:
+  '0': 17.47
+  '1': 18.28
+  '4': 22.77
+  '16': 35.65
+mma_ffma_overlap:
+  '1': 0.254
+  '4': 0.0
+  '16': 0.0
+tensor_spill_curve:
+  acc=192,epilogue=1,maxrreg=255:
+    cycles_per_mma: 121.4
+    regs_used: 218
+    spill_bytes: 0
+    local_bytes: 0
+  acc=64,epilogue=1,maxrreg=255:
+    cycles_per_mma: 131.08
+    regs_used: 88
+    spill_bytes: 0
+    local_bytes: 0
+  acc=64,epilogue=0,maxrreg=96:
+    cycles_per_mma: 16.89
+    regs_used: 84
+    spill_bytes: 5880
+    local_bytes: 0
+  acc=64,epilogue=0,maxrreg=128:
+    cycles_per_mma: 16.89
+    regs_used: 85
+    spill_bytes: 4928
+    local_bytes: 0
+  acc=192,epilogue=0,maxrreg=128:
+    cycles_per_mma: 198.47
+    regs_used: 128
+    spill_bytes: 4928
+    local_bytes: 1152
+  acc=192,epilogue=0,maxrreg=96:
+    cycles_per_mma: 295.47
+    regs_used: 96
+    spill_bytes: 5880
+    local_bytes: 1344
+  acc=192,epilogue=0,maxrreg=255:
+    cycles_per_mma: 16.36
+    regs_used: 212
+    spill_bytes: 0
+    local_bytes: 0
+  acc=64,epilogue=0,maxrreg=255:
+    cycles_per_mma: 16.89
+    regs_used: 85
+    spill_bytes: 0
+    local_bytes: 0
+  acc=128,epilogue=0,maxrreg=255:
+    cycles_per_mma: 16.5
+    regs_used: 149
+    spill_bytes: 0
+    local_bytes: 0
+  acc=128,epilogue=0,maxrreg=96:
+    cycles_per_mma: 185.26
+    regs_used: 96
+    spill_bytes: 5880
+    local_bytes: 840
+  acc=128,epilogue=1,maxrreg=255:
+    cycles_per_mma: 122.22
+    regs_used: 152
+    spill_bytes: 0
+    local_bytes: 0
+  acc=128,epilogue=0,maxrreg=128:
+    cycles_per_mma: 60.03
+    regs_used: 128
+    spill_bytes: 4928
+    local_bytes: 400
+epilogue_cycles_per_tile:
+  acc=192: 1680.6
+  acc=64: 1827.0
+  acc=128: 1691.5
 mio_issue_cycles_per_load: 4.21
 mio_issue_cycles_per_load_two_warps_per_smsp: 10.13
 mio_queue_depth_per_smsp: null
@@ -3452,6 +3671,10 @@ functional:
     128-bit per quarter-warp (max 8-way)
   independent_thread_scheduling: false
 micro_benchmarks:
+- b31_mma_issue
+- b32_ldmatrix_mma
+- b33_mma_mio
+- b34_mixed_issue
 - b30_mio_queue
 - b27_dependency_ilp
 - b28_lsu_port_contention
@@ -3470,7 +3693,7 @@ micro_benchmarks:
 - b25_multi_kernel
 - b26_functional_probes
 provenance:
-  suite_commit: 1b5e0dbb3fa77179cc0d7b34bb25fcf6caefaa90
+  suite_commit: 9f4acadd05f9580b797b8564e5e6f87006433e95
   host: spark-6951
   driver: 580.159.03
   toolkit: Build cuda_13.0.r13.0/compiler.36424714_0
@@ -3485,7 +3708,7 @@ provenance:
       min: 208.0
       max: 2535.0
     max_sm_mhz: 3003.0
-  date: '2026-10-15T00:36:04Z'
+  date: '2026-10-15T03:19:31Z'
   raw: calibration/spark-6951/raw
   ci_target: 0.04
   max_reps: 50
@@ -3610,6 +3833,291 @@ provenance:
       note: penalty = device read bandwidth / this allocation's read bandwidth, 1
         GiB working set
       method: 'B12: GPU streaming read bandwidth by allocation kind, 1 GiB'
+    mma_latency_cycles:
+      from:
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=1,w=1]
+      - mma_cycles_per_op[shape=int8_m16n8k32,a=1,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=1,w=1]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=1,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=1,w=1]
+      method: 'B31 (a): one warp per sub-partition, one dependent mma chain (the accumulator
+        feeds the next), cycles per mma'
+    mma_issue_cycles:
+      from:
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=16,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=1,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=4,w=4]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=16,w=2]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=4,w=4]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=4,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=4,w=2]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=8,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=2,w=1]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=4,w=2]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=16,w=4]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=8,w=1]
+      - mma_cycles_per_op[shape=int8_m16n8k32,a=1,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=2,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=1,w=2]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=16,w=2]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=8,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=4,w=2]
+      - mma_cycles_per_op[shape=int8_m16n8k32,a=1,w=4]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=2,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=16,w=1]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=16,w=4]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=1,w=4]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=4,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=4,w=4]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=4,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=4,w=4]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=1,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=1,w=4]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=16,w=2]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=1,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=16,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=4,w=2]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=8,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=1,w=2]
+      - mma_cycles_per_op[shape=int8_m16n8k32,a=4,w=4]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=16,w=4]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=1,w=2]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=16,w=4]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=2,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=16,w=1]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=1,w=2]
+      - mma_cycles_per_op[shape=int8_m16n8k32,a=4,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=16,w=2]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=4,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=1,w=4]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=1,w=4]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=1,w=1]
+      method: 'B31 (b, c): sub-partition cycles per warp-mma at the best point of
+        the (a, w) grid (the pipe''s rate); compare B20'
+    mma_in_flight_to_saturate:
+      from:
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=16,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=1,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=4,w=1]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=8,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=2,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=8,w=1]
+      - mma_cycles_per_op[shape=int8_m16n8k32,a=1,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=2,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=8,w=1]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=2,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=16,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=4,w=1]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=4,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=1,w=1]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=1,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=16,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=8,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=2,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=16,w=1]
+      - mma_cycles_per_op[shape=int8_m16n8k32,a=4,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=4,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=1,w=1]
+      method: 'B31 (b): smallest a (independent accumulators from one warp) reaching
+        90 % of the one-warp peak'
+    mma_cycles_grid:
+      from:
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=16,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=1,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=4,w=4]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=16,w=2]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=4,w=4]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=4,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=4,w=2]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=8,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=2,w=1]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=4,w=2]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=16,w=4]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=8,w=1]
+      - mma_cycles_per_op[shape=int8_m16n8k32,a=1,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=2,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=1,w=2]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=16,w=2]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=8,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=4,w=2]
+      - mma_cycles_per_op[shape=int8_m16n8k32,a=1,w=4]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=2,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=16,w=1]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=16,w=4]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=1,w=4]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=4,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=4,w=4]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=4,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=4,w=4]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=1,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=1,w=4]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=16,w=2]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=1,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=16,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=4,w=2]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=8,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=1,w=2]
+      - mma_cycles_per_op[shape=int8_m16n8k32,a=4,w=4]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=16,w=4]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=1,w=2]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=16,w=4]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=2,w=1]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=16,w=1]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=1,w=2]
+      - mma_cycles_per_op[shape=int8_m16n8k32,a=4,w=1]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=16,w=2]
+      - mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=4,w=1]
+      - mma_cycles_per_op[shape=bf16_m16n8k16,a=1,w=4]
+      - mma_cycles_per_op[shape=tf32_m16n8k8,a=1,w=4]
+      - mma_cycles_per_op[shape=fp16_m16n8k16,a=1,w=1]
+      method: 'B31: cycles per mma per warp over the (a, w) grid (the warp model''s
+        prediction target for the tensor pipe)'
+    ldmatrix_mma_cycles_per_step:
+      from:
+      - ldmatrix_mma_cycles_per_step[swizzled_depth3,bps=2]
+      - ldmatrix_mma_cycles_per_step[dependent_unswizzled,bps=1]
+      - ldmatrix_mma_cycles_per_step[swizzled_depth3,bps=4]
+      - ldmatrix_mma_cycles_per_step[swizzled_depth3,bps=1]
+      - ldmatrix_mma_cycles_per_step[dependent_swizzled,bps=1]
+      - ldmatrix_mma_cycles_per_step[swizzled_depth1,bps=1]
+      - ldmatrix_mma_cycles_per_step[unswizzled_depth2,bps=1]
+      - ldmatrix_mma_cycles_per_step[swizzled_depth2,bps=4]
+      - ldmatrix_mma_cycles_per_step[swizzled_depth2,bps=2]
+      - ldmatrix_mma_cycles_per_step[unswizzled_depth2,bps=2]
+      - ldmatrix_mma_cycles_per_step[swizzled_depth1,bps=2]
+      - ldmatrix_mma_cycles_per_step[unswizzled_depth2,bps=4]
+      - ldmatrix_mma_cycles_per_step[swizzled_depth1,bps=4]
+      - ldmatrix_mma_cycles_per_step[swizzled_depth2,bps=1]
+      method: 'B32: cycles per k-step per warp (2 ldmatrix.x4 + 4 mma.sync bf16 m16n8k16)
+        by pipeline depth, swizzle and blocks per SM; dependent = ldmatrix -> mma
+        -> next ldmatrix address'
+    ldmatrix_mma_dependent_cycles:
+      from:
+      - ldmatrix_mma_cycles_per_step[dependent_swizzled,bps=1]
+      method: 'B32 (a): the chain ldmatrix -> mma -> ldmatrix (the next address depends
+        on the accumulator through a run-time zero mask), cycles per link = ldmatrix
+        latency + mma latency + the address arithmetic'
+    mma_pipeline_depth_to_saturate:
+      from:
+      - ldmatrix_mma_cycles_per_step[swizzled_depth1,bps=1]
+      - ldmatrix_mma_cycles_per_step[swizzled_depth2,bps=1]
+      - ldmatrix_mma_cycles_per_step[swizzled_depth3,bps=1]
+      method: 'B32 (b): smallest register double-buffer depth within 10 % of the best'
+    ldmatrix_latency_cycles:
+      from:
+      - ldmatrix_latency_cycles[x4]
+      - ldmatrix_latency_cycles[x2]
+      - ldmatrix_latency_cycles[x1]
+      method: 'B32: one warp per sub-partition, ldmatrix.x1/.x2/.x4 from a swizzled
+        tile with each result XORed into an accumulator before the next load: cycles
+        per link = the ldmatrix latency plus about 4 cycles of XOR and loop; wavefronts
+        from the ncu cross-check'
+    ldmatrix_wavefronts:
+      from:
+      - counter_b32_ldsm[probe=x1]
+      - counter_b32_ldsm[probe=x4]
+      - counter_b32_ldsm[probe=x2]
+      method: 'B32 (ncu): shared-memory wavefronts per cycle while one warp per sub-partition
+        issues ldmatrix.xN back to back'
+    tensor_rate_under_lds_load:
+      from:
+      - tensor_under_load[load=cp_async,tensor_blocks=2]
+      - tensor_under_load[load=cp_async,tensor_blocks=3]
+      - tensor_under_load[load=cp_async,tensor_blocks=1]
+      - tensor_under_load[load=both,tensor_blocks=1]
+      - tensor_under_load[load=both,tensor_blocks=3]
+      - tensor_under_load[load=lds128,tensor_blocks=3]
+      - tensor_under_load[load=tensor_only,tensor_blocks=2]
+      - tensor_under_load[load=lds128,tensor_blocks=1]
+      - tensor_under_load[load=both,tensor_blocks=2]
+      - tensor_under_load[load=tensor_only,tensor_blocks=3]
+      - tensor_under_load[load=lds128,tensor_blocks=2]
+      - tensor_under_load[load=tensor_only,tensor_blocks=1]
+      method: 'B33: cycles per k-step of the tensor blocks (B32''s pipelined loop)
+        with load blocks of the given kind on the same SM, 1+1 to 3+3'
+    tensor_slowdown_under_load:
+      from:
+      - tensor_under_load[load=cp_async,tensor_blocks=2]
+      - tensor_under_load[load=cp_async,tensor_blocks=3]
+      - tensor_under_load[load=cp_async,tensor_blocks=1]
+      - tensor_under_load[load=both,tensor_blocks=1]
+      - tensor_under_load[load=both,tensor_blocks=3]
+      - tensor_under_load[load=lds128,tensor_blocks=3]
+      - tensor_under_load[load=tensor_only,tensor_blocks=2]
+      - tensor_under_load[load=lds128,tensor_blocks=1]
+      - tensor_under_load[load=both,tensor_blocks=2]
+      - tensor_under_load[load=tensor_only,tensor_blocks=3]
+      - tensor_under_load[load=lds128,tensor_blocks=2]
+      - tensor_under_load[load=tensor_only,tensor_blocks=1]
+      method: 'B33: ratio to the tensor-only run at the same tensor-block count'
+    load_block_cycles_under_tensor:
+      from:
+      - load_block_under_tensor[load=cp_async,tensor_blocks=3]
+      - load_block_under_tensor[load=both,tensor_blocks=2]
+      - load_block_under_tensor[load=cp_async,tensor_blocks=1]
+      - load_block_under_tensor[load=lds128,tensor_blocks=3]
+      - load_block_under_tensor[load=lds128,tensor_blocks=1]
+      - load_block_under_tensor[load=both,tensor_blocks=1]
+      - load_block_under_tensor[load=cp_async,tensor_blocks=2]
+      - load_block_under_tensor[load=both,tensor_blocks=3]
+      - load_block_under_tensor[load=lds128,tensor_blocks=2]
+      method: 'B33: cycles per step of the load blocks while tensor blocks run'
+    mma_ffma_split:
+      from:
+      - mma_split_cycles_per_mma[mma_alone]
+      - mma_split_cycles_per_mma[together]
+      - ffma_split_cycles_per_ffma[ffma_alone]
+      - ffma_split_cycles_per_ffma[together]
+      method: 'B34 (a2): two warps per sub-partition, one issuing independent mma,
+        the other independent FFMAs; cycles per mma and per FFMA alone and together'
+    mma_ffma_overlap_across_warps:
+      from:
+      - mma_split_cycles_per_mma[mma_alone]
+      - mma_split_cycles_per_mma[together]
+      - ffma_split_cycles_per_ffma[ffma_alone]
+      - ffma_split_cycles_per_ffma[together]
+      method: 'B34 (a2): 1 - the larger of the two slowdowns when the warps run together;
+        1.0 = full overlap of another warp''s FFMAs with an mma in the pipe'
+    mma_ffma_cycles_per_mma:
+      from:
+      - mma_ffma_cycles_per_mma[ffma_per_mma=1]
+      - mma_ffma_cycles_per_mma[ffma_per_mma=0]
+      - mma_ffma_cycles_per_mma[ffma_per_mma=4]
+      - mma_ffma_cycles_per_mma[ffma_per_mma=16]
+      method: 'B34 (a): one warp per sub-partition, 4 independent mma each followed
+        by ff FFMAs, cycles per mma'
+    mma_ffma_overlap:
+      from:
+      - mma_ffma_cycles_per_mma[ffma_per_mma=1]
+      - mma_ffma_cycles_per_mma[ffma_per_mma=0]
+      - mma_ffma_cycles_per_mma[ffma_per_mma=4]
+      - mma_ffma_cycles_per_mma[ffma_per_mma=16]
+      method: 'B34 (a): fraction of the FFMAs'' issue cost (1.075 cycles each, B2)
+        hidden in the mma''s issue shadow'
+    tensor_spill_curve:
+      from:
+      - tensor_loop_cycles_per_mma[acc=192,epilogue=1,maxrreg=255]
+      - tensor_loop_cycles_per_mma[acc=64,epilogue=1,maxrreg=255]
+      - tensor_loop_cycles_per_mma[acc=64,epilogue=0,maxrreg=96]
+      - tensor_loop_cycles_per_mma[acc=64,epilogue=0,maxrreg=128]
+      - tensor_loop_cycles_per_mma[acc=192,epilogue=0,maxrreg=128]
+      - tensor_loop_cycles_per_mma[acc=192,epilogue=0,maxrreg=96]
+      - tensor_loop_cycles_per_mma[acc=192,epilogue=0,maxrreg=255]
+      - tensor_loop_cycles_per_mma[acc=64,epilogue=0,maxrreg=255]
+      - tensor_loop_cycles_per_mma[acc=128,epilogue=0,maxrreg=255]
+      - tensor_loop_cycles_per_mma[acc=128,epilogue=0,maxrreg=96]
+      - tensor_loop_cycles_per_mma[acc=128,epilogue=1,maxrreg=255]
+      - tensor_loop_cycles_per_mma[acc=128,epilogue=0,maxrreg=128]
+      method: 'B34 (b): a tensor inner loop (ldmatrix.x4 + mma per tile) with 64/128/192
+        accumulators per thread, built at -maxrregcount 255/128/96; cycles per mma
+        with ptxas spill bytes'
+    epilogue_cycles_per_tile:
+      from:
+      - tensor_loop_cycles_per_mma[acc=192,epilogue=1,maxrreg=255]
+      - tensor_loop_cycles_per_mma[acc=64,epilogue=1,maxrreg=255]
+      - tensor_loop_cycles_per_mma[acc=128,epilogue=1,maxrreg=255]
+      method: 'B34 (c): the loop with its FP32 -> BF16 convert and store per trip
+        minus the loop alone, per m16n8 output tile'
     mio_issue_cycles_per_load:
       from: mio_queue_depth_table
       method: 'B30.1: one warp per SM issues n back-to-back ld.shared.32; cycles per
@@ -6032,7 +6540,8 @@ provenance:
       - counter_l2_hit_rate[a=48,b=0]
       method: 'ncu: L2 sector hit rate of an 8-pass per-block cyclic stream, L1 bypassed
         (first pass fills, 87.5 % = fully resident); capacity = largest footprint
-        within 3 points of that plateau'
+        within 5 points of that plateau (the capacity-sized footprint reads 84-87,
+        the next 79)'
     counter_crosscheck.issue:
       from:
       - counter_issue[a=1,b=0]

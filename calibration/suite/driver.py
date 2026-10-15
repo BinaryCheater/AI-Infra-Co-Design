@@ -40,11 +40,17 @@ METHODS = {
     "b25_multi_kernel": "kernel-to-kernel gap, CUDA graph gap, two-stream concurrency, L2 persistence across kernels",
     "b27_dependency_ilp": "dependency chains vs ILP vs TLP on one scheduler: loads-then-FFMA iterations over (a, w, L); FFMA and LDS latency references (B27_plus.md)",
     "b30_mio_queue": "the scheduler-to-LSU queue: depth per sub-partition (burst issue), drain rate by width and stride, cp.async/ldmatrix sharing (B30_plus.md)",
+    "b31_mma_issue": "mma.sync latency (dependent chain) and issue rate vs independent accumulators and warps per sub-partition, per shape (round 2, B31)",
+    "b32_ldmatrix_mma": "the ldmatrix -> mma operand path: dependent latency, pipelined depth 1-3, swizzled vs not, 1-4 blocks per SM (round 2, B32)",
+    "b33_mma_mio": "the tensor loop with LDS.128 / cp.async load blocks on the same SM, 1+1 to 3+3 (round 2, B33)",
+    "b34_mixed_issue": "mma with FFMA from the same schedulers; tensor loop at 64/128/192 accumulators under -maxrregcount; the epilogue (round 2, B34)",
+    "c1_tensor_tile": "group-1 composite: BF16 128x128x32 tile kernel, ldmatrix + mma, swizzled, double-buffered cp.async, 1-3 blocks per SM (round 2, a prediction check)",
     "b28_lsu_port_contention": "LSU and shared-memory port sharing across resident blocks: T5-width ld.shared + cp.async pattern at 1-6 blocks per SM (B27_plus.md)",
     "b26_functional_probes": "in-flight cp.async visibility and chunk order, wait_group semantics, barrier/fence visibility, TMA early bytes, FP32 contraction/ftz/tensor rounding, bank map, independent thread scheduling",
 }
 MICRO = [f"b{i}_" for i in range(13, 27)]
-MICRO3 = ["b27_", "b28_", "b30_"]            # B27_plus.md: the warp-model benchmarks (B29 is driven by b29_ground_truth.py)
+MICRO3 = ["b27_", "b28_", "b30_"]
+ROUND2 = ["b31_", "b32_", "b33_", "b34_", "c1_", "b35_", "b36_", "b37_", "c2_", "b38_", "b39_", "b40_", "c3_"]   # notes/hardware_calibration_round2_design.md            # B27_plus.md: the warp-model benchmarks (B29 is driven by b29_ground_truth.py)
 MINIMUM = ["b1_props", "b2_fma", "b4_bandwidth", "b5_latency", "b6_smem", "b7_barrier"]
 
 
@@ -92,6 +98,7 @@ def build(name, arch, build_dir, flags=(), suffix=""):
 
 
 B19_CAPS = [255, 128, 96, 64, 48, 32]
+CAPS = {"b19_registers_local": ([255, 128, 96, 64, 48, 32], r"Function properties for _Z5acc64Pfi"), "b34_mixed_issue": ([255, 128, 96], r"Function properties for _Z11tensor_loopILi48ELi0EEvPfP13__nv_bfloat16iPx")}
 # quantities in these units are inferred structure (a count, a yes/no, a knee), not a rate: the interval target does not apply
 STRUCTURAL_UNITS = {"bool", "count", "loads", "warps", "ways", "groups", "channels", "sms", "cycles_structural"}
 
@@ -102,15 +109,16 @@ def rec_unit(r):
 
 def variants(name, arch, build_dir):
     """(exe, extra run args) per build variant. B19 is rebuilt once per register cap with the ptxas spill count passed in."""
-    if name != "b19_registers_local":
+    if name not in CAPS:
         exe, _ = build(name, arch, build_dir)
         return [(exe, [])] if exe else []
     out = []
-    for cap in B19_CAPS:
+    caps, fn = CAPS[name]
+    for cap in caps:
         exe, log = build(name, arch, build_dir, [f"-maxrregcount={cap}"], f"_r{cap}")
         if not exe:
             continue
-        m = re.search(r"Function properties for _Z5acc64Pfi\s*\n\s*(\d+) bytes stack frame, (\d+) bytes spill stores, (\d+) bytes spill loads", log)
+        m = re.search(fn + r"\s*\n\s*(\d+) bytes stack frame, (\d+) bytes spill stores, (\d+) bytes spill loads", log)
         spill = int(m.group(2)) + int(m.group(3)) if m else -1
         out.append((exe, ["--maxrreg", str(cap), "--spill-bytes", str(spill)]))
     return out
@@ -159,12 +167,13 @@ def main():
     ap.add_argument("--only", nargs="*", default=None); ap.add_argument("--full", action="store_true")
     ap.add_argument("--micro", action="store_true", help="run B13-B26 (the structure suite)")
     ap.add_argument("--micro3", action="store_true", help="run B27-B28 (the warp-model benchmarks)")
+    ap.add_argument("--round2", action="store_true", help="run B31-B40 (round 2: tensor, TMA under load, attention)")
     ap.add_argument("--extra", default="", help="extra args passed to every benchmark")
     ap.add_argument("--crosscheck", action="store_true", help="after the benchmarks, run the ncu counter cross-checks (ncu_crosscheck.py)")
     a = ap.parse_args()
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     build_dir = HERE / "build"; build_dir.mkdir(exist_ok=True)
-    names = a.only or ([n for n in METHODS if any(n.startswith(m) for m in MICRO)] if a.micro else ([n for n in METHODS if any(n.startswith(m) for m in MICRO3)] if a.micro3 else (list(METHODS) if a.full else MINIMUM)))
+    names = a.only or ([n for n in METHODS if any(n.startswith(m) for m in MICRO)] if a.micro else ([n for n in METHODS if any(n.startswith(m) for m in MICRO3)] if a.micro3 else ([n for n in METHODS if any(n.startswith(m) for m in ROUND2)] if a.round2 else (list(METHODS) if a.full else MINIMUM))))
     names = [n for n in names if (HERE / "bench" / f"{n}.cu").exists()]
     summary = {"host": os.uname().nodename, "arch": a.arch, "ci_target": a.ci, "max_reps": a.max_reps,
                "nvcc": sh("nvcc --version | tail -1").stdout.strip(), "driver": sh("nvidia-smi --query-gpu=driver_version --format=csv,noheader").stdout.strip(),
@@ -180,7 +189,7 @@ def main():
             reps = 3
         # benchmarks whose single invocation already takes minutes (60 s loads, drift runs) or that report a structure rather
         # than a rate run once: repeating them to the interval target would cost an hour each and change nothing
-        once = name in ("b13_l2_structure", "b18_dram", "b22_clock_governor", "b23_unified_mechanics", "b26_functional_probes", "b16_block_scheduler")
+        once = name in ("b13_l2_structure", "b18_dram", "b22_clock_governor", "b23_unified_mechanics", "b26_functional_probes", "b16_block_scheduler", "b33_mma_mio", "b35_tma_residency", "b36_tma_contention", "b37_mbarrier_cluster", "b40_register_budget")
         total = 0
         failed = False
         while True:
@@ -219,7 +228,10 @@ def main():
                                        "worst_ci95": max((r["ci95"] or 0 for r in records.values()), default=None)}
         print(f"[done] {name}: {len(records)} quantities, {total} reps, {time.time() - t0:.1f} s", file=sys.stderr)
     if a.crosscheck:
-        r = subprocess.run([sys.executable, str(HERE / "ncu_crosscheck.py"), "--out", str(out), "--build", str(build_dir), "--arch", a.arch], text=True)
+        # with --only, re-read only the probes of the named benchmarks: re-reading every check moves B13-B30's counter-derived contract
+        # values by run-to-run noise (the LSU drain read 0.983 then 0.977), which a group-1 run has no business doing
+        only = [] if not a.only else ["--only"] + [p[0] for p in __import__("ncu_crosscheck").PROBES if any(p[1].startswith(n) for n in a.only)]
+        r = subprocess.run([sys.executable, str(HERE / "ncu_crosscheck.py"), "--out", str(out), "--build", str(build_dir), "--arch", a.arch] + only, text=True)
         summary["crosscheck"] = "ok" if r.returncode == 0 else f"failed ({r.returncode})"
     summary["finished"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     (out / "_summary.json").write_text(json.dumps(summary, indent=1) + "\n")

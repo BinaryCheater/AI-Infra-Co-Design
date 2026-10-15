@@ -1,0 +1,50 @@
+{
+ "quantity": "tensor_under_load[load=lds128,tensor_blocks=1]",
+ "unit": "cycles",
+ "samples": [
+  74.466875,
+  74.47625,
+  74.476875,
+  74.4778125,
+  74.4778125,
+  74.4784375,
+  74.4790625,
+  74.479375,
+  74.485,
+  74.4859375
+ ],
+ "detail": {
+  "load": "lds128",
+  "tensor_blocks_per_sm": 1,
+  "load_blocks_per_sm": 1,
+  "mma_per_step_per_warp": 4,
+  "ldmatrix_per_step_per_warp": 2,
+  "sms_with_both_roles": 48,
+  "sms": 48,
+  "sm_clock_mhz": 2540.8
+ },
+ "value": 74.478125,
+ "ci95": 3.5664834473224674e-05,
+ "n": 10,
+ "repeat_policy": "once",
+ "method": "the tensor loop with LDS.128 / cp.async load blocks on the same SM, 1+1 to 3+3 (round 2, B33)",
+ "benchmark": "b33_mma_mio",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 40.0,
+   "power_w": 4.29,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 40.0,
+   "power_w": 6.32,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:14:51Z",
+ "arch": "sm_121"
+}

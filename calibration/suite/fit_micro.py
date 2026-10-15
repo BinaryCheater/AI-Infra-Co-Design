@@ -521,10 +521,12 @@ def fit_counters(recs):
     if hit:
         curve = {str(a): g(mt, "lts__t_sector_hit_rate.pct") for (a, b), mt in sorted(hit.items())}
         cc["l2_hit_rate_pct_by_footprint_mib"] = curve
-        # 8 passes, the first fills: a fully resident footprint reads 7/8 = 87.5 % hits; capacity = the last footprint within 3 points of that plateau
-        cap = max((int(k) for k, v in curve.items() if v is not None and v >= 87.5 - 3), default=None)
+        # 8 passes, the first fills: a fully resident footprint reads 7/8 = 87.5 % hits; capacity = the last footprint within 5 points of that
+        # plateau. A footprint equal to the capacity cannot read the full plateau (the kernel's own other lines evict a few): the 24 MiB point
+        # read 87.3 on one run and 83.9 on the next while 28 MiB reads 79 on both, so the tolerance sits between those (round 2, group 1)
+        cap = max((int(k) for k, v in curve.items() if v is not None and v >= 87.5 - 5), default=None)
         cc["l2_capacity_mib_from_counters"] = cap
-        s["counter_crosscheck.l2_hit_rate"] = {"from": [f"counter_l2_hit_rate[a={a},b={b}]" for (a, b) in hit], "method": "ncu: L2 sector hit rate of an 8-pass per-block cyclic stream, L1 bypassed (first pass fills, 87.5 % = fully resident); capacity = largest footprint within 3 points of that plateau"}
+        s["counter_crosscheck.l2_hit_rate"] = {"from": [f"counter_l2_hit_rate[a={a},b={b}]" for (a, b) in hit], "method": "ncu: L2 sector hit rate of an 8-pass per-block cyclic stream, L1 bypassed (first pass fills, 87.5 % = fully resident); capacity = largest footprint within 5 points of that plateau (the capacity-sized footprint reads 84-87, the next 79)"}
     iss = rows.get("issue")
     if iss:
         tab = {}
@@ -705,7 +707,128 @@ def fit_b30(recs):
     return f, s
 
 
-FITTERS = [("b30_mio_queue", fit_b30), ("b27_dependency_ilp", fit_b27), ("b28_lsu_port_contention", fit_b28), ("b13_l2_structure", fit_b13), ("b14_l1_carveout", fit_b14), ("b15_copy_queue", fit_b15), ("b16_block_scheduler", fit_b16),
+# ---------------------------------------------------------------- round 2, group 1: the tensor core path (B31-B34)
+def fit_b31(recs):
+    f, s = {}, {}
+    rows = keyed(recs, "mma_cycles_per_op")
+    if not rows:
+        return f, s
+    by = {}
+    for k, r in rows.items():
+        d = r["detail"]; by.setdefault(d["shape"], {})[(int(d["a"]), int(d["warps_per_smsp"]))] = r["value"]
+    lat, issue, inflight, sat = {}, {}, {}, {}
+    for shape, g in by.items():
+        lat[shape] = g.get((1, 1))                                      # one dependent chain: cycles per mma = latency
+        best = min(g.values()); issue[shape] = round(best, 2)          # fewest cycles per mma per warp at saturation... per warp; per sub-partition rate = w / cycles
+        rate = {aw: aw[1] / v for aw, v in g.items()}                    # warp-mma per sub-partition cycle
+        peak = max(rate.values()); sat[shape] = round(peak, 4)
+        one = sorted((a, rate[(a, 1)]) for (a, w) in g if w == 1)
+        inflight[shape] = next((a for a, rt in one if rt >= 0.9 * max(rt2 for _, rt2 in one)), None)
+    f["mma_latency_cycles"] = {k: round(v, 1) for k, v in lat.items() if v}
+    f["mma_issue_cycles"] = {k: round(1.0 / sat[k], 2) for k in sat}                           # sub-partition cycles per mma at the pipe's rate
+    f["mma_in_flight_to_saturate"] = inflight
+    f["mma_rate_warp_per_cycle_per_smsp"] = sat
+    f["mma_cycles_grid"] = {shape: {f"a={a},w={w}": round(v, 1) for (a, w), v in sorted(g.items())} for shape, g in by.items()}
+    s["mma_latency_cycles"] = {"from": [r["quantity"] for k, r in rows.items() if "a=1,w=1" in k], "method": "B31 (a): one warp per sub-partition, one dependent mma chain (the accumulator feeds the next), cycles per mma"}
+    s["mma_issue_cycles"] = {"from": [r["quantity"] for r in rows.values()], "method": "B31 (b, c): sub-partition cycles per warp-mma at the best point of the (a, w) grid (the pipe's rate); compare B20"}
+    s["mma_in_flight_to_saturate"] = {"from": [r["quantity"] for k, r in rows.items() if "w=1" in k], "method": "B31 (b): smallest a (independent accumulators from one warp) reaching 90 % of the one-warp peak"}
+    s["mma_cycles_grid"] = {"from": [r["quantity"] for r in rows.values()], "method": "B31: cycles per mma per warp over the (a, w) grid (the warp model's prediction target for the tensor pipe)"}
+    return f, s
+
+
+def fit_b32(recs):
+    f, s = {}, {}
+    rows = keyed(recs, "ldmatrix_mma_cycles_per_step")
+    if rows:
+        tab = {k: round(r["value"], 1) for k, r in rows.items()}
+        f["ldmatrix_mma_cycles_per_step"] = tab
+        dep = tab.get("dependent_swizzled,bps=1")
+        if dep:
+            f["ldmatrix_mma_dependent_cycles"] = dep
+        sw = {d: tab.get(f"swizzled_depth{d},bps=1") for d in (1, 2, 3)}
+        best = min(v for v in sw.values() if v)
+        f["mma_pipeline_depth_to_saturate"] = next((d for d, v in sw.items() if v and v <= best / 0.9), None)
+        f["tensor_loop_efficiency"] = {"swizzled": round(4 * 1.0, 3) if False else None}
+        s["ldmatrix_mma_cycles_per_step"] = {"from": [r["quantity"] for r in rows.values()], "method": "B32: cycles per k-step per warp (2 ldmatrix.x4 + 4 mma.sync bf16 m16n8k16) by pipeline depth, swizzle and blocks per SM; dependent = ldmatrix -> mma -> next ldmatrix address"}
+        s["ldmatrix_mma_dependent_cycles"] = {"from": ["ldmatrix_mma_cycles_per_step[dependent_swizzled,bps=1]"], "method": "B32 (a): the chain ldmatrix -> mma -> ldmatrix (the next address depends on the accumulator through a run-time zero mask), cycles per link = ldmatrix latency + mma latency + the address arithmetic"}
+        s["mma_pipeline_depth_to_saturate"] = {"from": [f"ldmatrix_mma_cycles_per_step[swizzled_depth{d},bps=1]" for d in (1, 2, 3)], "method": "B32 (b): smallest register double-buffer depth within 10 % of the best"}
+    ld = keyed(recs, "ldmatrix_latency_cycles")
+    if ld:
+        f["ldmatrix_latency_cycles"] = {k: round(r["value"], 2) for k, r in ld.items()}
+        s["ldmatrix_latency_cycles"] = {"from": [r["quantity"] for r in ld.values()], "method": "B32: one warp per sub-partition, ldmatrix.x1/.x2/.x4 from a swizzled tile with each result XORed into an accumulator before the next load: cycles per link = the ldmatrix latency plus about 4 cycles of XOR and loop; wavefronts from the ncu cross-check"}
+    wf = {}
+    for q, r in recs.items():
+        if q.startswith("counter_b32_ldsm[probe=x") and r["detail"].get("measured"):
+            mt = {k: v[0] for k, v in r["detail"]["metrics"].items()}; w = mt.get("l1tex__data_pipe_lsu_wavefronts_mem_shared.sum"); i = mt.get("sm__inst_executed.sum")
+            wf[q.split("probe=")[1].rstrip("]")] = {"wavefronts_per_cycle_per_sm": round(w / 48 / mt["sm__cycles_active.avg"], 3) if w else None}
+    if wf:
+        f["ldmatrix_wavefronts"] = wf
+        s["ldmatrix_wavefronts"] = {"from": [q for q in recs if q.startswith("counter_b32_ldsm[probe=x")], "method": "B32 (ncu): shared-memory wavefronts per cycle while one warp per sub-partition issues ldmatrix.xN back to back"}
+    f.pop("tensor_loop_efficiency", None)
+    return f, s
+
+
+def fit_b33(recs):
+    f, s = {}, {}
+    t = keyed(recs, "tensor_under_load"); l = keyed(recs, "load_block_under_tensor")
+    if t:
+        f["tensor_rate_under_lds_load"] = {k: round(r["value"], 1) for k, r in t.items()}
+        base = {k: v for k, v in f["tensor_rate_under_lds_load"].items() if "tensor_only" in k}
+        f["tensor_slowdown_under_load"] = {k: round(v / base[f"load=tensor_only,tensor_blocks={k.split('tensor_blocks=')[1]}"], 3) for k, v in f["tensor_rate_under_lds_load"].items() if "tensor_only" not in k and f"load=tensor_only,tensor_blocks={k.split('tensor_blocks=')[1]}" in base}
+        s["tensor_rate_under_lds_load"] = {"from": [r["quantity"] for r in t.values()], "method": "B33: cycles per k-step of the tensor blocks (B32's pipelined loop) with load blocks of the given kind on the same SM, 1+1 to 3+3"}
+        s["tensor_slowdown_under_load"] = {"from": [r["quantity"] for r in t.values()], "method": "B33: ratio to the tensor-only run at the same tensor-block count"}
+    if l:
+        f["load_block_cycles_under_tensor"] = {k: round(r["value"], 1) for k, r in l.items()}
+        s["load_block_cycles_under_tensor"] = {"from": [r["quantity"] for r in l.values()], "method": "B33: cycles per step of the load blocks while tensor blocks run"}
+    return f, s
+
+
+def fit_b34(recs):
+    f, s = {}, {}
+    sp = {**{"mma_" + k: r for k, r in keyed(recs, "mma_split_cycles_per_mma").items()}, **{"ffma_" + k: r for k, r in keyed(recs, "ffma_split_cycles_per_ffma").items()}}
+    if sp:
+        tab = {k: round(r["value"], 2) for k, r in sp.items()}
+        f["mma_ffma_split"] = tab
+        ma, mt, fa, ft = tab.get("mma_mma_alone"), tab.get("mma_together"), tab.get("ffma_ffma_alone"), tab.get("ffma_together")
+        if ma and mt and fa and ft:
+            # 1.0 = the FFMA warp issues as if the tensor warp were absent (the scheduler's FFMA slots are free during another warp's mma)
+            f["mma_ffma_overlap_across_warps"] = round(min(1.0, max(0.0, 1.0 - max(ft / fa - 1.0, mt / ma - 1.0))), 3)
+        s["mma_ffma_split"] = {"from": [r["quantity"] for r in sp.values()], "method": "B34 (a2): two warps per sub-partition, one issuing independent mma, the other independent FFMAs; cycles per mma and per FFMA alone and together"}
+        s["mma_ffma_overlap_across_warps"] = {"from": [r["quantity"] for r in sp.values()], "method": "B34 (a2): 1 - the larger of the two slowdowns when the warps run together; 1.0 = full overlap of another warp's FFMAs with an mma in the pipe"}
+    r0 = keyed(recs, "mma_ffma_cycles_per_mma")
+    if r0:
+        tab = {int(k.split("=")[1]): r["value"] for k, r in r0.items()}
+        base = tab.get(0)
+        f["mma_ffma_cycles_per_mma"] = {str(k): round(v, 2) for k, v in sorted(tab.items())}
+        # overlap: FFMAs that fit in the mma's issue shadow for free. With base cycles per mma and ff FFMAs added, the extra cycles per FFMA
+        # against 1.07 (the FFMA issue cost) give the fraction hidden
+        ov = {}
+        for ff, v in tab.items():
+            if ff and base:
+                extra = (v - base) / ff
+                ov[str(ff)] = round(max(0.0, 1.0 - extra / 1.075), 3)
+        f["mma_ffma_overlap"] = ov
+        s["mma_ffma_cycles_per_mma"] = {"from": [r["quantity"] for r in r0.values()], "method": "B34 (a): one warp per sub-partition, 4 independent mma each followed by ff FFMAs, cycles per mma"}
+        s["mma_ffma_overlap"] = {"from": [r["quantity"] for r in r0.values()], "method": "B34 (a): fraction of the FFMAs' issue cost (1.075 cycles each, B2) hidden in the mma's issue shadow"}
+    lp = keyed(recs, "tensor_loop_cycles_per_mma")
+    if lp:
+        tab = {}
+        for k, r in lp.items():
+            d = r["detail"]; tab[k] = {"cycles_per_mma": round(r["value"], 2), "regs_used": d.get("regs_used"), "spill_bytes": d.get("spill_bytes_ptxas"), "local_bytes": d.get("local_bytes")}
+        f["tensor_spill_curve"] = tab
+        epi = {k: v for k, v in tab.items() if "epilogue=1" in k}
+        f["epilogue_cycles_per_tile"] = {}
+        for k, v in epi.items():
+            acc = k.split("acc=")[1].split(",")[0]; base = tab.get(f"acc={acc},epilogue=0,maxrreg=255")
+            if base:
+                tiles = int(acc) // 4
+                f["epilogue_cycles_per_tile"][f"acc={acc}"] = round((v["cycles_per_mma"] - base["cycles_per_mma"]) * 16 * tiles / tiles, 1)   # extra cycles per trip (16 k-steps) per output tile
+        s["tensor_spill_curve"] = {"from": [r["quantity"] for r in lp.values()], "method": "B34 (b): a tensor inner loop (ldmatrix.x4 + mma per tile) with 64/128/192 accumulators per thread, built at -maxrregcount 255/128/96; cycles per mma with ptxas spill bytes"}
+        s["epilogue_cycles_per_tile"] = {"from": [r["quantity"] for k, r in lp.items() if "epilogue=1" in k], "method": "B34 (c): the loop with its FP32 -> BF16 convert and store per trip minus the loop alone, per m16n8 output tile"}
+    return f, s
+
+
+FITTERS = [("b31_mma_issue", fit_b31), ("b32_ldmatrix_mma", fit_b32), ("b33_mma_mio", fit_b33), ("b34_mixed_issue", fit_b34), ("b30_mio_queue", fit_b30), ("b27_dependency_ilp", fit_b27), ("b28_lsu_port_contention", fit_b28), ("b13_l2_structure", fit_b13), ("b14_l1_carveout", fit_b14), ("b15_copy_queue", fit_b15), ("b16_block_scheduler", fit_b16),
            ("b17_latency_hiding", None), ("b18_dram", fit_b18), ("b19_registers_local", fit_b19), ("b20_tensor_detail", fit_b20),
            ("b21_compute_block", fit_b21), ("b22_clock_governor", fit_b22), ("b23_unified_mechanics", fit_b23), ("b24_atomics_reductions", fit_b24),
            ("b25_multi_kernel", fit_b25), ("b26_functional_probes", fit_b26)]

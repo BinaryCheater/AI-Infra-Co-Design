@@ -1,0 +1,79 @@
+{
+ "quantity": "counter_b32_ldsm[probe=x1]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: B32: ldmatrix wavefronts per instruction by x1/x2/x4; the pipelined loop's tensor activity and stalls, swizzled and not",
+ "benchmark": "b32_ldmatrix_mma",
+ "arch": "sm_121",
+ "timestamp": "2026-10-15T03:15:13Z",
+ "detail": {
+  "probe": "1",
+  "metrics": {
+   "l1tex__data_pipe_lsu_wavefronts_mem_shared.sum": [
+    102576.0,
+    ""
+   ],
+   "l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum": [
+    76800.0,
+    ""
+   ],
+   "sm__cycles_active.avg": [
+    26178.83,
+    "cycle"
+   ],
+   "sm__inst_executed.sum": [
+    479712.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_tensor.sum": [
+    0.0,
+    "inst"
+   ],
+   "sm__pipe_fma_cycles_active.avg": [
+    474.0,
+    "cycle"
+   ],
+   "sm__pipe_tensor_cycles_active.avg": [
+    0.0,
+    "cycle"
+   ],
+   "smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio": [
+    0.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio": [
+    0.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio": [
+    0.0,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio": [
+    7.82,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_wait_per_issue_active.ratio": [
+    2.72,
+    "inst"
+   ],
+   "smsp__cycles_active.avg": [
+    23423.7,
+    "cycle"
+   ],
+   "smsp__issue_active.avg": [
+    2498.5,
+    "cycle"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 1.9
+ }
+}

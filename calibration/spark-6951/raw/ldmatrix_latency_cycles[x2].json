@@ -1,0 +1,39 @@
+{
+ "quantity": "ldmatrix_latency_cycles[x2]",
+ "unit": "cycles",
+ "samples": [
+  69.6375,
+  69.6425,
+  69.6475
+ ],
+ "detail": {
+  "x": 2,
+  "warps_per_sm": 4,
+  "method": "one warp per sub-partition: ldmatrix.x2, its result XORed into an accumulator, then the next; cycles per link = the ldmatrix latency plus the XOR and loop (about 4 cycles)",
+  "sm_clock_mhz": 2541.3
+ },
+ "value": 69.6425,
+ "ci95": 7.179523997552433e-05,
+ "n": 3,
+ "repeat_policy": "to_ci",
+ "method": "the ldmatrix -> mma operand path: dependent latency, pipelined depth 1-3, swizzled vs not, 1-4 blocks per SM (round 2, B32)",
+ "benchmark": "b32_ldmatrix_mma",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 40.0,
+   "power_w": 4.29,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2444.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 43.0,
+   "power_w": 18.3,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:08:32Z",
+ "arch": "sm_121"
+}

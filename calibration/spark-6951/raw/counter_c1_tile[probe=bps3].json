@@ -1,0 +1,91 @@
+{
+ "quantity": "counter_c1_tile[probe=bps3]",
+ "unit": "metrics",
+ "samples": [
+  1.0
+ ],
+ "value": 1.0,
+ "ci95": 0.0,
+ "n": 1,
+ "repeat_policy": "once",
+ "method": "ncu: C1 composite: tensor pipe activity, issue-active, shared wavefronts and the stall families of the 128x128x32 tile kernel at 1-3 blocks per SM",
+ "benchmark": "c1_tensor_tile",
+ "arch": "sm_121",
+ "timestamp": "2026-10-15T03:15:32Z",
+ "detail": {
+  "probe": "3",
+  "metrics": {
+   "l1tex__data_pipe_lsu_wavefronts_mem_shared.sum": [
+    16775530.0,
+    ""
+   ],
+   "l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum": [
+    14345340.0,
+    ""
+   ],
+   "sm__cycles_active.avg": [
+    1174729.54,
+    "cycle"
+   ],
+   "sm__inst_executed.sum": [
+    60899824.0,
+    "inst"
+   ],
+   "sm__inst_executed_pipe_tensor.sum": [
+    9437184.0,
+    "inst"
+   ],
+   "sm__pipe_fma_cycles_active.avg": [
+    322397.25,
+    "cycle"
+   ],
+   "sm__pipe_tensor_cycles_active.avg": [
+    3145728.0,
+    "cycle"
+   ],
+   "smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio": [
+    1.02,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio": [
+    1.07,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio": [
+    3.58,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio": [
+    0.88,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio": [
+    0.48,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio": [
+    1.61,
+    "inst"
+   ],
+   "smsp__average_warps_issue_stalled_wait_per_issue_active.ratio": [
+    2.75,
+    "inst"
+   ],
+   "smsp__cycles_active.avg": [
+    1232131.26,
+    "cycle"
+   ],
+   "smsp__issue_active.avg": [
+    317185.48,
+    "cycle"
+   ],
+   "smsp__warps_active.avg": [
+    4199384.39,
+    "warp"
+   ]
+  },
+  "measured": true,
+  "reason": null,
+  "seconds": 1.9
+ }
+}

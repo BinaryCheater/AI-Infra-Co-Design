@@ -1,0 +1,48 @@
+{
+ "quantity": "mma_cycles_per_op[shape=fp8_e4m3_m16n8k32,a=4,w=4]",
+ "unit": "cycles",
+ "samples": [
+  64.364,
+  64.364125,
+  64.36425,
+  64.36425,
+  64.36425,
+  64.364375,
+  64.364375,
+  64.364375,
+  64.364375,
+  64.3645
+ ],
+ "detail": {
+  "shape": "fp8_e4m3_m16n8k32",
+  "a": 4,
+  "warps_per_smsp": 4,
+  "flops_per_mma": 8192,
+  "warp_mma_per_cycle_per_smsp": 0.0621,
+  "sm_clock_mhz": 2541.4
+ },
+ "value": 64.3643125,
+ "ci95": 1.4565524955740515e-06,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "mma.sync latency (dependent chain) and issue rate vs independent accumulators and warps per sub-partition, per shape (round 2, B31)",
+ "benchmark": "b31_mma_issue",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 38.0,
+   "power_w": 4.13,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 39.0,
+   "power_w": 8.04,
+   "sw_power_cap": "Active"
+  }
+ },
+ "timestamp": "2026-10-15T02:53:35Z",
+ "arch": "sm_121"
+}

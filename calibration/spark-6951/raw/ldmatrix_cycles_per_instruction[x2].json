@@ -1,0 +1,39 @@
+{
+ "quantity": "ldmatrix_cycles_per_instruction[x2]",
+ "unit": "cycles",
+ "samples": [
+  69.645,
+  69.6475,
+  69.6475
+ ],
+ "detail": {
+  "x": 2,
+  "warps_per_sm": 4,
+  "method": "one warp per sub-partition issuing ldmatrix.x2 back to back",
+  "sm_clock_mhz": 2540.8
+ },
+ "value": 69.6475,
+ "ci95": 1.794752144727181e-05,
+ "n": 3,
+ "repeat_policy": "to_ci",
+ "method": "the ldmatrix -> mma operand path: dependent latency, pipelined depth 1-3, swizzled vs not, 1-4 blocks per SM (round 2, B32)",
+ "benchmark": "b32_ldmatrix_mma",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 39.0,
+   "power_w": 4.33,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2405.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 40.0,
+   "power_w": 17.58,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T02:54:50Z",
+ "arch": "sm_121"
+}

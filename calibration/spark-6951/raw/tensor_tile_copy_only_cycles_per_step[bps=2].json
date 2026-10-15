@@ -1,0 +1,54 @@
+{
+ "quantity": "tensor_tile_copy_only_cycles_per_step[bps=2]",
+ "unit": "cycles",
+ "samples": [
+  1942.61719,
+  1943.02344,
+  1945.02734,
+  1945.125,
+  1951.61719,
+  1955.58984,
+  1946.83984,
+  1934.99219,
+  1929.57812,
+  1944.01562
+ ],
+ "detail": {
+  "blocks_per_sm": 2,
+  "resident_blocks_per_sm": 2,
+  "occupancy_limit_blocks": 2,
+  "warps_per_block": 8,
+  "ldmatrix_x4_per_step_per_warp": 12,
+  "mma_per_step_per_warp": 32,
+  "cp_async_chunks_per_step_per_thread": 4,
+  "smem_bytes": 32768,
+  "regs": 94,
+  "k_steps_per_pass": 32,
+  "tile": "128x128x32 bf16",
+  "sm_clock_mhz": 2541.5
+ },
+ "value": 1944.5214799999999,
+ "ci95": 0.002407605186238424,
+ "n": 10,
+ "repeat_policy": "to_ci",
+ "method": "group-1 composite: BF16 128x128x32 tile kernel, ldmatrix + mma, swizzled, double-buffered cp.async, 1-3 blocks per SM (round 2, a prediction check)",
+ "benchmark": "c1_tensor_tile",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 42.0,
+   "power_w": 4.36,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 42.0,
+   "power_w": 6.17,
+   "sw_power_cap": "Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:19:31Z",
+ "arch": "sm_121"
+}

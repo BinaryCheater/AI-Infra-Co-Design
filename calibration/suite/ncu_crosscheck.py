@@ -19,6 +19,15 @@ STALL = ",".join(f"smsp__average_warps_issue_stalled_{s}_per_issue_active.ratio"
 SMEM = "l1tex__data_pipe_lsu_wavefronts_mem_shared.sum,l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum,sm__sass_inst_executed_op_shared_ld.sum,sm__sass_data_bytes_mem_shared.sum,gpu__time_duration.sum"
 L1 = "l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum,l1tex__t_sector_hit_rate.pct,l1tex__t_requests.sum,gpu__time_duration.sum"
 
+TENSOR = "sm__cycles_active.avg,sm__pipe_tensor_cycles_active.avg,sm__inst_executed_pipe_tensor.sum,sm__inst_executed.sum,smsp__issue_active.avg,smsp__cycles_active.avg,sm__pipe_fma_cycles_active.avg,l1tex__data_pipe_lsu_wavefronts_mem_shared.sum," + ",".join(f"smsp__average_warps_issue_stalled_{s}_per_issue_active.ratio" for s in ("mio_throttle", "short_scoreboard", "not_selected", "math_pipe_throttle", "wait"))
+# round-2 checks run a benchmark binary's --probe mode (warm-up + one profiled launch of the saturated configuration)
+PROBES = [
+    ("b31_tensor", "b31_mma_issue", TENSOR, [("0", "fp16"), ("1", "bf16"), ("2", "tf32"), ("3", "fp8")], "B31: tensor pipe active cycles and mma instructions at the saturated point (a = 16, 4 warps per sub-partition) per shape; rate vs B20"),
+    ("b32_ldsm", "b32_ldmatrix_mma", TENSOR + ",l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum", [("1", "x1"), ("2", "x2"), ("4", "x4"), ("pipelined", "pipelined"), ("unswizzled", "unswizzled")], "B32: ldmatrix wavefronts per instruction by x1/x2/x4; the pipelined loop's tensor activity and stalls, swizzled and not"),
+    ("b33_mix", "b33_mma_mio", TENSOR + ",l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum,smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio", [("lds128", "lds128"), ("cp_async", "cp_async"), ("both", "both")], "B33: tensor pipe activity, shared wavefronts and stalls with one tensor block and one load block per SM"),
+    ("c1_tile", "c1_tensor_tile", TENSOR + ",smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio,smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio,l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum,smsp__warps_active.avg", [("1", "bps1"), ("2", "bps2"), ("3", "bps3")], "C1 composite: tensor pipe activity, issue-active, shared wavefronts and the stall families of the 128x128x32 tile kernel at 1-3 blocks per SM"),
+    ("b34_mixed", "b34_mixed_issue_r255", TENSOR + ",l1tex__t_sectors_pipe_lsu_mem_local_op_ld.sum,l1tex__t_sectors_pipe_lsu_mem_local_op_st.sum", [("ratio4", "ratio4"), ("loop128", "loop128"), ("split", "split")], "B34: issue-active, FMA and tensor pipe activity with 4 FFMAs per mma; the 128-accumulator loop's local-memory sectors"),
+]
 CHECKS = [
     # name, kernel, metrics, [(a, b)...], what it cross-checks
     ("l2_fill", "strided", L2, [(32, 0), (64, 0), (128, 0), (256, 0), (512, 0)], "B13.1 fill granularity: L2 sectors per request and DRAM (miss) sectors per request at each stride"),
@@ -69,6 +78,22 @@ def main():
     ncu = sh(["which", "ncu"]).stdout.strip()
     if not ncu:
         print("ncu not on PATH", file=sys.stderr); sys.exit(1)
+    for name, exe_name, metrics, probes, what in PROBES:
+        if a.only and name not in a.only:
+            continue
+        pexe = build / exe_name
+        if not pexe.exists():
+            print(f"[ncu] {name}: {exe_name} not built, skipped", file=sys.stderr); continue
+        for probe, label in probes:
+            t0 = time.time()
+            r = sh([ncu, "--csv", "--metrics", metrics, "--launch-skip", "1", "--launch-count", "1", str(pexe), "--reps", "1", "--probe", probe])
+            vals, units = parse_csv(r.stdout)
+            q = f"counter_{name}[probe={label}]"
+            rec = {"quantity": q, "unit": "metrics", "samples": [1.0] if vals else [], "value": 1.0 if vals else None, "ci95": 0.0 if vals else None, "n": 1 if vals else 0,
+                   "repeat_policy": "once", "method": f"ncu: {what}", "benchmark": exe_name, "arch": a.arch, "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                   "detail": {"probe": probe, "metrics": {k: [v, units.get(k)] for k, v in vals.items()}, "measured": bool(vals), "reason": None if vals else (r.stderr or r.stdout)[-400:].strip(), "seconds": round(time.time() - t0, 1)}}
+            (out / (re.sub(r"[^A-Za-z0-9_.=\[\]-]", "_", q) + ".json")).write_text(json.dumps(rec, indent=1) + "\n")
+            print(f"[ncu] {q}: {len(vals)} metrics, {time.time() - t0:.1f} s" + ("" if vals else f" FAILED: {rec['detail']['reason'][:200]}"), file=sys.stderr)
     for name, kernel, metrics, args, what in CHECKS:
         if a.only and name not in a.only:
             continue

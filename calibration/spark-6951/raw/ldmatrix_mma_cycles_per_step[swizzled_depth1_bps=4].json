@@ -1,0 +1,67 @@
+{
+ "quantity": "ldmatrix_mma_cycles_per_step[swizzled_depth1,bps=4]",
+ "unit": "cycles",
+ "samples": [
+  131.441875,
+  131.464687,
+  131.479531,
+  131.487656,
+  131.488281,
+  131.490469,
+  131.491875,
+  131.502656,
+  131.503125,
+  131.505937,
+  131.450312,
+  131.460625,
+  131.462031,
+  131.462187,
+  131.467656,
+  131.484531,
+  131.485,
+  131.487031,
+  131.505625,
+  131.570469,
+  131.445781,
+  131.453125,
+  131.462656,
+  131.464063,
+  131.464219,
+  131.478125,
+  131.483438,
+  131.484844,
+  131.56625,
+  131.575938
+ ],
+ "detail": {
+  "variant": "swizzled_depth1",
+  "blocks_per_sm": 4,
+  "mma_per_step_per_warp": 4,
+  "ldmatrix_per_step_per_warp": 2,
+  "sm_clock_mhz": 2541.3
+ },
+ "value": 131.48398450000002,
+ "ci95": 9.179825243274591e-05,
+ "n": 30,
+ "repeat_policy": "to_ci",
+ "method": "the ldmatrix -> mma operand path: dependent latency, pipelined depth 1-3, swizzled vs not, 1-4 blocks per SM (round 2, B32)",
+ "benchmark": "b32_ldmatrix_mma",
+ "clocks": {
+  "before": {
+   "sm_mhz": 208.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 40.0,
+   "power_w": 4.29,
+   "sw_power_cap": "Not Active"
+  },
+  "after": {
+   "sm_mhz": 2444.0,
+   "max_sm_mhz": 3003.0,
+   "temp_c": 43.0,
+   "power_w": 18.3,
+   "sw_power_cap": "Not Active"
+  }
+ },
+ "timestamp": "2026-10-15T03:08:32Z",
+ "arch": "sm_121"
+}
