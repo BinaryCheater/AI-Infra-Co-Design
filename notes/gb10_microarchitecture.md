@@ -44,7 +44,7 @@ Once the first wave is placed, later blocks go wherever a block finishes; only 1
 | global load, L1 hit | 44 |
 | `mma.sync` m16n8k16 FP16 | 29 |
 
-**Hiding latency.** With one warp per scheduler and a single dependent FFMA chain, the scheduler is busy 1 cycle in 4. Four independent chains in one warp fill it; so do two warps with two chains each [B27]. For shared loads the rule is different, because the loads also pass through a queue (Chapter 5): one warp with one outstanding load takes 33 cycles per load; with `a` independent loads and `w` warps per scheduler the time per iteration is 8·a·w cycles once a·w ≥ 4, i.e. the scheduler's loads are served one every 8 cycles whatever the mix of ILP and TLP [B27]. One warp issuing a burst of 16 loads back to back does better, 0.36 loads per cycle per sub-partition, so the 8-cycle figure is a per-instruction dispatch cost that bursts can pipeline [B27].
+**Hiding latency.** With one warp per scheduler and a single dependent FFMA chain, the scheduler is busy 1 cycle in 4. Four independent chains in one warp fill it; so do two warps with two chains each [B27]. For shared loads the rule is different, because the loads also pass through a queue into a unit that the four schedulers share (Chapter 5): one warp with one outstanding load takes 33 cycles per load; with `a` independent loads and `w` warps per scheduler the time per iteration is 8·a·w cycles once a·w ≥ 4 [B27]. That 8 is not a scheduler property. It is the SM's load/store unit serving one 32-bit load every 2 cycles, divided among four schedulers. ILP and TLP both hide the 27-cycle latency, and neither raises the rate past the unit's limit.
 
 **What a scheduler stalls on.** The hardware counters classify every cycle a warp does not issue. For the FFMA-dense GEMM inner loop (tile 128×256×16, 8×16 register blocking) the picture per issue-active cycle is: 0.84 warps waiting because another warp was picked (`not_selected`), 0.31 waiting for the memory queue (`mio_throttle`), 0.15 on a fixed-latency dependency, 0.11 on a short scoreboard; the FMA pipe is busy 62 % of cycles and 87 % of issued instructions are FFMA [ncu, `inner_loop`]. For a load-heavy loop (32×32×32, 2×2 blocking) the order flips: 1.52 short-scoreboard, 1.15 wait, 1.03 `mio_throttle`, 0.45 `not_selected`, and the FMA pipe is busy 18 % of the time [ncu]. These two profiles are the two regimes of Chapter 4.
 
@@ -128,15 +128,22 @@ Stride 2 is free, so the bank datapath is effectively 8 bytes wide per bank pair
 
 So the pipe moves about 256 bytes per cycle per SM, 0.63 TB/s at 2.46 GHz, and reaches it only with 64- or 128-bit accesses. A dependent chain of 32-bit loads gets a quarter of that, 154 GB/s [B6], because each load waits 27 cycles for the previous one.
 
-**The queue in front of the pipe.** Shared loads and stores, global loads and stores, and `cp.async` all pass from the sub-partition's scheduler through a queue (NVIDIA's counters call it MIO) into the load/store unit. When that queue is full the scheduler reports `mio_throttle`. Three measurements describe it from outside:
+**The queue in front of the pipe.** Shared loads and stores, global loads and stores, and `cp.async` all pass from the sub-partition's scheduler through a queue (NVIDIA's counters call it MIO) into the load/store unit. When the unit cannot accept more, the scheduler reports `mio_throttle`. The structure, from B30:
 
-- Through the queue, one sub-partition serves a load every 8 cycles when each warp issues one load at a time, and up to 0.36 loads per cycle when one warp issues a burst of 16 [B27].
-- The SM-wide rate of load/store instructions rises with occupancy: 0.47 instructions per cycle with one resident block of 256 threads, 0.49 with two, 0.71 with three, 0.81 with four, 1.02 with six, for a GEMM-like mix of `LDS.128`, `LDS.32` and `cp.async` [B28]. The corresponding shared-memory traffic rises from 119 to 262 bytes per cycle per SM. With several blocks resident, the blocks do not progress at equal rates; per-block times spread by 30 % [B28].
-- Adding `cp.async` traffic to a loop of shared loads slows the loads by 6–13 % [B28]; copies and loads share the entry to the unit but not its full bandwidth.
+- **Dispatch.** A sub-partition can hand one shared load to the queue every **4.2 cycles**. With two warps on the same sub-partition each gets one every 10.1 cycles, so the slot belongs to the sub-partition, not the warp [B30].
+- **No visible depth.** One warp issued 64 shared loads back to back and never stalled. What limits issue is the drain, not a full queue [B30].
+- **Drain.** The unit retires **one wavefront per cycle per SM**, and never more than one instruction per 2 cycles. A conflict-free 32-bit load is one wavefront, 64-bit two, 128-bit four, each multiplied by the bank-conflict degree; the profiler's wavefront counts match the clock on all ten width-and-stride cases [B30]. So an SM sustains at most 0.5 conflict-free 32-bit loads per cycle and 0.25 128-bit loads, and the rate does not change between 4 and 48 resident warps; only the `mio_throttle` count grows, from 0.1 to 8.5 stalled warps per issue cycle [B30].
+- **Broadcast is cheap.** A load whose 32 threads read one address is one wavefront whatever its width. This is why a loop of broadcast `LDS.128` reaches one instruction per cycle [B28], and why the A-fragment loads of a register-blocked GEMM, which are broadcast across the threads of a row, cost a quarter of what their width suggests [B21].
+- **Who shares the queue.** `ldmatrix` waits behind shared loads (12 cycles alone, 36 after a burst). `cp.async` does not: issuing a 16-byte chunk costs **6.8 cycles** with or without shared loads in flight [B30]. Adding copy traffic to a loop of shared loads still slows the loads by 6–13 % [B28], so the two share the entry to the unit, not its queue.
+- **Arbitration.** With several blocks resident, the blocks do not progress at equal rates; per-block times spread by 30 % [B28].
 
-The queue's depth and the dispatch cost that produces the 8-cycle figure have not been measured directly; that is benchmark B30 (Chapter 9).
+In short: a shared load costs the unit `wavefronts = passes(width, addresses) × conflict degree` cycles, and a kernel is load-bound when the sum of those over its resident warps exceeds the cycles its FFMAs need. The 16×32×8 GEMM tile looked like such a kernel; it is not. Its two A addresses per warp sit in different banks, the counter says 2.5 wavefronts per k-step, and what made it slow in the model was an instruction count, not a conflict (gap 19). The load-bound kernels in the test set are the 2×2 and 4×4 register-blocked ones, where each load feeds one or four FFMAs.
 
-**Asynchronous copies (`cp.async`).** Each thread issues a 16-byte copy from global memory straight into shared memory, bypassing registers. The copy does not allocate in L1, with either `.cg` or `.ca` [B14]. Issuing the instruction costs the warp **124 cycles** [B15]. A tile then completes after a latency that grows with its size, median cycles with one block per SM [B15]:
+**A rule for template writers.** `ldmatrix` waits behind shared loads: 12 cycles alone, 36 after a burst of loads. `cp.async` issue does not: 6.8 cycles per chunk with or without a burst of loads in front of it [B30.4]. So a tensor kernel's fragment loads and its plain loads compete for one queue, while a kernel's copies can be issued into a busy load stream for free.
+
+**An unexplained number.** In a loop that mixes shared loads with `cp.async`, one SM completes one 4 KB copy tile every **520 cycles**, about 19.6 GB/s per SM, whether one block issues the copies or six [B28]. The copy-only kernel gets 44 GB/s per SM [B8]. Issue is not the cause (B30.4), and L2 is not (the source is L2-resident). The cause has not been measured. The hypothesis, and it is only that: a copy's data is written into shared memory as wavefronts through the same one-per-cycle pipe as the loads, so a loop of loads leaves the fills the pipe's leftovers. The counter that settles it is `l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ldgsts` beside `_op_ld` on B28's mixed run (gap 25).
+
+**Asynchronous copies (`cp.async`).** Each thread issues a 16-byte copy from global memory straight into shared memory, bypassing registers. The copy does not allocate in L1, with either `.cg` or `.ca` [B14]. Issuing one 16-byte chunk costs the warp **6.8 cycles** [B30]; the per-chunk address and bounds arithmetic around it in a generated kernel adds far more, about 120 cycles in the GEMM kernels [B15, SASS]. A tile then completes after a latency that grows with its size, median cycles with one block per SM [B15]:
 
 | tile | 4 KB | 8 KB | 16 KB | 32 KB | 48 KB |
 |---|---|---|---|---|---|
@@ -210,14 +217,14 @@ Managed memory costs a constant **1.45×** against device memory, with the CPU i
 
 In order of how much it matters to predicting a kernel's time on this chip.
 
-1. **The scheduler-to-LSU queue** (Chapter 5): its depth per sub-partition, the per-instruction dispatch cost behind the 8-cycle figure, how many wavefronts each instruction width costs at the unit, and whether `ldmatrix` and `cp.async` share the queue with `LDS`. This is benchmark B30, and it is the reason three of thirty test GEMMs are predicted 30–60 % wrong.
+1. **The copy return path.** One 4 KB `cp.async` tile per SM every 520 cycles under a load-heavy loop, 19.6 GB/s against 44 for copies alone (Chapter 5). The copy-bound and barrier-bound GEMM designs in the test set wait on this, and the model has no mechanism for it. Four counters would show where the time goes: `l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ldgsts`, `_op_ld`, `_op_ldsm`, and `l1tex__m_xbar2l1tex_read_bytes`. If the first is non-zero and fills plus loads sit near one wavefront per cycle, the fills share the shared-memory pipe; if not, the limit is between L2 and the SM.
 2. **The scheduler's choice** among eligible warps: oldest-first, round-robin, or something else. The `not_selected` counts are consistent with either.
 3. **Register-file bank conflicts.** Operand register numbers cannot be controlled from CUDA C++ or PTX, so the penalty has not been measured [B19.3].
 4. **L2 internals:** the set hash, the number of slices, the replacement policy beyond "not LRU", and whether there are two partitions. The chip behaves like one 24 MiB cache with a 6 ns latency spread; that is all the outside view gives.
 5. **DRAM channel count and controller queues.** The channel hash hides the count; the controller hides page structure. Only the aggregate bandwidth and the CPU-sharing loss are known.
 6. **Outstanding-miss limits** beyond the Little's-law estimates (12 DRAM, 30 L2 requests per SM).
 7. **The front end** above the scheduler: instruction cache size and fetch bandwidth. No kernel so far has been limited by them.
-8. **The tensor core's operand path:** whether `ldmatrix` traffic competes with `LDS` in the same queue, and the operand collector depth that sets how many independent `mma.sync` a warp needs in flight (29 cycles of latency says at least 2–4).
+8. **The tensor core's operand path:** `ldmatrix` shares the queue with `LDS` [B30]; unknown is the operand collector depth that sets how many independent `mma.sync` a warp needs in flight (29 cycles of latency says at least 2–4).
 9. **Clock behaviour under heavier thermal load** than a 60 s FMA burst at 79 W; no cap was reached, so the governor's limits are unseen.
 
 Each of these is one benchmark. None of them changes the numbers in Chapters 1–8; they bound how far those numbers can be extrapolated.
@@ -257,8 +264,8 @@ Each of these is one benchmark. None of them changes the numbers in Chapters 1�
 | B27 | dependency vs ILP vs TLP | 2, 5 | scoreboard latencies, load dispatch cost |
 | B28 | LSU contention | 5 | load/store rate vs occupancy, arbitration |
 | B29 | inner-loop ground truth | 4 | the generated GEMM loops under counters |
-| B30 | scheduler-to-LSU queue | 9 | pending |
+| B30 | scheduler-to-LSU queue | 2, 5 | dispatch slot, drain rate, wavefront costs, who shares the queue |
 
 ## Appendix B. Public documentation used
 
-Only for names and for facts no benchmark can reach: the LPDDR5X bus width and rate and the 273 GB/s figure (NVIDIA DGX Spark datasheet); the 128-byte line and 32-byte sector organisation of L1 and L2 and the existence of the MIO queue (NVIDIA Nsight Compute kernel profiling guide, where the stall reasons are defined); the PTX semantics of `cp.async`, `cp.async.bulk` and mbarrier (PTX ISA). Everything else is from the benchmarks above.
+Only for names and for facts no benchmark can reach: the LPDDR5X bus width and rate and the 273 GB/s figure (NVIDIA DGX Spark datasheet); the 128-byte line and 32-byte sector organisation of L1 and L2 and the name of the MIO queue (NVIDIA Nsight Compute kernel profiling guide, where the stall reasons are defined); the PTX semantics of `cp.async`, `cp.async.bulk` and mbarrier (PTX ISA). Everything else is from the benchmarks above.
