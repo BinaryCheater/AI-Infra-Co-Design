@@ -9,7 +9,7 @@ kinds:
              smem_bytes_per_s_per_sm, bank_conflict_penalty, barrier_s, async_copy_latency_s, async_copy_bytes_per_s,
              launch_s, clock_hz_sustained, max_blocks_per_sm_measured]
   structural: [sms, smem_bytes_per_sm, banks, bank_bytes, ports, l2_region_bytes, l2_policy, copy_throughput_window_chunks, copy_chunk_bytes,
-               scheduler, issue_cycles, issue_model]
+               scheduler, issue_cycles, issue_model, copy_path]
   fixed: [line_bytes, warp_size, bytes_per_element]
 
 structural:
@@ -17,11 +17,11 @@ structural:
     policy: breadth-first-least-loaded # M8: each block goes to the SM with the most free capacity, in grid order (B9 fixes the capacity)
     justified_by: B9
   copy_chunk_bytes: 16                 # M4: cp.async.cg request size the kernel issues (one 16 B chunk per thread)
-  copy_throughput_window_chunks: 383   # M4: a THROUGHPUT window of 16 B chunks in flight per SM, not a queue length (B27_plus.md §3.3).
-                                       #     B8's latency-vs-size slope 4-48 KB is 22.9 ns/KB; the per-chunk issue cost B30.4 measured
-                                       #     (6.8 cycles per 16 B per warp = 0.7 ns per KB of a 256-thread block's tile; B15.3's 127
-                                       #     included the address and guard code) is charged explicitly, leaving 22.2 ns/KB = 45 GB/s per
-                                       #     SM at the L2 latency: 45e9 * 136e-9 / 16 = 383.
+  copy_throughput_window_chunks: 447   # M4: a THROUGHPUT window of 16 B chunks in flight per SM, shared by every resident block, not a
+                                       #     queue length (B27_plus.md §3.3). B8's latency-vs-size slope 4-48 KB is 22.9 ns/KB. The chunks
+                                       #     now pass through the sub-partition slot (6.8 cycles per chunk per warp, B30.4) and the LSU
+                                       #     entry (four 128 B wavefronts per chunk at one per cycle): per KB of a 256-thread block's tile
+                                       #     that is 0.7 + 3.2 ns, leaving 19.0 ns/KB = 52.6 GB/s at the L2 latency: 52.6e9 * 136e-9 / 16 = 447.
                                        #     B15.1's "at least 22 pending 4 KB groups per block with no issue stall" is a different quantity
                                        #     (an issue-window lower bound: 22 x 4 KB / 16 B = 5632 chunks), so issue is never the limit here.
   copy_window_justified_by: [B8, B15]
@@ -39,6 +39,10 @@ structural:
                                        #     dispatch per sub-partition, 1 wavefront per cycle drain, 2 cycles per instruction floor),
                                        #     FMA pipe per scheduler (B2). No table and no tuned number.
   issue_model_justified_by: [B17, B27, B30, B21]
+  copy_path: shared                    # M4/M7: "shared" = cp.async chunks go through the sub-partition slot and the LSU entry with the
+                                       #     shared loads (B30_plus round 4 §1, as specified); "separate" = they do not (what B30.4 measured:
+                                       #     6.4 cycles per chunk after a 32-load burst, 6.8 alone). Thirty designs: shared median 13.0 %,
+                                       #     separate 8.2 % (notes/sim_gaps.md #23-#24).
   issue_overhead_per_chunk: 40         # M7 (G4): instructions per cp.async chunk (16 B per thread) issued per phase outside the k-loop
   issue_overhead_per_phase: 180        #     (address, guard, wait, barrier, loop control); from the SASS of the six spark-001 kernels:
                                        #     per-phase non-loop instructions 663/391/301/467/280/354 at 12/6/5/6/3/3 chunks per thread

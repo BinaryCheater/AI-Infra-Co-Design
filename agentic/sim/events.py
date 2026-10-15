@@ -74,6 +74,7 @@ class Compute(Event):
     other_per_phase: int = 0    # per warp per phase: copy-issue, guard, address and loop instructions outside the k-loop (from SASS)
     a_wavefronts: tuple = ()    # wavefronts of each A load (128-bit, one per RM row per four k-steps) from its addresses
     b_wavefronts: tuple = ()    # wavefronts of each B load (32-bit, one per RN column per k-step)
+    copies_per_phase: int = 0   # cp.async chunk instructions per warp issued in this phase (the next tile's chunks per thread)
 
 
 @dataclass

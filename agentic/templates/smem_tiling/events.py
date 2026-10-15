@@ -77,7 +77,8 @@ def warp_programs(design: TilingDesign, warps: int, phases: int, tile_bytes: int
     # outside the k-loop: the copy issue, guards, addresses, wait and barriers. Read from the compiled kernel's SASS
     # (templates/smem_tiling/sass.py) when the caller passes instr_per_phase; no estimate otherwise (0)
     loop_instr = design.tk * (ffma + wf["instructions_per_step"] + 1)
-    other = int(round(max(0.0, (instr_per_phase or 0.0) - loop_instr))) if instr_per_phase else 0
+    copies = int(round(tile_bytes * warps / (warps * 32 * 16))) if tile_bytes else 0      # chunks per thread per phase (tile_bytes is one warp's share)
+    other = int(round(max(0.0, (instr_per_phase or 0.0) - loop_instr - copies))) if instr_per_phase else 0
     progs = []
     for w in range(warps):
         seq = []
@@ -93,7 +94,8 @@ def warp_programs(design: TilingDesign, warps: int, phases: int, tile_bytes: int
                 seq.append(BarrierArrive(w, f"A{p}", p, "leading"))
             seq.append(Compute(w, (p % S,), flops_per_phase, "fp32", tile=p, phase=p, smem_wavefronts=smem_wf, smem_stride=1,
                                k_steps=design.tk if tile_bytes else 0, ffma_per_step=ffma, lds32_per_step=lds32, lds128_per_step=lds128, other_per_phase=other,
-                               a_wavefronts=tuple(wf["a_wavefronts_per_load"]), b_wavefronts=tuple(wf["b_wavefronts_per_load"])))
+                               a_wavefronts=tuple(wf["a_wavefronts_per_load"]), b_wavefronts=tuple(wf["b_wavefronts_per_load"]),
+                               copies_per_phase=copies if (P == 0 or p + P < phases) else 0))
             if design.trailing_barrier:
                 seq.append(BarrierArrive(w, f"B{p}", p, "trailing"))
         if store_bytes:

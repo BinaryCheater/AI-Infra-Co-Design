@@ -76,9 +76,10 @@ class Memory:
         b0, t0 = pts[-2]; b1, t1 = pts[-1]
         return t1 + (t1 - t0) * (bytes_ - b1) / (b1 - b0)
 
-    def request(self, engine: Engine, sm: int, src, bytes_: int, done):
-        """A copy of `bytes_` from region `src` into an SM's shared memory; call done(t) at completion."""
-        engine.at(engine.t + self.copy_latency(bytes_), done)
+    def request(self, engine: Engine, sm: int, src, bytes_: int, done, skip_issue: bool = False, delay: float = 0.0):
+        """A copy of `bytes_` from region `src` into an SM's shared memory; call done(t) at completion. `delay`: the warp model's
+        dispatch time of the chunks (they left the LSU then); `skip_issue`: that dispatch already covered the per-chunk issue."""
+        engine.at(engine.t + delay + self.copy_latency(bytes_), done)
 
 
 # ------------------------------------------------------------------------ the simulator
@@ -209,7 +210,17 @@ class Simulator:
         if isinstance(e, IssueCopy):
             # cp.async groups are per thread: each warp commits and waits for its own share of the tile
             b.groups_issued[(w, e.group)] = now
-            self.memory.request(self.engine, b.sm, e.src, e.bytes, lambda t=None, b=b, w=w, g=e.group: self._copy_done(b, w, g))
+            delay = 0.0
+            if self.issue is not None:
+                # the chunks go through the sub-partition slot and the LSU with every resident block's loads (warp model): the
+                # request reaches the memory window when the last chunk has left the LSU
+                nxt = next((x for x in seq[b.warps_pc[w]:] if isinstance(x, Compute) and x.copies_per_phase), None)
+                if nxt is not None:
+                    blocks_resident = max(1, len(self.sm_blocks[b.sm])); wpb = len(b.program.warps)
+                    _, hist = self.issue.phase(wpb, blocks_resident, nxt.k_steps, nxt.ffma_per_step, nxt.lds32_per_step, nxt.lds128_per_step, nxt.other_per_phase, 1, nxt.smem_stride, nxt.a_wavefronts, nxt.b_wavefronts, nxt.copies_per_phase)
+                    delay = hist.get("copy_dispatch_cycles", 0.0) / self.cfg.clock_hz
+            shared = self.issue is not None and getattr(self.issue, "copy_path", "shared") == "shared"
+            self.memory.request(self.engine, b.sm, e.src, e.bytes, lambda t=None, b=b, w=w, g=e.group: self._copy_done(b, w, g), skip_issue=shared, delay=delay if shared else 0.0)
             self._advance(b, w, now + cost, "issue_copy", e)
         elif isinstance(e, Wait):
             if (w, e.group) in b.groups_done:
@@ -240,12 +251,13 @@ class Simulator:
                 # with a scoreboard and the shared LSU; every resident block's warps take part, so no separate FMA or smem pipe
                 blocks_resident = max(1, len(self.sm_blocks[b.sm]))
                 wpb = len(b.program.warps)
-                cycles, hist = self.issue.phase(wpb, blocks_resident, e.k_steps, e.ffma_per_step, e.lds32_per_step, e.lds128_per_step, e.other_per_phase, 1, e.smem_stride, e.a_wavefronts, e.b_wavefronts)
+                cycles, hist = self.issue.phase(wpb, blocks_resident, e.k_steps, e.ffma_per_step, e.lds32_per_step, e.lds128_per_step, e.other_per_phase, 1, e.smem_stride, e.a_wavefronts, e.b_wavefronts, e.copies_per_phase)
                 service = cycles / self.cfg.clock_hz
                 self.compute[b.sm].busy += service / blocks_resident
-                tot = sum(hist.values()) or 1
+                tot = sum(v for k, v in hist.items() if isinstance(v, (int, float)) and k != "copy_dispatch_cycles") or 1
                 for k, v in hist.items():
-                    self.wait_families[k] += service * v / tot                  # this warp's share of the phase by family
+                    if isinstance(v, (int, float)) and k not in ("copy_dispatch_cycles",):
+                        self.wait_families[k] += service * v / tot              # this warp's share of the phase by family
                 self._account(b, w, "compute", service, e.phase)
                 self._advance(b, w, now + service, "compute", e)
                 return

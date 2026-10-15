@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chip View</title>
+<link rel="stylesheet" href="console.css">
+<style>
+  body { display: block; overflow: auto; height: auto; }
+  main.ma { display: grid; grid-template-columns: minmax(0, 1000px) 320px; gap: 16px; padding: 14px 18px; max-width: 1360px; margin: 0 auto; align-items: start; }
+  #drawing svg { width: 100%; height: auto; display: block; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+  #side { position: sticky; top: 10px; display: grid; gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+  .card h3 { margin: 0 0 6px; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  #controls { grid-column: 1 / -1; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; display: grid; gap: 6px; }
+  #controls .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  #controls input[type=range] { flex: 1; min-width: 240px; }
+  #controls .readout { font-family: var(--mono); font-size: 13px; min-width: 250px; }
+  #controls input[type=number] { width: 70px; font: inherit; font-size: 14px; padding: 3px 5px; border: 1px solid var(--line); border-radius: 6px; }
+  .key { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; color: var(--muted); }
+  .key i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; border: 1px solid #8a9599; }
+  #inspect pre { margin: 6px 0 0; white-space: pre-wrap; font-family: var(--mono); font-size: 12px; max-height: 360px; overflow: auto; }
+  #inspect .sentence { font-size: 14px; }
+  #note { font-size: 13px; }
+
+  /* the drawing */
+  svg text { fill: #2D4047; font-size: 12px; stroke: none; }
+  svg .title { font-size: 15px; font-weight: 600; fill: #183039; }
+  svg .title.big { font-size: 20px; }
+  svg .lbl { font-size: 11.5px; fill: #6E7E84; }
+  svg .lbl.strong { fill: #183039; font-weight: 600; font-size: 13px; }
+  svg .lbl.val { fill: #183039; font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+  svg .lbl.big { font-size: 14px; }
+  svg #sm\.lsu\.text { font-size: 10.5px; }
+  svg .sect { font-size: 12.5px; fill: #183039; font-weight: 600; }
+  svg .ch { font-size: 11px; fill: #9aa5a9; font-weight: 400; }
+  svg .regime { font-size: 30px; font-weight: 800; fill: #183039; letter-spacing: .02em; }
+  svg .frame { fill: #fbfaf8; stroke: #D8D4CC; }
+  svg .smframe { fill: #fff; stroke: #b9c3c6; stroke-width: 1.5; }
+  svg .unit, svg .schedbox { fill: #fbfaf8; stroke: #c9cfd1; }
+  svg .el { cursor: pointer; transition: opacity .15s; }
+  svg .dim { opacity: .4; }
+  svg .selected > rect:first-child, svg .selected > .schedbox, svg .selected > .frame { stroke: #C54A38; stroke-width: 2.5; }
+  svg .selected.warp circle { stroke: #C54A38; stroke-width: 3; }
+  svg .chipsm { fill: #fff; stroke: #9aa5a9; cursor: pointer; }
+  svg .chipsm.st-F { fill: #3F9D5A; } svg .chipsm.st-M { fill: #E8892B; } svg .chipsm.st-C { fill: #4C7FC4; }
+  svg .chipsm.st-B { fill: #9AA0A6; } svg .chipsm.st-I { fill: #9ec9ad; }
+  svg .chipsm.cur { stroke: #C54A38; stroke-width: 2.5; }
+  svg .sched.issued .schedbox { stroke: #3F9D5A; stroke-width: 3; }
+  svg .warp circle { fill: #fff; stroke: #8a9599; stroke-width: 1; }
+  svg .warp text { font-size: 9.5px; fill: #183039; pointer-events: none; }
+    svg .warp.other text { display: none; }
+  svg .warp.absent { display: none; }
+  svg .warp.s-issuing circle { fill: #3F9D5A; } svg .warp.s-issuing text { fill: #fff; }
+  svg .warp.s-ready circle { fill: #b9dfc4; }
+  svg .warp.s-scoreboard circle { fill: #F2C14E; }
+  svg .warp.s-mio circle { fill: #E8892B; } svg .warp.s-mio text { fill: #fff; }
+  svg .warp.s-copy circle { fill: #4C7FC4; } svg .warp.s-copy text { fill: #fff; }
+  svg .warp.s-barrier circle { fill: #9AA0A6; }
+  svg .warp.s-done circle { fill: #fff; stroke-dasharray: 2 2; }
+  svg .warp.s-idle circle { fill: #f4f4f4; stroke: #ccc; }
+  svg .lane { fill: #eef1f1; stroke: #c9cfd1; }
+  svg .lane.on { fill: #3F9D5A; stroke: #2b6e3e; }
+  svg .cell { fill: #eef1f1; stroke: #c9cfd1; }
+  svg .cell.on { fill: #E8892B; stroke: #b5651a; }
+  svg #sm\.lsu\.cell.on { fill: #E8892B; }
+  svg .slot rect { fill: #fff; stroke: #9aa5a9; }
+  svg .slot.st-inflight rect { fill: url(#hatch); }
+  svg .slot.st-ready rect { fill: #4C7FC4; }
+  svg .slot.st-reading rect { fill: #4C7FC4; stroke: #3F9D5A; stroke-width: 3; }
+  svg .slot.st-consumed rect { fill: #c9d6ea; }
+  svg .slot.st-ready .slotlbl, svg .slot.st-reading .slotlbl { fill: #fff; font-weight: 700; }
+  svg .slotlbl { font-size: 13px; }
+  svg .slot.unused { opacity: .25; }
+  svg .track { fill: #eef1f1; stroke: #c9cfd1; }
+  svg .fill { fill: #5A7D78; }
+  svg .copyfill { fill: #4C7FC4; }
+  svg .ringtrack { fill: none; stroke: #e3e6e7; stroke-width: 6; }
+  svg .ring { fill: none; stroke: #9AA0A6; stroke-width: 6; }
+  svg .ring.released { stroke: #3F9D5A; }
+  svg .arrowpath { stroke: #8a9599; stroke-width: 2; fill: none; }
+  svg .dots circle { fill: #183039; }
+  svg .dots circle.dram { fill: #C54A38; }
+  svg .dots circle.copy { fill: #4C7FC4; }
+  svg .dots circle.lds { fill: #E8892B; }
+  svg .dots circle.ret { fill: #3F9D5A; }
+</style>
+</head>
+<body>
+<header id="top"><div class="brand">CHIP VIEW</div>
+  <span class="field">design <select id="design"></select></span>
+  <span class="field">SM <select id="smsel"></select></span>
+  <span class="spacer"></span>
+  <a class="ghost link" href="/validation">validation</a> <a class="ghost link" href="/calibration">calibration</a> <a class="ghost link" href="/">console</a></header>
+<main class="ma">
+  <div id="controls">
+    <div class="row">
+      <button id="prev" title="previous event (on the selected element, if any)">◀ step</button>
+      <button id="next" title="next event (on the selected element, if any)">step ▶</button>
+      <button id="play">▶ play</button>
+      <span class="seg" id="rate"><button data-r="1">1</button><button data-r="10">10</button><button data-r="100" class="on">100</button><button data-r="1000">1000</button></span><span class="muted">events/s</span>
+      <span class="muted">phase</span><input type="number" id="phase" min="0" value="0"><button id="gophase">go</button><button id="midphase" title="the middle of the current phase's k-loop">mid</button>
+      <span class="readout" id="readout"></span>
+    </div>
+    <div class="row"><span class="muted" style="width:52px">kernel</span><input type="range" id="scrub" min="0" max="1" step="1" value="0"></div>
+    <div class="row"><span class="muted" style="width:52px">phase</span><input type="range" id="fine" min="0" max="1" step="1" value="0"></div>
+  </div>
+  <div id="drawing">loading the drawing…</div>
+  <div id="side">
+    <div class="card"><h3>Warp dots</h3><div class="key">
+      <span><i style="background:#3F9D5A"></i>issuing</span><span><i style="background:#b9dfc4"></i>ready, not picked</span>
+      <span><i style="background:#F2C14E"></i>waiting on a load result</span><span><i style="background:#E8892B"></i>MIO full</span>
+      <span><i style="background:#4C7FC4"></i>copy wait</span><span><i style="background:#9AA0A6"></i>barrier</span><span><i style="background:#fff;border-style:dashed"></i>done</span></div></div>
+    <div class="card" id="inspect"><h3>Selected</h3><div class="sentence muted">Click a box, a warp, a bar or an SM square. Step then follows that element.</div><pre></pre></div>
+    <div class="card" id="note"><h3>Run</h3><div id="runinfo" class="muted">–</div></div>
+  </div>
+</main>
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"}[c]));
+const el = id => document.getElementById(id);
+const CLS = ["LDS.128", "LDS.32", "FFMA", "ALU"];
+const FFMA = 2;
+
+const S = { summary: null, tmpl: {}, doc: null, t: 0, sel: null, sm: 0, playing: null, rate: 100, design: null, wpb: 8 };
+
+// ------------------------------------------------------------------ loading
+async function getJSON(u) { const r = await fetch(u); if (!r.ok) throw new Error(u + " " + r.status); return r.json(); }
+
+function prepTemplate(T) {
+  const n = Math.ceil(T.cycles) + 2, W = T.warps_per_block * T.blocks;
+  const [it, iw, is, ic] = T.issues;
+  const schedIssue = new Int16Array(n * 4).fill(-1), schedCls = new Int8Array(n * 4).fill(-1), fma = new Int16Array(n * 4).fill(-1);
+  const fc = Math.max(1, Math.round(T.fma_cost));
+  for (let i = 0; i < it.length; i++) {
+    const c = it[i], s = is[i];
+    schedIssue[c * 4 + s] = iw[i]; schedCls[c * 4 + s] = ic[i];
+    if (ic[i] === FFMA) for (let k = 0; k < fc && c + k < n; k++) fma[(c + k) * 4 + s] = iw[i];
+  }
+  const st = Array.from({length: W}, () => ({t: [], c: []}));
+  const [stt, stw, stc] = T.warp_states;
+  for (let i = 0; i < stt.length; i++) { st[stw[i]].t.push(stt[i]); st[stw[i]].c.push(stc[i]); }
+  const L = T.loads, nl = L[0].length;
+  const depthDiff = new Int32Array(n + 1), lsuAt = new Int32Array(n).fill(-1);
+  for (let i = 0; i < nl; i++) {
+    const a = L[0][i], z = Math.min(n - 1, Math.ceil(L[7][i]));
+    depthDiff[a] += 1; depthDiff[z] -= 1;
+    for (let c = Math.floor(L[6][i]); c < Math.ceil(L[7][i]) && c < n; c++) lsuAt[c] = i;
+  }
+  const depth = new Int16Array(n); let d = 0, dmax = 0;
+  for (let c = 0; c < n; c++) { d += depthDiff[c]; depth[c] = d; dmax = Math.max(dmax, d); }
+  // times at which something happens, for stepping
+  const times = new Set(it); for (let i = 0; i < nl; i++) { times.add(L[0][i]); times.add(Math.ceil(L[7][i])); } for (const x of stt) times.add(x);
+  const allTimes = Float64Array.from([...times]).sort();
+  return Object.assign(T, {n, W, schedIssue, schedCls, fma, st, depth, dmax, lsuAt, allTimes, filt: {}});
+}
+
+function warpStateLocal(T, w, c) {
+  const a = T.st[w]; if (!a || !a.t.length) return "idle";
+  let lo = 0, hi = a.t.length - 1, k = -1;
+  while (lo <= hi) { const m = (lo + hi) >> 1; if (a.t[m] <= c) { k = m; lo = m + 1; } else hi = m - 1; }
+  return k < 0 ? "issuing" : T.states[a.c[k]];
+}
+
+function prepDoc(D) {
+  const ev = D.events, wpb = D.warps;
+  D.byWarp = Array.from({length: wpb}, () => []);
+  for (const e of ev) if (e.warp != null && e.dur != null) D.byWarp[e.warp].push(e);
+  for (const a of D.byWarp) a.sort((x, y) => x.t - y.t);
+  // copies: per group and warp, issue and done
+  D.copy = {};
+  for (const e of ev) {
+    if (e.kind === "copy_issue") { const g = D.copy[e.group] ||= {issue: {}, done: {}, slot: e.slot, bytes: e.bytes, tile: e.tile}; g.issue[e.warp] = e.t; }
+  }
+  for (const e of ev) if (e.kind === "copy_done") { const g = D.copy[e.group]; if (g) g.done[e.warp] = e.t; }
+  for (const g of Object.values(D.copy)) { g.first = Math.min(...Object.values(g.issue)); g.last = Math.max(...Object.values(g.done), g.first); }
+  D.missByGroup = {};
+  for (const e of ev) if (e.kind === "l2_miss") { const g = +e.tile[e.tile.length - 1]; (D.missByGroup[g] ||= []).push(e); }
+  // phase spans: a phase runs from the end of the previous k-loop to the end of its own
+  D.phases.forEach((p, i) => { p.start = i === 0 ? D.t_start : D.phases[i - 1].t1; });
+  D.barriers = {};
+  for (const e of ev) {
+    if (e.kind === "barrier_arrive") ((D.barriers[e.barrier] ||= {arr: [], rel: null, phase: e.phase}).arr.push(e));
+    if (e.kind === "barrier_release") ((D.barriers[e.barrier] ||= {arr: [], rel: null, phase: e.phase}).rel = e.t);
+  }
+  D.arrivals = ev.filter(e => e.kind === "barrier_arrive").sort((a, b) => a.t - b.t);
+  D.times = Float64Array.from(new Set(ev.flatMap(e => e.dur ? [e.t, e.t + e.dur] : [e.t]))).sort();
+  // the largest number of copy chunks in flight, for the bar's scale
+  let mx = 0; for (const e of ev) if (e.kind === "copy_issue" || e.kind === "copy_done") mx = Math.max(mx, chunksInFlight(D, e.t + 0.01));
+  D.chunkMax = Math.max(1, mx);
+  return D;
+}
+
+function chunksInFlight(D, t) {
+  let n = 0;
+  for (const g of Object.values(D.copy)) {
+    if (g.first > t || g.last <= t) continue;
+    for (const w in g.issue) if (g.issue[w] <= t && (g.done[w] == null || g.done[w] > t)) n += g.bytes / 16;
+  }
+  return n;
+}
+
+async function loadDesign(id, sm, t) {
+  S.design = id;
+  S.summary = await getJSON(`/microtrace/${id}/summary.json`);
+  const tm = await getJSON(`/microtrace/${id}/templates.json`);
+  S.tmpl = {}; for (const [k, T] of Object.entries(tm)) S.tmpl[k] = prepTemplate(T);
+  const sms = Object.keys(S.summary.sm_files).map(Number).sort((a, b) => a - b);
+  $("smsel").innerHTML = sms.map(s => `<option value="${s}">SM ${s}${s === S.summary.default_sm ? " (critical path)" : ""}</option>`).join("");
+  const R = S.summary.result, d = S.summary.design;
+  $("runinfo").innerHTML = `${esc(S.summary.label)}<br>simulated ${R.time_us.toFixed(1)} µs, ${Math.round(S.summary.cycles).toLocaleString()} cycles at ${(S.summary.clock_hz / 1e9).toFixed(2)} GHz · ${S.summary.blocks} blocks · ${S.summary.phases} phases`
+    + `<br>k-loop length by blocks resident on the SM:<br>${Object.entries(S.summary.templates).map(([k, T]) => `&nbsp;&nbsp;${T.blocks} → ${Math.round(T.cycles)} cycles, ${T.regime}`).join("<br>")}`
+    + (S.summary.sass_overhead ? "" : `<br><b>No SASS counts cached for this kernel:</b> the per-phase overhead instructions (address, guard, copy issue) are not simulated, so the k-loop is the whole phase.`);
+  await loadSM(sm != null && S.summary.sm_files[sm] ? sm : S.summary.default_sm, t);
+}
+
+async function loadSM(sm, t) {
+  S.sm = +sm; $("smsel").value = S.sm;
+  const f = S.summary.sm_files[S.sm].file;
+  S.doc = prepDoc(await getJSON(`/microtrace/${S.design}/${f}`));
+  S.wpb = S.doc.warps;
+  $("phase").max = S.doc.phases.length - 1;
+  const sc = $("scrub"); sc.min = 0; sc.max = Math.ceil(S.summary.cycles);
+  if (t == null || t < S.doc.t_start || t > S.doc.t_end) t = S.doc.phases[0] && S.doc.phases[0].t0 != null ? S.doc.phases[0].t0 : S.doc.t_start;
+  setT(t);
+}
+
+// ------------------------------------------------------------------ state at time t
+function phaseAt(t) {
+  const P = S.doc.phases;
+  for (let i = 0; i < P.length; i++) if (t >= P[i].start && t < (i === P.length - 1 ? S.doc.t_end : P[i].t1)) return P[i];
+  return null;
+}
+function computeAt(t) {                          // the k-loop the block is in at t, with the local cycle
+  const p = phaseAt(t); if (!p || p.t0 == null || t < p.t0 || t >= p.t1) return null;
+  const T = S.tmpl[p.template]; if (!T) return null;
+  return {p, T, c: Math.floor(t - p.t0)};
+}
+function warpBlockEvent(w, t) {
+  const a = S.doc.byWarp[w]; let lo = 0, hi = a.length - 1, k = -1;
+  while (lo <= hi) { const m = (lo + hi) >> 1; if (a[m].t <= t) { k = m; lo = m + 1; } else hi = m - 1; }
+  return k >= 0 && t < a[k].t + Math.max(a[k].dur, 0.5) ? a[k] : null;
+}
+function warpState(w, t, K) {
+  if (t < S.doc.t_start) return "idle";
+  if (t >= S.doc.t_end) return "done";
+  if (w >= S.wpb) return K ? warpStateLocal(K.T, w, K.c) : null;
+  const e = warpBlockEvent(w, t);
+  if (e && e.kind === "phase_compute") { const T = S.tmpl[e.template]; return T ? warpStateLocal(T, w, Math.floor(t - e.t)) : "issuing"; }
+  if (e) return e.state || "issuing";
+  return "issuing";
+}
+
+// ------------------------------------------------------------------ rendering
+const REGIME_ON = {
+  "scheduler-bound": ["sm.sched", "sm.warp", "sm.fma", "arrow.smem.fma"],
+  "load-bound": ["sm.warp", "sm.mio", "sm.lsu", "sm.smem", "arrow.lsu.smem", "arrow.smem.fma"],
+  "copy-bound": ["sm.warp", "sm.copy", "sm.smem", "arrow.l2.sm", "l2"],
+  "DRAM-bound": ["sm.warp", "sm.copy", "arrow.l2.sm", "arrow.dram.l2", "l2", "dram"],
+  "barrier-bound": ["sm.warp", "sm.barrier"],
+};
+
+function setBar(id, frac, text) {
+  const f = el(id + ".fill"); f.setAttribute("width", (260 * Math.max(0, Math.min(1, frac))).toFixed(1));
+  el(id + ".text").textContent = text;
+}
+function placeDots(arrowId, items) {      // items: [{f: progress 0..1, cls}]
+  const g = el(arrowId), path = g.querySelector("path"), dots = g.querySelector(".dots"), L = path.getTotalLength();
+  const shown = items.slice(0, 14);
+  dots.innerHTML = shown.map(it => { const p = path.getPointAtLength(L * Math.max(0, Math.min(1, it.f))); return `<circle class="${it.cls}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.6"/>`; }).join("")
+    + (items.length > 14 ? `` : "");
+}
+
+function render() {
+  const t = S.t, D = S.doc, K = computeAt(t), sum = S.summary;
+  const win = Math.min(sum.l2.hits.length - 1, Math.max(0, Math.floor(t / sum.window)));
+  // header
+  const p = phaseAt(t);
+  el("sm.title").textContent = `SM ${S.sm}`;
+  el("sm.subtitle").textContent = `block ${D.block} (${D.block_coords.join(", ")}) · ${D.warps} warps` + (p ? ` · phase ${p.phase} of ${D.phases.length}` : (t < D.t_start ? " · not started" : " · finished"))
+    + (K ? ` · k-loop cycle ${K.c} of ${Math.round(K.T.cycles)}` : "");
+  const regime = p ? p.regime : (t < D.t_start ? "block not started" : "block finished");
+  el("sm.regime").textContent = regime;
+  // dimming: everything off the critical path at 40 %
+  const on = REGIME_ON[regime];
+  document.querySelectorAll("#gb10 .el").forEach(n => {
+    const id = n.id || n.closest("[id]").id;
+    n.classList.toggle("dim", !!on && !on.some(o => id === o || id.startsWith(o + "[") || id.startsWith(o + ".")));
+  });
+  // chip strip
+  for (let s = 0; s < sum.sms; s++) {
+    const n = el(`chip.sm[${s}]`); const code = (sum.strip[s] || "")[win] || ".";
+    n.setAttribute("class", `chipsm st-${code === "." ? "idle" : code}${s === S.sm ? " cur" : ""}`);
+  }
+  // warps
+  const W = K ? K.T.W : S.wpb;
+  for (let w = 0; w < 48; w++) {
+    const n = el(`sm.warp[${w}]`); if (!n) continue;
+    const st = w < W ? warpState(w, t, K) : null;
+    n.querySelector("circle").setAttribute("r", w >= S.wpb ? 7 : 12);
+    n.setAttribute("class", `warp el${w >= S.wpb ? " other" : ""}${st == null ? " absent" : " s-" + st}${S.sel === n.id ? " selected" : ""}`);
+  }
+  // schedulers and FMA lanes
+  for (let s = 0; s < 4; s++) {
+    const issued = K ? K.T.schedIssue[K.c * 4 + s] >= 0 : false;
+    el(`sm.sched[${s}]`).classList.toggle("issued", issued);
+    el(`sm.fma[${s}]`).classList.toggle("on", K ? K.T.fma[K.c * 4 + s] >= 0 : false);
+  }
+  // MIO and LSU
+  const depth = K ? K.T.depth[K.c] : 0;
+  for (let i = 0; i < 16; i++) el(`sm.mio.cell[${i}]`).classList.toggle("on", i < depth);
+  el("sm.mio.depth").textContent = `depth ${depth}${depth > 16 ? " (bar shows 16)" : ""}${K ? ` · phase max ${K.T.dmax}` : ""}`;
+  const li = K ? K.T.lsuAt[K.c] : -1;
+  el("sm.lsu.cell").classList.toggle("on", li >= 0);
+  if (li >= 0) { const L = K.T.loads; el("sm.lsu.text").textContent = `w${L[1][li]} ${CLS[L[3][li]]} · ${L[5][li]} wf · ${(L[7][li] - K.c).toFixed(1)} left`; }
+  else el("sm.lsu.text").textContent = "idle";
+  // shared-memory slots
+  for (let k = 0; k < 3; k++) {
+    const n = el(`sm.smem.slot[${k}]`), txt = n.querySelector(".slottext");
+    if (k >= D.slots) { n.setAttribute("class", "slot el unused"); txt.textContent = `slot ${k}: not in this design`; continue; }
+    let st = "empty", label = `slot ${k}: empty`, best = null;
+    for (const [grp, g] of Object.entries(D.copy)) if (g.slot === k && g.first <= t && (!best || g.first > best.g.first)) best = {grp: +grp, g};
+    if (best) {
+      const ph = D.phases[best.grp];
+      if (t < best.g.last) st = "inflight";
+      else if (ph && ph.t0 != null && t < ph.t0) st = "ready";
+      else if (ph && ph.t1 != null && t < ph.t1) st = "reading";
+      else st = "consumed";
+      label = `slot ${k}: tile ${best.g.tile}, ${{inflight: "in flight", ready: "ready", reading: "being read", consumed: "consumed"}[st]}`;
+    }
+    n.setAttribute("class", `slot el st-${st}${S.sel === n.id ? " selected" : ""}`); txt.textContent = label;
+  }
+  // copies
+  const ch = chunksInFlight(D, t);
+  el("sm.copy.bar").setAttribute("width", (436 * Math.min(1, ch / D.chunkMax)).toFixed(1));
+  el("sm.copy.text").textContent = `${Math.round(ch)} chunks of 16 B in flight (this block) · max ${Math.round(D.chunkMax)}`;
+  // barrier
+  let bar = null;
+  for (const a of D.arrivals) { if (a.t <= t) bar = a.barrier; else break; }
+  const ring = el("sm.barrier.ring");
+  if (bar) {
+    const B = D.barriers[bar], arrived = B.arr.filter(a => a.t <= t).length, rel = B.rel != null && B.rel <= t;
+    ring.setAttribute("stroke-dasharray", `${100 * arrived / D.warps} 100`); ring.classList.toggle("released", rel);
+    el("sm.barrier.text").textContent = rel ? `${bar}: released` : `${bar}: ${arrived}/${D.warps} arrived`;
+  } else { ring.setAttribute("stroke-dasharray", "0 100"); el("sm.barrier.text").textContent = `0/${D.warps} arrived`; }
+  // L2 and DRAM, chip-wide over the last 1000 cycles
+  const h = sum.l2.hits[win], m = sum.l2.misses[win];
+  setBar("l2.hit", h + m ? h / (h + m) : 0, h + m ? `${(100 * h / (h + m)).toFixed(0)} % of ${h + m} req.` : "no requests");
+  const qmax = S.qmax ||= {l2: Math.max(1, ...sum.l2.depth), dram: Math.max(1, ...sum.dram.depth), bw: 235e9};
+  setBar("l2.queue", sum.l2.depth[win] / qmax.l2, `${sum.l2.depth[win].toFixed(1)} · max ${qmax.l2.toFixed(0)}`);
+  const bw = sum.dram.bytes[win] / (sum.window / sum.clock_hz);
+  setBar("dram.bw", bw / qmax.bw, `${(bw / 1e9).toFixed(0)} GB/s of 235`);
+  setBar("dram.queue", sum.dram.depth[win] / qmax.dram, `${sum.dram.depth[win].toFixed(1)} · max ${qmax.dram.toFixed(0)}`);
+  // arrows: a dot per transfer in flight, placed by how far along it is
+  const cp = [], dr = [];
+  for (const [grp, g] of Object.entries(D.copy)) {
+    if (g.first > t || g.last <= t) continue;
+    for (const w in g.issue) { const a = g.issue[w], z = g.done[w]; if (a <= t && z > t) cp.push({f: (t - a) / (z - a), cls: "copy"}); }
+    for (const e of D.missByGroup[grp] || []) { const z = g.done[e.warp] ?? g.last; if (e.t <= t && z > t) dr.push({f: (t - e.t) / (z - e.t), cls: "dram"}); }
+  }
+  placeDots("arrow.l2.sm", cp); placeDots("arrow.dram.l2", dr);
+  const ld = [], rt = [];
+  if (K) {
+    const L = K.T.loads, c = K.c;
+    // loads are in dispatch order and the LSU drains in order: scan a window around c
+    for (let i = 0; i < L[0].length; i++) {
+      if (L[0][i] > c) break;
+      if (L[6][i] <= c && L[7][i] > c) ld.push({f: (c - L[6][i]) / Math.max(1, L[7][i] - L[6][i]), cls: "lds"});
+      else if (L[7][i] <= c && L[8][i] > c) rt.push({f: (c - L[7][i]) / Math.max(1, L[8][i] - L[7][i]), cls: "ret"});
+    }
+  }
+  placeDots("arrow.lsu.smem", ld); placeDots("arrow.smem.fma", rt);
+  // controls
+  $("scrub").value = Math.round(t);
+  if (p) { const f = $("fine"); f.min = Math.floor(p.start); f.max = Math.ceil(p.t1 ?? D.t_end); f.value = Math.round(t); $("phase").value = p.phase; }
+  $("readout").textContent = `t = ${t.toFixed(1)} cyc · ${(t / sum.clock_hz * 1e6).toFixed(3)} µs`;
+  if (S.sel) inspect(S.sel);
+  writeHash();
+}
+
+// ------------------------------------------------------------------ the event behind a pixel
+function inspect(id) {
+  const t = S.t, D = S.doc, K = computeAt(t), box = $("inspect");
+  let sentence = "", obj = null;
+  const m = id.match(/^sm\.warp\[(\d+)\]$/);
+  if (m) {
+    const w = +m[1], st = warpState(w, t, K);
+    if (K) {
+      const T = K.T, L = T.loads; let lastIssue = null, pending = null;
+      for (let i = 0; i < T.issues[0].length && T.issues[0][i] <= K.c; i++) if (T.issues[1][i] === w) lastIssue = i;
+      for (let i = 0; i < L[0].length && L[0][i] <= K.c; i++) if (L[1][i] === w && L[8][i] > K.c) pending = i;
+      sentence = `warp ${w}${w >= S.wpb ? " (another block on this SM)" : ""} · ${st}`;
+      if (lastIssue != null) sentence += ` · last issued ${CLS[T.issues[3][lastIssue]]} at k-loop cycle ${T.issues[0][lastIssue]}`;
+      if (pending != null) {
+        const q = L[6][pending] - L[0][pending];
+        sentence += ` · ${CLS[L[3][pending]]} for k-step ${L[4][pending]} in flight: dispatched at ${L[0][pending]}, waited ${q.toFixed(1)} cycles in the queue, ${L[5][pending]} wavefront${L[5][pending] === 1 ? "" : "s"}, result at ${L[8][pending].toFixed(1)}`;
+        obj = {t: +(K.p.t0 + L[0][pending]).toFixed(1), res: "sm.mio", sm: S.sm, warp: w, kind: CLS[L[3][pending]] === "FFMA" ? "fma" : "lds", width: L[3][pending] === 0 ? 128 : 32, wavefronts: L[5][pending], queued: +q.toFixed(1), phase: K.p.phase, step: L[4][pending], dur: +(L[7][pending] - L[6][pending]).toFixed(1)};
+      }
+    } else {
+      const e = w < S.wpb ? warpBlockEvent(w, t) : null;
+      sentence = `warp ${w} · ${st}`; obj = e;
+      if (e && e.kind === "wait") sentence += ` · waiting for copy group ${e.group} (${e.dur.toFixed(0)} cycles in all)`;
+      if (e && e.kind === "barrier_arrive") sentence += ` · at barrier ${e.barrier} for ${e.dur.toFixed(0)} cycles`;
+    }
+  } else if (id.startsWith("sm.mio")) {
+    if (K) {
+      const L = K.T.loads, q = [];
+      for (let i = 0; i < L[0].length && L[0][i] <= K.c; i++) if (L[7][i] > K.c) q.push(i);
+      sentence = `${q.length} shared loads dispatched and not yet drained`;
+      obj = q.slice(0, 24).map(i => `w${L[1][i]} ${CLS[L[3][i]]} k${L[4][i]} ${L[5][i]} wf, dispatched ${L[0][i]}, ${L[6][i] > K.c ? "waiting " + (K.c - L[0][i]) + " cyc" : "draining"}`);
+    } else sentence = "no k-loop running: the queue is empty";
+  } else if (id.startsWith("sm.lsu")) {
+    const li = K ? K.T.lsuAt[K.c] : -1;
+    if (li >= 0) { const L = K.T.loads; sentence = `warp ${L[1][li]}, ${CLS[L[3][li]]}, ${L[5][li]} wavefront${L[5][li] === 1 ? "" : "s"}, waited ${(L[6][li] - L[0][li]).toFixed(1)} cycles in the queue, drains ${L[6][li].toFixed(1)}–${L[7][li].toFixed(1)}`; }
+    else sentence = "the LSU is idle";
+  } else if (id.startsWith("sm.sched")) {
+    const s = +id.match(/\[(\d)\]/)[1];
+    if (K) { const w = K.T.schedIssue[K.c * 4 + s]; sentence = w >= 0 ? `sched${s} issued ${CLS[K.T.schedCls[K.c * 4 + s]]} from warp ${w} at this cycle` : `sched${s} issued nothing at this cycle`; }
+    else sentence = `sched${s}: no k-loop running`;
+  } else if (id.startsWith("sm.fma")) {
+    sentence = K ? [0, 1, 2, 3].map(s => `lane ${s}: ${K.T.fma[K.c * 4 + s] >= 0 ? "FFMA of warp " + K.T.fma[K.c * 4 + s] : "idle"}`).join(" · ") : "no k-loop running";
+  } else if (id.startsWith("sm.smem.slot")) {
+    const k = +id.match(/\[(\d)\]/)[1]; const rows = Object.entries(D.copy).filter(([g, c]) => c.slot === k);
+    sentence = `slot ${k} holds tiles ${rows.map(([g, c]) => c.tile).join(", ")}`;
+    obj = rows.filter(([g, c]) => Math.abs(c.first - t) < 4e4 || (c.first <= t && c.last >= t)).map(([g, c]) => ({tile: c.tile, copy_first_issue: c.first, copy_last_done: c.last, compute: D.phases[g] ? [D.phases[g].t0, D.phases[g].t1] : null}));
+  } else if (id.startsWith("sm.copy")) {
+    sentence = `${Math.round(chunksInFlight(D, t))} chunks in flight`;
+    obj = Object.entries(D.copy).filter(([g, c]) => c.first <= t && c.last > t).map(([g, c]) => ({group: +g, slot: c.slot, issue: c.issue, done: c.done}));
+  } else if (id.startsWith("sm.barrier")) {
+    let bar = null; for (const a of D.arrivals) { if (a.t <= t) bar = a.barrier; else break; }
+    sentence = bar ? `barrier ${bar}` : "no barrier yet"; obj = bar ? D.barriers[bar] : null;
+  } else if (id === "l2" || id.startsWith("l2.") || id === "dram" || id.startsWith("dram.") || id.startsWith("arrow.")) {
+    const sum = S.summary, win = Math.max(0, Math.floor(t / sum.window));
+    sentence = `chip-wide, cycles ${win * sum.window}–${(win + 1) * sum.window}: ${sum.l2.hits[win]} L2 hits, ${sum.l2.misses[win]} misses, ${(sum.dram.bytes[win] / 1024).toFixed(0)} KB from DRAM`;
+    obj = D.events.filter(e => (e.kind === "l2_hit" || e.kind === "l2_miss" || e.kind === "dram_read") && Math.abs(e.t - t) < 5000).slice(0, 20);
+  } else sentence = id;
+  box.querySelector(".sentence").textContent = sentence; box.querySelector(".sentence").classList.remove("muted");
+  box.querySelector("pre").textContent = obj ? JSON.stringify(obj, null, 1) : "";
+}
+
+// ------------------------------------------------------------------ moving through time
+function setT(t) { S.t = Math.max(0, Math.min(S.summary.cycles, t)); render(); }
+
+function filterFor(id) {           // (block-event predicate, template time list builder) for "step on the selected element"
+  if (!id) return null;
+  let m;
+  if ((m = id.match(/^sm\.warp\[(\d+)\]$/))) { const w = +m[1]; return {ev: e => e.warp === w, tm: T => { const a = T.st[w]; const x = new Set(a ? a.t : []); for (let i = 0; i < T.issues[0].length; i++) if (T.issues[1][i] === w) x.add(T.issues[0][i]); return x; }}; }
+  if ((m = id.match(/^sm\.sched\[(\d)\]$/))) { const s = +m[1]; return {ev: () => false, tm: T => new Set(T.issues[0].filter((_, i) => T.issues[2][i] === s))}; }
+  if (id.startsWith("sm.fma")) return {ev: () => false, tm: T => new Set(T.issues[0].filter((_, i) => T.issues[3][i] === FFMA))};
+  if (id.startsWith("sm.mio")) return {ev: () => false, tm: T => new Set([...T.loads[0], ...T.loads[7].map(Math.ceil)])};
+  if (id.startsWith("sm.lsu") || id === "arrow.lsu.smem") return {ev: () => false, tm: T => new Set([...T.loads[6].map(Math.floor), ...T.loads[7].map(Math.ceil)])};
+  if (id === "arrow.smem.fma") return {ev: () => false, tm: T => new Set([...T.loads[7].map(Math.ceil), ...T.loads[8].map(Math.ceil)])};
+  if ((m = id.match(/^sm\.smem\.slot\[(\d)\]$/))) { const k = +m[1]; return {ev: e => (e.kind === "copy_issue" && e.slot === k) || (e.kind === "copy_done" && S.doc.copy[e.group] && S.doc.copy[e.group].slot === k) || (e.kind === "phase_compute" && e.slot === k), tm: null}; }
+  if (id.startsWith("sm.copy") || id === "arrow.l2.sm") return {ev: e => e.kind === "copy_issue" || e.kind === "copy_done", tm: null};
+  if (id.startsWith("sm.barrier")) return {ev: e => e.kind === "barrier_arrive" || e.kind === "barrier_release", tm: null};
+  if (id.startsWith("l2") || id.startsWith("dram") || id === "arrow.dram.l2") return {ev: e => e.kind === "l2_hit" || e.kind === "l2_miss" || e.kind === "dram_read", tm: null};
+  return null;
+}
+function sortedTimes(set) { return Float64Array.from(set).sort(); }
+function blockTimes(id) {
+  const D = S.doc; D.ftimes ||= {};
+  if (!id) return D.times;
+  if (!D.ftimes[id]) { const f = filterFor(id); D.ftimes[id] = f ? sortedTimes(new Set(D.events.filter(f.ev).flatMap(e => e.dur ? [e.t, e.t + e.dur] : [e.t]))) : D.times; }
+  return D.ftimes[id];
+}
+function tmplTimes(T, id) {
+  if (!id) return T.allTimes;
+  const f = filterFor(id); if (!f) return T.allTimes; if (!f.tm) return new Float64Array(0);
+  return T.filt[id] ||= sortedTimes(f.tm(T));
+}
+function upper(a, x) { let lo = 0, hi = a.length; while (lo < hi) { const m = (lo + hi) >> 1; if (a[m] <= x) lo = m + 1; else hi = m; } return lo; }
+function lower(a, x) { let lo = 0, hi = a.length; while (lo < hi) { const m = (lo + hi) >> 1; if (a[m] < x) lo = m + 1; else hi = m; } return lo; }
+function stepEvent(dir) {
+  const t = S.t, D = S.doc, id = S.sel && !S.sel.startsWith("chip") ? S.sel : null;
+  const bt = blockTimes(id); let best = dir > 0 ? Infinity : -Infinity;
+  if (dir > 0) { const i = upper(bt, t + 1e-6); if (i < bt.length) best = bt[i]; }
+  else { const i = lower(bt, t - 1e-6) - 1; if (i >= 0) best = bt[i]; }
+  // inside k-loops: the template's own events, offset by each phase's start
+  for (const p of D.phases) {
+    if (p.t0 == null) continue;
+    if (dir > 0 && (p.t1 <= t || p.t0 > best)) continue;
+    if (dir < 0 && (p.t0 >= t || p.t1 < best)) continue;
+    const T = S.tmpl[p.template]; if (!T) continue; const tt = tmplTimes(T, id);
+    const c = t - p.t0;
+    if (dir > 0) { const i = upper(tt, c + 1e-6); if (i < tt.length) best = Math.min(best, p.t0 + tt[i]); }
+    else { const i = lower(tt, c - 1e-6) - 1; if (i >= 0) best = Math.max(best, p.t0 + tt[i]); }
+  }
+  if (isFinite(best)) { setT(best); return true; }
+  return false;
+}
+function play() {
+  if (S.playing) { clearInterval(S.playing); S.playing = null; $("play").textContent = "▶ play"; return; }
+  $("play").textContent = "❚❚ pause"; let acc = 0;
+  S.playing = setInterval(() => {
+    acc += S.rate * 0.05; let k = Math.floor(acc); acc -= k;
+    let moved = true; while (k-- > 0 && moved) moved = stepEvent(+1);
+    if (!moved) play();
+  }, 50);
+}
+
+// ------------------------------------------------------------------ the hash (shared cursor, §10)
+function writeHash() {
+  const h = `#design=${encodeURIComponent(S.design)}&sm=${S.sm}&t=${Math.round(S.t * 10) / 10}${S.sel ? "&sel=" + encodeURIComponent(S.sel) : ""}`;
+  if (location.hash !== h) history.replaceState(null, "", h);
+}
+function readHash() { const q = new URLSearchParams(location.hash.slice(1)); return {design: q.get("design"), sm: q.get("sm"), t: q.get("t"), sel: q.get("sel")}; }
+
+// ------------------------------------------------------------------ wiring
+async function init() {
+  const svg = await (await fetch("gb10.svg")).text();
+  $("drawing").innerHTML = svg;
+  const list = await getJSON("/api/microtrace");
+  if (!list.length) { $("drawing").insertAdjacentHTML("afterbegin", "<p>No traces yet. Run <code>python -m agentic.sim.microtrace</code>.</p>"); return; }
+  $("design").innerHTML = list.map(d => `<option value="${esc(d.id)}">${esc(`${d.design.tm}×${d.design.tn}×${d.design.tk} S${d.design.stages} P${d.design.prefetch} β${d.design.beta} · ${d.workload}`)}</option>`).join("");
+  const h = readHash();
+  const id = list.some(d => d.id === h.design) ? h.design : list[0].id;
+  $("design").value = id;
+  S.sel = h.sel || null;
+  await loadDesign(id, h.sm != null ? +h.sm : null, h.t != null ? +h.t : null);
+  $("design").onchange = () => loadDesign($("design").value);
+  $("smsel").onchange = () => loadSM(+$("smsel").value, S.t);
+  $("scrub").oninput = e => setT(+e.target.value);
+  $("fine").oninput = e => setT(+e.target.value);
+  $("next").onclick = () => stepEvent(+1); $("prev").onclick = () => stepEvent(-1);
+  $("play").onclick = play;
+  $("rate").onclick = e => { const b = e.target.closest("button"); if (!b) return; S.rate = +b.dataset.r; $("rate").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); };
+  const goPhase = mid => { const p = S.doc.phases[+$("phase").value]; if (!p) return; setT(mid && p.t0 != null ? p.t0 + (p.t1 - p.t0) / 2 : p.start); };
+  $("gophase").onclick = () => goPhase(false); $("midphase").onclick = () => goPhase(true);
+  $("drawing").addEventListener("click", e => {
+    const sq = e.target.closest(".chipsm");
+    if (sq) { const s = +sq.id.match(/\[(\d+)\]/)[1]; if (S.summary.sm_files[s]) loadSM(s, S.t); return; }
+    const n = e.target.closest(".el, [id^='l2'], [id^='dram']");
+    if (!n || !n.id) return;
+    document.querySelectorAll("#gb10 .selected").forEach(x => x.classList.remove("selected"));
+    S.sel = n.id; n.classList.add("selected"); inspect(n.id); writeHash();
+  });
+  document.addEventListener("keydown", e => {
+    if (e.target.tagName === "INPUT" && e.target.type === "number") return;
+    if (e.key === "ArrowRight") { stepEvent(+1); e.preventDefault(); }
+    if (e.key === "ArrowLeft") { stepEvent(-1); e.preventDefault(); }
+    if (e.key === " ") { play(); e.preventDefault(); }
+  });
+}
+init().catch(e => { $("drawing").textContent = "error: " + e.message; console.error(e); });
+})();
+</script>
+</body>
+</html>

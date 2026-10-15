@@ -21,7 +21,7 @@ def test_g4_validation_set_recorded():
     assert all(r["measured_us"] and r["simulated_us"] and r["ncu"].get("ok") for r in v["rows"])
 
 
-@pytest.mark.xfail(strict=True, reason="G4 gate not passed with SASS counts and address wavefronts: median 8.2% (passes), worst 41%, non-compute agreement 0 %; notes/sim_gaps.md #19-#22")
+@pytest.mark.xfail(strict=True, reason="G4 gate not passed with the shared copy path: median 13.0%, worst 51%, non-compute agreement 0 %; notes/sim_gaps.md #23-#24")
 def test_g4_validation_error_gate():
     v = _rows(); s = v["summary"]
     assert s["median_abs_error"] <= 0.10, s

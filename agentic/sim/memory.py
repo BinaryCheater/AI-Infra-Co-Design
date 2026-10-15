@@ -58,10 +58,17 @@ class Hierarchy(Memory):
         chunks_per_thread = bytes_block / (self.threads_per_block * self.copy_chunk)
         return chunks_per_thread * self.copy_issue_s_per_chunk_per_warp
 
+    def lsu_entry_s(self, bytes_block: int) -> float:
+        """The LSU entry the chunks occupy on their way to the window: one warp instruction per 512 B, four 128 B wavefronts each at one
+        per cycle (B30), per SM."""
+        hz = float(self.c.get("clock_hz_sustained") or 2.4e9)
+        return (bytes_block / 512.0) * 4.0 / hz
+
     def copy_time(self, bytes_block: int, lat: float) -> float:
-        """One block's tile of `bytes_block` from a level of latency `lat` with the SM's window to itself (B8's setting)."""
+        """One block's tile of `bytes_block` from a level of latency `lat` with the SM's window to itself (B8's setting): the per-chunk
+        issue on the sub-partition slot, the LSU entry, then the chunks stream through the window (B8's slope is their sum)."""
         window_rate = self.copy_depth * self.copy_chunk / lat
-        return self.copy_issue_s(bytes_block) + bytes_block / window_rate + lat + self.copy_overhead   # issue, then the chunks stream (B8's slope is their sum)
+        return self.copy_issue_s(bytes_block) + self.lsu_entry_s(bytes_block) + bytes_block / window_rate + lat + self.copy_overhead
 
     # ---- the LRU
     def lookup(self, key, bytes_: int) -> bool:
@@ -78,8 +85,9 @@ class Hierarchy(Memory):
         return False
 
     # ---- a request
-    def request(self, engine: Engine, sm: int, src, bytes_: int, done, write: bool = False):
-        now = engine.t
+    def request(self, engine: Engine, sm: int, src, bytes_: int, done, write: bool = False, skip_issue: bool = False, delay: float = 0.0):
+        """skip_issue: the warp model already dispatched the chunks (delay = when the last one left the LSU)."""
+        now = engine.t + delay
         key = src if not isinstance(src, tuple) or src[0] != "block" else None
         if isinstance(src, tuple) and src[0] == "block":
             # the tiling template: ("block", i, j, tile) reads A tile (i, tile) and B tile (tile, j); each warp
@@ -102,7 +110,7 @@ class Hierarchy(Memory):
                 # the warp's own chunk issue (serial, B15.3) must also have finished before the last chunk can be in flight
                 window_rate = self.copy_depth * self.copy_chunk / lat
                 t0, t_win = window.serve(now, share / window_rate)
-                issue_end = now + self.copy_issue_s(share * (self.tile_bytes / max(1, bytes_)))   # the block's whole tile, per warp share
+                issue_end = now if skip_issue else now + self.copy_issue_s(share * (self.tile_bytes / max(1, bytes_)))   # the block's whole tile, per warp share
                 _, t = q.serve(max(t_win, now) + (issue_end - now) + lat, nbytes / bw if not hit else share / bw)
                 t_end = max(t_end, t + self.copy_overhead)
             engine.at(t_end, done)

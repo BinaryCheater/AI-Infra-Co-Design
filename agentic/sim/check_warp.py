@@ -102,3 +102,46 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def b15_copy_latency(m: WarpModel, contract: dict, structural: dict, fixed: dict):
+    """B15.2 as a prediction: r resident blocks per SM each issue one tile (256 threads, 16 B chunks per thread) and wait; the chunks go
+    through the sub-partition slots and the LSU (warp model), then the SM's copy window and the L2 latency (the source is L2-resident).
+    Per-block completion cycles across the r blocks give p50/p99; against cp_async_latency_dist[tile, resident]."""
+    from .memory import Hierarchy
+    h = Hierarchy(contract, structural, fixed); hz = float(contract["clock_hz_sustained"])
+    rows = []
+    for key, meas in sorted((contract.get("cp_async_latency_dist") or {}).items()):
+        tile = int(key.split("tile=")[1].split(",")[0]); r = int(key.split("resident=")[1])
+        chunks = tile // (256 * 16)
+        cyc, hist = m.phase(8, r, 0, 0, 0, 0, 0, 0, 1, (), (), chunks)                    # copies only: no k-loop
+        per_block = list(hist["copy_dispatch_by_block"]) if hist.get("copy_dispatch_by_block") else [cyc]
+        window_rate = h.copy_depth * h.copy_chunk / h.lat_l2                                 # bytes per second through the SM's window
+        times = []
+        win_free = 0.0
+        for b in sorted(per_block):                                                          # the window streams the tiles in dispatch order
+            start = max(b / hz, win_free); win_free = start + tile / window_rate
+            times.append((win_free + h.lat_l2 + h.copy_overhead) * hz)
+        times.sort()
+        p50 = times[len(times) // 2]; p99 = times[min(len(times) - 1, int(0.99 * len(times)))]
+        rows.append({"tile": tile, "resident": r, "p50_sim": p50, "p50_meas": meas["p50_cycles"], "p50_err": p50 / meas["p50_cycles"] - 1, "p99_sim": p99, "p99_meas": meas["p99_cycles"], "p99_err": p99 / meas["p99_cycles"] - 1})
+    return rows
+
+
+def b28_copy(m: WarpModel, contract: dict):
+    """B28's copy-only mix (one 4 KB cp.async per block per phase, wait_group 1, barrier) and the mixed-run shared-memory rate as predictions."""
+    from .config import load
+    cfg = load("spark-6951-gb10"); from .memory import Hierarchy; h = Hierarchy(cfg["contract"], cfg["structural"], cfg["fixed"]); hz = float(contract["clock_hz_sustained"])
+    from ..templates.smem_tiling.events import wavefronts
+    a_wf = tuple(wavefronts([0] * 32, 16) for _ in range(4)); b_wf = tuple(wavefronts([l * 4 for l in range(32)], 4) for _ in range(8))
+    rows = []
+    for b, meas in sorted(((int(k), v) for k, v in (contract.get("copy_bytes_per_s_per_sm_by_residency") or {}).items())):
+        # copy-only phase: 1 chunk per thread, then the wait for the previous phase's tile (wait_group 1) and the barrier; two tiles in flight per block
+        cyc, hist = m.phase(8, b, 0, 0, 0, 0, 0, 0, 1, (), (), 1)
+        window_rate = h.copy_depth * h.copy_chunk / h.lat_l2
+        per_phase = max(cyc, (b * 4096 / window_rate + h.lat_l2 + h.copy_overhead) * hz / 2.0)   # wait_group 1: a tile may take two phases
+        bps = b * 4096 / (per_phase / hz)
+        share = contract.get("lsu_copy_share_of_smem_rate", {}).get(str(b))
+        lds_only, _ = m.phase(8, b, 8, 1, 8, 4, 0, 0, 1, a_wf, b_wf, 0); both, _ = m.phase(8, b, 8, 1, 8, 4, 0, 0, 1, a_wf, b_wf, 1)
+        rows.append({"b": b, "copy_bps_sim": bps, "copy_bps_meas": meas, "copy_err": bps / meas - 1, "share_sim": lds_only / both, "share_meas": share, "share_err": (lds_only / both) / share - 1 if share else None})
+    return rows

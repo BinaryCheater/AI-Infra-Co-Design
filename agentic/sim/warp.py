@@ -26,10 +26,12 @@ from __future__ import annotations
 import math
 from functools import lru_cache
 
-LDS128, LDS32, FFMA, ALU = 0, 1, 2, 3
+LDS128, LDS32, FFMA, ALU, COPY = 0, 1, 2, 3, 4
 
 
 class WarpModel:
+    _rec = None                                       # a recorder (sim/microtrace.py) while trace_phase runs; None otherwise
+
     def __init__(self, contract: dict, structural: dict):
         hz = float(contract.get("clock_hz_sustained") or 2.4e9)
         sb = contract.get("scoreboard_latency_cycles") or {}
@@ -52,6 +54,13 @@ class WarpModel:
         # by the quarter-warp rule, taken as one (B30 measured 32 distinct addresses only; recorded in notes/sim_gaps.md)
         self.wavefronts_broadcast128 = 1.0
         self.mio_queue_depth = contract.get("mio_queue_depth_per_smsp")        # None: no depth limit observed (B30.1)
+        # cp.async chunks (16 B per lane, 512 B per warp instruction) go through the same sub-partition slot and LSU entry as shared
+        # loads: B30.4's 6.8 cycles per chunk per warp on the slot, four 128 B wavefronts in the LSU (B30_plus round 4, §1)
+        self.copy_issue = float(contract.get("cp_async_issue_cycles_per_chunk") or 6.8)
+        self.copy_wavefronts = 4.0
+        # structural: "shared" (B30_plus round 4 §1: chunks queue with the loads) or "separate" (B30.4 measured cp.async issue unaffected
+        # by a preceding burst of loads); with "separate" the copies do not enter the phase's instruction stream
+        self.copy_path = str(structural.get("copy_path", "shared"))
         self.fma_cost = 1.0 / min(1.0, float(contract["fp32_flops_per_s_per_sm"]) / 64.0 / hz / self.schedulers)
         self.penalty = {int(k): float(v) for k, v in (contract.get("bank_conflict_penalty") or {}).items()}
 
@@ -73,7 +82,7 @@ class WarpModel:
 
     @lru_cache(maxsize=8192)
     def phase(self, warps_per_block: int, blocks: int, k_steps: int, ffma: int, lds32: int, lds128: int, other: int = 0, alu: int = 1, stride_words: int = 1,
-              a_wavefronts: tuple = (), b_wavefronts: tuple = ()):
+              a_wavefronts: tuple = (), b_wavefronts: tuple = (), copies: int = 0):
         """Cycles for one phase with `blocks` resident blocks of `warps_per_block` warps starting together, and the wait histogram.
         a_wavefronts: one entry per A load (128-bit, one per RM row per unrolled body of four steps); b_wavefronts: per B load per step
         (32-bit). When absent, the width table applies (lds128 loads per step at 4 wavefronts, lds32 at 1)."""
@@ -83,6 +92,10 @@ class WarpModel:
         # loads spread among them; an FFMA depends on its step's loads
         U = 4
         prog = []                                     # (class, dep_step): the k-step whose loads this FFMA needs, else -1
+        if self.copy_path != "shared":
+            copies = 0
+        for _ in range(copies):                       # the next tile's cp.async chunks, issued at the phase start (program order)
+            prog.append((COPY, -1))
         for _ in range(other):
             prog.append((ALU, -1))
         a_wf = list(a_wavefronts) if a_wavefronts else [self.wavefronts[LDS128]] * (lds128 * U)
@@ -115,8 +128,10 @@ class WarpModel:
         mio_pending = [[] for _ in range(S)]                              # per sub-partition: drain times of dispatched entries (for the optional depth limit)
         fma_free = [0.0] * S
         hist = {"issued": 0, "scoreboard": 0, "not_selected": 0, "lsu": 0, "done": 0}
+        copy_done = [0.0] * W                                             # per warp: when its last cp.async chunk left the LSU
         t = 0; alive = W; deg = self.degree(stride_words); floor = self.floor(W)
         age = list(range(W))
+        rec = self._rec
         while alive > 0 and t < 50_000_000:
             for s in range(S):
                 issued = False; eligible_seen = 0
@@ -124,28 +139,45 @@ class WarpModel:
                     if sched[w] != s:
                         continue
                     if pc[w] >= n:
+                        if rec: rec.state(t, w, "done")
                         continue
                     cls, dep = prog[pc[w]]
                     # in-order: a warp issues at most one instruction per cycle
                     if last_issue[w] >= t + 0.5 and pc[w] > 0:
                         hist["scoreboard"] += 0; continue
                     if cls == FFMA and step_loads_ready[w][dep] > t:
-                        hist["scoreboard"] += 1; continue
-                    if cls in (LDS128, LDS32) and (mio_free[s] > t + 0.5 or (self.mio_queue_depth and sum(1 for c in mio_pending[s] if c > t) >= self.mio_queue_depth)):
-                        hist["lsu"] += 1; continue                           # mio_throttle: the sub-partition's dispatch slot (or queue) is not free
+                        hist["scoreboard"] += 1
+                        if rec: rec.state(t, w, "scoreboard")
+                        continue
+                    if cls in (LDS128, LDS32, COPY) and (mio_free[s] > t + 0.5 or (self.mio_queue_depth and sum(1 for c in mio_pending[s] if c > t) >= self.mio_queue_depth)):
+                        hist["lsu"] += 1
+                        if rec: rec.state(t, w, "mio")
+                        continue                           # mio_throttle: the sub-partition's dispatch slot (or queue) is not free
                     if cls == FFMA and fma_free[s] > t + 0.5:
-                        hist["not_selected"] += 1; continue
+                        hist["not_selected"] += 1
+                        if rec: rec.state(t, w, "ready")
+                        continue
                     eligible_seen += 1
                     if issued:
-                        hist["not_selected"] += 1; continue
+                        hist["not_selected"] += 1
+                        if rec: rec.state(t, w, "ready")
+                        continue
                     # issue
-                    if cls in (LDS128, LDS32):
+                    if cls == COPY:
+                        mio_free[s] = t + self.copy_issue
+                        start = max(float(t), lsu_free); lsu_free = start + max(floor, self.copy_wavefronts / self.lsu_drain_wf)
+                        copy_done[w] = lsu_free
+                        if self.mio_queue_depth:
+                            mio_pending[s] = [c for c in mio_pending[s] if c > t] + [lsu_free]
+                        if rec: rec.load(t, w, s, cls, -1, self.copy_wavefronts, start, lsu_free, lsu_free)
+                    elif cls in (LDS128, LDS32):
                         mio_free[s] = t + self.mio_issue
                         wf = (per_warp_wf[w].pop(0) if per_warp_wf[w] else self.wavefronts[cls]) * deg
                         start = max(float(t), lsu_free); lsu_free = start + max(floor, wf / self.lsu_drain_wf)
                         done_at = lsu_free + self.lat[cls]
                         if self.mio_queue_depth:
                             mio_pending[s] = [c for c in mio_pending[s] if c > t] + [lsu_free]
+                        if rec: rec.load(t, w, s, cls, dep, wf, start, lsu_free, done_at)
                         if dep >= 0:
                             # an A load serves its whole unrolled body: every step of the body depends on it
                             targets = range(dep, min(dep + 4, k_steps)) if cls == LDS128 else (dep,)
@@ -154,6 +186,7 @@ class WarpModel:
                     elif cls == FFMA:
                         fma_free[s] = max(fma_free[s], float(t)) + self.fma_cost
                     pc[w] += 1; last_issue[w] = float(t); hist["issued"] += 1; issued = True
+                    if rec: rec.issue(t, w, s, cls)
                     if pc[w] >= n:
                         alive -= 1
                 # oldest-first within a scheduler: rotate the issued warp to the back so a stuck warp does not starve others
@@ -162,7 +195,18 @@ class WarpModel:
             # every warp that finished its phase waits at the barrier
             hist["done"] += sum(1 for w in range(W) if pc[w] >= n)
             t += 1
+        hist["copy_dispatch_cycles"] = max(copy_done) if copies else 0.0  # when the last chunk of the phase's copies left the LSU (block 0's view)
+        hist["copy_dispatch_by_block"] = tuple(max(copy_done[b * warps_per_block:(b + 1) * warps_per_block]) for b in range(blocks)) if copies else ()
         return float(t), hist
+
+    def trace_phase(self, rec, *args):
+        """phase() run once more, uncached, with every issue, load and warp state handed to `rec` (the microarchitecture view's
+        trace, notes/microarchitecture_view_design.md §4). Same arguments and result as phase()."""
+        self._rec = rec
+        try:
+            return WarpModel.phase.__wrapped__(self, *args)
+        finally:
+            self._rec = None
 
     def phase_cycles(self, warps_per_block: int, blocks: int, k_steps: int, ffma: int, lds32: int, lds128: int, other: int = 0, stride_words: int = 1) -> float:
         return self.phase(warps_per_block, blocks, k_steps, ffma, lds32, lds128, other, 1, stride_words)[0]

@@ -188,6 +188,26 @@ def _calibration_file(connection, rel: str):
     return _response(connection, HTTPStatus.OK, path.read_bytes(), mimetypes.guess_type(str(path))[0] or "text/plain")
 
 
+MICROTRACE = Path(__file__).resolve().parents[2] / "runs" / "microtrace"
+
+
+def _microtrace_file(connection, rel: str):
+    """The chip view's trace files (agentic/sim/microtrace.py writes them under runs/microtrace/<design>/)."""
+    path = (MICROTRACE / rel).resolve()
+    if not path.is_file() or MICROTRACE.resolve() not in path.parents:
+        return connection.respond(HTTPStatus.NOT_FOUND, "not found\n")
+    return _response(connection, HTTPStatus.OK, path.read_bytes(), "application/json")
+
+
+def microtrace_index() -> list[dict]:
+    """The designs with a chip-view trace: id, label, time, the SM shown first."""
+    out = []
+    for f in sorted(MICROTRACE.glob("*/summary.json")) if MICROTRACE.exists() else []:
+        s = json.loads(f.read_text())
+        out.append({k: s.get(k) for k in ("id", "label", "workload", "design", "time_us", "cycles", "default_sm", "phases", "blocks")})
+    return out
+
+
 def validation_index() -> list[dict]:
     """The G4 validation sets (calibration/<host>/validation.json): simulated vs measured per design."""
     out = []
@@ -221,6 +241,10 @@ def make_process_request(session: Session):
             return _static(connection, "calibration.html")
         if p == "/validation" or p == "/validation/":
             return _static(connection, "validation.html")
+        if p == "/microarch" or p == "/microarch/":
+            return _static(connection, "microarch.html")
+        if p.startswith("/microtrace/"):
+            return _microtrace_file(connection, p[len("/microtrace/"):])
         if p.startswith("/calibration-files/"):
             return _calibration_file(connection, p[len("/calibration-files/"):])
         if p.startswith("/api/"):
@@ -249,6 +273,8 @@ def api(session: Session, route: str, q: dict):
         return calibration_index()
     if route == "validation":
         return validation_index()
+    if route == "microtrace":
+        return microtrace_index()
     if route == "population":
         return session._summary()
     if route == "describe_all":
