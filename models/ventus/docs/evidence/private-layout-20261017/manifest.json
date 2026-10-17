@@ -1,0 +1,1631 @@
+{
+  "schema": "ventus-private-layout-evidence-v1",
+  "scope": "Original numerical failure, explicit corrected driver, finite checks and distinct partial/recovery runs; no accuracy or acceptance claim",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "0335ba34ae204afdcaf31bfde4d682b221c96b262f7bea0a0b9327d8c40eb6a0",
+      "bytes": 6509
+    },
+    {
+      "path": "corrected/code-hashes.json",
+      "sha256": "43d67b1bb1215defe07eb47c6a4b2a3e5acf06868d8b499f8abcee07f2e78366",
+      "bytes": 5947
+    },
+    {
+      "path": "corrected/native/experiment.json",
+      "sha256": "e3151abeb174f8b8edcca017e6a6ae016467e063d6af06226e4619286fe58510",
+      "bytes": 5885
+    },
+    {
+      "path": "corrected/native/stages.jsonl",
+      "sha256": "236b34cd542c6aa049706292535f4642617737695599f2ed5d80836189110ce8",
+      "bytes": 1583
+    },
+    {
+      "path": "corrected/rtl/driver-adapter/build.json",
+      "sha256": "0ee212ccdf62401be043229714ba3108a40990c7c53be6c9586c7e3cf164b976",
+      "bytes": 744
+    },
+    {
+      "path": "corrected/rtl/private-spill-w2-b2/logs/ventus_rtlsim.log",
+      "sha256": "474583f0a579c1278951f1addad55307cee753e3b0202adb3165cba253a1746b",
+      "bytes": 745
+    },
+    {
+      "path": "corrected/rtl/private-spill-w2-b2/stderr.log",
+      "sha256": "94c0858ac290171c106278d1c34c3b3b317dcf5d322f4faee07b27f644ae1571",
+      "bytes": 86194
+    },
+    {
+      "path": "corrected/rtl/private-spill-w2-b2/stdout.log",
+      "sha256": "ae5521e42eda76126e9b2e16e0e0dde159269d2bf7edc00af7411a2d5d2d79d3",
+      "bytes": 17890
+    },
+    {
+      "path": "corrected/rtl/private-spill-w2-b2/summary.json",
+      "sha256": "86fc868a373407df319d6247f980dbd4c904ba72525783580313422c944b42a4",
+      "bytes": 2598
+    },
+    {
+      "path": "corrected/rtl/results.json",
+      "sha256": "705460041f7311edab469a619d75d3a8f960ef92276908c62ff6ba0ec832291f",
+      "bytes": 2948
+    },
+    {
+      "path": "corrected/worker-result.json",
+      "sha256": "355216611ee5cb7ef0893e8348a6886ecf150927e70a21e6372fb948d3059a12",
+      "bytes": 3976
+    },
+    {
+      "path": "corrected-source-snapshot/code-hashes.json",
+      "sha256": "43d67b1bb1215defe07eb47c6a4b2a3e5acf06868d8b499f8abcee07f2e78366",
+      "bytes": 5947
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/__init__.py",
+      "sha256": "83303f7fbfb23cc7d346971b32d9a3029bc26450e4430e41d0ebba4691d82a0a",
+      "bytes": 70
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/solver.py",
+      "sha256": "cd3bc98bfbc13e09a13924abba879fb365075742f9ecbc68f4e4f3c77d0f808c",
+      "bytes": 2174
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/__init__.py",
+      "sha256": "bb90553cbef78a5957d11291e552abf3f84a238d604fa658b643880e1e18e4c6",
+      "bytes": 120
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/__main__.py",
+      "sha256": "09b941da0ffdf9745fefb30ee6ca52d0aa499545e55716516512e136ef7e2948",
+      "bytes": 10731
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/accuracy_audit.py",
+      "sha256": "bdf5f131dee82000280235e6d2bbdab268cc2c53772c6bf29e10cff182d738de",
+      "bytes": 12255
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/baseline.py",
+      "sha256": "120ac10f7b3359a3ccea0894fad3fa4781c6429d17111c23d501535a60df8042",
+      "bytes": 4374
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/benchmark_native.py",
+      "sha256": "becc5e6c055640f88652ad818f855554603a083aa36c1ef49e3cb0bcc9869879",
+      "bytes": 4503
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/cache_acceptance.py",
+      "sha256": "e39920ebe8fa38f1936a9c5279400abb9d7c4f3851baeea8fe8151db6ba0d945",
+      "bytes": 4848
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/causal_memory.py",
+      "sha256": "8ad6b5cbb2264b36becff328a3e3f4d50b6a1aebbba8c39c3c3f8cbb0c169d72",
+      "bytes": 18939
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/coalescer.py",
+      "sha256": "68ef20fbab29abb4ccb02bd756252267a298dfb5d2ed87b43135d0d17ba2a34b",
+      "bytes": 2656
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/compiled_check.py",
+      "sha256": "04e5aa296aaf99a9990200f5c54f90dedc2b3d81cd22191fb852746c3b8baa28",
+      "bytes": 20715
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/compiler.py",
+      "sha256": "9d6318dc840de9333f1c2cf6ecc326231c064e0e1d20863f610314a0b4237282",
+      "bytes": 5655
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/config.py",
+      "sha256": "2f116280be41351801eeba0ad479944a0bc5c263bd0f14b60543aafd3da31c41",
+      "bytes": 4613
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/driver_adapter.py",
+      "sha256": "17d98f0b39afd37f8853eca0cd610fe4d04e7e73c8fe2f95228683aa4778cd57",
+      "bytes": 3014
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/elastic.py",
+      "sha256": "ec41c9d87e95ddda5165106f7a425951aa01df56e6a97dbda711714762186e72",
+      "bytes": 1388
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/elf.py",
+      "sha256": "3234f3baefcf34ad3339e2b40e3164f49e6e45fa1f900784f7ae8def2453e87f",
+      "bytes": 7983
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/frontend.py",
+      "sha256": "3eb69d4b4f755d4d3285b245ebc78cd37405ebfc93ec4a9112a21c5b4742bb5f",
+      "bytes": 10381
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/frontend_parity.py",
+      "sha256": "60af5f1d03c08060c8c4a282f082ff552efb376fe1d5ec139b71be152c8eedd1",
+      "bytes": 12615
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/gemm_lowering.py",
+      "sha256": "d95738dc0e9307408f2d4235b62a9ca6d3678c2ed4f25cf5cd6b25ea7be72db4",
+      "bytes": 7558
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/graph.py",
+      "sha256": "765aeb04bda71d3dbe32938599ab20c341a8ae352fd5981202fce26aec6b5508",
+      "bytes": 1624
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/historical_replay.py",
+      "sha256": "72d8b07905486f06af975ce99b2af3a9fe162c4c0c3142953ddc43c6d710f86c",
+      "bytes": 12399
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/instruction_cli.py",
+      "sha256": "e49aeff1daee2535c8c157242322dda7b9cefc0402ac1d324d9d0a4e02c7a47d",
+      "bytes": 12458
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/ir.py",
+      "sha256": "466627742c3d8a033b41a0de3a1e56a403bbcebfb7d88053e2cfe584cb256076",
+      "bytes": 6021
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/launch_contract.py",
+      "sha256": "f6067b120798cc27d1951d2df20cfd7fe1184628e811c1dcfd220993e61663ca",
+      "bytes": 7088
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/layernorm.py",
+      "sha256": "4d4809733cf3dcc173d60054239687a40ef6ba3596d46262948bdf921264ed83",
+      "bytes": 5456
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/lsu_control.py",
+      "sha256": "0756038009e64e4ab713893644e3d4b4131879dc92267f103f8403d19d59f90e",
+      "bytes": 7112
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/mip.py",
+      "sha256": "f12939c226af7970849dfa3bbb33864b2d12292f1ec108be61bfee526c4b1e46",
+      "bytes": 5833
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/model_program.py",
+      "sha256": "d235a1f140d94d7a386856609eb749372e859e308380c4f64397556888efe288",
+      "bytes": 18659
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/online.py",
+      "sha256": "1c38ecadaf2fc19f2ab6812a7c322f1a2144c88ce8a4e8a6043cdc0e2c937ace",
+      "bytes": 22470
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/operators.py",
+      "sha256": "8aeada5c5cd01f82605b0af7ddbcb00a7ea6635324c12ad0def504cc9184da15",
+      "bytes": 8004
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/physical_operands.py",
+      "sha256": "2e537576cab8938ba23c6bb7e2a28f880834874ce571ddfd92f4da7bc3e0c5cf",
+      "bytes": 2322
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/process.py",
+      "sha256": "ea5702ee579b952404579a81a2671ed7541b7ab7814588593a9af4de6f1397ba",
+      "bytes": 2296
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/program.py",
+      "sha256": "56b8872910d9ddd1a648238dc5451b9bedea54f2d1951e58499e4fc9257d3304",
+      "bytes": 7484
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/rtl_accuracy.py",
+      "sha256": "928e394be5219c736e14b18500294f6fd5c0d308e763cfbd1224c33f9c7056bc",
+      "bytes": 16842
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/rtl_diagnostics.py",
+      "sha256": "e60a6127e536da57d64e734372d5294abffae1318ede5a1e04f00a60c8c41932",
+      "bytes": 3412
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/runtime/r1-private-driver.cpp",
+      "sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+      "bytes": 1038
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/runtime/rtl-r1-workitem.S",
+      "sha256": "850885c539a9d93202c4bbfa224aee17bf75b5781282212dc9d81f2d4b2d0e07",
+      "bytes": 14770
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/runtime/rtl-r1-workitem.json",
+      "sha256": "f47ccc4656dcfd9e493d85b5080cd36f59284290ab37d52ce3c14eb6f564dad6",
+      "bytes": 990
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/rust.py",
+      "sha256": "8e2c49927e58fe9dcd8fa03d8274cb58b01aa05f31ed227fc49041fa5becd8d8",
+      "bytes": 16635
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/rust_core/Cargo.lock",
+      "sha256": "430373e2bc7055e0b966d8eea9836bca3d4b78bea7a2c2eca0f215c8862c25c7",
+      "bytes": 157
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/rust_core/Cargo.toml",
+      "sha256": "5aa703e20143319176f70ef7c492d5bd1d2cb4eeac813d60f7d9bffa5b687226",
+      "bytes": 155
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/rust_core/src/frontend.rs",
+      "sha256": "e86c0ff50f0ccd1aaac2d659958b3eb7a90d3895800baccba11fef2a76344411",
+      "bytes": 25000
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/rust_core/src/lib.rs",
+      "sha256": "ad133666b47d40f75c41e4b9e93bd9fbcd8a4b5445162d327bbbdf0c67b4923b",
+      "bytes": 70204
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/rust_core/src/provider.rs",
+      "sha256": "f4cde8d3c7458f8fd1fec5fe9701330eb06c7a63d54b8ff19a25857f4599a2fd",
+      "bytes": 41690
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/rust_frontend.py",
+      "sha256": "1706cfc1c2b8bbeeced0f2c97df849364bbb81fb53711b84eeb54e305fe0e673",
+      "bytes": 8804
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/session.py",
+      "sha256": "cfc5e916e36f00ee1623930bc5a5323a83db8b304800b8afb651a2fb62569d18",
+      "bytes": 4325
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/source.py",
+      "sha256": "62e42be3e415c8674089cb09df4194972b817f0cfec073898e17a6a6ec60b042",
+      "bytes": 10509
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/source_ready.py",
+      "sha256": "9238aa7484ce0ede1e567be118c061ed583e6728c14ccba272148d3ac14b08ba",
+      "bytes": 9598
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/termination.py",
+      "sha256": "8b6c15ea0c75e3b4f4f895d4b88eb57be8190cc18d3b8720dc7869e40d2a80c2",
+      "bytes": 1744
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/timing.py",
+      "sha256": "6d7fa3491b154b59f67ae86b2310d63c67197167d844b10dda42ea0425d58daf",
+      "bytes": 14634
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/trace_diff.py",
+      "sha256": "f06d29c4e30c03597b05646452b4bb020bf811a2991deb856c58a7e9f0d41753",
+      "bytes": 7585
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/transformer.py",
+      "sha256": "6de50f726a248acbb3c919b0034be2f21eb2ddb0b359580489ac43f86395561d",
+      "bytes": 27980
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/transformer_cli.py",
+      "sha256": "b3464b2ddb0446359b93ac6f51378cab1a732023661e195e5da20ccd247456b7",
+      "bytes": 4135
+    },
+    {
+      "path": "corrected-source-snapshot/codesign/ventus/workloads.py",
+      "sha256": "df164d864bf62da1700ba4862e6cbabcf39264ba43594eac31d0eb0cdc2ac82d",
+      "bytes": 6107
+    },
+    {
+      "path": "corrected-source-snapshot/ventus_project/__init__.py",
+      "sha256": "d7baddd1765e4243b4e414bf7e54932749db5c8b81615e9a6fc2ad1b296fb60c",
+      "bytes": 81
+    },
+    {
+      "path": "corrected-source-snapshot/ventus_project/compiled_workflow.py",
+      "sha256": "a7c5cf108172b96b4f157dc802f64d0a8e31f33a9303f243c86a1edc0c3d207e",
+      "bytes": 21453
+    },
+    {
+      "path": "corrected-source-snapshot/ventus_project/config.py",
+      "sha256": "459f3b1110288d872977a6cad48b5988ed93c7256c222abb5b67eaadaad4c987",
+      "bytes": 1744
+    },
+    {
+      "path": "current-code-hashes.json",
+      "sha256": "dc9ff638a018359ab5dd51749c66fb2354a10f4c332d445d518860846ea984b7",
+      "bytes": 1078
+    },
+    {
+      "path": "first-six-source-snapshot/code-hashes.json",
+      "sha256": "53047ccc91f6bcbd79c59b973ed7646f6e0e5343ce795b8890d01d162f430d07",
+      "bytes": 5947
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/__init__.py",
+      "sha256": "83303f7fbfb23cc7d346971b32d9a3029bc26450e4430e41d0ebba4691d82a0a",
+      "bytes": 70
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/solver.py",
+      "sha256": "cd3bc98bfbc13e09a13924abba879fb365075742f9ecbc68f4e4f3c77d0f808c",
+      "bytes": 2174
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/__init__.py",
+      "sha256": "bb90553cbef78a5957d11291e552abf3f84a238d604fa658b643880e1e18e4c6",
+      "bytes": 120
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/__main__.py",
+      "sha256": "09b941da0ffdf9745fefb30ee6ca52d0aa499545e55716516512e136ef7e2948",
+      "bytes": 10731
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/accuracy_audit.py",
+      "sha256": "bdf5f131dee82000280235e6d2bbdab268cc2c53772c6bf29e10cff182d738de",
+      "bytes": 12255
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/baseline.py",
+      "sha256": "120ac10f7b3359a3ccea0894fad3fa4781c6429d17111c23d501535a60df8042",
+      "bytes": 4374
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/benchmark_native.py",
+      "sha256": "becc5e6c055640f88652ad818f855554603a083aa36c1ef49e3cb0bcc9869879",
+      "bytes": 4503
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/cache_acceptance.py",
+      "sha256": "e39920ebe8fa38f1936a9c5279400abb9d7c4f3851baeea8fe8151db6ba0d945",
+      "bytes": 4848
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/causal_memory.py",
+      "sha256": "8ad6b5cbb2264b36becff328a3e3f4d50b6a1aebbba8c39c3c3f8cbb0c169d72",
+      "bytes": 18939
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/coalescer.py",
+      "sha256": "68ef20fbab29abb4ccb02bd756252267a298dfb5d2ed87b43135d0d17ba2a34b",
+      "bytes": 2656
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/compiled_check.py",
+      "sha256": "04e5aa296aaf99a9990200f5c54f90dedc2b3d81cd22191fb852746c3b8baa28",
+      "bytes": 20715
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/compiler.py",
+      "sha256": "9d6318dc840de9333f1c2cf6ecc326231c064e0e1d20863f610314a0b4237282",
+      "bytes": 5655
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/config.py",
+      "sha256": "2f116280be41351801eeba0ad479944a0bc5c263bd0f14b60543aafd3da31c41",
+      "bytes": 4613
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/driver_adapter.py",
+      "sha256": "0c6569c1f57e20db6c7f6efe681dd65827b5520743b36710495937f40192f0b3",
+      "bytes": 4889
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/elastic.py",
+      "sha256": "ec41c9d87e95ddda5165106f7a425951aa01df56e6a97dbda711714762186e72",
+      "bytes": 1388
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/elf.py",
+      "sha256": "3234f3baefcf34ad3339e2b40e3164f49e6e45fa1f900784f7ae8def2453e87f",
+      "bytes": 7983
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/frontend.py",
+      "sha256": "3eb69d4b4f755d4d3285b245ebc78cd37405ebfc93ec4a9112a21c5b4742bb5f",
+      "bytes": 10381
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/frontend_parity.py",
+      "sha256": "60af5f1d03c08060c8c4a282f082ff552efb376fe1d5ec139b71be152c8eedd1",
+      "bytes": 12615
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/gemm_lowering.py",
+      "sha256": "d95738dc0e9307408f2d4235b62a9ca6d3678c2ed4f25cf5cd6b25ea7be72db4",
+      "bytes": 7558
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/graph.py",
+      "sha256": "765aeb04bda71d3dbe32938599ab20c341a8ae352fd5981202fce26aec6b5508",
+      "bytes": 1624
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/historical_replay.py",
+      "sha256": "72d8b07905486f06af975ce99b2af3a9fe162c4c0c3142953ddc43c6d710f86c",
+      "bytes": 12399
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/instruction_cli.py",
+      "sha256": "e49aeff1daee2535c8c157242322dda7b9cefc0402ac1d324d9d0a4e02c7a47d",
+      "bytes": 12458
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/ir.py",
+      "sha256": "466627742c3d8a033b41a0de3a1e56a403bbcebfb7d88053e2cfe584cb256076",
+      "bytes": 6021
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/launch_contract.py",
+      "sha256": "2c737ae9b56e1a9c7d5e2cfce633fd2d0b0de66b071cb3892881f951b7625499",
+      "bytes": 7288
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/layernorm.py",
+      "sha256": "4d4809733cf3dcc173d60054239687a40ef6ba3596d46262948bdf921264ed83",
+      "bytes": 5456
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/lsu_control.py",
+      "sha256": "0756038009e64e4ab713893644e3d4b4131879dc92267f103f8403d19d59f90e",
+      "bytes": 7112
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/mip.py",
+      "sha256": "f12939c226af7970849dfa3bbb33864b2d12292f1ec108be61bfee526c4b1e46",
+      "bytes": 5833
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/model_program.py",
+      "sha256": "d235a1f140d94d7a386856609eb749372e859e308380c4f64397556888efe288",
+      "bytes": 18659
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/online.py",
+      "sha256": "1c38ecadaf2fc19f2ab6812a7c322f1a2144c88ce8a4e8a6043cdc0e2c937ace",
+      "bytes": 22470
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/operators.py",
+      "sha256": "8aeada5c5cd01f82605b0af7ddbcb00a7ea6635324c12ad0def504cc9184da15",
+      "bytes": 8004
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/physical_operands.py",
+      "sha256": "2e537576cab8938ba23c6bb7e2a28f880834874ce571ddfd92f4da7bc3e0c5cf",
+      "bytes": 2322
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/process.py",
+      "sha256": "ea5702ee579b952404579a81a2671ed7541b7ab7814588593a9af4de6f1397ba",
+      "bytes": 2296
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/program.py",
+      "sha256": "56b8872910d9ddd1a648238dc5451b9bedea54f2d1951e58499e4fc9257d3304",
+      "bytes": 7484
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/rtl_accuracy.py",
+      "sha256": "928e394be5219c736e14b18500294f6fd5c0d308e763cfbd1224c33f9c7056bc",
+      "bytes": 16842
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/rtl_diagnostics.py",
+      "sha256": "e60a6127e536da57d64e734372d5294abffae1318ede5a1e04f00a60c8c41932",
+      "bytes": 3412
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/runtime/r1-private-driver.cpp",
+      "sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+      "bytes": 1038
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/runtime/rtl-r1-workitem.S",
+      "sha256": "850885c539a9d93202c4bbfa224aee17bf75b5781282212dc9d81f2d4b2d0e07",
+      "bytes": 14770
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/runtime/rtl-r1-workitem.json",
+      "sha256": "f47ccc4656dcfd9e493d85b5080cd36f59284290ab37d52ce3c14eb6f564dad6",
+      "bytes": 990
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/rust.py",
+      "sha256": "8e2c49927e58fe9dcd8fa03d8274cb58b01aa05f31ed227fc49041fa5becd8d8",
+      "bytes": 16635
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/rust_core/Cargo.lock",
+      "sha256": "430373e2bc7055e0b966d8eea9836bca3d4b78bea7a2c2eca0f215c8862c25c7",
+      "bytes": 157
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/rust_core/Cargo.toml",
+      "sha256": "5aa703e20143319176f70ef7c492d5bd1d2cb4eeac813d60f7d9bffa5b687226",
+      "bytes": 155
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/rust_core/src/frontend.rs",
+      "sha256": "e86c0ff50f0ccd1aaac2d659958b3eb7a90d3895800baccba11fef2a76344411",
+      "bytes": 25000
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/rust_core/src/lib.rs",
+      "sha256": "ad133666b47d40f75c41e4b9e93bd9fbcd8a4b5445162d327bbbdf0c67b4923b",
+      "bytes": 70204
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/rust_core/src/provider.rs",
+      "sha256": "f4cde8d3c7458f8fd1fec5fe9701330eb06c7a63d54b8ff19a25857f4599a2fd",
+      "bytes": 41690
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/rust_frontend.py",
+      "sha256": "1706cfc1c2b8bbeeced0f2c97df849364bbb81fb53711b84eeb54e305fe0e673",
+      "bytes": 8804
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/session.py",
+      "sha256": "cfc5e916e36f00ee1623930bc5a5323a83db8b304800b8afb651a2fb62569d18",
+      "bytes": 4325
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/source.py",
+      "sha256": "62e42be3e415c8674089cb09df4194972b817f0cfec073898e17a6a6ec60b042",
+      "bytes": 10509
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/source_ready.py",
+      "sha256": "9238aa7484ce0ede1e567be118c061ed583e6728c14ccba272148d3ac14b08ba",
+      "bytes": 9598
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/termination.py",
+      "sha256": "8b6c15ea0c75e3b4f4f895d4b88eb57be8190cc18d3b8720dc7869e40d2a80c2",
+      "bytes": 1744
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/timing.py",
+      "sha256": "6d7fa3491b154b59f67ae86b2310d63c67197167d844b10dda42ea0425d58daf",
+      "bytes": 14634
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/trace_diff.py",
+      "sha256": "f06d29c4e30c03597b05646452b4bb020bf811a2991deb856c58a7e9f0d41753",
+      "bytes": 7585
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/transformer.py",
+      "sha256": "6de50f726a248acbb3c919b0034be2f21eb2ddb0b359580489ac43f86395561d",
+      "bytes": 27980
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/transformer_cli.py",
+      "sha256": "b3464b2ddb0446359b93ac6f51378cab1a732023661e195e5da20ccd247456b7",
+      "bytes": 4135
+    },
+    {
+      "path": "first-six-source-snapshot/codesign/ventus/workloads.py",
+      "sha256": "df164d864bf62da1700ba4862e6cbabcf39264ba43594eac31d0eb0cdc2ac82d",
+      "bytes": 6107
+    },
+    {
+      "path": "first-six-source-snapshot/ventus_project/__init__.py",
+      "sha256": "d7baddd1765e4243b4e414bf7e54932749db5c8b81615e9a6fc2ad1b296fb60c",
+      "bytes": 81
+    },
+    {
+      "path": "first-six-source-snapshot/ventus_project/compiled_workflow.py",
+      "sha256": "a7c5cf108172b96b4f157dc802f64d0a8e31f33a9303f243c86a1edc0c3d207e",
+      "bytes": 21453
+    },
+    {
+      "path": "first-six-source-snapshot/ventus_project/config.py",
+      "sha256": "459f3b1110288d872977a6cad48b5988ed93c7256c222abb5b67eaadaad4c987",
+      "bytes": 1744
+    },
+    {
+      "path": "footprints.json",
+      "sha256": "bb9ab8c465267d731d74f69825a944a485837ccfe63bf6eef72cdc69658d13a7",
+      "bytes": 816
+    },
+    {
+      "path": "regression/first-six/code-hashes.json",
+      "sha256": "53047ccc91f6bcbd79c59b973ed7646f6e0e5343ce795b8890d01d162f430d07",
+      "bytes": 5947
+    },
+    {
+      "path": "regression/first-six/input/cases.json",
+      "sha256": "e8585cd29848dc04a6d97c5e79142d63999bfc2ec1a805d47d6a9d37a2291f0b",
+      "bytes": 98477
+    },
+    {
+      "path": "regression/first-six/input/exchange-w2-tail-r2/input.data",
+      "sha256": "1500741d77135885b844add4e14de43ea565ffc1d975b623a5d9ddf8775a9e2b",
+      "bytes": 17325
+    },
+    {
+      "path": "regression/first-six/input/exchange-w2-tail-r2/input.metadata",
+      "sha256": "d5b44ef4f93f99476637427b35dea935bf4ab2dd7b3773c8ab0c85a00a54c620",
+      "bytes": 684
+    },
+    {
+      "path": "regression/first-six/input/exchange-w4-tail-r3/input.data",
+      "sha256": "1c4688f1acd291a17aa07a6950a246aeb496b6f4e04302ede036e95aced7cf7b",
+      "bytes": 32202
+    },
+    {
+      "path": "regression/first-six/input/exchange-w4-tail-r3/input.metadata",
+      "sha256": "1d258d0e56530deced9ec0913c43f5116b503a7c38453cc5b644b4d6cc6c4774",
+      "bytes": 684
+    },
+    {
+      "path": "regression/first-six/input/gemm-m11-n13-k9/input.data",
+      "sha256": "8a8800b1601d0b0f35e3102da3b168221d1897f5f9f6e5e88dce18abb584faf4",
+      "bytes": 15174
+    },
+    {
+      "path": "regression/first-six/input/gemm-m11-n13-k9/input.metadata",
+      "sha256": "24b3315ecbce033d70929366fa454cf27e5bfa523b7624169d151111e9904d57",
+      "bytes": 738
+    },
+    {
+      "path": "regression/first-six/input/gemm-w2-m7-n9-k11/input.data",
+      "sha256": "de08758938fef4c22d3e0fd1b81ecbd00dacc0a003413a700e2124b95a270812",
+      "bytes": 11988
+    },
+    {
+      "path": "regression/first-six/input/gemm-w2-m7-n9-k11/input.metadata",
+      "sha256": "f498ede5c1f4b8e7c54b79c099acc8d58b5c31bd0b3f8329f0518594623b5947",
+      "bytes": 738
+    },
+    {
+      "path": "regression/first-six/input/vecadd-pairs-w4-b3/input.data",
+      "sha256": "ac6543bc479e5db4a9da2b37cfe87517d0a3a3cd24c16e8a25fb5e94a78cf967",
+      "bytes": 26001
+    },
+    {
+      "path": "regression/first-six/input/vecadd-pairs-w4-b3/input.metadata",
+      "sha256": "7c597f6947538716789b021395d1dbbcf9918010c352eb2ae8ef9805629c654d",
+      "bytes": 684
+    },
+    {
+      "path": "regression/first-six/input/vecadd-single-w1-b2/input.data",
+      "sha256": "750e07e92cf4d78e33dd0c5b1e258a54cfbde0fb6e53bacc0b2bafaf14a77536",
+      "bytes": 6894
+    },
+    {
+      "path": "regression/first-six/input/vecadd-single-w1-b2/input.metadata",
+      "sha256": "e154593ded063818daa8c1aacdbcd04579c7b967ddd04306f973f0797af2a87b",
+      "bytes": 684
+    },
+    {
+      "path": "regression/first-six/input/vecadd-single-w2-b3/input.data",
+      "sha256": "f78053119689c8220e283bb052175243b4d4d11ae80f93469ee78055721c991d",
+      "bytes": 10350
+    },
+    {
+      "path": "regression/first-six/input/vecadd-single-w2-b3/input.metadata",
+      "sha256": "9682de0c321889cdebb02615be638598418606d02c9b6ff2085c6407b81dfefb",
+      "bytes": 684
+    },
+    {
+      "path": "regression/first-six/partial-result.json",
+      "sha256": "9a30448f06e229914a3e7c3a80b5b2f16df34290a5ef88420ed06e5ee26f9d9f",
+      "bytes": 817
+    },
+    {
+      "path": "regression/first-six/rtl/driver-adapter/build.json",
+      "sha256": "8fcc6694554555cf8b8ea8a4cf28673f9df97ad5b1a2513e6d64c67d37b726f1",
+      "bytes": 744
+    },
+    {
+      "path": "regression/first-six/rtl/exchange-w2-tail-r2/logs/ventus_rtlsim.log",
+      "sha256": "5031ab2578294553179b235ff55eae2671fcad027f01bfff9ed586a6122b4c8a",
+      "bytes": 1118
+    },
+    {
+      "path": "regression/first-six/rtl/exchange-w2-tail-r2/stderr.log",
+      "sha256": "33150e4be1a60360019a28a2de74b53ae813d5a5ee8e71f402bf95ea94080129",
+      "bytes": 282983
+    },
+    {
+      "path": "regression/first-six/rtl/exchange-w2-tail-r2/stdout.log",
+      "sha256": "3baa016d824fd22bd4c1de0324d563adf89239039598902b81ccb6d742b8e98c",
+      "bytes": 16593
+    },
+    {
+      "path": "regression/first-six/rtl/exchange-w2-tail-r2/summary.json",
+      "sha256": "42ac63f38b62012b9ef6c7abfe511b45a67580465221ebde79dda209a941563d",
+      "bytes": 2690
+    },
+    {
+      "path": "regression/first-six/rtl/exchange-w2-tail-r2/trace.csv",
+      "sha256": "75c9fc6c712b8a1fbb16d695713c33165b09bcbe22a9f47c4df78c6d9c255f93",
+      "bytes": 131477
+    },
+    {
+      "path": "regression/first-six/rtl/exchange-w4-tail-r3/logs/ventus_rtlsim.log",
+      "sha256": "87cca9dbb7492be18bc78bf7c22fc15852dc3f16e6f426db719111e01354c016",
+      "bytes": 1189
+    },
+    {
+      "path": "regression/first-six/rtl/exchange-w4-tail-r3/stderr.log",
+      "sha256": "07f03462271c632aa27bb937827c866e265016cac48c37dbab5a967b7cd5d971",
+      "bytes": 654069
+    },
+    {
+      "path": "regression/first-six/rtl/exchange-w4-tail-r3/stdout.log",
+      "sha256": "61abad4a9dbbbaced0e573b57b2d5c03c93ec400a64e41b521c9f046f6ec9efa",
+      "bytes": 47772
+    },
+    {
+      "path": "regression/first-six/rtl/exchange-w4-tail-r3/summary.json",
+      "sha256": "18701fbe3fde607c0da29a54b9e201e2c7fa2b8615d4c710d53c37498181b40e",
+      "bytes": 2694
+    },
+    {
+      "path": "regression/first-six/rtl/exchange-w4-tail-r3/trace.csv",
+      "sha256": "5a18e949f30dc6eb072cf7e9ceb88005708aedf0e781779a3005cbe053a7d991",
+      "bytes": 297009
+    },
+    {
+      "path": "regression/first-six/rtl/gemm-w2-m7-n9-k11/logs/ventus_rtlsim.log",
+      "sha256": "c08f93c7af54f304011991a97bb64e18e71939efce68efbc9fe08b0da29b1195",
+      "bytes": 804
+    },
+    {
+      "path": "regression/first-six/rtl/gemm-w2-m7-n9-k11/stderr.log",
+      "sha256": "ea06b7b61272ed91279bbb1dc49c421b44326c70c6fb5361c0e770568a452b7f",
+      "bytes": 548908
+    },
+    {
+      "path": "regression/first-six/rtl/gemm-w2-m7-n9-k11/stdout.log",
+      "sha256": "d102a327e13655b5615eda4d5ce733bc781c6abbbceb6af1a25b226577075207",
+      "bytes": 3826
+    },
+    {
+      "path": "regression/first-six/rtl/gemm-w2-m7-n9-k11/summary.json",
+      "sha256": "b0a6c21fc188ae81932a9a015eb3260b1f15e56f4acbfaeadb1bb74f89a207a7",
+      "bytes": 2685
+    },
+    {
+      "path": "regression/first-six/rtl/gemm-w2-m7-n9-k11/trace.csv",
+      "sha256": "75df0aa5079da8b998ffc2d8d59404aa59e64797d5cb7205c66ec295d2c3fcbe",
+      "bytes": 181234
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-pairs-w4-b3/logs/ventus_rtlsim.log",
+      "sha256": "213c3b06a646387f0d57b1de169e647ba585f1e40367cdb4d9db71bbe9864a36",
+      "bytes": 1110
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-pairs-w4-b3/stderr.log",
+      "sha256": "9a9275fcc8f17dd2688c98ad6b7275b30c337eecae41f1da21be9e0d6ee74188",
+      "bytes": 239855
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-pairs-w4-b3/stdout.log",
+      "sha256": "8b77cd73409014198f3728f39191ebf49d0031d93a697b0fdebae8196686125a",
+      "bytes": 35153
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-pairs-w4-b3/summary.json",
+      "sha256": "2ce1a5f4b2be7934220c3d0f63b73e03e38b1126d00218f7e9da99235a4173aa",
+      "bytes": 2689
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-pairs-w4-b3/trace.csv",
+      "sha256": "6c116fedd0b3a88ada5effde922b23771e6a9d590f0627ff595c036e621adc30",
+      "bytes": 112794
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-single-w1-b2/logs/ventus_rtlsim.log",
+      "sha256": "668d9d864e96679d03e225ec31b0b54ad7a4bdb1ac009c9d8ec75f4a25e46889",
+      "bytes": 772
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-single-w1-b2/stderr.log",
+      "sha256": "eaa3f1a31622fda3a419ed0c6288c5cfb8a08d03c5e624accb514530998640e5",
+      "bytes": 30313
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-single-w1-b2/stdout.log",
+      "sha256": "e35db04b915f93aa7e583c0dfdcf11b8ff5958b0c8286463ec7e1f01fe224461",
+      "bytes": 3837
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-single-w1-b2/summary.json",
+      "sha256": "a772b47431465864ea0a6a5685ed5c69ffa54ec3286092c3df9aaddca2f187e9",
+      "bytes": 2689
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-single-w1-b2/trace.csv",
+      "sha256": "3d7a7abd8ad56ce92b8ae5bb7c5b41e028c1eab702ba8e574c376ccb89f50ab1",
+      "bytes": 16581
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-single-w2-b3/logs/ventus_rtlsim.log",
+      "sha256": "7e9fbf5b3331137448f8c7e007d2d84e7c5fcad8fe7d84a31c8e46b5c8fa0923",
+      "bytes": 1095
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-single-w2-b3/stderr.log",
+      "sha256": "d28e1cd17d1274a2ee7a447a33062ab5650ca3c635979065bf9a42b48eecf29c",
+      "bytes": 89015
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-single-w2-b3/stdout.log",
+      "sha256": "ce8e7efdd40956cca056c449a9ee072bfd8445ec06a87f90afa63f02448fbf71",
+      "bytes": 9794
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-single-w2-b3/summary.json",
+      "sha256": "c9b67020748ee67f440e21c8c7524f56b106b3ce1be419a44496ebbcfe33bf9e",
+      "bytes": 2692
+    },
+    {
+      "path": "regression/first-six/rtl/vecadd-single-w2-b3/trace.csv",
+      "sha256": "6547550d9ab97da51249e71b14b15f0df47b0e9d7283a8a6fb4a586ecc5c48fd",
+      "bytes": 49060
+    },
+    {
+      "path": "regression/recheck.json",
+      "sha256": "005059c950ef282f0964eb76fe08c92ce7eedd4a5daf13431565eb5c83ac2b28",
+      "bytes": 15787
+    },
+    {
+      "path": "regression/remaining-selected/code-hashes.json",
+      "sha256": "917dcace4978f7044f12438a11691b30fbc4af354885b028030a0119612a981e",
+      "bytes": 5947
+    },
+    {
+      "path": "regression/remaining-selected/input/cases.json",
+      "sha256": "f25929a158cd13e680d5a4cf693ff73632d177f681bb57cb9dbf60967d25bb60",
+      "bytes": 7431
+    },
+    {
+      "path": "regression/remaining-selected/input/gemm-m11-n13-k9/input.data",
+      "sha256": "8a8800b1601d0b0f35e3102da3b168221d1897f5f9f6e5e88dce18abb584faf4",
+      "bytes": 15174
+    },
+    {
+      "path": "regression/remaining-selected/input/gemm-m11-n13-k9/input.metadata",
+      "sha256": "24b3315ecbce033d70929366fa454cf27e5bfa523b7624169d151111e9904d57",
+      "bytes": 738
+    },
+    {
+      "path": "regression/remaining-selected/rtl/driver-adapter/build.json",
+      "sha256": "11fec986ca274957bd922322b79892fa33e7b7e79cda5047585bc9532c8a8beb",
+      "bytes": 745
+    },
+    {
+      "path": "regression/remaining-selected/rtl/gemm-m11-n13-k9/logs/ventus_rtlsim.log",
+      "sha256": "662883fb835ea15c9ed0bcec02a015eba4823d11ac0695d4540e61130ed747dd",
+      "bytes": 1134
+    },
+    {
+      "path": "regression/remaining-selected/rtl/gemm-m11-n13-k9/stderr.log",
+      "sha256": "5ae7f290e7ba4c2c2578019ff8db4d853ba480daeba4daaa695f6f3dcdad078f",
+      "bytes": 836645
+    },
+    {
+      "path": "regression/remaining-selected/rtl/gemm-m11-n13-k9/stdout.log",
+      "sha256": "55ed4848a8da353938bb2fac752587ab396d609a8c06b55ffa017c367e8788ad",
+      "bytes": 7686
+    },
+    {
+      "path": "regression/remaining-selected/rtl/gemm-m11-n13-k9/summary.json",
+      "sha256": "060eceaf05f91fa5310af24ed87ff4d74ce9c41ee0ce0468e5f92727f5784b20",
+      "bytes": 2685
+    },
+    {
+      "path": "regression/remaining-selected/rtl/gemm-m11-n13-k9/trace.csv",
+      "sha256": "cfd3366857be3daaf7b000f471470d634000829429c9a36b80125bf141035130",
+      "bytes": 268993
+    },
+    {
+      "path": "regression/remaining-selected/rtl/results.json",
+      "sha256": "ad6b0783188bb71211ce24d862258d39a12f927368f1eb6e253177e05cbda754",
+      "bytes": 3039
+    },
+    {
+      "path": "regression/workbench-runtime-v3.json",
+      "sha256": "ff3d3e7dde73d7d36107b8c441a2278da0866b7df5a161f10ee3de5267f24c17",
+      "bytes": 84018
+    },
+    {
+      "path": "remaining-selected-source-snapshot/code-hashes.json",
+      "sha256": "917dcace4978f7044f12438a11691b30fbc4af354885b028030a0119612a981e",
+      "bytes": 5947
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/__init__.py",
+      "sha256": "83303f7fbfb23cc7d346971b32d9a3029bc26450e4430e41d0ebba4691d82a0a",
+      "bytes": 70
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/solver.py",
+      "sha256": "cd3bc98bfbc13e09a13924abba879fb365075742f9ecbc68f4e4f3c77d0f808c",
+      "bytes": 2174
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/__init__.py",
+      "sha256": "bb90553cbef78a5957d11291e552abf3f84a238d604fa658b643880e1e18e4c6",
+      "bytes": 120
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/__main__.py",
+      "sha256": "09b941da0ffdf9745fefb30ee6ca52d0aa499545e55716516512e136ef7e2948",
+      "bytes": 10731
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/accuracy_audit.py",
+      "sha256": "bdf5f131dee82000280235e6d2bbdab268cc2c53772c6bf29e10cff182d738de",
+      "bytes": 12255
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/baseline.py",
+      "sha256": "120ac10f7b3359a3ccea0894fad3fa4781c6429d17111c23d501535a60df8042",
+      "bytes": 4374
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/benchmark_native.py",
+      "sha256": "becc5e6c055640f88652ad818f855554603a083aa36c1ef49e3cb0bcc9869879",
+      "bytes": 4503
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/cache_acceptance.py",
+      "sha256": "e39920ebe8fa38f1936a9c5279400abb9d7c4f3851baeea8fe8151db6ba0d945",
+      "bytes": 4848
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/causal_memory.py",
+      "sha256": "8ad6b5cbb2264b36becff328a3e3f4d50b6a1aebbba8c39c3c3f8cbb0c169d72",
+      "bytes": 18939
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/coalescer.py",
+      "sha256": "68ef20fbab29abb4ccb02bd756252267a298dfb5d2ed87b43135d0d17ba2a34b",
+      "bytes": 2656
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/compiled_check.py",
+      "sha256": "bf6fb5fbe27bed65375357274cb892023e1b1f506212f267d13de40f14ca6e16",
+      "bytes": 20828
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/compiler.py",
+      "sha256": "9d6318dc840de9333f1c2cf6ecc326231c064e0e1d20863f610314a0b4237282",
+      "bytes": 5655
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/config.py",
+      "sha256": "2f116280be41351801eeba0ad479944a0bc5c263bd0f14b60543aafd3da31c41",
+      "bytes": 4613
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/driver_adapter.py",
+      "sha256": "24df7cb5ae5e8ef8635e3ca7d584eb0cf3eb4bb768ed95450000e89bed450204",
+      "bytes": 5259
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/elastic.py",
+      "sha256": "ec41c9d87e95ddda5165106f7a425951aa01df56e6a97dbda711714762186e72",
+      "bytes": 1388
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/elf.py",
+      "sha256": "3234f3baefcf34ad3339e2b40e3164f49e6e45fa1f900784f7ae8def2453e87f",
+      "bytes": 7983
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/frontend.py",
+      "sha256": "3eb69d4b4f755d4d3285b245ebc78cd37405ebfc93ec4a9112a21c5b4742bb5f",
+      "bytes": 10381
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/frontend_parity.py",
+      "sha256": "60af5f1d03c08060c8c4a282f082ff552efb376fe1d5ec139b71be152c8eedd1",
+      "bytes": 12615
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/gemm_lowering.py",
+      "sha256": "d95738dc0e9307408f2d4235b62a9ca6d3678c2ed4f25cf5cd6b25ea7be72db4",
+      "bytes": 7558
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/graph.py",
+      "sha256": "765aeb04bda71d3dbe32938599ab20c341a8ae352fd5981202fce26aec6b5508",
+      "bytes": 1624
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/historical_replay.py",
+      "sha256": "72d8b07905486f06af975ce99b2af3a9fe162c4c0c3142953ddc43c6d710f86c",
+      "bytes": 12399
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/instruction_cli.py",
+      "sha256": "e49aeff1daee2535c8c157242322dda7b9cefc0402ac1d324d9d0a4e02c7a47d",
+      "bytes": 12458
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/ir.py",
+      "sha256": "466627742c3d8a033b41a0de3a1e56a403bbcebfb7d88053e2cfe584cb256076",
+      "bytes": 6021
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/launch_contract.py",
+      "sha256": "2c737ae9b56e1a9c7d5e2cfce633fd2d0b0de66b071cb3892881f951b7625499",
+      "bytes": 7288
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/layernorm.py",
+      "sha256": "4d4809733cf3dcc173d60054239687a40ef6ba3596d46262948bdf921264ed83",
+      "bytes": 5456
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/lsu_control.py",
+      "sha256": "0756038009e64e4ab713893644e3d4b4131879dc92267f103f8403d19d59f90e",
+      "bytes": 7112
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/mip.py",
+      "sha256": "f12939c226af7970849dfa3bbb33864b2d12292f1ec108be61bfee526c4b1e46",
+      "bytes": 5833
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/model_program.py",
+      "sha256": "d235a1f140d94d7a386856609eb749372e859e308380c4f64397556888efe288",
+      "bytes": 18659
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/online.py",
+      "sha256": "1c38ecadaf2fc19f2ab6812a7c322f1a2144c88ce8a4e8a6043cdc0e2c937ace",
+      "bytes": 22470
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/operators.py",
+      "sha256": "8aeada5c5cd01f82605b0af7ddbcb00a7ea6635324c12ad0def504cc9184da15",
+      "bytes": 8004
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/physical_operands.py",
+      "sha256": "2e537576cab8938ba23c6bb7e2a28f880834874ce571ddfd92f4da7bc3e0c5cf",
+      "bytes": 2322
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/process.py",
+      "sha256": "ea5702ee579b952404579a81a2671ed7541b7ab7814588593a9af4de6f1397ba",
+      "bytes": 2296
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/program.py",
+      "sha256": "56b8872910d9ddd1a648238dc5451b9bedea54f2d1951e58499e4fc9257d3304",
+      "bytes": 7484
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/rtl_accuracy.py",
+      "sha256": "928e394be5219c736e14b18500294f6fd5c0d308e763cfbd1224c33f9c7056bc",
+      "bytes": 16842
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/rtl_diagnostics.py",
+      "sha256": "e60a6127e536da57d64e734372d5294abffae1318ede5a1e04f00a60c8c41932",
+      "bytes": 3412
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/runtime/r1-private-driver.cpp",
+      "sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+      "bytes": 1038
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/runtime/rtl-r1-workitem.S",
+      "sha256": "850885c539a9d93202c4bbfa224aee17bf75b5781282212dc9d81f2d4b2d0e07",
+      "bytes": 14770
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/runtime/rtl-r1-workitem.json",
+      "sha256": "f47ccc4656dcfd9e493d85b5080cd36f59284290ab37d52ce3c14eb6f564dad6",
+      "bytes": 990
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/rust.py",
+      "sha256": "8e2c49927e58fe9dcd8fa03d8274cb58b01aa05f31ed227fc49041fa5becd8d8",
+      "bytes": 16635
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/rust_core/Cargo.lock",
+      "sha256": "430373e2bc7055e0b966d8eea9836bca3d4b78bea7a2c2eca0f215c8862c25c7",
+      "bytes": 157
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/rust_core/Cargo.toml",
+      "sha256": "5aa703e20143319176f70ef7c492d5bd1d2cb4eeac813d60f7d9bffa5b687226",
+      "bytes": 155
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/rust_core/src/frontend.rs",
+      "sha256": "e86c0ff50f0ccd1aaac2d659958b3eb7a90d3895800baccba11fef2a76344411",
+      "bytes": 25000
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/rust_core/src/lib.rs",
+      "sha256": "ad133666b47d40f75c41e4b9e93bd9fbcd8a4b5445162d327bbbdf0c67b4923b",
+      "bytes": 70204
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/rust_core/src/provider.rs",
+      "sha256": "f4cde8d3c7458f8fd1fec5fe9701330eb06c7a63d54b8ff19a25857f4599a2fd",
+      "bytes": 41690
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/rust_frontend.py",
+      "sha256": "1706cfc1c2b8bbeeced0f2c97df849364bbb81fb53711b84eeb54e305fe0e673",
+      "bytes": 8804
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/session.py",
+      "sha256": "cfc5e916e36f00ee1623930bc5a5323a83db8b304800b8afb651a2fb62569d18",
+      "bytes": 4325
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/source.py",
+      "sha256": "62e42be3e415c8674089cb09df4194972b817f0cfec073898e17a6a6ec60b042",
+      "bytes": 10509
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/source_ready.py",
+      "sha256": "9238aa7484ce0ede1e567be118c061ed583e6728c14ccba272148d3ac14b08ba",
+      "bytes": 9598
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/termination.py",
+      "sha256": "8b6c15ea0c75e3b4f4f895d4b88eb57be8190cc18d3b8720dc7869e40d2a80c2",
+      "bytes": 1744
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/timing.py",
+      "sha256": "6d7fa3491b154b59f67ae86b2310d63c67197167d844b10dda42ea0425d58daf",
+      "bytes": 14634
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/trace_diff.py",
+      "sha256": "f06d29c4e30c03597b05646452b4bb020bf811a2991deb856c58a7e9f0d41753",
+      "bytes": 7585
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/transformer.py",
+      "sha256": "6de50f726a248acbb3c919b0034be2f21eb2ddb0b359580489ac43f86395561d",
+      "bytes": 27980
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/transformer_cli.py",
+      "sha256": "b3464b2ddb0446359b93ac6f51378cab1a732023661e195e5da20ccd247456b7",
+      "bytes": 4135
+    },
+    {
+      "path": "remaining-selected-source-snapshot/codesign/ventus/workloads.py",
+      "sha256": "df164d864bf62da1700ba4862e6cbabcf39264ba43594eac31d0eb0cdc2ac82d",
+      "bytes": 6107
+    },
+    {
+      "path": "remaining-selected-source-snapshot/ventus_project/__init__.py",
+      "sha256": "d7baddd1765e4243b4e414bf7e54932749db5c8b81615e9a6fc2ad1b296fb60c",
+      "bytes": 81
+    },
+    {
+      "path": "remaining-selected-source-snapshot/ventus_project/compiled_workflow.py",
+      "sha256": "a7c5cf108172b96b4f157dc802f64d0a8e31f33a9303f243c86a1edc0c3d207e",
+      "bytes": 21453
+    },
+    {
+      "path": "remaining-selected-source-snapshot/ventus_project/config.py",
+      "sha256": "459f3b1110288d872977a6cad48b5988ed93c7256c222abb5b67eaadaad4c987",
+      "bytes": 1744
+    },
+    {
+      "path": "setup-failures.json",
+      "sha256": "49f3bc955c932be2f53f980c3047d397bbb6a1c45a7e5747eba759bad3e7891a",
+      "bytes": 1242
+    },
+    {
+      "path": "source-audit.json",
+      "sha256": "f42ceda24e0befa01c017bdbbdb2a0e1a0353caf10eb8e105fc9bc0d50942459",
+      "bytes": 2261
+    },
+    {
+      "path": "target-comparison.json",
+      "sha256": "1a6a0432767d11f9d050ef977fbbc1dd1b9624009ea486674dd394f37c32a058",
+      "bytes": 1105
+    },
+    {
+      "path": "upstream/code-hashes.json",
+      "sha256": "91268a9ebd575417e6060904970a20a622be5ca817f08a7902b87134c5540b82",
+      "bytes": 5721
+    },
+    {
+      "path": "upstream/native/experiment.json",
+      "sha256": "6b9824ba1663562848883b875513420b59fb52178f1b9c2546e337947d10260f",
+      "bytes": 5710
+    },
+    {
+      "path": "upstream/native/stages.jsonl",
+      "sha256": "0ffe697d5c99de1aa10538cf23dd9fb21c227ce4227d958ce8366019fc8bbcd3",
+      "bytes": 1474
+    },
+    {
+      "path": "upstream/rtl/private-spill-w2-b2/logs/ventus_rtlsim.log",
+      "sha256": "a3f61235a48b6ffe3068a4e1bd38fbdc32acfc351606a302ae0e8f6289cc383a",
+      "bytes": 745
+    },
+    {
+      "path": "upstream/rtl/private-spill-w2-b2/stderr.log",
+      "sha256": "db8605bdeb60201bafc78c114c661660670b105667d4902db0fcebfab1176285",
+      "bytes": 86134
+    },
+    {
+      "path": "upstream/rtl/private-spill-w2-b2/stdout.log",
+      "sha256": "8ca23a22f97632080ebcaa40a11a42f369adf4877ecfdbd8c1ca0afba6d0f27f",
+      "bytes": 17890
+    },
+    {
+      "path": "upstream/rtl/private-spill-w2-b2/summary.json",
+      "sha256": "604fad5392ec3812125a4acc7c84cbb1453a3d4ab6ef2c2f2bbd2d68bf0f9613",
+      "bytes": 4808
+    },
+    {
+      "path": "upstream/rtl/results.json",
+      "sha256": "e37e92520a961fba6d655c68d9bfd03623cb50902fb2eadf7092023870d6b2b0",
+      "bytes": 5731
+    },
+    {
+      "path": "upstream/worker-result.json",
+      "sha256": "578299d47968b3cee9617543ede993f953232738e78678a34accd0f03da1bef8",
+      "bytes": 7045
+    },
+    {
+      "path": "upstream-source-snapshot/code-hashes.json",
+      "sha256": "91268a9ebd575417e6060904970a20a622be5ca817f08a7902b87134c5540b82",
+      "bytes": 5721
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/__init__.py",
+      "sha256": "83303f7fbfb23cc7d346971b32d9a3029bc26450e4430e41d0ebba4691d82a0a",
+      "bytes": 70
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/solver.py",
+      "sha256": "cd3bc98bfbc13e09a13924abba879fb365075742f9ecbc68f4e4f3c77d0f808c",
+      "bytes": 2174
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/__init__.py",
+      "sha256": "bb90553cbef78a5957d11291e552abf3f84a238d604fa658b643880e1e18e4c6",
+      "bytes": 120
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/__main__.py",
+      "sha256": "09b941da0ffdf9745fefb30ee6ca52d0aa499545e55716516512e136ef7e2948",
+      "bytes": 10731
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/accuracy_audit.py",
+      "sha256": "bdf5f131dee82000280235e6d2bbdab268cc2c53772c6bf29e10cff182d738de",
+      "bytes": 12255
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/baseline.py",
+      "sha256": "120ac10f7b3359a3ccea0894fad3fa4781c6429d17111c23d501535a60df8042",
+      "bytes": 4374
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/benchmark_native.py",
+      "sha256": "becc5e6c055640f88652ad818f855554603a083aa36c1ef49e3cb0bcc9869879",
+      "bytes": 4503
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/cache_acceptance.py",
+      "sha256": "e39920ebe8fa38f1936a9c5279400abb9d7c4f3851baeea8fe8151db6ba0d945",
+      "bytes": 4848
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/causal_memory.py",
+      "sha256": "8ad6b5cbb2264b36becff328a3e3f4d50b6a1aebbba8c39c3c3f8cbb0c169d72",
+      "bytes": 18939
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/coalescer.py",
+      "sha256": "68ef20fbab29abb4ccb02bd756252267a298dfb5d2ed87b43135d0d17ba2a34b",
+      "bytes": 2656
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/compiled_check.py",
+      "sha256": "766828a296c0294fe82bf31816836c8cd020371fe1056479f77f2723e9dabe6f",
+      "bytes": 18105
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/compiler.py",
+      "sha256": "9d6318dc840de9333f1c2cf6ecc326231c064e0e1d20863f610314a0b4237282",
+      "bytes": 5655
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/config.py",
+      "sha256": "2f116280be41351801eeba0ad479944a0bc5c263bd0f14b60543aafd3da31c41",
+      "bytes": 4613
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/elastic.py",
+      "sha256": "ec41c9d87e95ddda5165106f7a425951aa01df56e6a97dbda711714762186e72",
+      "bytes": 1388
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/elf.py",
+      "sha256": "4eee548c754f600aa1faa5010a0614dc863a8af3eb3b4c77448038a2f2ae8454",
+      "bytes": 7577
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/frontend.py",
+      "sha256": "3eb69d4b4f755d4d3285b245ebc78cd37405ebfc93ec4a9112a21c5b4742bb5f",
+      "bytes": 10381
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/frontend_parity.py",
+      "sha256": "60af5f1d03c08060c8c4a282f082ff552efb376fe1d5ec139b71be152c8eedd1",
+      "bytes": 12615
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/gemm_lowering.py",
+      "sha256": "d95738dc0e9307408f2d4235b62a9ca6d3678c2ed4f25cf5cd6b25ea7be72db4",
+      "bytes": 7558
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/graph.py",
+      "sha256": "765aeb04bda71d3dbe32938599ab20c341a8ae352fd5981202fce26aec6b5508",
+      "bytes": 1624
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/historical_replay.py",
+      "sha256": "72d8b07905486f06af975ce99b2af3a9fe162c4c0c3142953ddc43c6d710f86c",
+      "bytes": 12399
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/instruction_cli.py",
+      "sha256": "0053b2a6c92e3258195d6f3c085f7a64bdafc634d2f3dd546bbd5340068ac4d0",
+      "bytes": 12374
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/ir.py",
+      "sha256": "466627742c3d8a033b41a0de3a1e56a403bbcebfb7d88053e2cfe584cb256076",
+      "bytes": 6021
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/launch_contract.py",
+      "sha256": "f01000770da81e8ee5f409c41a2225f40624c58720cffe09a23253925b60f769",
+      "bytes": 6861
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/layernorm.py",
+      "sha256": "4d4809733cf3dcc173d60054239687a40ef6ba3596d46262948bdf921264ed83",
+      "bytes": 5456
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/lsu_control.py",
+      "sha256": "0756038009e64e4ab713893644e3d4b4131879dc92267f103f8403d19d59f90e",
+      "bytes": 7112
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/mip.py",
+      "sha256": "f12939c226af7970849dfa3bbb33864b2d12292f1ec108be61bfee526c4b1e46",
+      "bytes": 5833
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/model_program.py",
+      "sha256": "d235a1f140d94d7a386856609eb749372e859e308380c4f64397556888efe288",
+      "bytes": 18659
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/online.py",
+      "sha256": "1c38ecadaf2fc19f2ab6812a7c322f1a2144c88ce8a4e8a6043cdc0e2c937ace",
+      "bytes": 22470
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/operators.py",
+      "sha256": "8aeada5c5cd01f82605b0af7ddbcb00a7ea6635324c12ad0def504cc9184da15",
+      "bytes": 8004
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/physical_operands.py",
+      "sha256": "2e537576cab8938ba23c6bb7e2a28f880834874ce571ddfd92f4da7bc3e0c5cf",
+      "bytes": 2322
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/process.py",
+      "sha256": "ea5702ee579b952404579a81a2671ed7541b7ab7814588593a9af4de6f1397ba",
+      "bytes": 2296
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/program.py",
+      "sha256": "56b8872910d9ddd1a648238dc5451b9bedea54f2d1951e58499e4fc9257d3304",
+      "bytes": 7484
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/rtl_accuracy.py",
+      "sha256": "928e394be5219c736e14b18500294f6fd5c0d308e763cfbd1224c33f9c7056bc",
+      "bytes": 16842
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/rtl_diagnostics.py",
+      "sha256": "e60a6127e536da57d64e734372d5294abffae1318ede5a1e04f00a60c8c41932",
+      "bytes": 3412
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/runtime/rtl-r1-workitem.S",
+      "sha256": "850885c539a9d93202c4bbfa224aee17bf75b5781282212dc9d81f2d4b2d0e07",
+      "bytes": 14770
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/runtime/rtl-r1-workitem.json",
+      "sha256": "f47ccc4656dcfd9e493d85b5080cd36f59284290ab37d52ce3c14eb6f564dad6",
+      "bytes": 990
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/rust.py",
+      "sha256": "f91b1a91fdae78bea56e070c3ad3da7d6d056a2cbccf770ea11b863b48cd025b",
+      "bytes": 16255
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/rust_core/Cargo.lock",
+      "sha256": "430373e2bc7055e0b966d8eea9836bca3d4b78bea7a2c2eca0f215c8862c25c7",
+      "bytes": 157
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/rust_core/Cargo.toml",
+      "sha256": "5aa703e20143319176f70ef7c492d5bd1d2cb4eeac813d60f7d9bffa5b687226",
+      "bytes": 155
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/rust_core/src/frontend.rs",
+      "sha256": "e86c0ff50f0ccd1aaac2d659958b3eb7a90d3895800baccba11fef2a76344411",
+      "bytes": 25000
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/rust_core/src/lib.rs",
+      "sha256": "ad133666b47d40f75c41e4b9e93bd9fbcd8a4b5445162d327bbbdf0c67b4923b",
+      "bytes": 70204
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/rust_core/src/provider.rs",
+      "sha256": "9effe1ef984da9b869acc0367da319406ea357ddd6842f51ce0cfe60245b41d4",
+      "bytes": 41217
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/rust_frontend.py",
+      "sha256": "1706cfc1c2b8bbeeced0f2c97df849364bbb81fb53711b84eeb54e305fe0e673",
+      "bytes": 8804
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/session.py",
+      "sha256": "cfc5e916e36f00ee1623930bc5a5323a83db8b304800b8afb651a2fb62569d18",
+      "bytes": 4325
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/source.py",
+      "sha256": "62e42be3e415c8674089cb09df4194972b817f0cfec073898e17a6a6ec60b042",
+      "bytes": 10509
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/source_ready.py",
+      "sha256": "9238aa7484ce0ede1e567be118c061ed583e6728c14ccba272148d3ac14b08ba",
+      "bytes": 9598
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/termination.py",
+      "sha256": "8b6c15ea0c75e3b4f4f895d4b88eb57be8190cc18d3b8720dc7869e40d2a80c2",
+      "bytes": 1744
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/timing.py",
+      "sha256": "6d7fa3491b154b59f67ae86b2310d63c67197167d844b10dda42ea0425d58daf",
+      "bytes": 14634
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/trace_diff.py",
+      "sha256": "f06d29c4e30c03597b05646452b4bb020bf811a2991deb856c58a7e9f0d41753",
+      "bytes": 7585
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/transformer.py",
+      "sha256": "6de50f726a248acbb3c919b0034be2f21eb2ddb0b359580489ac43f86395561d",
+      "bytes": 27980
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/transformer_cli.py",
+      "sha256": "b3464b2ddb0446359b93ac6f51378cab1a732023661e195e5da20ccd247456b7",
+      "bytes": 4135
+    },
+    {
+      "path": "upstream-source-snapshot/codesign/ventus/workloads.py",
+      "sha256": "df164d864bf62da1700ba4862e6cbabcf39264ba43594eac31d0eb0cdc2ac82d",
+      "bytes": 6107
+    },
+    {
+      "path": "upstream-source-snapshot/ventus_project/__init__.py",
+      "sha256": "d7baddd1765e4243b4e414bf7e54932749db5c8b81615e9a6fc2ad1b296fb60c",
+      "bytes": 81
+    },
+    {
+      "path": "upstream-source-snapshot/ventus_project/compiled_workflow.py",
+      "sha256": "71db4cba1b8a67cf3b76603032eb92ddb57bca536e2deec91ea6732dcfc7d0ff",
+      "bytes": 20857
+    },
+    {
+      "path": "upstream-source-snapshot/ventus_project/config.py",
+      "sha256": "459f3b1110288d872977a6cad48b5988ed93c7256c222abb5b67eaadaad4c987",
+      "bytes": 1744
+    },
+    {
+      "path": "work/cases.json",
+      "sha256": "d7df4374653ed535e5548937b1183d9a73904b503e0e8d82dc42789b9cdefca5",
+      "bytes": 7303
+    },
+    {
+      "path": "work/compile/build.json",
+      "sha256": "af26cd41f9b84318d70ce9a3fa0f3634fa5b0809e840e8ef7fa19423acd64ec6",
+      "bytes": 3796
+    },
+    {
+      "path": "work/compile/program.elf",
+      "sha256": "4c6f2f11ad9595e45c12662cd351879f3d5bcc7163deb8f8613dee11a53a8b0b",
+      "bytes": 13520
+    },
+    {
+      "path": "work/input/cases.json",
+      "sha256": "f7909e1528a22dba473977e3a5dc5bf44acbf190a27959f8a998b066ad677cf1",
+      "bytes": 13303
+    },
+    {
+      "path": "work/input/private-spill-w2-b2/input.data",
+      "sha256": "6daa5b1e451f864c57b99a9c3d1d09bd1f006e1e9590f3c70c125ecad6d98594",
+      "bytes": 14589
+    },
+    {
+      "path": "work/input/private-spill-w2-b2/input.metadata",
+      "sha256": "25fe075c85702806209d4c29c36f801bfc51bd2384a798b39ea42325d34bb7f6",
+      "bytes": 630
+    },
+    {
+      "path": "work/source/kernel.cl",
+      "sha256": "e97d9994df93396a6d53df86ec76d38e47b3c5c9c6b09b201efc017fcc1e8c4a",
+      "bytes": 547
+    },
+    {
+      "path": "work/spec.json",
+      "sha256": "5cc5464f361d1ea1557f246b3b67d1a31a1ce00dc2155ce10cfc7cd44de7b916",
+      "bytes": 7373
+    },
+    {
+      "path": "workbench-runtime.json",
+      "sha256": "9503a6a1b295dca48c6121d99add37a5aa1f107a5ed2bb9e56f2394adc59d730",
+      "bytes": 11446
+    }
+  ]
+}

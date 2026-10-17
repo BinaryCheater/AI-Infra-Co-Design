@@ -1,0 +1,25 @@
+--- v3/lsu_control.py
++++ experimental/lsu_control.py
+@@ -76,7 +76,7 @@
+             if self.lsu_output[sm] and self.lsu_output[sm][0].operation.kind == "store":
+                 token = self.lsu_output[sm].popleft()
+                 done = self.b.node(
+-                    token.operation.name + ".store.complete", [(token.node, 0), (self.now(), 0)]
++                    token.operation.name + ".store.complete", [(token.node, 0), (0, self.clock - int(self.b.times[token.node] < self.clock))]
+                 )
+                 self.retire(token, done)
+         consumed = super().writebacks()
+@@ -115,7 +115,7 @@
+                 token = self.lsu_buffer[sm]
+                 self.lsu_buffer[sm] = None
+                 first = self.b.node(
+-                    token.operation.name + ".lsu.dequeue", [(token.node, 0), (self.now(), 0)]
++                    token.operation.name + ".lsu.dequeue", [(token.node, 0), (0, self.clock - int(self.b.times[token.node] < self.clock))]
+                 )
+                 self.address_pending[sm] = token, first
+             if self.address_pending[sm] is None:
+
+Additional experimental builder adapter (not applied): before memory_instruction,
+replace the previous address-release dependency with an origin-anchored event at
+its timestamp minus one; restore the historical release after the new release is
+appended. This adapter is a phase experiment, not a completed causal controller.

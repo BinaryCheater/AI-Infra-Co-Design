@@ -1,0 +1,46 @@
+{
+  "name": "vecadd-single-w1-b2",
+  "elf_sha256": "e3a13134c3cf4aaa48113b168798c25ee1579e447dd65028fef9c73bb03f0a7f",
+  "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+  "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+  "observer_sha256": "c6144a2848cdc285fea0a3939661cd13c231c3dfc51958c7c0a8d1b7bdf13dcd",
+  "inputs_sha256": "3269ca3c532b785b63ff5c17c887c651b55e7c1f11ac675dfe003d786c4a19f4",
+  "case_input_sha256": {
+    "input.metadata": "e154593ded063818daa8c1aacdbcd04579c7b967ddd04306f973f0797af2a87b",
+    "input.data": "750e07e92cf4d78e33dd0c5b1e258a54cfbde0fb6e53bacc0b2bafaf14a77536"
+  },
+  "completed": true,
+  "functional_ok": true,
+  "status": "passed",
+  "unsupported_instruction_diagnostics": [],
+  "completion": {
+    "kernel_completed": true,
+    "kernel_completion_markers": [
+      {
+        "stream": "stdout",
+        "line": 10,
+        "text": "[RTL     info]@11715 kernel0  vecadd-single-w1-b2 finished",
+        "simulation_time": 11715
+      }
+    ],
+    "error_diagnostics": [],
+    "limit_diagnostics": [],
+    "completion_reasons": [],
+    "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+  },
+  "numerical": {
+    "outputs_match": true,
+    "expected_words": 64,
+    "observed_words": 64,
+    "duplicate_addresses": [],
+    "mismatches": []
+  },
+  "returncode": 0,
+  "timed_out": false,
+  "wall_seconds": 19.333360097836703,
+  "logs_sha256": {
+    "stdout.log": "81d27fe121d87b3548f9a640282f1e295f81821c4cd35d5695fbfc0580f97b45",
+    "stderr.log": "a32877ebce2b5e322505302dd0e1fdf146e2616a263f7b9eba935d688eb8b6f1"
+  },
+  "scope": "Concrete finite input/output check on RTL; no universal proof or timing accuracy claim."
+}

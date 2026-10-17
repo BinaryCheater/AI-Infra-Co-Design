@@ -1,0 +1,56 @@
+{
+  "version": "ventus-instruction-rust-v10-causal",
+  "source_sha256": "bd6e03cf76ba3c1c34be4191faff0fffe113c31bb3fdb061f88155cf0791f300",
+  "runtime_sha256": "ece7f88e49ded73dc4d980465b8cbd15bab7626eabe2d0165dacad859875f326",
+  "elf_sha256": "9ecc468d6972d5f165ba8f8fc913cdaf598bffe28326424a48930be39912be0c",
+  "memory_widths": [
+    1,
+    2,
+    4
+  ],
+  "units": [
+    "integer_div",
+    "integer_mul"
+  ],
+  "result": {
+    "start": 0,
+    "end": 992,
+    "cycles": 992,
+    "instructions": 489,
+    "requested_bytes": 2403,
+    "host_ticks": 993,
+    "idle_skipped": 0,
+    "counters": {
+      "scalar": 198,
+      "vector": 128,
+      "load": 99,
+      "store": 64,
+      "memory_read_bytes": 2176,
+      "memory_write_bytes": 3584,
+      "l2_hit": 3,
+      "l2_miss": 45,
+      "l1_merge": 6,
+      "l1_hit": 38,
+      "l1_write_miss": 28,
+      "l1_read_miss": 20,
+      "lds_rounds": 75,
+      "writeback_stall_cycles": 2
+    },
+    "memory_mechanisms": {
+      "groups_accepted": 167,
+      "groups_returned": 167,
+      "instructions_allocated": 163,
+      "instructions_retired": 163,
+      "external_accepted": 45,
+      "external_returned": 45,
+      "integer_mul_instructions": 4,
+      "integer_div_instructions": 10,
+      "l1_return_stall_cycles": 46,
+      "external_response_backpressure_cycles": 0,
+      "external_peak_slots": 3,
+      "external_request_stall_cycles": 0
+    },
+    "timing_backend": "causal-lsu-l1/pinned-wrapper-v1; bounded L2 abstraction"
+  },
+  "scope": "Fresh local native timing completion only; numerical RTL receipt is the earlier frozen worker, with its separate source snapshot"
+}

@@ -1,0 +1,46 @@
+{
+  "name": "exchange-w4-tail-r3",
+  "elf_sha256": "b2ca3287a40bdc4aa578f2981241d83fd01a5805627922dc0bdccf0456150a87",
+  "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+  "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+  "observer_sha256": "c6144a2848cdc285fea0a3939661cd13c231c3dfc51958c7c0a8d1b7bdf13dcd",
+  "inputs_sha256": "d774f8979c37d277e17c8a35c83ea6a3f39e42340e1eea0eba029bec041909ca",
+  "case_input_sha256": {
+    "input.metadata": "1d258d0e56530deced9ec0913c43f5116b503a7c38453cc5b644b4d6cc6c4774",
+    "input.data": "1c4688f1acd291a17aa07a6950a246aeb496b6f4e04302ede036e95aced7cf7b"
+  },
+  "completed": true,
+  "functional_ok": true,
+  "status": "passed",
+  "unsupported_instruction_diagnostics": [],
+  "completion": {
+    "kernel_completed": true,
+    "kernel_completion_markers": [
+      {
+        "stream": "stdout",
+        "line": 23,
+        "text": "[RTL     info]@121985 kernel0  exchange-w4-tail-r3 finished",
+        "simulation_time": 121985
+      }
+    ],
+    "error_diagnostics": [],
+    "limit_diagnostics": [],
+    "completion_reasons": [],
+    "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+  },
+  "numerical": {
+    "outputs_match": true,
+    "expected_words": 1053,
+    "observed_words": 1053,
+    "duplicate_addresses": [],
+    "mismatches": []
+  },
+  "returncode": 0,
+  "timed_out": false,
+  "wall_seconds": 55.49483562912792,
+  "logs_sha256": {
+    "stdout.log": "cd296b4b5e9078d7ed19789d2a78b758b199ffda477bafda31eaf2c011fb18a8",
+    "stderr.log": "2e53d3a7a9a2a502376a40cc63a0bbcaefa7647733ffb95890cea2f16a88417e"
+  },
+  "scope": "Concrete finite input/output check on RTL; no universal proof or timing accuracy claim."
+}

@@ -1,0 +1,39 @@
+{
+  "completed": false,
+  "reason": "SSH transport budget exhausted; same-directory processes subsequently absent; no terminal suite receipt",
+  "cases_finished": [
+    {
+      "name": "exchange-w2-tail-r2",
+      "functional_ok": true
+    },
+    {
+      "name": "exchange-w4-tail-r3",
+      "functional_ok": true
+    },
+    {
+      "name": "gemm-w2-m7-n9-k11",
+      "functional_ok": true
+    },
+    {
+      "name": "vecadd-pairs-w4-b3",
+      "functional_ok": true
+    },
+    {
+      "name": "vecadd-single-w1-b2",
+      "functional_ok": true
+    },
+    {
+      "name": "vecadd-single-w2-b3",
+      "functional_ok": true
+    }
+  ],
+  "remaining": [
+    "gemm-m11-n13-k9"
+  ],
+  "transport": {
+    "returncode": 255,
+    "timed_out": true,
+    "output_exhausted": false,
+    "wall_seconds": 240.00693029211834
+  }
+}

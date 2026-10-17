@@ -1,0 +1,170 @@
+[
+  {
+    "name": "resident-w1-k24-conflict0",
+    "prediction": 112,
+    "reference": 112,
+    "error": 0.0,
+    "icache_misses": 1
+  },
+  {
+    "name": "resident-w1-k24-conflict1",
+    "prediction": 118,
+    "reference": 118,
+    "error": 0.0,
+    "icache_misses": 1
+  },
+  {
+    "name": "reload-w1-k24-conflict0",
+    "prediction": 118,
+    "reference": 118,
+    "error": 0.0,
+    "icache_misses": 1
+  },
+  {
+    "name": "reload-w1-k24-conflict1",
+    "prediction": 124,
+    "reference": 124,
+    "error": 0.0,
+    "icache_misses": 1
+  },
+  {
+    "name": "stream-w1-k24-conflict0",
+    "prediction": 156,
+    "reference": 156,
+    "error": 0.0,
+    "icache_misses": 1
+  },
+  {
+    "name": "stream-w1-k24-conflict1",
+    "prediction": 162,
+    "reference": 162,
+    "error": 0.0,
+    "icache_misses": 1
+  },
+  {
+    "name": "resident-w3-k96-conflict0",
+    "prediction": 273,
+    "reference": 273,
+    "error": 0.0,
+    "icache_misses": 1
+  },
+  {
+    "name": "resident-w3-k96-conflict1",
+    "prediction": 297,
+    "reference": 297,
+    "error": 0.0,
+    "icache_misses": 1
+  },
+  {
+    "name": "reload-w3-k96-conflict0",
+    "prediction": 396,
+    "reference": 385,
+    "error": 2.857,
+    "icache_misses": 2
+  },
+  {
+    "name": "reload-w3-k96-conflict1",
+    "prediction": 377,
+    "reference": 375,
+    "error": 0.533,
+    "icache_misses": 2
+  },
+  {
+    "name": "stream-w3-k96-conflict0",
+    "prediction": 560,
+    "reference": 550,
+    "error": 1.818,
+    "icache_misses": 3
+  },
+  {
+    "name": "stream-w3-k96-conflict1",
+    "prediction": 585,
+    "reference": 576,
+    "error": 1.562,
+    "icache_misses": 3
+  },
+  {
+    "name": "resident-w6-k192-conflict0",
+    "prediction": 503,
+    "reference": 504,
+    "error": -0.198,
+    "icache_misses": 2
+  },
+  {
+    "name": "resident-w6-k192-conflict1",
+    "prediction": 552,
+    "reference": 555,
+    "error": -0.541,
+    "icache_misses": 2
+  },
+  {
+    "name": "reload-w6-k192-conflict0",
+    "prediction": 1263,
+    "reference": 1242,
+    "error": 1.691,
+    "icache_misses": 3
+  },
+  {
+    "name": "reload-w6-k192-conflict1",
+    "prediction": 1269,
+    "reference": 1279,
+    "error": -0.782,
+    "icache_misses": 3
+  },
+  {
+    "name": "stream-w6-k192-conflict0",
+    "prediction": 1478,
+    "reference": 1645,
+    "error": -10.152,
+    "icache_misses": 5
+  },
+  {
+    "name": "stream-w6-k192-conflict1",
+    "prediction": 1577,
+    "reference": 1752,
+    "error": -9.989,
+    "icache_misses": 5
+  },
+  {
+    "name": "resident-w8-k96-conflict0",
+    "prediction": 364,
+    "reference": 368,
+    "error": -1.087,
+    "icache_misses": 1
+  },
+  {
+    "name": "resident-w8-k96-conflict1",
+    "prediction": 388,
+    "reference": 394,
+    "error": -1.523,
+    "icache_misses": 1
+  },
+  {
+    "name": "reload-w8-k96-conflict0",
+    "prediction": 893,
+    "reference": 876,
+    "error": 1.941,
+    "icache_misses": 2
+  },
+  {
+    "name": "reload-w8-k96-conflict1",
+    "prediction": 896,
+    "reference": 872,
+    "error": 2.752,
+    "icache_misses": 2
+  },
+  {
+    "name": "stream-w8-k96-conflict0",
+    "prediction": 1005,
+    "reference": 1012,
+    "error": -0.692,
+    "icache_misses": 3
+  },
+  {
+    "name": "stream-w8-k96-conflict1",
+    "prediction": 1027,
+    "reference": 1034,
+    "error": -0.677,
+    "icache_misses": 3
+  }
+]

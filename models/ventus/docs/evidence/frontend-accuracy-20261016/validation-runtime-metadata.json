@@ -1,0 +1,11 @@
+{
+  "prediction_platform": {
+    "system": "Darwin",
+    "machine": "arm64",
+    "python": "3.14.7",
+    "processor": "arm",
+    "python_worker_threads": 1
+  },
+  "timing_scope": "Python graph construction plus execute; excludes input file parsing and process startup",
+  "note": "RTL runs on separately configured remote host. Do not combine with native historical speed measurements."
+}

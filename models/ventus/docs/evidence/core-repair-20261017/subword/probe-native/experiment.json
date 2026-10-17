@@ -1,0 +1,199 @@
+{
+  "version": "ventus-instruction-rust-v10-causal",
+  "source_sha256": "198ca14f55c9e19b54d38c1cc29033931717403874641d389233ef1cdbfb74bd",
+  "runtime_sha256": "12c087ec77f2992d0d699b269a2938c270a8912b6c3dace31fc33b6bf6e5c920",
+  "input_sha256": "e27ba8c5fd7ed3e32e5d5cbd56425612f57029bed8eb1c2c906261550e4c42cb",
+  "manifest_sha256": "2748f56b60bd43b6988ef8bbf8b6aef5945f20288ea9a97d836313b9001e9424",
+  "program_sha256": [
+    "3ee4c9064fb733c65e6d995377f09d6a5bf0315977b4b4acb0c9cb073ea6a8c5"
+  ],
+  "hardware": {
+    "sms": 2,
+    "warps_per_sm": 8,
+    "blocks_per_sm": 8,
+    "threads": 32,
+    "rf_banks": 4,
+    "rf_read_ports": 1,
+    "rf_write_ports": 1,
+    "writeback_ports": 1,
+    "collectors": 8,
+    "vgpr_slots": 1024,
+    "sgpr_slots": 2048,
+    "tensor_m": 4,
+    "tensor_n": 8,
+    "tensor_k": 4,
+    "tensor_units": 1,
+    "lds_bytes": 131072,
+    "lds_banks": 32,
+    "lds_ports": 1,
+    "line_bytes": 128,
+    "l1_sets": 256,
+    "l1_ways": 2,
+    "l1_mshrs": 4,
+    "l1_subentries": 2,
+    "l1_write_entries": 4,
+    "l2_sets": 64,
+    "l2_ways": 16,
+    "l2_mshrs": 32,
+    "lsu_entries": 8,
+    "lsu_per_warp": 4,
+    "memory_channels": 1,
+    "memory_bytes_per_cycle": 128,
+    "memory_latency": 2
+  },
+  "instruction_target": null,
+  "low_precision_measured_cost": "unsupported; structural-v2 estimates are a separate declared approximation",
+  "scenario": null,
+  "completed": true,
+  "completion_scope": "control/address execution and modeled timing dispatches",
+  "functional_validation": {
+    "status": "not_run",
+    "reason": "The timing provider does not evaluate general numerical tensor outputs."
+  },
+  "rtl_validation": {
+    "status": "not_run",
+    "reason": "This instruction run does not execute RTL."
+  },
+  "cycles": 949,
+  "partial_cycles": 949,
+  "instructions": 489,
+  "requested_bytes": 2403,
+  "counters": {
+    "scalar": 198,
+    "vector": 128,
+    "load": 99,
+    "store": 64,
+    "memory_read_bytes": 2176,
+    "memory_write_bytes": 3584,
+    "l2_hit": 3,
+    "l2_miss": 17,
+    "l1_merge": 6,
+    "l1_hit": 38,
+    "l1_write_miss": 28,
+    "l1_read_miss": 20,
+    "lds_rounds": 75,
+    "writeback_stall_cycles": 8
+  },
+  "host_ticks": 950,
+  "idle_cycles_skipped": 0,
+  "host_seconds": 0.013999362010508776,
+  "accumulated_dispatch_host_seconds": 0.005400564055889845,
+  "build_or_load_seconds": 23.843585019931197,
+  "process_peak_rss_mib": 37.1484375,
+  "stages": [
+    {
+      "name": "subword-div-w2-b2-tail67",
+      "start": 0,
+      "end": 949,
+      "cycles": 949,
+      "instructions": 489,
+      "requested_bytes": 2403,
+      "host_ticks": 950,
+      "idle_skipped": 0,
+      "counters": {
+        "scalar": 198,
+        "vector": 128,
+        "load": 99,
+        "store": 64,
+        "memory_read_bytes": 2176,
+        "memory_write_bytes": 3584,
+        "l2_hit": 3,
+        "l2_miss": 17,
+        "l1_merge": 6,
+        "l1_hit": 38,
+        "l1_write_miss": 28,
+        "l1_read_miss": 20,
+        "lds_rounds": 75,
+        "writeback_stall_cycles": 8
+      },
+      "memory_mechanisms": {
+        "groups_accepted": 167,
+        "groups_returned": 167,
+        "instructions_allocated": 163,
+        "instructions_retired": 163,
+        "external_accepted": 45,
+        "external_returned": 45,
+        "reserved_6": 0,
+        "reserved_7": 0,
+        "l1_return_stall_cycles": 46,
+        "external_response_backpressure_cycles": 0,
+        "external_peak_slots": 2,
+        "external_request_stall_cycles": 0
+      },
+      "timing_backend": "causal-lsu-l1/pinned-wrapper-v1; bounded L2 abstraction",
+      "host_seconds": 0.005400564055889845,
+      "program_sha256": "3ee4c9064fb733c65e6d995377f09d6a5bf0315977b4b4acb0c9cb073ea6a8c5",
+      "program": {
+        "elf_sha256": "9ecc468d6972d5f165ba8f8fc913cdaf598bffe28326424a48930be39912be0c",
+        "compiler_resources": {
+          "subword_u32": {
+            "version": 3,
+            "flags": 0,
+            "vgpr": 33,
+            "sgpr": 32,
+            "lds_static": 0,
+            "pds_static": 0,
+            "lds_stack": 40,
+            "pds_stack": 24
+          }
+        },
+        "launch_resources": {
+          "vgpr": 36,
+          "sgpr": 32,
+          "lds": 128
+        },
+        "blocks": 2,
+        "warps_per_block": 2,
+        "threads": 32,
+        "stack_policy": "warp-private scalar spill stack; work-group LDS allocation",
+        "register_policy": "compiler usage rounded to complete RF-bank rows at launch",
+        "private_layout": {
+          "base": 2684354560,
+          "warp_base_stride": 0,
+          "bytes_per_thread": 24,
+          "word_interleave_threads": 64
+        },
+        "collective_policy": "uniform full-workgroup PC/flags; per-warp memory snapshots published at matching local/global fences; conservative block timing fences",
+        "resource_admission": {
+          "version": "ventus-compiled-launch-contract-v2",
+          "per_workgroup": {
+            "blocks": 1,
+            "warps": 2,
+            "vgpr": 72,
+            "sgpr": 64,
+            "lds": 128
+          },
+          "per_sm": {
+            "blocks": 8,
+            "warps": 8,
+            "vgpr": 1024,
+            "sgpr": 2048,
+            "lds": 131072
+          },
+          "resident_blocks_upper_bound": 4,
+          "scope": "Static capacity upper bound; excludes allocator timing/fragmentation and achieved occupancy."
+        }
+      }
+    }
+  ],
+  "phase_totals": {
+    "subword-div-w2-b2-tail67": {
+      "cycles": 949,
+      "instructions": 489,
+      "requested_bytes": 2403,
+      "host_seconds": 0.005400564055889845
+    }
+  },
+  "error": null,
+  "initial_state": "cold cache",
+  "recovery": "fenced checkpoint + hashed stage journal; cache tags, replacement state, counters and cycle offset preserved",
+  "limitations": [
+    "ELF provider supports uniform full-workgroup barriers with epoch memory publication; divergent/subgroup synchronization and atomics remain unsupported",
+    "compiled barrier timing uses conservative block fences; individual arrival/control timing is not calibrated",
+    "unknown numerical control/address requires functional input",
+    "extended instruction timing is an explicit uncalibrated target",
+    "dispatch boundaries drain writes and invalidate written cache lines",
+    "budget checked between complete dispatches; no in-flight checkpoint",
+    "checkpoints every 30 host seconds and normal completion; journal may extend beyond recovery point"
+  ]
+}

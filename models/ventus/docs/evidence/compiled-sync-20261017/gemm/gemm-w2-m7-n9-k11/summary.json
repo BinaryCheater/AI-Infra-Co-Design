@@ -1,0 +1,46 @@
+{
+  "name": "gemm-w2-m7-n9-k11",
+  "elf_sha256": "9652f1897ab90b0b7a16532f9456ac5e1a06ce7c1ca42a613a2bfaa97ded2c91",
+  "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+  "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+  "observer_sha256": "c6144a2848cdc285fea0a3939661cd13c231c3dfc51958c7c0a8d1b7bdf13dcd",
+  "inputs_sha256": "20bbd2ec59986babaa44acd10c37a700bca951c98b07cad7c51a67b8253adf48",
+  "case_input_sha256": {
+    "input.metadata": "f498ede5c1f4b8e7c54b79c099acc8d58b5c31bd0b3f8329f0518594623b5947",
+    "input.data": "de08758938fef4c22d3e0fd1b81ecbd00dacc0a003413a700e2124b95a270812"
+  },
+  "completed": true,
+  "functional_ok": true,
+  "status": "passed",
+  "unsupported_instruction_diagnostics": [],
+  "completion": {
+    "kernel_completed": true,
+    "kernel_completion_markers": [
+      {
+        "stream": "stdout",
+        "line": 12,
+        "text": "[RTL     info]@37125 kernel0  gemm-w2-m7-n9-k11 finished",
+        "simulation_time": 37125
+      }
+    ],
+    "error_diagnostics": [],
+    "limit_diagnostics": [],
+    "completion_reasons": [],
+    "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+  },
+  "numerical": {
+    "outputs_match": true,
+    "expected_words": 63,
+    "observed_words": 63,
+    "duplicate_addresses": [],
+    "mismatches": []
+  },
+  "returncode": 0,
+  "timed_out": false,
+  "wall_seconds": 28.591517437947914,
+  "logs_sha256": {
+    "stdout.log": "e0a2cfc6601687a6a3bb649f8330778f986609be5c017e38fd55a5bad92c8e7c",
+    "stderr.log": "f5bb7be2f7deb712fceb99d2ef0817f50eb4486260c799f79c6b850ac3986420"
+  },
+  "scope": "Concrete finite input/output check on RTL; no universal proof or timing accuracy claim."
+}

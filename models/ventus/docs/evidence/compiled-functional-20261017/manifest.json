@@ -1,0 +1,123 @@
+{
+  "schema": "compiled-functional-evidence-v1",
+  "rtl_reference": "681172541a8a34ffb43c483a19c075acbc11a4eb",
+  "runtime": "ventus-instruction-rust-v9-3",
+  "scope": "fresh RTL finite-output checks and direct workbench evaluator protocol checks; no optimization research or acceptance",
+  "files": [
+    {
+      "path": "cases.json",
+      "sha256": "3269ca3c532b785b63ff5c17c887c651b55e7c1f11ac675dfe003d786c4a19f4",
+      "bytes": 38609
+    },
+    {
+      "path": "failures.json",
+      "sha256": "26d52b06e6157ad4b1416b44d6483af5741b13203a24e4b702693200d1662788",
+      "bytes": 114596
+    },
+    {
+      "path": "vecadd-pairs-w4-b3/input.data",
+      "sha256": "ac6543bc479e5db4a9da2b37cfe87517d0a3a3cd24c16e8a25fb5e94a78cf967",
+      "bytes": 26001
+    },
+    {
+      "path": "vecadd-pairs-w4-b3/input.metadata",
+      "sha256": "7c597f6947538716789b021395d1dbbcf9918010c352eb2ae8ef9805629c654d",
+      "bytes": 684
+    },
+    {
+      "path": "vecadd-pairs-w4-b3/stderr.log",
+      "sha256": "8cbdd6d21bc5f53f399d84ad03167396e9079032c7d79395fcf38ca28012293e",
+      "bytes": 239796
+    },
+    {
+      "path": "vecadd-pairs-w4-b3/stdout.log",
+      "sha256": "22c7d937786090f29de4f7f72a53106fc8e02be90844e071954186fa97f5bb72",
+      "bytes": 35153
+    },
+    {
+      "path": "vecadd-pairs-w4-b3/summary.json",
+      "sha256": "755e13227f9439f1c44da0b4d2377345d61b093dcaef7f1d91086914614c059d",
+      "bytes": 1782
+    },
+    {
+      "path": "vecadd-pairs-w4-b3/trace.csv",
+      "sha256": "45b14cc9b4646dacd726e37daa5042d72f132326bd6abd4c6b050b06f065f11b",
+      "bytes": 112794
+    },
+    {
+      "path": "vecadd-single-w1-b2/input.data",
+      "sha256": "750e07e92cf4d78e33dd0c5b1e258a54cfbde0fb6e53bacc0b2bafaf14a77536",
+      "bytes": 6894
+    },
+    {
+      "path": "vecadd-single-w1-b2/input.metadata",
+      "sha256": "e154593ded063818daa8c1aacdbcd04579c7b967ddd04306f973f0797af2a87b",
+      "bytes": 684
+    },
+    {
+      "path": "vecadd-single-w1-b2/stderr.log",
+      "sha256": "a32877ebce2b5e322505302dd0e1fdf146e2616a263f7b9eba935d688eb8b6f1",
+      "bytes": 30254
+    },
+    {
+      "path": "vecadd-single-w1-b2/stdout.log",
+      "sha256": "81d27fe121d87b3548f9a640282f1e295f81821c4cd35d5695fbfc0580f97b45",
+      "bytes": 3837
+    },
+    {
+      "path": "vecadd-single-w1-b2/summary.json",
+      "sha256": "58aa89dab091d19b1cbab0f36fa6efdd639c50c36a4366a1ff127a1aafb3c0b1",
+      "bytes": 1782
+    },
+    {
+      "path": "vecadd-single-w1-b2/trace.csv",
+      "sha256": "3d7a7abd8ad56ce92b8ae5bb7c5b41e028c1eab702ba8e574c376ccb89f50ab1",
+      "bytes": 16581
+    },
+    {
+      "path": "vecadd-single-w2-b3/input.data",
+      "sha256": "f78053119689c8220e283bb052175243b4d4d11ae80f93469ee78055721c991d",
+      "bytes": 10350
+    },
+    {
+      "path": "vecadd-single-w2-b3/input.metadata",
+      "sha256": "9682de0c321889cdebb02615be638598418606d02c9b6ff2085c6407b81dfefb",
+      "bytes": 684
+    },
+    {
+      "path": "vecadd-single-w2-b3/stderr.log",
+      "sha256": "6f77ef404d983174de60db44faee6603067f3cda834361dd303a5d34c3892703",
+      "bytes": 88956
+    },
+    {
+      "path": "vecadd-single-w2-b3/stdout.log",
+      "sha256": "307d3a9ff676416b0dd4f5b5dd464b14047daf073afdfa6c47a189438bf192cb",
+      "bytes": 9794
+    },
+    {
+      "path": "vecadd-single-w2-b3/summary.json",
+      "sha256": "4acbeff3cefa2f55c52089c3f073a356fe62d96685f913ea2c0f7ae0fe0ee8ee",
+      "bytes": 1783
+    },
+    {
+      "path": "vecadd-single-w2-b3/trace.csv",
+      "sha256": "58d0b82afdca1ba4e65f52c4f9ed6512d73037ee779c9d6116792ea72b2f47e6",
+      "bytes": 49060
+    },
+    {
+      "path": "workbench-integration.json",
+      "sha256": "a3238dd6ac0e976ddcf6d4dcaf025e8169902ac73ed83e02920118b6adc8b7d9",
+      "bytes": 22037
+    },
+    {
+      "path": "README.md",
+      "sha256": "d111f677b3a5780b6e2263b5ba7d378f27409a73fd1b295ce2b1e446b1275916",
+      "bytes": 5110
+    },
+    {
+      "path": "workbench-stdio.json",
+      "sha256": "52c12390e8436179dd33859d5d5d79a623e5aead68164457e1b5e9463f8d459a",
+      "bytes": 6783
+    }
+  ]
+}

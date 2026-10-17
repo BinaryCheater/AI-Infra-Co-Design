@@ -1,0 +1,15 @@
+[RTL     info]@0 SNAPSHOT created, pid=2510599
+[RTL    trace]@20 Hardware reset ok
+[RTL    trace]@30 kernel 0 private-spill-w2-b2 activate
+[RTL    debug]@185 block0  dispatched to GPU (kernel0  private-spill-w2-b2 block0 )
+[RTL    debug]@195 block1  dispatched to GPU (kernel0  private-spill-w2-b2 block1 )
+[RTL    debug]@9255 block0  finished (kernel0  private-spill-w2-b2 block0 )
+[RTL    debug]@9305 block1  finished (kernel0  private-spill-w2-b2 block1 )
+[RTL     info]@9305 kernel0  private-spill-w2-b2 finished
+[RTL    debug]@10000 
+[RTL    debug]@20000 
+[RTL    debug]@30000 
+[RTL    debug]@40000 
+[RTL    debug]@50000 
+[RTL     info]@59305 Simulation finished in 59305 unit time
+[RTL    debug]@59305 All snapshot process are cleared, OK

@@ -1,0 +1,244 @@
+{
+  "scope": "Bounded workbench runtime/protocol integration; no search, agent, Runner state or acceptance",
+  "adapter_sha256": "89e828506e2681ecd1042ca5a58a46dc1f41cc1f0e0407f2665900de4cfa25d4",
+  "diagnostic_sha256": "a468d3abdde4116ccd3d0bf50d2d5c1f6abbc78a6ce53a5db896ffd01d5c594c",
+  "runtime_sha256": "9486f468a61aa505e333e5fafdc6a60e646bc168ea55ddf6bb07630b3632260e",
+  "manifest_sha256": "d39d829ebbd9e16641ff81d602892a92ab6a097391d046e10aa47ef9ea3c2a61",
+  "cases": [
+    {
+      "name": "gemm-w2-m7-n9-k11",
+      "status": "passed",
+      "request": {
+        "schema": "workbench-1",
+        "role": "evaluator",
+        "operation": "evaluate",
+        "subject_ref": "e937a8250901c29e93c3f54cc148dfebdd8a0c5189b0c697924dbd48ad658d99",
+        "scope_hash": "d39d829ebbd9e16641ff81d602892a92ab6a097391d046e10aa47ef9ea3c2a61",
+        "mode": "research",
+        "input": {
+          "design_ref": "e937a8250901c29e93c3f54cc148dfebdd8a0c5189b0c697924dbd48ad658d99",
+          "design": {
+            "program": {
+              "format": "ventus-compiled-case-v1",
+              "case": "gemm-w2-m7-n9-k11",
+              "elf_sha256": "9652f1897ab90b0b7a16532f9456ac5e1a06ce7c1ca42a613a2bfaa97ded2c91",
+              "check_manifest_sha256": "d39d829ebbd9e16641ff81d602892a92ab6a097391d046e10aa47ef9ea3c2a61"
+            },
+            "hardware": {
+              "sms": 2,
+              "warps_per_sm": 8,
+              "blocks_per_sm": 8,
+              "threads": 32,
+              "rf_banks": 4,
+              "rf_read_ports": 1,
+              "rf_write_ports": 1,
+              "writeback_ports": 1,
+              "collectors": 8,
+              "vgpr_slots": 1024,
+              "sgpr_slots": 2048,
+              "tensor_m": 4,
+              "tensor_n": 8,
+              "tensor_k": 4,
+              "tensor_units": 1,
+              "lds_bytes": 131072,
+              "lds_banks": 32,
+              "lds_ports": 1,
+              "line_bytes": 128,
+              "l1_sets": 256,
+              "l1_ways": 2,
+              "l1_mshrs": 4,
+              "l1_subentries": 2,
+              "l1_write_entries": 4,
+              "l2_sets": 64,
+              "l2_ways": 16,
+              "l2_mshrs": 32,
+              "lsu_entries": 8,
+              "lsu_per_warp": 4,
+              "memory_channels": 1,
+              "memory_bytes_per_cycle": 128,
+              "memory_latency": 2
+            }
+          },
+          "workload": {
+            "name": "gemm-w2-m7-n9-k11",
+            "kernel": "workgroup_gemm_f32",
+            "global_size": [
+              128,
+              1,
+              1
+            ],
+            "local_size": [
+              64,
+              1,
+              1
+            ],
+            "check_manifest_sha256": "d39d829ebbd9e16641ff81d602892a92ab6a097391d046e10aa47ef9ea3c2a61"
+          },
+          "hardware": {
+            "sms": 2,
+            "warps_per_sm": 8,
+            "blocks_per_sm": 8,
+            "threads": 32,
+            "rf_banks": 4,
+            "rf_read_ports": 1,
+            "rf_write_ports": 1,
+            "writeback_ports": 1,
+            "collectors": 8,
+            "vgpr_slots": 1024,
+            "sgpr_slots": 2048,
+            "tensor_m": 4,
+            "tensor_n": 8,
+            "tensor_k": 4,
+            "tensor_units": 1,
+            "lds_bytes": 131072,
+            "lds_banks": 32,
+            "lds_ports": 1,
+            "line_bytes": 128,
+            "l1_sets": 256,
+            "l1_ways": 2,
+            "l1_mshrs": 4,
+            "l1_subentries": 2,
+            "l1_write_entries": 4,
+            "l2_sets": 64,
+            "l2_ways": 16,
+            "l2_mshrs": 32,
+            "lsu_entries": 8,
+            "lsu_per_warp": 4,
+            "memory_channels": 1,
+            "memory_bytes_per_cycle": 128,
+            "memory_latency": 2
+          },
+          "solution": {
+            "objective": null
+          }
+        }
+      },
+      "response": {
+        "schema": "workbench-1",
+        "role": "evaluator",
+        "operation": "evaluate",
+        "subject_ref": "e937a8250901c29e93c3f54cc148dfebdd8a0c5189b0c697924dbd48ad658d99",
+        "scope_hash": "d39d829ebbd9e16641ff81d602892a92ab6a097391d046e10aa47ef9ea3c2a61",
+        "mode": "research",
+        "design_ref": "e937a8250901c29e93c3f54cc148dfebdd8a0c5189b0c697924dbd48ad658d99",
+        "fidelity": "modeled",
+        "unit": "cycles",
+        "metrics": {
+          "cycles": 2667,
+          "executed_instructions": 2218,
+          "barrier_arrivals": 16
+        },
+        "primary_metric": {
+          "name": "Modeled compiled-dispatch cycles",
+          "value": 2667,
+          "unit": "cycles",
+          "direction": "min",
+          "context": {
+            "workload": "c92a3fa4b8f729577e42fdab7d85ad1eb59d36b4d7d08dceecd954000ca60cef",
+            "hardware": "1b39454055238c480eb7eaf5502dfc722bb97bb78d03a339b7b8eca0ccb57c54",
+            "objective": "compiled-dispatch-drained",
+            "evaluator": "ventus-compiled-evaluator-v1/ventus-instruction-rust-v9-4",
+            "protocol": "cold-cache-elf-control-address-v1"
+          }
+        },
+        "functional_reference": {
+          "functional_ok": true,
+          "completion": {
+            "kernel_completed": true,
+            "kernel_completion_markers": [
+              {
+                "stream": "stdout",
+                "line": 12,
+                "text": "[RTL     info]@37125 kernel0  gemm-w2-m7-n9-k11 finished",
+                "simulation_time": 37125
+              }
+            ],
+            "error_diagnostics": [],
+            "limit_diagnostics": [],
+            "completion_reasons": [],
+            "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+          },
+          "numerical": {
+            "outputs_match": true,
+            "expected_words": 63,
+            "observed_words": 63,
+            "duplicate_addresses": [],
+            "mismatches": []
+          },
+          "reference_sha256": "bd356ea9dc65e3cdf7708c3b414afad5d08aecb4d61a1a6d57a83dc1198212e5",
+          "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+          "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+          "scope": "Finite outputs and named completion for this frozen program/input/launch on the recorded RTL."
+        },
+        "program_binding": {
+          "case": "gemm-w2-m7-n9-k11",
+          "check_manifest_sha256": "d39d829ebbd9e16641ff81d602892a92ab6a097391d046e10aa47ef9ea3c2a61",
+          "elf_sha256": "9652f1897ab90b0b7a16532f9456ac5e1a06ce7c1ca42a613a2bfaa97ded2c91",
+          "format": "ventus-compiled-case-v1"
+        },
+        "execution": {
+          "version": "ventus-instruction-rust-v9-4",
+          "source_sha256": "3ce712b332306ba23faee696e8b847176e7946729b41b1164494ecd0a9e4e051",
+          "runtime_sha256": "be604a63cd25ae5c8ace63b4b6ffa1c3eb9c806fb1c70e00bf0fcda87c0e30f7",
+          "program_sha256": [
+            "2b39ea9612dae569664f35ec3da096efaea5485a8ea617d502c3c9bb21a8c27a"
+          ],
+          "initial_state": "cold cache",
+          "completion_scope": "control/address execution and modeled timing dispatches",
+          "counters": {
+            "scalar": 918,
+            "vector": 914,
+            "fma": 64,
+            "load": 242,
+            "store": 64,
+            "barrier": 16,
+            "memory_read_bytes": 3072,
+            "memory_write_bytes": 1280,
+            "l2_hit": 10,
+            "l2_miss": 24,
+            "l1_merge": 14,
+            "l1_hit": 50,
+            "l1_write_miss": 10,
+            "l1_read_miss": 24,
+            "lds_rounds": 864,
+            "writeback_stall_cycles": 76
+          },
+          "program": {
+            "elf_sha256": "9652f1897ab90b0b7a16532f9456ac5e1a06ce7c1ca42a613a2bfaa97ded2c91",
+            "compiler_resources": {
+              "workgroup_gemm_f32": {
+                "version": 3,
+                "flags": 0,
+                "vgpr": 33,
+                "sgpr": 32,
+                "lds_static": 512,
+                "pds_static": 0,
+                "lds_stack": 36,
+                "pds_stack": 12
+              }
+            },
+            "launch_resources": {
+              "vgpr": 36,
+              "sgpr": 32,
+              "lds": 640
+            },
+            "blocks": 2,
+            "warps_per_block": 2,
+            "threads": 32,
+            "stack_policy": "warp-private scalar spill stack; work-group LDS allocation",
+            "register_policy": "compiler usage rounded to complete RF-bank rows at launch",
+            "collective_policy": "uniform full-workgroup PC/flags; per-warp memory snapshots published at matching local/global fences; conservative block timing fences"
+          }
+        },
+        "limitations": [
+          "Finite numerical correctness is rechecked from recorded RTL logs; RTL is not rerun by this evaluator.",
+          "Cycles come from the native timing model; they are not measured RTL cycles or an accuracy claim.",
+          "Boot/CTA/cold instruction fetch and RTL output flush are not matched timing endpoints.",
+          "Registered cases and baseline hardware only; uniform workgroup barriers use conservative model fences; subgroup/atomic synchronization remains unsupported.",
+          "This adapter does not implement template construction, solver binding or a general compiler realizer."
+        ]
+      }
+    }
+  ],
+  "all_passed": true
+}

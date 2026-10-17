@@ -1,0 +1,13 @@
+/local.toml
+/.venv/
+/results/
+/dist/
+# Preserve immutable logs despite the parent repository's log exclusion.
+!docs/evidence/**
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.DS_Store
+/codesign/ventus/rust_core/target/

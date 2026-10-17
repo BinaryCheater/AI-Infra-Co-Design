@@ -1,0 +1,405 @@
+{
+  "schema": "ventus.frontend.reproduction-check.v2",
+  "summary_vs_graph_predictions": [
+    {
+      "name": "resident-w2-k40-conflict0",
+      "banks": 4,
+      "cycles": 154,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "resident-w2-k40-conflict1",
+      "banks": 4,
+      "cycles": 164,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "reload-w2-k40-conflict0",
+      "banks": 4,
+      "cycles": 186,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "reload-w2-k40-conflict1",
+      "banks": 4,
+      "cycles": 196,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "stream-w2-k40-conflict0",
+      "banks": 4,
+      "cycles": 254,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "stream-w2-k40-conflict1",
+      "banks": 4,
+      "cycles": 264,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "shared-w2-k40-conflict0",
+      "banks": 4,
+      "cycles": 443,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "shared-w2-k40-conflict1",
+      "banks": 4,
+      "cycles": 453,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "resident-w5-k128-conflict0",
+      "banks": 4,
+      "cycles": 360,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "resident-w5-k128-conflict1",
+      "banks": 4,
+      "cycles": 396,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "reload-w5-k128-conflict0",
+      "banks": 4,
+      "cycles": 729,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "reload-w5-k128-conflict1",
+      "banks": 4,
+      "cycles": 732,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "stream-w5-k128-conflict0",
+      "banks": 4,
+      "cycles": 912,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "stream-w5-k128-conflict1",
+      "banks": 4,
+      "cycles": 939,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "shared-w5-k128-conflict0",
+      "banks": 4,
+      "cycles": 2211,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "shared-w5-k128-conflict1",
+      "banks": 4,
+      "cycles": 2352,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "resident-w7-k160-conflict0",
+      "banks": 4,
+      "cycles": 457,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "resident-w7-k160-conflict1",
+      "banks": 4,
+      "cycles": 496,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "reload-w7-k160-conflict0",
+      "banks": 4,
+      "cycles": 1214,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "reload-w7-k160-conflict1",
+      "banks": 4,
+      "cycles": 1231,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "stream-w7-k160-conflict0",
+      "banks": 4,
+      "cycles": 1437,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "stream-w7-k160-conflict1",
+      "banks": 4,
+      "cycles": 1446,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "shared-w7-k160-conflict0",
+      "banks": 4,
+      "cycles": 3818,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "shared-w7-k160-conflict1",
+      "banks": 4,
+      "cycles": 3733,
+      "graph_receipt": "validation-predictions-rf4.json"
+    },
+    {
+      "name": "resident-w2-k40-conflict0",
+      "banks": 8,
+      "cycles": 154,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "resident-w2-k40-conflict1",
+      "banks": 8,
+      "cycles": 159,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "reload-w2-k40-conflict0",
+      "banks": 8,
+      "cycles": 186,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "reload-w2-k40-conflict1",
+      "banks": 8,
+      "cycles": 191,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "stream-w2-k40-conflict0",
+      "banks": 8,
+      "cycles": 254,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "stream-w2-k40-conflict1",
+      "banks": 8,
+      "cycles": 259,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "shared-w2-k40-conflict0",
+      "banks": 8,
+      "cycles": 443,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "shared-w2-k40-conflict1",
+      "banks": 8,
+      "cycles": 448,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "resident-w5-k128-conflict0",
+      "banks": 8,
+      "cycles": 360,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "resident-w5-k128-conflict1",
+      "banks": 8,
+      "cycles": 380,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "reload-w5-k128-conflict0",
+      "banks": 8,
+      "cycles": 729,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "reload-w5-k128-conflict1",
+      "banks": 8,
+      "cycles": 724,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "stream-w5-k128-conflict0",
+      "banks": 8,
+      "cycles": 912,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "stream-w5-k128-conflict1",
+      "banks": 8,
+      "cycles": 921,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "shared-w5-k128-conflict0",
+      "banks": 8,
+      "cycles": 2211,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "shared-w5-k128-conflict1",
+      "banks": 8,
+      "cycles": 2308,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "resident-w7-k160-conflict0",
+      "banks": 8,
+      "cycles": 457,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "resident-w7-k160-conflict1",
+      "banks": 8,
+      "cycles": 477,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "reload-w7-k160-conflict0",
+      "banks": 8,
+      "cycles": 1214,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "reload-w7-k160-conflict1",
+      "banks": 8,
+      "cycles": 1219,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "stream-w7-k160-conflict0",
+      "banks": 8,
+      "cycles": 1437,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "stream-w7-k160-conflict1",
+      "banks": 8,
+      "cycles": 1573,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "shared-w7-k160-conflict0",
+      "banks": 8,
+      "cycles": 3818,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "shared-w7-k160-conflict1",
+      "banks": 8,
+      "cycles": 3728,
+      "graph_receipt": "validation-postreference-rf8.json"
+    },
+    {
+      "name": "resident-w4-k56-conflict0",
+      "banks": 8,
+      "cycles": 204,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "resident-w4-k56-conflict1",
+      "banks": 8,
+      "cycles": 207,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "reload-w4-k56-conflict0",
+      "banks": 8,
+      "cycles": 300,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "reload-w4-k56-conflict1",
+      "banks": 8,
+      "cycles": 301,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "stream-w4-k56-conflict0",
+      "banks": 8,
+      "cycles": 384,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "stream-w4-k56-conflict1",
+      "banks": 8,
+      "cycles": 438,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "shared-w4-k56-conflict0",
+      "banks": 8,
+      "cycles": 929,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "shared-w4-k56-conflict1",
+      "banks": 8,
+      "cycles": 927,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "resident-w6-k144-conflict0",
+      "banks": 8,
+      "cycles": 407,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "resident-w6-k144-conflict1",
+      "banks": 8,
+      "cycles": 426,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "reload-w6-k144-conflict0",
+      "banks": 8,
+      "cycles": 954,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "reload-w6-k144-conflict1",
+      "banks": 8,
+      "cycles": 958,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "stream-w6-k144-conflict0",
+      "banks": 8,
+      "cycles": 1130,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "stream-w6-k144-conflict1",
+      "banks": 8,
+      "cycles": 1139,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "shared-w6-k144-conflict0",
+      "banks": 8,
+      "cycles": 3159,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    },
+    {
+      "name": "shared-w6-k144-conflict1",
+      "banks": 8,
+      "cycles": 3158,
+      "graph_receipt": "validation-rf8-corrected-predictions.json"
+    }
+  ],
+  "reference_hash_checks_including_invalid_pairing_duplicates": 136,
+  "audit_recomputed_identical": true,
+  "timing_modules_unchanged_from_pre_RTL_freeze": {
+    "frontend.py": "efdf994f830bb2cc07e5f7400f4de470c0373a96fd5364ce14e6b09fcf0a7ed2",
+    "lsu_control.py": "0756038009e64e4ab713893644e3d4b4131879dc92267f103f8403d19d59f90e",
+    "cache_acceptance.py": "e39920ebe8fa38f1936a9c5279400abb9d7c4f3851baeea8fe8151db6ba0d945",
+    "timing.py": "6d7fa3491b154b59f67ae86b2310d63c67197167d844b10dda42ea0425d58daf",
+    "online.py": "1c38ecadaf2fc19f2ab6812a7c322f1a2144c88ce8a4e8a6043cdc0e2c937ace",
+    "physical_operands.py": "2e537576cab8938ba23c6bb7e2a28f880834874ce571ddfd92f4da7bc3e0c5cf",
+    "termination.py": "8b6c15ea0c75e3b4f4f895d4b88eb57be8190cc18d3b8720dc7869e40d2a80c2",
+    "config.py": "2f116280be41351801eeba0ad479944a0bc5c263bd0f14b60543aafd3da31c41",
+    "ir.py": "466627742c3d8a033b41a0de3a1e56a403bbcebfb7d88053e2cfe584cb256076",
+    "graph.py": "765aeb04bda71d3dbe32938599ab20c341a8ae352fd5981202fce26aec6b5508",
+    "session.py": "cfc5e916e36f00ee1623930bc5a5323a83db8b304800b8afb651a2fb62569d18"
+  },
+  "note": "Internal consistency checks, not independent RTL timing evidence. Invalid RF8 filename pairings intentionally excluded from summary-vs-graph validation."
+}

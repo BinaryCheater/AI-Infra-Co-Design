@@ -1,0 +1,6 @@
+{
+  "source": "examples/kernels/private_spill_u32.cl",
+  "source_sha256": "e97d9994df93396a6d53df86ec76d38e47b3c5c9c6b09b201efc017fcc1e8c4a",
+  "elf_sha256": "4c6f2f11ad9595e45c12662cd351879f3d5bcc7163deb8f8613dee11a53a8b0b",
+  "purpose": "Real compiler output for private-memory isolation diagnostics; not a universal correctness certificate"
+}

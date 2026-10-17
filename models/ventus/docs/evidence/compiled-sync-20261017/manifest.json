@@ -1,0 +1,138 @@
+{
+  "schema": "ventus-compiled-sync-evidence-v1",
+  "runtime": "ventus-instruction-rust-v9-4",
+  "rtl_reference": "681172541a8a34ffb43c483a19c075acbc11a4eb",
+  "scope": "Fresh finite numerical RTL and bounded evaluator protocol checks; modeled timing remains uncalibrated",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "ce7f0c5b302440ec785b7739b7ca47aa277eca758e2f8e30e7a4ad16f23a63f0",
+      "bytes": 7107
+    },
+    {
+      "path": "cases.json",
+      "sha256": "d774f8979c37d277e17c8a35c83ea6a3f39e42340e1eea0eba029bec041909ca",
+      "bytes": 43430
+    },
+    {
+      "path": "exchange-w2-tail-r2/input.data",
+      "sha256": "1500741d77135885b844add4e14de43ea565ffc1d975b623a5d9ddf8775a9e2b",
+      "bytes": 17325
+    },
+    {
+      "path": "exchange-w2-tail-r2/input.metadata",
+      "sha256": "d5b44ef4f93f99476637427b35dea935bf4ab2dd7b3773c8ab0c85a00a54c620",
+      "bytes": 684
+    },
+    {
+      "path": "exchange-w2-tail-r2/stderr.log",
+      "sha256": "efa541dd2c9c272077a66fa2d3933ba013cbf4b5a64a1079a01618d7e4f0d166",
+      "bytes": 282922
+    },
+    {
+      "path": "exchange-w2-tail-r2/stdout.log",
+      "sha256": "650a69757728997a1b2cd5bc5e1ffd5f8853791b07150ffdd986472d1ffa333d",
+      "bytes": 16593
+    },
+    {
+      "path": "exchange-w2-tail-r2/summary.json",
+      "sha256": "dfd284f4227cd309f09c545eb4d9d9c89dee27a88acc29bb3ffba264bd0b3f20",
+      "bytes": 1784
+    },
+    {
+      "path": "exchange-w2-tail-r2/trace.csv",
+      "sha256": "9cdd646882f26395d83b1f3204613ceb085883b1c63d2bd1f15796f9e419e74d",
+      "bytes": 131477
+    },
+    {
+      "path": "exchange-w4-tail-r3/input.data",
+      "sha256": "1c4688f1acd291a17aa07a6950a246aeb496b6f4e04302ede036e95aced7cf7b",
+      "bytes": 32202
+    },
+    {
+      "path": "exchange-w4-tail-r3/input.metadata",
+      "sha256": "1d258d0e56530deced9ec0913c43f5116b503a7c38453cc5b644b4d6cc6c4774",
+      "bytes": 684
+    },
+    {
+      "path": "exchange-w4-tail-r3/stderr.log",
+      "sha256": "2e53d3a7a9a2a502376a40cc63a0bbcaefa7647733ffb95890cea2f16a88417e",
+      "bytes": 653852
+    },
+    {
+      "path": "exchange-w4-tail-r3/stdout.log",
+      "sha256": "cd296b4b5e9078d7ed19789d2a78b758b199ffda477bafda31eaf2c011fb18a8",
+      "bytes": 47772
+    },
+    {
+      "path": "exchange-w4-tail-r3/summary.json",
+      "sha256": "a81fa5888e419f8d19a6029f984ebdf5f7d2c7659f793a5e713cc5cdecb91c6d",
+      "bytes": 1787
+    },
+    {
+      "path": "exchange-w4-tail-r3/trace.csv",
+      "sha256": "30de5fc1cc9bd99762bc7be9f4eaa8a2d0fc1389e9e3585624251cb737bf4dd0",
+      "bytes": 297050
+    },
+    {
+      "path": "gemm/cases.json",
+      "sha256": "20bbd2ec59986babaa44acd10c37a700bca951c98b07cad7c51a67b8253adf48",
+      "bytes": 3830
+    },
+    {
+      "path": "gemm/gemm-w2-m7-n9-k11/input.data",
+      "sha256": "de08758938fef4c22d3e0fd1b81ecbd00dacc0a003413a700e2124b95a270812",
+      "bytes": 11988
+    },
+    {
+      "path": "gemm/gemm-w2-m7-n9-k11/input.metadata",
+      "sha256": "f498ede5c1f4b8e7c54b79c099acc8d58b5c31bd0b3f8329f0518594623b5947",
+      "bytes": 738
+    },
+    {
+      "path": "gemm/gemm-w2-m7-n9-k11/stderr.log",
+      "sha256": "f5bb7be2f7deb712fceb99d2ef0817f50eb4486260c799f79c6b850ac3986420",
+      "bytes": 548847
+    },
+    {
+      "path": "gemm/gemm-w2-m7-n9-k11/stdout.log",
+      "sha256": "e0a2cfc6601687a6a3bb649f8330778f986609be5c017e38fd55a5bad92c8e7c",
+      "bytes": 3826
+    },
+    {
+      "path": "gemm/gemm-w2-m7-n9-k11/summary.json",
+      "sha256": "bd356ea9dc65e3cdf7708c3b414afad5d08aecb4d61a1a6d57a83dc1198212e5",
+      "bytes": 1778
+    },
+    {
+      "path": "gemm/gemm-w2-m7-n9-k11/trace.csv",
+      "sha256": "d9e9955da94fa514bf27fcd533720118c14d49ffba4b6cbb27c375ac5aa0eb74",
+      "bytes": 181234
+    },
+    {
+      "path": "gemm/workbench-runtime-v9-4.json",
+      "sha256": "191a50e1c6f82a55bb4fb8c16398eab6a8e5b9ed65e542b0fdfb35694174a44c",
+      "bytes": 9485
+    },
+    {
+      "path": "gemm/workbench-stdio.json",
+      "sha256": "7f893ed07414490a13f462732a74525ebe2a2439af7679cb2fbe63301ed8f824",
+      "bytes": 6757
+    },
+    {
+      "path": "missing-private-backing.json",
+      "sha256": "be8d0fdbe353d3c9a287ea7c0aafe0dbac238a9cd0816db4803ecb032213a660",
+      "bytes": 2857
+    },
+    {
+      "path": "workbench-runtime-v9-4.json",
+      "sha256": "d22bef8aa2dde0e57c76d28c2a5e4334b1978ab0c80d828e94aa787d9391eea2",
+      "bytes": 18563
+    },
+    {
+      "path": "workbench-stdio.json",
+      "sha256": "45582495193d8c2f1b7815c2801996a4780c387e0c6f7d9d2a757ae3d2afdfdb",
+      "bytes": 14880
+    }
+  ]
+}

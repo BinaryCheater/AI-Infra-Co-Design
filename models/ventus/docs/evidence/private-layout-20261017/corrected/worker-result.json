@@ -1,0 +1,95 @@
+{
+  "schema": "ventus-compiled-workflow-result-v1",
+  "job_id": "d98348d3b4a548549cb3f5ed38b31862",
+  "native": [
+    {
+      "name": "private-spill-w2-b2",
+      "completed": true,
+      "process": {
+        "returncode": 0,
+        "timed_out": false,
+        "output_exhausted": false,
+        "wall_seconds": 19.057357144076377
+      },
+      "cycles": 565,
+      "instructions": 400,
+      "receipt_sha256": "e3151abeb174f8b8edcca017e6a6ae016467e063d6af06226e4619286fe58510"
+    }
+  ],
+  "rtl": {
+    "schema": "ventus-compiled-rtl-check-v1",
+    "cases": [
+      {
+        "name": "private-spill-w2-b2",
+        "elf_sha256": "4c6f2f11ad9595e45c12662cd351879f3d5bcc7163deb8f8613dee11a53a8b0b",
+        "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+        "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+        "driver_profile": "workgroup-private-v1",
+        "driver_adapter": {
+          "profile": "workgroup-private-v1",
+          "process": {
+            "returncode": 0,
+            "timed_out": false,
+            "output_exhausted": false,
+            "wall_seconds": 3.630820778897032
+          },
+          "source_sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+          "target_header_sha256": "ce18925342bc0514f34b0f3f8e846271f8f00aac1dd1de7dfcae57f5fa5d303a",
+          "target_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+          "compiler_sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769",
+          "verilator_header_sha256": "1ab9fbe3fb6ef389443f6c31314d8a76479f082c0d37a6484a3d216aeaf5e154",
+          "completed": true,
+          "binary_sha256": "fed9d9feadb91a26ae57cce4cbc40a085e8ba57670c0d2ed5d8662877c364cd3"
+        },
+        "requires_private_adjustment": true,
+        "inputs_sha256": "f7909e1528a22dba473977e3a5dc5bf44acbf190a27959f8a998b066ad677cf1",
+        "case_input_sha256": {
+          "input.metadata": "25fe075c85702806209d4c29c36f801bfc51bd2384a798b39ea42325d34bb7f6",
+          "input.data": "6daa5b1e451f864c57b99a9c3d1d09bd1f006e1e9590f3c70c125ecad6d98594"
+        },
+        "completed": true,
+        "functional_ok": true,
+        "status": "passed",
+        "unsupported_instruction_diagnostics": [],
+        "completion": {
+          "kernel_completed": true,
+          "kernel_completion_markers": [
+            {
+              "stream": "stdout",
+              "line": 9,
+              "text": "[RTL     info]@9305 kernel0  private-spill-w2-b2 finished",
+              "simulation_time": 9305
+            }
+          ],
+          "error_diagnostics": [],
+          "limit_diagnostics": [],
+          "completion_reasons": [],
+          "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+        },
+        "numerical": {
+          "outputs_match": true,
+          "expected_words": 384,
+          "observed_words": 384,
+          "duplicate_addresses": [],
+          "mismatches": []
+        },
+        "returncode": 0,
+        "timed_out": false,
+        "output_exhausted": false,
+        "wall_seconds": 19.38153876690194,
+        "logs_sha256": {
+          "stdout.log": "ae5521e42eda76126e9b2e16e0e0dde159269d2bf7edc00af7411a2d5d2d79d3",
+          "stderr.log": "94c0858ac290171c106278d1c34c3b3b317dcf5d322f4faee07b27f644ae1571"
+        },
+        "scope": "Concrete finite input/output check on RTL; no universal proof or timing accuracy claim."
+      }
+    ],
+    "all_functional_ok": true
+  },
+  "completed": true,
+  "code_manifest_sha256": "43d67b1bb1215defe07eb47c6a4b2a3e5acf06868d8b499f8abcee07f2e78366",
+  "case_manifest_sha256": "d7df4374653ed535e5548937b1183d9a73904b503e0e8d82dc42789b9cdefca5",
+  "python": "3.12.3",
+  "architecture": "x86_64",
+  "scope": "Concrete compilation/control-address timing/numerical RTL integration; no accuracy, optimality or acceptance claim"
+}

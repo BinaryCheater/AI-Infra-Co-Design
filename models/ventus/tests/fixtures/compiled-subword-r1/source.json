@@ -1,0 +1,6 @@
+{
+  "source": "examples/kernels/subword_u32.cl",
+  "source_sha256": "ee4e74eb23e155aebe61c9ad6e1b3a619579308917fbb35e98fbf26aac6a69f2",
+  "elf_sha256": "9ecc468d6972d5f165ba8f8fc913cdaf598bffe28326424a48930be39912be0c",
+  "purpose": "Real compiler diagnostic: packed byte/halfword stores have an R1 counterexample; 134 integer result words matched; not a numerical certificate"
+}

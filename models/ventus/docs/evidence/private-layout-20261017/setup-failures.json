@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "Setup failure before RTL; no successful numerical claim",
+    "kind": "verilator-header-discovery",
+    "worker_failure": {
+      "job_id": "0f7f8fbb2b904e8d9071892ef46dd19e",
+      "type": "ValueError"
+    },
+    "diagnosis": "Tool output reported a stale compiled-in VERILATOR_ROOT before the actual installation. Discovery now verifies candidate headers and preserves explicit-root errors.",
+    "original_stderr_sha256": "fc9b7559b924c741f438802c5dfb08896a6b68b07bb749ab15a035ae011d3647",
+    "code_manifest_sha256": "954fd14723b7f1f2af82fb5f0ff09719eef4b1b1ae460bafc4d2eb5bdfb1520d"
+  },
+  {
+    "scope": "Setup failure before RTL; same terminal run retrieved without resubmission",
+    "kind": "relative-adapter-output",
+    "process": {
+      "returncode": 1,
+      "timed_out": false,
+      "output_exhausted": false,
+      "wall_seconds": 6.857835833914578
+    },
+    "diagnosis": "A relative output path was passed under that same directory as cwd. Normalize target/output paths once before compiler execution.",
+    "original_stderr_sha256": "0d77f634bc4f5d5e8be4170d983ef238f644409818755305d5326670269d3eb9",
+    "code_manifest_sha256": "a5eedf48582da049f3a7ea42fafc5c77324516018ba5e0bf9e428dd7dba38c8e"
+  }
+]

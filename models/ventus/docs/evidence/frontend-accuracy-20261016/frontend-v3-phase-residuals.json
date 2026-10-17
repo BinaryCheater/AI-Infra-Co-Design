@@ -1,0 +1,1235 @@
+[
+  {
+    "name": "resident-w3-k96-conflict0",
+    "kinds": {
+      "vector": {
+        "model_service": {
+          "count": 33,
+          "mean": 3.6363636363636362,
+          "min": 2,
+          "max": 5
+        },
+        "rtl_service": {
+          "count": 33,
+          "mean": 3.606060606060606,
+          "min": 2,
+          "max": 5
+        },
+        "collect_signed_residual": {
+          "count": 33,
+          "mean": 0,
+          "min": 0,
+          "max": 0
+        },
+        "writeback_signed_residual": {
+          "count": 33,
+          "mean": 0.030303030303030304,
+          "min": 0,
+          "max": 1
+        }
+      },
+      "scalar": {
+        "model_service": {
+          "count": 15,
+          "mean": 2.8,
+          "min": 2,
+          "max": 4
+        },
+        "rtl_service": {
+          "count": 15,
+          "mean": 2.8,
+          "min": 2,
+          "max": 4
+        },
+        "collect_signed_residual": {
+          "count": 15,
+          "mean": 0,
+          "min": 0,
+          "max": 0
+        },
+        "writeback_signed_residual": {
+          "count": 15,
+          "mean": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "load": {
+        "model_service": {
+          "count": 6,
+          "mean": 28.333333333333332,
+          "min": 21,
+          "max": 34
+        },
+        "rtl_service": {
+          "count": 6,
+          "mean": 28.666666666666668,
+          "min": 22,
+          "max": 34
+        },
+        "collect_signed_residual": {
+          "count": 6,
+          "mean": 0.3333333333333333,
+          "min": 0,
+          "max": 1
+        },
+        "writeback_signed_residual": {
+          "count": 6,
+          "mean": 0,
+          "min": 0,
+          "max": 0
+        },
+        "lsu_admit_signed_residual": {
+          "count": 6,
+          "mean": 1.6666666666666667,
+          "min": 0,
+          "max": 4
+        }
+      },
+      "tensor": {
+        "model_service": {
+          "count": 36,
+          "mean": 15.083333333333334,
+          "min": 15,
+          "max": 17
+        },
+        "rtl_service": {
+          "count": 36,
+          "mean": 15.083333333333334,
+          "min": 15,
+          "max": 17
+        },
+        "collect_signed_residual": {
+          "count": 36,
+          "mean": 0,
+          "min": 0,
+          "max": 0
+        },
+        "writeback_signed_residual": {
+          "count": 36,
+          "mean": 0,
+          "min": 0,
+          "max": 0
+        }
+      },
+      "store": {
+        "collect_signed_residual": {
+          "count": 3,
+          "mean": 0,
+          "min": 0,
+          "max": 0
+        },
+        "lsu_admit_signed_residual": {
+          "count": 3,
+          "mean": 0.6666666666666666,
+          "min": 0,
+          "max": 1
+        }
+      },
+      "endprg": {
+        "collect_signed_residual": {
+          "count": 3,
+          "mean": 0,
+          "min": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  {
+    "name": "reload-w3-k96-conflict0",
+    "kinds": {
+      "vector": {
+        "model_service": {
+          "count": 33,
+          "mean": 3.6666666666666665,
+          "min": 2,
+          "max": 5
+        },
+        "rtl_service": {
+          "count": 33,
+          "mean": 3.6363636363636362,
+          "min": 2,
+          "max": 5
+        },
+        "collect_signed_residual": {
+          "count": 33,
+          "mean": 4,
+          "min": 0,
+          "max": 11
+        },
+        "writeback_signed_residual": {
+          "count": 33,
+          "mean": 4.03030303030303,
+          "min": 0,
+          "max": 11
+        }
+      },
+      "scalar": {
+        "model_service": {
+          "count": 15,
+          "mean": 2.8,
+          "min": 2,
+          "max": 4
+        },
+        "rtl_service": {
+          "count": 15,
+          "mean": 2.8,
+          "min": 2,
+          "max": 4
+        },
+        "collect_signed_residual": {
+          "count": 15,
+          "mean": 6.6,
+          "min": 0,
+          "max": 11
+        },
+        "writeback_signed_residual": {
+          "count": 15,
+          "mean": 6.6,
+          "min": 0,
+          "max": 11
+        }
+      },
+      "load": {
+        "model_service": {
+          "count": 72,
+          "mean": 16.65277777777778,
+          "min": 11,
+          "max": 34
+        },
+        "rtl_service": {
+          "count": 72,
+          "mean": 15.916666666666666,
+          "min": 10,
+          "max": 34
+        },
+        "collect_signed_residual": {
+          "count": 72,
+          "mean": 4.763888888888889,
+          "min": 0,
+          "max": 11
+        },
+        "writeback_signed_residual": {
+          "count": 72,
+          "mean": 5.5,
+          "min": 0,
+          "max": 11
+        },
+        "lsu_admit_signed_residual": {
+          "count": 72,
+          "mean": 5.486111111111111,
+          "min": 0,
+          "max": 11
+        }
+      },
+      "tensor": {
+        "model_service": {
+          "count": 36,
+          "mean": 15.36111111111111,
+          "min": 15,
+          "max": 17
+        },
+        "rtl_service": {
+          "count": 36,
+          "mean": 15.36111111111111,
+          "min": 15,
+          "max": 17
+        },
+        "collect_signed_residual": {
+          "count": 36,
+          "mean": 5.5,
+          "min": 0,
+          "max": 11
+        },
+        "writeback_signed_residual": {
+          "count": 36,
+          "mean": 5.5,
+          "min": -1,
+          "max": 11
+        }
+      },
+      "store": {
+        "collect_signed_residual": {
+          "count": 3,
+          "mean": 11,
+          "min": 11,
+          "max": 11
+        },
+        "lsu_admit_signed_residual": {
+          "count": 3,
+          "mean": 11,
+          "min": 11,
+          "max": 11
+        }
+      },
+      "endprg": {
+        "collect_signed_residual": {
+          "count": 3,
+          "mean": 11,
+          "min": 11,
+          "max": 11
+        }
+      }
+    }
+  },
+  {
+    "name": "stream-w3-k96-conflict0",
+    "kinds": {
+      "vector": {
+        "model_service": {
+          "count": 99,
+          "mean": 4.575757575757576,
+          "min": 2,
+          "max": 9
+        },
+        "rtl_service": {
+          "count": 99,
+          "mean": 4.2727272727272725,
+          "min": 2,
+          "max": 7
+        },
+        "collect_signed_residual": {
+          "count": 99,
+          "mean": 4.848484848484849,
+          "min": 0,
+          "max": 11
+        },
+        "writeback_signed_residual": {
+          "count": 99,
+          "mean": 5.151515151515151,
+          "min": 0,
+          "max": 11
+        }
+      },
+      "scalar": {
+        "model_service": {
+          "count": 18,
+          "mean": 3,
+          "min": 2,
+          "max": 4
+        },
+        "rtl_service": {
+          "count": 18,
+          "mean": 3,
+          "min": 2,
+          "max": 4
+        },
+        "collect_signed_residual": {
+          "count": 18,
+          "mean": 5,
+          "min": 0,
+          "max": 10
+        },
+        "writeback_signed_residual": {
+          "count": 18,
+          "mean": 5,
+          "min": 0,
+          "max": 10
+        }
+      },
+      "load": {
+        "model_service": {
+          "count": 72,
+          "mean": 29.069444444444443,
+          "min": 19,
+          "max": 33
+        },
+        "rtl_service": {
+          "count": 72,
+          "mean": 28.680555555555557,
+          "min": 19,
+          "max": 33
+        },
+        "collect_signed_residual": {
+          "count": 72,
+          "mean": 4.888888888888889,
+          "min": 0,
+          "max": 12
+        },
+        "writeback_signed_residual": {
+          "count": 72,
+          "mean": 5.277777777777778,
+          "min": -1,
+          "max": 11
+        },
+        "lsu_admit_signed_residual": {
+          "count": 72,
+          "mean": 5.902777777777778,
+          "min": -2,
+          "max": 14
+        }
+      },
+      "tensor": {
+        "model_service": {
+          "count": 36,
+          "mean": 15.63888888888889,
+          "min": 15,
+          "max": 17
+        },
+        "rtl_service": {
+          "count": 36,
+          "mean": 15.083333333333334,
+          "min": 15,
+          "max": 17
+        },
+        "collect_signed_residual": {
+          "count": 36,
+          "mean": 5.416666666666667,
+          "min": 0,
+          "max": 10
+        },
+        "writeback_signed_residual": {
+          "count": 36,
+          "mean": 5.972222222222222,
+          "min": 0,
+          "max": 11
+        }
+      },
+      "store": {
+        "collect_signed_residual": {
+          "count": 3,
+          "mean": 10,
+          "min": 10,
+          "max": 10
+        },
+        "lsu_admit_signed_residual": {
+          "count": 3,
+          "mean": 10.666666666666666,
+          "min": 10,
+          "max": 11
+        }
+      },
+      "endprg": {
+        "collect_signed_residual": {
+          "count": 3,
+          "mean": 10,
+          "min": 10,
+          "max": 10
+        }
+      }
+    }
+  },
+  {
+    "name": "resident-w6-k192-conflict0",
+    "kinds": {
+      "vector": {
+        "model_service": {
+          "count": 66,
+          "mean": 3.727272727272727,
+          "min": 2,
+          "max": 6
+        },
+        "rtl_service": {
+          "count": 66,
+          "mean": 3.742424242424242,
+          "min": 2,
+          "max": 6
+        },
+        "collect_signed_residual": {
+          "count": 66,
+          "mean": 1.621212121212121,
+          "min": -9,
+          "max": 18
+        },
+        "writeback_signed_residual": {
+          "count": 66,
+          "mean": 1.606060606060606,
+          "min": -9,
+          "max": 18
+        }
+      },
+      "scalar": {
+        "model_service": {
+          "count": 30,
+          "mean": 2.8333333333333335,
+          "min": 2,
+          "max": 5
+        },
+        "rtl_service": {
+          "count": 30,
+          "mean": 2.9,
+          "min": 2,
+          "max": 7
+        },
+        "collect_signed_residual": {
+          "count": 30,
+          "mean": 3,
+          "min": -9,
+          "max": 18
+        },
+        "writeback_signed_residual": {
+          "count": 30,
+          "mean": 2.933333333333333,
+          "min": -9,
+          "max": 18
+        }
+      },
+      "load": {
+        "model_service": {
+          "count": 12,
+          "mean": 25.75,
+          "min": 11,
+          "max": 51
+        },
+        "rtl_service": {
+          "count": 12,
+          "mean": 21.916666666666668,
+          "min": 11,
+          "max": 34
+        },
+        "collect_signed_residual": {
+          "count": 12,
+          "mean": -0.3333333333333333,
+          "min": -4,
+          "max": 1
+        },
+        "writeback_signed_residual": {
+          "count": 12,
+          "mean": 3.5,
+          "min": -7,
+          "max": 20
+        },
+        "lsu_admit_signed_residual": {
+          "count": 12,
+          "mean": 0.75,
+          "min": -2,
+          "max": 3
+        }
+      },
+      "tensor": {
+        "model_service": {
+          "count": 144,
+          "mean": 15.097222222222221,
+          "min": 15,
+          "max": 21
+        },
+        "rtl_service": {
+          "count": 144,
+          "mean": 15.125,
+          "min": 15,
+          "max": 18
+        },
+        "collect_signed_residual": {
+          "count": 144,
+          "mean": 6.680555555555555,
+          "min": -6,
+          "max": 20
+        },
+        "writeback_signed_residual": {
+          "count": 144,
+          "mean": 6.652777777777778,
+          "min": -7,
+          "max": 21
+        }
+      },
+      "store": {
+        "collect_signed_residual": {
+          "count": 6,
+          "mean": 5.5,
+          "min": -9,
+          "max": 18
+        },
+        "lsu_admit_signed_residual": {
+          "count": 6,
+          "mean": 6.666666666666667,
+          "min": -7,
+          "max": 18
+        }
+      },
+      "endprg": {
+        "collect_signed_residual": {
+          "count": 6,
+          "mean": 5.666666666666667,
+          "min": -9,
+          "max": 18
+        }
+      }
+    }
+  },
+  {
+    "name": "reload-w6-k192-conflict0",
+    "kinds": {
+      "vector": {
+        "model_service": {
+          "count": 66,
+          "mean": 4.090909090909091,
+          "min": 2,
+          "max": 10
+        },
+        "rtl_service": {
+          "count": 66,
+          "mean": 4.318181818181818,
+          "min": 2,
+          "max": 19
+        },
+        "collect_signed_residual": {
+          "count": 66,
+          "mean": 6.848484848484849,
+          "min": -24,
+          "max": 63
+        },
+        "writeback_signed_residual": {
+          "count": 66,
+          "mean": 6.621212121212121,
+          "min": -20,
+          "max": 59
+        }
+      },
+      "scalar": {
+        "model_service": {
+          "count": 30,
+          "mean": 2.8,
+          "min": 2,
+          "max": 4
+        },
+        "rtl_service": {
+          "count": 30,
+          "mean": 2.8666666666666667,
+          "min": 2,
+          "max": 5
+        },
+        "collect_signed_residual": {
+          "count": 30,
+          "mean": 11.733333333333333,
+          "min": -24,
+          "max": 63
+        },
+        "writeback_signed_residual": {
+          "count": 30,
+          "mean": 11.666666666666666,
+          "min": -24,
+          "max": 63
+        }
+      },
+      "load": {
+        "model_service": {
+          "count": 288,
+          "mean": 23.09722222222222,
+          "min": 11,
+          "max": 51
+        },
+        "rtl_service": {
+          "count": 288,
+          "mean": 23.15972222222222,
+          "min": 10,
+          "max": 34
+        },
+        "collect_signed_residual": {
+          "count": 288,
+          "mean": 12.819444444444445,
+          "min": -56,
+          "max": 77
+        },
+        "writeback_signed_residual": {
+          "count": 288,
+          "mean": 12.756944444444445,
+          "min": -55,
+          "max": 73
+        },
+        "lsu_admit_signed_residual": {
+          "count": 288,
+          "mean": 12.645833333333334,
+          "min": -55,
+          "max": 73
+        }
+      },
+      "tensor": {
+        "model_service": {
+          "count": 144,
+          "mean": 21.84027777777778,
+          "min": 15,
+          "max": 31
+        },
+        "rtl_service": {
+          "count": 144,
+          "mean": 20.833333333333332,
+          "min": 15,
+          "max": 29
+        },
+        "collect_signed_residual": {
+          "count": 144,
+          "mean": 12.729166666666666,
+          "min": -55,
+          "max": 70
+        },
+        "writeback_signed_residual": {
+          "count": 144,
+          "mean": 13.73611111111111,
+          "min": -55,
+          "max": 77
+        }
+      },
+      "store": {
+        "collect_signed_residual": {
+          "count": 6,
+          "mean": 20.5,
+          "min": -20,
+          "max": 57
+        },
+        "lsu_admit_signed_residual": {
+          "count": 6,
+          "mean": 20.5,
+          "min": -16,
+          "max": 48
+        }
+      },
+      "endprg": {
+        "collect_signed_residual": {
+          "count": 6,
+          "mean": 20,
+          "min": -20,
+          "max": 53
+        }
+      }
+    }
+  },
+  {
+    "name": "stream-w6-k192-conflict0",
+    "kinds": {
+      "vector": {
+        "model_service": {
+          "count": 342,
+          "mean": 8.637426900584796,
+          "min": 2,
+          "max": 32
+        },
+        "rtl_service": {
+          "count": 342,
+          "mean": 10.137426900584796,
+          "min": 2,
+          "max": 42
+        },
+        "collect_signed_residual": {
+          "count": 342,
+          "mean": -36.39473684210526,
+          "min": -190,
+          "max": 68
+        },
+        "writeback_signed_residual": {
+          "count": 342,
+          "mean": -37.89473684210526,
+          "min": -190,
+          "max": 69
+        }
+      },
+      "scalar": {
+        "model_service": {
+          "count": 36,
+          "mean": 3.0277777777777777,
+          "min": 2,
+          "max": 5
+        },
+        "rtl_service": {
+          "count": 36,
+          "mean": 3.0833333333333335,
+          "min": 2,
+          "max": 5
+        },
+        "collect_signed_residual": {
+          "count": 36,
+          "mean": -86.44444444444444,
+          "min": -189,
+          "max": 0
+        },
+        "writeback_signed_residual": {
+          "count": 36,
+          "mean": -86.5,
+          "min": -189,
+          "max": 0
+        }
+      },
+      "load": {
+        "model_service": {
+          "count": 288,
+          "mean": 31.979166666666668,
+          "min": 14,
+          "max": 60
+        },
+        "rtl_service": {
+          "count": 288,
+          "mean": 35.38194444444444,
+          "min": 12,
+          "max": 62
+        },
+        "collect_signed_residual": {
+          "count": 288,
+          "mean": -32.645833333333336,
+          "min": -191,
+          "max": 61
+        },
+        "writeback_signed_residual": {
+          "count": 288,
+          "mean": -36.048611111111114,
+          "min": -192,
+          "max": 72
+        },
+        "lsu_admit_signed_residual": {
+          "count": 288,
+          "mean": -33.923611111111114,
+          "min": -190,
+          "max": 68
+        }
+      },
+      "tensor": {
+        "model_service": {
+          "count": 144,
+          "mean": 18.53472222222222,
+          "min": 15,
+          "max": 30
+        },
+        "rtl_service": {
+          "count": 144,
+          "mean": 22.9375,
+          "min": 15,
+          "max": 57
+        },
+        "collect_signed_residual": {
+          "count": 144,
+          "mean": -33.74305555555556,
+          "min": -189,
+          "max": 71
+        },
+        "writeback_signed_residual": {
+          "count": 144,
+          "mean": -38.145833333333336,
+          "min": -191,
+          "max": 63
+        }
+      },
+      "store": {
+        "collect_signed_residual": {
+          "count": 6,
+          "mean": -173.16666666666666,
+          "min": -183,
+          "max": -162
+        },
+        "lsu_admit_signed_residual": {
+          "count": 6,
+          "mean": -173.16666666666666,
+          "min": -183,
+          "max": -162
+        }
+      },
+      "endprg": {
+        "collect_signed_residual": {
+          "count": 6,
+          "mean": -173.16666666666666,
+          "min": -183,
+          "max": -162
+        }
+      }
+    }
+  },
+  {
+    "name": "resident-w8-k96-conflict0",
+    "kinds": {
+      "vector": {
+        "model_service": {
+          "count": 88,
+          "mean": 3.7613636363636362,
+          "min": 2,
+          "max": 6
+        },
+        "rtl_service": {
+          "count": 88,
+          "mean": 3.7045454545454546,
+          "min": 2,
+          "max": 6
+        },
+        "collect_signed_residual": {
+          "count": 88,
+          "mean": -1.4431818181818181,
+          "min": -28,
+          "max": 24
+        },
+        "writeback_signed_residual": {
+          "count": 88,
+          "mean": -1.3863636363636365,
+          "min": -28,
+          "max": 25
+        }
+      },
+      "scalar": {
+        "model_service": {
+          "count": 40,
+          "mean": 2.8,
+          "min": 2,
+          "max": 4
+        },
+        "rtl_service": {
+          "count": 40,
+          "mean": 2.85,
+          "min": 2,
+          "max": 5
+        },
+        "collect_signed_residual": {
+          "count": 40,
+          "mean": -0.5,
+          "min": -28,
+          "max": 24
+        },
+        "writeback_signed_residual": {
+          "count": 40,
+          "mean": -0.55,
+          "min": -28,
+          "max": 24
+        }
+      },
+      "load": {
+        "model_service": {
+          "count": 16,
+          "mean": 23.0625,
+          "min": 10,
+          "max": 58
+        },
+        "rtl_service": {
+          "count": 16,
+          "mean": 19.3125,
+          "min": 10,
+          "max": 34
+        },
+        "collect_signed_residual": {
+          "count": 16,
+          "mean": -3.25,
+          "min": -26,
+          "max": 1
+        },
+        "writeback_signed_residual": {
+          "count": 16,
+          "mean": 0.5,
+          "min": -25,
+          "max": 24
+        },
+        "lsu_admit_signed_residual": {
+          "count": 16,
+          "mean": -2.3125,
+          "min": -25,
+          "max": 3
+        }
+      },
+      "tensor": {
+        "model_service": {
+          "count": 96,
+          "mean": 15.395833333333334,
+          "min": 15,
+          "max": 19
+        },
+        "rtl_service": {
+          "count": 96,
+          "mean": 15.489583333333334,
+          "min": 15,
+          "max": 21
+        },
+        "collect_signed_residual": {
+          "count": 96,
+          "mean": 2.1979166666666665,
+          "min": -25,
+          "max": 24
+        },
+        "writeback_signed_residual": {
+          "count": 96,
+          "mean": 2.1041666666666665,
+          "min": -25,
+          "max": 24
+        }
+      },
+      "store": {
+        "collect_signed_residual": {
+          "count": 8,
+          "mean": 1.75,
+          "min": -21,
+          "max": 24
+        },
+        "lsu_admit_signed_residual": {
+          "count": 8,
+          "mean": 1.75,
+          "min": -21,
+          "max": 23
+        }
+      },
+      "endprg": {
+        "collect_signed_residual": {
+          "count": 8,
+          "mean": 1.75,
+          "min": -21,
+          "max": 24
+        }
+      }
+    }
+  },
+  {
+    "name": "reload-w8-k96-conflict0",
+    "kinds": {
+      "vector": {
+        "model_service": {
+          "count": 88,
+          "mean": 5.579545454545454,
+          "min": 2,
+          "max": 21
+        },
+        "rtl_service": {
+          "count": 88,
+          "mean": 5.431818181818182,
+          "min": 2,
+          "max": 19
+        },
+        "collect_signed_residual": {
+          "count": 88,
+          "mean": 3,
+          "min": -77,
+          "max": 54
+        },
+        "writeback_signed_residual": {
+          "count": 88,
+          "mean": 3.147727272727273,
+          "min": -79,
+          "max": 51
+        }
+      },
+      "scalar": {
+        "model_service": {
+          "count": 40,
+          "mean": 2.85,
+          "min": 2,
+          "max": 5
+        },
+        "rtl_service": {
+          "count": 40,
+          "mean": 2.825,
+          "min": 2,
+          "max": 5
+        },
+        "collect_signed_residual": {
+          "count": 40,
+          "mean": 8.725,
+          "min": -63,
+          "max": 53
+        },
+        "writeback_signed_residual": {
+          "count": 40,
+          "mean": 8.75,
+          "min": -63,
+          "max": 53
+        }
+      },
+      "load": {
+        "model_service": {
+          "count": 192,
+          "mean": 27.328125,
+          "min": 11,
+          "max": 66
+        },
+        "rtl_service": {
+          "count": 192,
+          "mean": 26.744791666666668,
+          "min": 11,
+          "max": 42
+        },
+        "collect_signed_residual": {
+          "count": 192,
+          "mean": 7.046875,
+          "min": -80,
+          "max": 81
+        },
+        "writeback_signed_residual": {
+          "count": 192,
+          "mean": 7.630208333333333,
+          "min": -83,
+          "max": 80
+        },
+        "lsu_admit_signed_residual": {
+          "count": 192,
+          "mean": 7.536458333333333,
+          "min": -80,
+          "max": 80
+        }
+      },
+      "tensor": {
+        "model_service": {
+          "count": 96,
+          "mean": 25.354166666666668,
+          "min": 15,
+          "max": 36
+        },
+        "rtl_service": {
+          "count": 96,
+          "mean": 24.864583333333332,
+          "min": 15,
+          "max": 40
+        },
+        "collect_signed_residual": {
+          "count": 96,
+          "mean": 8.229166666666666,
+          "min": -83,
+          "max": 81
+        },
+        "writeback_signed_residual": {
+          "count": 96,
+          "mean": 8.71875,
+          "min": -76,
+          "max": 81
+        }
+      },
+      "store": {
+        "collect_signed_residual": {
+          "count": 8,
+          "mean": 21.375,
+          "min": -15,
+          "max": 49
+        },
+        "lsu_admit_signed_residual": {
+          "count": 8,
+          "mean": 21.625,
+          "min": -13,
+          "max": 54
+        }
+      },
+      "endprg": {
+        "collect_signed_residual": {
+          "count": 8,
+          "mean": 21,
+          "min": -15,
+          "max": 52
+        }
+      }
+    }
+  },
+  {
+    "name": "stream-w8-k96-conflict0",
+    "kinds": {
+      "vector": {
+        "model_service": {
+          "count": 264,
+          "mean": 9.852272727272727,
+          "min": 2,
+          "max": 24
+        },
+        "rtl_service": {
+          "count": 264,
+          "mean": 9.81439393939394,
+          "min": 2,
+          "max": 31
+        },
+        "collect_signed_residual": {
+          "count": 264,
+          "mean": 1.8409090909090908,
+          "min": -54,
+          "max": 66
+        },
+        "writeback_signed_residual": {
+          "count": 264,
+          "mean": 1.878787878787879,
+          "min": -53,
+          "max": 67
+        }
+      },
+      "scalar": {
+        "model_service": {
+          "count": 48,
+          "mean": 3.0625,
+          "min": 2,
+          "max": 5
+        },
+        "rtl_service": {
+          "count": 48,
+          "mean": 3.0208333333333335,
+          "min": 2,
+          "max": 4
+        },
+        "collect_signed_residual": {
+          "count": 48,
+          "mean": 4.645833333333333,
+          "min": -40,
+          "max": 67
+        },
+        "writeback_signed_residual": {
+          "count": 48,
+          "mean": 4.6875,
+          "min": -40,
+          "max": 67
+        }
+      },
+      "load": {
+        "model_service": {
+          "count": 192,
+          "mean": 34.265625,
+          "min": 12,
+          "max": 61
+        },
+        "rtl_service": {
+          "count": 192,
+          "mean": 33.942708333333336,
+          "min": 10,
+          "max": 68
+        },
+        "collect_signed_residual": {
+          "count": 192,
+          "mean": 2.4479166666666665,
+          "min": -50,
+          "max": 41
+        },
+        "writeback_signed_residual": {
+          "count": 192,
+          "mean": 2.7708333333333335,
+          "min": -69,
+          "max": 61
+        },
+        "lsu_admit_signed_residual": {
+          "count": 192,
+          "mean": 3.3385416666666665,
+          "min": -53,
+          "max": 50
+        }
+      },
+      "tensor": {
+        "model_service": {
+          "count": 96,
+          "mean": 23.270833333333332,
+          "min": 15,
+          "max": 38
+        },
+        "rtl_service": {
+          "count": 96,
+          "mean": 22.1875,
+          "min": 15,
+          "max": 39
+        },
+        "collect_signed_residual": {
+          "count": 96,
+          "mean": 3.0104166666666665,
+          "min": -62,
+          "max": 63
+        },
+        "writeback_signed_residual": {
+          "count": 96,
+          "mean": 4.09375,
+          "min": -50,
+          "max": 46
+        }
+      },
+      "store": {
+        "collect_signed_residual": {
+          "count": 8,
+          "mean": 11.375,
+          "min": -37,
+          "max": 65
+        },
+        "lsu_admit_signed_residual": {
+          "count": 8,
+          "mean": 6.5,
+          "min": -39,
+          "max": 56
+        }
+      },
+      "endprg": {
+        "collect_signed_residual": {
+          "count": 8,
+          "mean": 5.75,
+          "min": -39,
+          "max": 52
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,380 @@
+{
+  "scope": "Actual stdin/stdout integration calls, no Runner/agent/optimization search",
+  "adapter_sha256": "226c5cf7db96186dd9e396783cbff9a7aaf340fc7207519da2e8fec4a34c7806",
+  "cases": [
+    {
+      "request": {
+        "schema": "workbench-1",
+        "role": "evaluator",
+        "operation": "evaluate",
+        "subject_ref": "8abf8dca71e7eee592a5c960849f36df9e06608e12fe2aafa384fe98e541353f",
+        "scope_hash": "88fa6b346dde4312f3d520860d32de8a8883b444e68fc07ff87e1d3613ae83d4",
+        "mode": "research",
+        "input": {
+          "design_ref": "8abf8dca71e7eee592a5c960849f36df9e06608e12fe2aafa384fe98e541353f",
+          "design": {
+            "program": {
+              "format": "ventus-compiled-case-v1",
+              "case": "exchange-w2-tail-r2",
+              "elf_sha256": "b2ca3287a40bdc4aa578f2981241d83fd01a5805627922dc0bdccf0456150a87",
+              "check_manifest_sha256": "88fa6b346dde4312f3d520860d32de8a8883b444e68fc07ff87e1d3613ae83d4"
+            },
+            "hardware": {
+              "sms": 2,
+              "warps_per_sm": 8,
+              "blocks_per_sm": 8,
+              "threads": 32,
+              "rf_banks": 4,
+              "rf_read_ports": 1,
+              "rf_write_ports": 1,
+              "writeback_ports": 1,
+              "collectors": 8,
+              "vgpr_slots": 1024,
+              "sgpr_slots": 2048,
+              "tensor_m": 4,
+              "tensor_n": 8,
+              "tensor_k": 4,
+              "tensor_units": 1,
+              "lds_bytes": 131072,
+              "lds_banks": 32,
+              "lds_ports": 1,
+              "line_bytes": 128,
+              "l1_sets": 256,
+              "l1_ways": 2,
+              "l1_mshrs": 4,
+              "l1_subentries": 2,
+              "l1_write_entries": 4,
+              "l2_sets": 64,
+              "l2_ways": 16,
+              "l2_mshrs": 32,
+              "lsu_entries": 8,
+              "lsu_per_warp": 4,
+              "memory_channels": 1,
+              "memory_bytes_per_cycle": 128,
+              "memory_latency": 2
+            }
+          },
+          "workload": {
+            "name": "exchange-w2-tail-r2",
+            "kernel": "workgroup_exchange_u32",
+            "global_size": [
+              192,
+              1,
+              1
+            ],
+            "local_size": [
+              64,
+              1,
+              1
+            ],
+            "check_manifest_sha256": "88fa6b346dde4312f3d520860d32de8a8883b444e68fc07ff87e1d3613ae83d4"
+          },
+          "hardware": {
+            "sms": 2,
+            "warps_per_sm": 8,
+            "blocks_per_sm": 8,
+            "threads": 32,
+            "rf_banks": 4,
+            "rf_read_ports": 1,
+            "rf_write_ports": 1,
+            "writeback_ports": 1,
+            "collectors": 8,
+            "vgpr_slots": 1024,
+            "sgpr_slots": 2048,
+            "tensor_m": 4,
+            "tensor_n": 8,
+            "tensor_k": 4,
+            "tensor_units": 1,
+            "lds_bytes": 131072,
+            "lds_banks": 32,
+            "lds_ports": 1,
+            "line_bytes": 128,
+            "l1_sets": 256,
+            "l1_ways": 2,
+            "l1_mshrs": 4,
+            "l1_subentries": 2,
+            "l1_write_entries": 4,
+            "l2_sets": 64,
+            "l2_ways": 16,
+            "l2_mshrs": 32,
+            "lsu_entries": 8,
+            "lsu_per_warp": 4,
+            "memory_channels": 1,
+            "memory_bytes_per_cycle": 128,
+            "memory_latency": 2
+          },
+          "solution": {
+            "objective": null
+          }
+        }
+      },
+      "response": {
+        "schema": "workbench-1",
+        "role": "evaluator",
+        "operation": "evaluate",
+        "subject_ref": "8abf8dca71e7eee592a5c960849f36df9e06608e12fe2aafa384fe98e541353f",
+        "scope_hash": "88fa6b346dde4312f3d520860d32de8a8883b444e68fc07ff87e1d3613ae83d4",
+        "mode": "research",
+        "design_ref": "8abf8dca71e7eee592a5c960849f36df9e06608e12fe2aafa384fe98e541353f",
+        "fidelity": "modeled",
+        "unit": "cycles",
+        "metrics": {
+          "cycles": 1301,
+          "executed_instructions": 1462
+        },
+        "primary_metric": {
+          "name": "Modeled compiled-dispatch cycles",
+          "value": 1301,
+          "unit": "cycles",
+          "direction": "min",
+          "context": {
+            "workload": "34d3e4ca9cf5a45dc89d8971c6a4f59e84180322825c017f7a2fc6c18c55e324",
+            "hardware": "1b39454055238c480eb7eaf5502dfc722bb97bb78d03a339b7b8eca0ccb57c54",
+            "objective": "compiled-dispatch-drained",
+            "evaluator": "ventus-compiled-evaluator-v1/ventus-instruction-rust-v9-4",
+            "protocol": "cold-cache-elf-control-address-v1"
+          }
+        },
+        "functional_reference": {
+          "functional_ok": true,
+          "completion": {
+            "kernel_completed": true,
+            "kernel_completion_markers": [
+              {
+                "stream": "stdout",
+                "line": 21,
+                "text": "[RTL     info]@99365 kernel0  exchange-w2-tail-r2 finished",
+                "simulation_time": 99365
+              }
+            ],
+            "error_diagnostics": [],
+            "limit_diagnostics": [],
+            "completion_reasons": [],
+            "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+          },
+          "numerical": {
+            "outputs_match": true,
+            "expected_words": 346,
+            "observed_words": 346,
+            "duplicate_addresses": [],
+            "mismatches": []
+          },
+          "reference_sha256": "dfd284f4227cd309f09c545eb4d9d9c89dee27a88acc29bb3ffba264bd0b3f20",
+          "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+          "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+          "scope": "Finite outputs and named completion for this frozen program/input/launch on the recorded RTL."
+        },
+        "program_binding": {
+          "format": "ventus-compiled-case-v1",
+          "case": "exchange-w2-tail-r2",
+          "elf_sha256": "b2ca3287a40bdc4aa578f2981241d83fd01a5805627922dc0bdccf0456150a87",
+          "check_manifest_sha256": "88fa6b346dde4312f3d520860d32de8a8883b444e68fc07ff87e1d3613ae83d4"
+        },
+        "execution": {
+          "version": "ventus-instruction-rust-v9-4",
+          "source_sha256": "3ce712b332306ba23faee696e8b847176e7946729b41b1164494ecd0a9e4e051",
+          "runtime_sha256": "2113532a5c96f53a63053093c2fbe4260dc1a4b0f13ba09468a57a7b72207cc4",
+          "program_sha256": [
+            "995f5bf6cc7acefeb575aceaa15cef9c52a8ca881d7f2d96e786e62b452cb304"
+          ],
+          "initial_state": "cold cache",
+          "completion_scope": "control/address execution and modeled timing dispatches"
+        },
+        "limitations": [
+          "Finite numerical correctness is rechecked from recorded RTL logs; RTL is not rerun by this evaluator.",
+          "Cycles come from the native timing model; they are not measured RTL cycles or an accuracy claim.",
+          "Boot/CTA/cold instruction fetch and RTL output flush are not matched timing endpoints.",
+          "Registered cases and baseline hardware only; uniform workgroup barriers use conservative model fences; subgroup/atomic synchronization remains unsupported.",
+          "This adapter does not implement template construction, solver binding or a general compiler realizer."
+        ]
+      }
+    },
+    {
+      "request": {
+        "schema": "workbench-1",
+        "role": "evaluator",
+        "operation": "evaluate",
+        "subject_ref": "805a388db19c580cc2993a75bef99ea367fae3a466a6b1097d558dc34ec61e39",
+        "scope_hash": "88fa6b346dde4312f3d520860d32de8a8883b444e68fc07ff87e1d3613ae83d4",
+        "mode": "research",
+        "input": {
+          "design_ref": "805a388db19c580cc2993a75bef99ea367fae3a466a6b1097d558dc34ec61e39",
+          "design": {
+            "program": {
+              "format": "ventus-compiled-case-v1",
+              "case": "exchange-w4-tail-r3",
+              "elf_sha256": "b2ca3287a40bdc4aa578f2981241d83fd01a5805627922dc0bdccf0456150a87",
+              "check_manifest_sha256": "88fa6b346dde4312f3d520860d32de8a8883b444e68fc07ff87e1d3613ae83d4"
+            },
+            "hardware": {
+              "sms": 2,
+              "warps_per_sm": 8,
+              "blocks_per_sm": 8,
+              "threads": 32,
+              "rf_banks": 4,
+              "rf_read_ports": 1,
+              "rf_write_ports": 1,
+              "writeback_ports": 1,
+              "collectors": 8,
+              "vgpr_slots": 1024,
+              "sgpr_slots": 2048,
+              "tensor_m": 4,
+              "tensor_n": 8,
+              "tensor_k": 4,
+              "tensor_units": 1,
+              "lds_bytes": 131072,
+              "lds_banks": 32,
+              "lds_ports": 1,
+              "line_bytes": 128,
+              "l1_sets": 256,
+              "l1_ways": 2,
+              "l1_mshrs": 4,
+              "l1_subentries": 2,
+              "l1_write_entries": 4,
+              "l2_sets": 64,
+              "l2_ways": 16,
+              "l2_mshrs": 32,
+              "lsu_entries": 8,
+              "lsu_per_warp": 4,
+              "memory_channels": 1,
+              "memory_bytes_per_cycle": 128,
+              "memory_latency": 2
+            }
+          },
+          "workload": {
+            "name": "exchange-w4-tail-r3",
+            "kernel": "workgroup_exchange_u32",
+            "global_size": [
+              384,
+              1,
+              1
+            ],
+            "local_size": [
+              128,
+              1,
+              1
+            ],
+            "check_manifest_sha256": "88fa6b346dde4312f3d520860d32de8a8883b444e68fc07ff87e1d3613ae83d4"
+          },
+          "hardware": {
+            "sms": 2,
+            "warps_per_sm": 8,
+            "blocks_per_sm": 8,
+            "threads": 32,
+            "rf_banks": 4,
+            "rf_read_ports": 1,
+            "rf_write_ports": 1,
+            "writeback_ports": 1,
+            "collectors": 8,
+            "vgpr_slots": 1024,
+            "sgpr_slots": 2048,
+            "tensor_m": 4,
+            "tensor_n": 8,
+            "tensor_k": 4,
+            "tensor_units": 1,
+            "lds_bytes": 131072,
+            "lds_banks": 32,
+            "lds_ports": 1,
+            "line_bytes": 128,
+            "l1_sets": 256,
+            "l1_ways": 2,
+            "l1_mshrs": 4,
+            "l1_subentries": 2,
+            "l1_write_entries": 4,
+            "l2_sets": 64,
+            "l2_ways": 16,
+            "l2_mshrs": 32,
+            "lsu_entries": 8,
+            "lsu_per_warp": 4,
+            "memory_channels": 1,
+            "memory_bytes_per_cycle": 128,
+            "memory_latency": 2
+          },
+          "solution": {
+            "objective": null
+          }
+        }
+      },
+      "response": {
+        "schema": "workbench-1",
+        "role": "evaluator",
+        "operation": "evaluate",
+        "subject_ref": "805a388db19c580cc2993a75bef99ea367fae3a466a6b1097d558dc34ec61e39",
+        "scope_hash": "88fa6b346dde4312f3d520860d32de8a8883b444e68fc07ff87e1d3613ae83d4",
+        "mode": "research",
+        "design_ref": "805a388db19c580cc2993a75bef99ea367fae3a466a6b1097d558dc34ec61e39",
+        "fidelity": "modeled",
+        "unit": "cycles",
+        "metrics": {
+          "cycles": 2166,
+          "executed_instructions": 3291
+        },
+        "primary_metric": {
+          "name": "Modeled compiled-dispatch cycles",
+          "value": 2166,
+          "unit": "cycles",
+          "direction": "min",
+          "context": {
+            "workload": "66ceef8d304af70533f11a1f1e0bad7fe15759781228aca57477f0ffb502da0e",
+            "hardware": "1b39454055238c480eb7eaf5502dfc722bb97bb78d03a339b7b8eca0ccb57c54",
+            "objective": "compiled-dispatch-drained",
+            "evaluator": "ventus-compiled-evaluator-v1/ventus-instruction-rust-v9-4",
+            "protocol": "cold-cache-elf-control-address-v1"
+          }
+        },
+        "functional_reference": {
+          "functional_ok": true,
+          "completion": {
+            "kernel_completed": true,
+            "kernel_completion_markers": [
+              {
+                "stream": "stdout",
+                "line": 23,
+                "text": "[RTL     info]@121985 kernel0  exchange-w4-tail-r3 finished",
+                "simulation_time": 121985
+              }
+            ],
+            "error_diagnostics": [],
+            "limit_diagnostics": [],
+            "completion_reasons": [],
+            "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+          },
+          "numerical": {
+            "outputs_match": true,
+            "expected_words": 1053,
+            "observed_words": 1053,
+            "duplicate_addresses": [],
+            "mismatches": []
+          },
+          "reference_sha256": "a81fa5888e419f8d19a6029f984ebdf5f7d2c7659f793a5e713cc5cdecb91c6d",
+          "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+          "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+          "scope": "Finite outputs and named completion for this frozen program/input/launch on the recorded RTL."
+        },
+        "program_binding": {
+          "format": "ventus-compiled-case-v1",
+          "case": "exchange-w4-tail-r3",
+          "elf_sha256": "b2ca3287a40bdc4aa578f2981241d83fd01a5805627922dc0bdccf0456150a87",
+          "check_manifest_sha256": "88fa6b346dde4312f3d520860d32de8a8883b444e68fc07ff87e1d3613ae83d4"
+        },
+        "execution": {
+          "version": "ventus-instruction-rust-v9-4",
+          "source_sha256": "3ce712b332306ba23faee696e8b847176e7946729b41b1164494ecd0a9e4e051",
+          "runtime_sha256": "2113532a5c96f53a63053093c2fbe4260dc1a4b0f13ba09468a57a7b72207cc4",
+          "program_sha256": [
+            "fa3f7e8f9056f03bf5fec4d123211afac8428cb884a7d516f9b7dc56cf9f78a6"
+          ],
+          "initial_state": "cold cache",
+          "completion_scope": "control/address execution and modeled timing dispatches"
+        },
+        "limitations": [
+          "Finite numerical correctness is rechecked from recorded RTL logs; RTL is not rerun by this evaluator.",
+          "Cycles come from the native timing model; they are not measured RTL cycles or an accuracy claim.",
+          "Boot/CTA/cold instruction fetch and RTL output flush are not matched timing endpoints.",
+          "Registered cases and baseline hardware only; uniform workgroup barriers use conservative model fences; subgroup/atomic synchronization remains unsupported.",
+          "This adapter does not implement template construction, solver binding or a general compiler realizer."
+        ]
+      }
+    }
+  ]
+}

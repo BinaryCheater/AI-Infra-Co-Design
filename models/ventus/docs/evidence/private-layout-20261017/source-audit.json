@@ -1,0 +1,84 @@
+{
+  "rtl_commit": "681172541a8a34ffb43c483a19c075acbc11a4eb",
+  "files": [
+    {
+      "path": "ventus/src/pipeline/LSU.scala",
+      "sha256": "70d45d08a732d426b40b5027b96c9923fd51b69139530c248bb829d739bc58d6",
+      "rules": [
+        {
+          "anchor": "io.csr_tid + x.asUInt",
+          "lines": [
+            150,
+            477
+          ]
+        },
+        {
+          "anchor": "io.csr_pds",
+          "lines": [
+            150,
+            477,
+            583
+          ]
+        },
+        {
+          "anchor": "*io.csr_numw)<<depth_thread",
+          "lines": [
+            150,
+            477
+          ]
+        }
+      ]
+    },
+    {
+      "path": "ventus/src/pipeline/CSR.scala",
+      "sha256": "7934574edd600644dbcc78a792c02f71f166d302ee76ed262b3563029a9d1f11",
+      "rules": [
+        {
+          "anchor": "io.lsu_tid := wf_tag_dispatch * num_thread.asUInt",
+          "lines": [
+            315
+          ]
+        }
+      ]
+    },
+    {
+      "path": "ventus/src/cta/cu_interface.scala",
+      "sha256": "3f9c44bfd38f381d8171a268c17198d54e95c8ba38018af59fef282085b05bc0",
+      "rules": [
+        {
+          "anchor": "splitter_pds_addr + fifo.io.deq.bits.num_pds_per_wf",
+          "lines": [
+            93
+          ]
+        }
+      ]
+    },
+    {
+      "path": "sim-verilator/cta_sche_wrapper.cpp",
+      "sha256": "cacd3cfe77b06f8cbd2d984595de11de3c4b4fc95f7aed3391b213ab6c377239",
+      "rules": [
+        {
+          "anchor": "kernel->get_num_pds_per_thread() * kernel->get_num_thread()",
+          "lines": [
+            86
+          ]
+        }
+      ]
+    },
+    {
+      "path": "ventus/src/top/MemBox.scala",
+      "sha256": "ff6fceec5e24c659114ea0c93e5c9a5c19cdcb4ce0dd24fa9f5043407afae70c",
+      "rules": [
+        {
+          "anchor": "_.host_pds_size_per_wf -> 0.U",
+          "lines": [
+            57
+          ]
+        }
+      ]
+    }
+  ],
+  "source_formula": "workgroup_base + warp_base_increment + 4*(warp*threads+lane) + workgroup_threads*(offset&~3) + (offset&3)",
+  "correction": "Set host_pds_size_per_wf to zero so every warp receives workgroup_base, as in the pinned MemBox harness.",
+  "scope": "Reviewed source/driver address derivation, supported by separate numerical and bus-line evidence."
+}

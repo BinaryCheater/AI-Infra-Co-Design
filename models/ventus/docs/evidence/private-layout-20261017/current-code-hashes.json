@@ -1,0 +1,12 @@
+{
+  "codesign/ventus/driver_adapter.py": "24df7cb5ae5e8ef8635e3ca7d584eb0cf3eb4bb768ed95450000e89bed450204",
+  "codesign/ventus/runtime/r1-private-driver.cpp": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+  "codesign/ventus/elf.py": "3a2cacd09edc645f561106844ef7e0f9533e41cdf4b975252a06948516556a4a",
+  "codesign/ventus/compiled_check.py": "bf6fb5fbe27bed65375357274cb892023e1b1f506212f267d13de40f14ca6e16",
+  "codesign/ventus/launch_contract.py": "23f2ad7b7dcd2063ed2bb1bccd8656ef38c5bb6f6165c3f6cb83a931706e2105",
+  "codesign/ventus/rust.py": "8e2c49927e58fe9dcd8fa03d8274cb58b01aa05f31ed227fc49041fa5becd8d8",
+  "codesign/ventus/rust_core/src/provider.rs": "f4cde8d3c7458f8fd1fec5fe9701330eb06c7a63d54b8ff19a25857f4599a2fd",
+  "codesign/ventus/instruction_cli.py": "e49aeff1daee2535c8c157242322dda7b9cefc0402ac1d324d9d0a4e02c7a47d",
+  "ventus_project/compiled_workflow.py": "a7c5cf108172b96b4f157dc802f64d0a8e31f33a9303f243c86a1edc0c3d207e",
+  "tests/test_ventus_private_memory.py": "f856296463e6be4b98642edd51adf987a68d6e7bd343a12874bde42391b0ff5a"
+}

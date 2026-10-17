@@ -1,0 +1,213 @@
+{
+  "schema": "ventus-compiled-rtl-check-v1",
+  "cases": [
+    {
+      "name": "private-spill-w2-b2",
+      "elf_sha256": "4c6f2f11ad9595e45c12662cd351879f3d5bcc7163deb8f8613dee11a53a8b0b",
+      "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+      "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+      "inputs_sha256": "9eda859f4d7457dbab5918e23e85314b3ab8985838bee1ef458a0cc8d885280c",
+      "case_input_sha256": {
+        "input.metadata": "25fe075c85702806209d4c29c36f801bfc51bd2384a798b39ea42325d34bb7f6",
+        "input.data": "6daa5b1e451f864c57b99a9c3d1d09bd1f006e1e9590f3c70c125ecad6d98594"
+      },
+      "completed": true,
+      "functional_ok": false,
+      "status": "output_mismatch",
+      "unsupported_instruction_diagnostics": [],
+      "completion": {
+        "kernel_completed": true,
+        "kernel_completion_markers": [
+          {
+            "stream": "stdout",
+            "line": 9,
+            "text": "[RTL     info]@9255 kernel0  private-spill-w2-b2 finished",
+            "simulation_time": 9255
+          }
+        ],
+        "error_diagnostics": [],
+        "limit_diagnostics": [],
+        "completion_reasons": [],
+        "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+      },
+      "numerical": {
+        "outputs_match": false,
+        "expected_words": 384,
+        "observed_words": 384,
+        "duplicate_addresses": [],
+        "mismatches": [
+          {
+            "address": 2415927680,
+            "expected": 512,
+            "actual": 1026
+          },
+          {
+            "address": 2415927692,
+            "expected": 528,
+            "actual": 1042
+          },
+          {
+            "address": 2415927704,
+            "expected": 544,
+            "actual": 1058
+          },
+          {
+            "address": 2415927716,
+            "expected": 560,
+            "actual": 1074
+          },
+          {
+            "address": 2415927728,
+            "expected": 576,
+            "actual": 1090
+          },
+          {
+            "address": 2415927740,
+            "expected": 592,
+            "actual": 1106
+          },
+          {
+            "address": 2415927752,
+            "expected": 608,
+            "actual": 1122
+          },
+          {
+            "address": 2415927764,
+            "expected": 624,
+            "actual": 1138
+          },
+          {
+            "address": 2415927776,
+            "expected": 640,
+            "actual": 1154
+          },
+          {
+            "address": 2415927788,
+            "expected": 656,
+            "actual": 1170
+          },
+          {
+            "address": 2415927800,
+            "expected": 672,
+            "actual": 1186
+          },
+          {
+            "address": 2415927812,
+            "expected": 688,
+            "actual": 1202
+          },
+          {
+            "address": 2415927824,
+            "expected": 704,
+            "actual": 1218
+          },
+          {
+            "address": 2415927836,
+            "expected": 720,
+            "actual": 1234
+          },
+          {
+            "address": 2415927848,
+            "expected": 736,
+            "actual": 1250
+          },
+          {
+            "address": 2415927860,
+            "expected": 752,
+            "actual": 1266
+          },
+          {
+            "address": 2415927872,
+            "expected": 768,
+            "actual": 1282
+          },
+          {
+            "address": 2415927884,
+            "expected": 784,
+            "actual": 1298
+          },
+          {
+            "address": 2415927896,
+            "expected": 800,
+            "actual": 1314
+          },
+          {
+            "address": 2415927908,
+            "expected": 816,
+            "actual": 1330
+          },
+          {
+            "address": 2415927920,
+            "expected": 832,
+            "actual": 1346
+          },
+          {
+            "address": 2415927932,
+            "expected": 848,
+            "actual": 1362
+          },
+          {
+            "address": 2415927944,
+            "expected": 864,
+            "actual": 1378
+          },
+          {
+            "address": 2415927956,
+            "expected": 880,
+            "actual": 1394
+          },
+          {
+            "address": 2415927968,
+            "expected": 896,
+            "actual": 1410
+          },
+          {
+            "address": 2415927980,
+            "expected": 912,
+            "actual": 1426
+          },
+          {
+            "address": 2415927992,
+            "expected": 928,
+            "actual": 1442
+          },
+          {
+            "address": 2415928004,
+            "expected": 944,
+            "actual": 1458
+          },
+          {
+            "address": 2415928016,
+            "expected": 960,
+            "actual": 1474
+          },
+          {
+            "address": 2415928028,
+            "expected": 976,
+            "actual": 1490
+          },
+          {
+            "address": 2415928040,
+            "expected": 992,
+            "actual": 1506
+          },
+          {
+            "address": 2415928052,
+            "expected": 1008,
+            "actual": 1522
+          }
+        ]
+      },
+      "returncode": 0,
+      "timed_out": false,
+      "output_exhausted": false,
+      "wall_seconds": 19.17133209295571,
+      "logs_sha256": {
+        "stdout.log": "8ca23a22f97632080ebcaa40a11a42f369adf4877ecfdbd8c1ca0afba6d0f27f",
+        "stderr.log": "db8605bdeb60201bafc78c114c661660670b105667d4902db0fcebfab1176285"
+      },
+      "scope": "Concrete finite input/output check on RTL; no universal proof or timing accuracy claim."
+    }
+  ],
+  "all_functional_ok": false
+}

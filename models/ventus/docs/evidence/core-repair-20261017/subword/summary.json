@@ -1,0 +1,220 @@
+{
+  "name": "subword-div-w2-b2-tail67",
+  "elf_sha256": "9ecc468d6972d5f165ba8f8fc913cdaf598bffe28326424a48930be39912be0c",
+  "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+  "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+  "driver_profile": "workgroup-private-v1",
+  "driver_adapter": {
+    "profile": "workgroup-private-v1",
+    "process": {
+      "returncode": 0,
+      "timed_out": false,
+      "output_exhausted": false,
+      "wall_seconds": 3.670736987143755
+    },
+    "source_sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+    "target_header_sha256": "ce18925342bc0514f34b0f3f8e846271f8f00aac1dd1de7dfcae57f5fa5d303a",
+    "target_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+    "compiler_sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769",
+    "verilator_header_sha256": "1ab9fbe3fb6ef389443f6c31314d8a76479f082c0d37a6484a3d216aeaf5e154",
+    "completed": true,
+    "binary_sha256": "fed9d9feadb91a26ae57cce4cbc40a085e8ba57670c0d2ed5d8662877c364cd3"
+  },
+  "requires_private_adjustment": true,
+  "inputs_sha256": "29b5bc2d3b176153d31903678211618cd958fb8bbb3742cb04d2b351112bdea2",
+  "case_input_sha256": {
+    "input.metadata": "81b052a69df2198f1357a44b7867dcd454fb9d570fd27a90fad3e8ac010ae7e1",
+    "input.data": "e379e075ded84ad221a541cf3b0f005a6feac9e891f4dc6be4a870357a533f0f"
+  },
+  "completed": true,
+  "functional_ok": false,
+  "status": "output_mismatch",
+  "unsupported_instruction_diagnostics": [],
+  "completion": {
+    "kernel_completed": true,
+    "kernel_completion_markers": [
+      {
+        "stream": "stdout",
+        "line": 10,
+        "text": "[RTL     info]@13175 kernel0  subword-div-w2-b2-tail67 finished",
+        "simulation_time": 13175
+      }
+    ],
+    "error_diagnostics": [],
+    "limit_diagnostics": [],
+    "completion_reasons": [],
+    "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+  },
+  "numerical": {
+    "outputs_match": false,
+    "expected_words": 185,
+    "observed_words": 185,
+    "duplicate_addresses": [],
+    "mismatches": [
+      {
+        "address": 2415927296,
+        "expected": 3668478556,
+        "actual": 4294937180
+      },
+      {
+        "address": 2415927300,
+        "expected": 1109394172,
+        "actual": 4294967292
+      },
+      {
+        "address": 2415927304,
+        "expected": 3672672924,
+        "actual": 4294967196
+      },
+      {
+        "address": 2415927312,
+        "expected": 1523116700,
+        "actual": 4294967196
+      },
+      {
+        "address": 2415927316,
+        "expected": 3804242556,
+        "actual": 4290781820
+      },
+      {
+        "address": 2415927320,
+        "expected": 440969884,
+        "actual": 4294967196
+      },
+      {
+        "address": 2415927324,
+        "expected": 3000029756,
+        "actual": 4294955580
+      },
+      {
+        "address": 2415927328,
+        "expected": 438848156,
+        "actual": 4294967196
+      },
+      {
+        "address": 2415927332,
+        "expected": 2191573756,
+        "actual": 4294967292
+      },
+      {
+        "address": 2415927336,
+        "expected": 451463772,
+        "actual": 4294953564
+      },
+      {
+        "address": 2415927340,
+        "expected": 2995802684,
+        "actual": 4287648316
+      },
+      {
+        "address": 2415927344,
+        "expected": 436792028,
+        "actual": 4294967260
+      },
+      {
+        "address": 2415927348,
+        "expected": 3800081020,
+        "actual": 4294943356
+      },
+      {
+        "address": 2415927352,
+        "expected": 1510484700,
+        "actual": 4294967260
+      },
+      {
+        "address": 2415927356,
+        "expected": 2995819196,
+        "actual": 4294967228
+      },
+      {
+        "address": 2415931396,
+        "expected": 2313847998,
+        "actual": 4294935742
+      },
+      {
+        "address": 2415931400,
+        "expected": 2545322522,
+        "actual": 4294937114
+      },
+      {
+        "address": 2415931404,
+        "expected": 2656735366,
+        "actual": 4294938758
+      },
+      {
+        "address": 2415931408,
+        "expected": 2835256618,
+        "actual": 4294939946
+      },
+      {
+        "address": 2415931412,
+        "expected": 2728046542,
+        "actual": 4294946766
+      },
+      {
+        "address": 2415931416,
+        "expected": 3174473834,
+        "actual": 4294942826
+      },
+      {
+        "address": 2415931420,
+        "expected": 3085613574,
+        "actual": 4294949382
+      },
+      {
+        "address": 2415931424,
+        "expected": 3515788474,
+        "actual": 4294945978
+      },
+      {
+        "address": 2415931428,
+        "expected": 3559575902,
+        "actual": 4294955358
+      },
+      {
+        "address": 2415931432,
+        "expected": 3671515130,
+        "actual": 4294959098
+      },
+      {
+        "address": 2415931436,
+        "expected": 3246048646,
+        "actual": 4294952326
+      },
+      {
+        "address": 2415931440,
+        "expected": 3340681770,
+        "actual": 4294951466
+      },
+      {
+        "address": 2415931444,
+        "expected": 4256889038,
+        "actual": 4294965454
+      },
+      {
+        "address": 2415931448,
+        "expected": 4032230762,
+        "actual": 4294964586
+      },
+      {
+        "address": 2415931452,
+        "expected": 3941265158,
+        "actual": 4294962950
+      },
+      {
+        "address": 2415931456,
+        "expected": 3700349402,
+        "actual": 4294957530
+      }
+    ]
+  },
+  "returncode": 0,
+  "timed_out": false,
+  "output_exhausted": false,
+  "wall_seconds": 19.92278781393543,
+  "logs_sha256": {
+    "stdout.log": "a116c5b20db7e729460585a8598d23ca4a677020604b4832609db2d35a5edacb",
+    "stderr.log": "01fd7f4e2bafcb57134edfb22f7811e5230c9cee2dbc4db50a707cacd63fe626"
+  },
+  "scope": "Concrete finite input/output check on RTL; no universal proof or timing accuracy claim."
+}

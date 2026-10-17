@@ -1,0 +1,84 @@
+{
+  "schema": "ventus-compiled-workflow-result-v1",
+  "job_id": "1356231fb0d445cfbc22a746a9b7fc60",
+  "native": [
+    {
+      "name": "gemm-m11-n13-k9",
+      "completed": false,
+      "process": {
+        "returncode": 1,
+        "timed_out": false,
+        "output_exhausted": false,
+        "wall_seconds": 0.5058769180905074
+      },
+      "cycles": null,
+      "instructions": null,
+      "receipt_sha256": null
+    }
+  ],
+  "rtl": {
+    "schema": "ventus-compiled-rtl-check-v1",
+    "cases": [
+      {
+        "name": "gemm-m11-n13-k9",
+        "elf_sha256": "0069414083961ef161d19c39565005bbfff21b7d3230e1576f90b818ed644978",
+        "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+        "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+        "observer_sha256": "c6144a2848cdc285fea0a3939661cd13c231c3dfc51958c7c0a8d1b7bdf13dcd",
+        "inputs_sha256": "dc28f612bfef92dfeb927e13a693d1f87e350186a8be9b06778245684b215d34",
+        "case_input_sha256": {
+          "input.metadata": "24b3315ecbce033d70929366fa454cf27e5bfa523b7624169d151111e9904d57",
+          "input.data": "8a8800b1601d0b0f35e3102da3b168221d1897f5f9f6e5e88dce18abb584faf4"
+        },
+        "completed": true,
+        "functional_ok": true,
+        "status": "passed",
+        "unsupported_instruction_diagnostics": [],
+        "completion": {
+          "kernel_completed": true,
+          "kernel_completion_markers": [
+            {
+              "stream": "stdout",
+              "line": 22,
+              "text": "[RTL     info]@115385 kernel0  gemm-m11-n13-k9 finished",
+              "simulation_time": 115385
+            }
+          ],
+          "error_diagnostics": [],
+          "limit_diagnostics": [],
+          "completion_reasons": [],
+          "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+        },
+        "numerical": {
+          "outputs_match": true,
+          "expected_words": 143,
+          "observed_words": 143,
+          "duplicate_addresses": [],
+          "mismatches": []
+        },
+        "returncode": 0,
+        "timed_out": false,
+        "output_exhausted": false,
+        "wall_seconds": 53.575233057839796,
+        "logs_sha256": {
+          "stdout.log": "b16e1e03703e98053f2e7eafc1baa9ef68d6927bc636a8c278b7edc85b562b65",
+          "stderr.log": "71ecf78d357853e0da3b8940bb9f623db1c580612089001d9718f8c3d3c282d4"
+        },
+        "scope": "Concrete finite input/output check on RTL; no universal proof or timing accuracy claim."
+      }
+    ],
+    "all_functional_ok": true
+  },
+  "completed": false,
+  "code_manifest_sha256": "65fd4807bddf541dc56dd35cecc17771e4a64933efc35bd9e01008de51eb86fb",
+  "case_manifest_sha256": "1e2549e138a15e0b0128cdddf35db217923c60f0f15acc851d1661f7a8306e5c",
+  "python": "3.12.3",
+  "architecture": "x86_64",
+  "scope": "Concrete compilation/control-address timing/numerical RTL integration; no accuracy, optimality or acceptance claim",
+  "diagnostic": {
+    "type": "ModuleNotFoundError",
+    "missing_module": "codesign.solver",
+    "original_stderr_sha256": "94cbd9fb64452d1b64264e24c2a78d885614a1b5562b94404d424954b7c3b3e4",
+    "scope": "Worker snapshot omitted a shared dependency; original private logs retained in ignored results."
+  }
+}

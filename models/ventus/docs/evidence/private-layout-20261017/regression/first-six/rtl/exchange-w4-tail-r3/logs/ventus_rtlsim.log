@@ -1,0 +1,29 @@
+[RTL     info]@0 SNAPSHOT created, pid=2522330
+[RTL    trace]@20 Hardware reset ok
+[RTL    trace]@30 kernel 0 exchange-w4-tail-r3 activate
+[RTL    debug]@5125 block0  dispatched to GPU (kernel0  exchange-w4-tail-r3 block0 )
+[RTL    debug]@5135 block1  dispatched to GPU (kernel0  exchange-w4-tail-r3 block1 )
+[RTL    debug]@5145 block2  dispatched to GPU (kernel0  exchange-w4-tail-r3 block2 )
+[RTL    debug]@10000 
+[RTL    debug]@20000 
+[RTL    debug]@30000 
+[RTL    debug]@32825 block1  finished (kernel0  exchange-w4-tail-r3 block1 )
+[RTL    debug]@33735 block0  finished (kernel0  exchange-w4-tail-r3 block0 )
+[RTL    debug]@40000 
+[RTL    debug]@50000 
+[RTL    debug]@60000 
+[RTL    debug]@70000 
+[RTL    debug]@80000 
+[RTL    debug]@90000 
+[RTL    debug]@100000 
+[RTL    debug]@110000 
+[RTL    debug]@120000 
+[RTL    debug]@121885 block2  finished (kernel0  exchange-w4-tail-r3 block2 )
+[RTL     info]@121885 kernel0  exchange-w4-tail-r3 finished
+[RTL    debug]@130000 
+[RTL    debug]@140000 
+[RTL    debug]@150000 
+[RTL    debug]@160000 
+[RTL    debug]@170000 
+[RTL     info]@171885 Simulation finished in 171885 unit time
+[RTL    debug]@171885 All snapshot process are cleared, OK

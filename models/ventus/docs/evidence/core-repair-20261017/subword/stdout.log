@@ -1,0 +1,205 @@
+[RTL     info]@0 SNAPSHOT created, pid=2647385
+[RTL    trace]@20 Hardware reset ok
+[2026-10-17 20:18:30.135] [trace] kernel0 @ßIN^ data loaded from file
+[RTL    trace]@30 kernel 0 subword-div-w2-b2-tail67 activate
+[RTL    debug]@185 block0  dispatched to GPU (kernel0  subword-div-w2-b2-tail67 block0 )
+[RTL    debug]@195 block1  dispatched to GPU (kernel0  subword-div-w2-b2-tail67 block1 )
+[RTL    debug]@10000 
+[RTL    debug]@11485 block1  finished (kernel0  subword-div-w2-b2-tail67 block1 )
+[RTL    debug]@13175 block0  finished (kernel0  subword-div-w2-b2-tail67 block0 )
+[RTL     info]@13175 kernel0  subword-div-w2-b2-tail67 finished
+[RTL    debug]@20000 
+[RTL    debug]@30000 
+[RTL    debug]@40000 
+[RTL    debug]@50000 
+[RTL    debug]@60000 
+dump-mem: mem[0x90002000 +: 4] = 0xFFFF8A5C
+dump-mem: mem[0x90002004 +: 4] = 0xFFFFFFFC
+dump-mem: mem[0x90002008 +: 4] = 0xFFFFFF9C
+dump-mem: mem[0x9000200C +: 4] = 0xB250123C
+dump-mem: mem[0x90002010 +: 4] = 0xFFFFFF9C
+dump-mem: mem[0x90002014 +: 4] = 0xFFC0227C
+dump-mem: mem[0x90002018 +: 4] = 0xFFFFFF9C
+dump-mem: mem[0x9000201C +: 4] = 0xFFFFD23C
+dump-mem: mem[0x90002020 +: 4] = 0xFFFFFF9C
+dump-mem: mem[0x90002024 +: 4] = 0xFFFFFFFC
+dump-mem: mem[0x90002028 +: 4] = 0xFFFFCA5C
+dump-mem: mem[0x9000202C +: 4] = 0xFF90523C
+dump-mem: mem[0x90002030 +: 4] = 0xFFFFFFDC
+dump-mem: mem[0x90002034 +: 4] = 0xFFFFA27C
+dump-mem: mem[0x90002038 +: 4] = 0xFFFFFFDC
+dump-mem: mem[0x9000203C +: 4] = 0xFFFFFFBC
+dump-mem: mem[0x90002040 +: 4] = 0x7F280A5C
+dump-mem: mem[0x90003000 +: 4] = 0x838E7F5A
+dump-mem: mem[0x90003004 +: 4] = 0xFFFF84BE
+dump-mem: mem[0x90003008 +: 4] = 0xFFFF8A1A
+dump-mem: mem[0x9000300C +: 4] = 0xFFFF9086
+dump-mem: mem[0x90003010 +: 4] = 0xFFFF952A
+dump-mem: mem[0x90003014 +: 4] = 0xFFFFAFCE
+dump-mem: mem[0x90003018 +: 4] = 0xFFFFA06A
+dump-mem: mem[0x9000301C +: 4] = 0xFFFFBA06
+dump-mem: mem[0x90003020 +: 4] = 0xFFFFACBA
+dump-mem: mem[0x90003024 +: 4] = 0xFFFFD15E
+dump-mem: mem[0x90003028 +: 4] = 0xFFFFDFFA
+dump-mem: mem[0x9000302C +: 4] = 0xFFFFC586
+dump-mem: mem[0x90003030 +: 4] = 0xFFFFC22A
+dump-mem: mem[0x90003034 +: 4] = 0xFFFFF8CE
+dump-mem: mem[0x90003038 +: 4] = 0xFFFFF56A
+dump-mem: mem[0x9000303C +: 4] = 0xFFFFEF06
+dump-mem: mem[0x90003040 +: 4] = 0xFFFFD9DA
+dump-mem: mem[0x90003044 +: 4] = 0x272A227E
+dump-mem: mem[0x90003048 +: 4] = 0x29F62C1A
+dump-mem: mem[0x9000304C +: 4] = 0x345A3686
+dump-mem: mem[0x90003050 +: 4] = 0x323E3F6A
+dump-mem: mem[0x90003054 +: 4] = 0x089A35CE
+dump-mem: mem[0x90003058 +: 4] = 0x07760BAA
+dump-mem: mem[0x9000305C +: 4] = 0x1D2A0006
+dump-mem: mem[0x90003060 +: 4] = 0x0B8E06FA
+dump-mem: mem[0x90003064 +: 4] = 0x726A0F5E
+dump-mem: mem[0x90003068 +: 4] = 0x7CD6713A
+dump-mem: mem[0x9000306C +: 4] = 0x66BA7B86
+dump-mem: mem[0x90003070 +: 4] = 0x611E6C6A
+dump-mem: mem[0x90003074 +: 4] = 0x5BFA66CE
+dump-mem: mem[0x90003078 +: 4] = 0x5A5658AA
+dump-mem: mem[0x9000307C +: 4] = 0x502A5506
+dump-mem: mem[0x90003080 +: 4] = 0x368E33DA
+dump-mem: mem[0x90003084 +: 4] = 0x7FC039BE
+dump-mem: mem[0x90004000 +: 4] = 0x0000005B
+dump-mem: mem[0x90004004 +: 4] = 0x00000000
+dump-mem: mem[0x90004008 +: 4] = 0xFFFFFFC0
+dump-mem: mem[0x9000400C +: 4] = 0x00000000
+dump-mem: mem[0x90004010 +: 4] = 0xFFFFFFE2
+dump-mem: mem[0x90004014 +: 4] = 0xFFFFFFFE
+dump-mem: mem[0x90004018 +: 4] = 0xFFFFFFF3
+dump-mem: mem[0x9000401C +: 4] = 0x00000000
+dump-mem: mem[0x90004020 +: 4] = 0xFFFFFFFD
+dump-mem: mem[0x90004024 +: 4] = 0x00000000
+dump-mem: mem[0x90004028 +: 4] = 0x00000003
+dump-mem: mem[0x9000402C +: 4] = 0x00000000
+dump-mem: mem[0x90004030 +: 4] = 0x00000008
+dump-mem: mem[0x90004034 +: 4] = 0x00000000
+dump-mem: mem[0x90004038 +: 4] = 0x0000000B
+dump-mem: mem[0x9000403C +: 4] = 0x00000000
+dump-mem: mem[0x90004040 +: 4] = 0xFFFFFF83
+dump-mem: mem[0x90004044 +: 4] = 0x00000000
+dump-mem: mem[0x90004048 +: 4] = 0xFFFFFFD4
+dump-mem: mem[0x9000404C +: 4] = 0x00000000
+dump-mem: mem[0x90004050 +: 4] = 0xFFFFFFEF
+dump-mem: mem[0x90004054 +: 4] = 0xFFFFFFFF
+dump-mem: mem[0x90004058 +: 4] = 0xFFFFFFFD
+dump-mem: mem[0x9000405C +: 4] = 0x00000000
+dump-mem: mem[0x90004060 +: 4] = 0x00000004
+dump-mem: mem[0x90004064 +: 4] = 0x00000000
+dump-mem: mem[0x90004068 +: 4] = 0x0000000A
+dump-mem: mem[0x9000406C +: 4] = 0x00000000
+dump-mem: mem[0x90004070 +: 4] = 0x0000000D
+dump-mem: mem[0x90004074 +: 4] = 0xFFFFFFFE
+dump-mem: mem[0x90004078 +: 4] = 0xFFFFFFF1
+dump-mem: mem[0x9000407C +: 4] = 0x00000000
+dump-mem: mem[0x90004080 +: 4] = 0xFFFFFFAB
+dump-mem: mem[0x90004084 +: 4] = 0x00000000
+dump-mem: mem[0x90004088 +: 4] = 0xFFFFFFE8
+dump-mem: mem[0x9000408C +: 4] = 0x00000000
+dump-mem: mem[0x90004090 +: 4] = 0xFFFFFFFD
+dump-mem: mem[0x90004094 +: 4] = 0x00000000
+dump-mem: mem[0x90004098 +: 4] = 0x00000006
+dump-mem: mem[0x9000409C +: 4] = 0x00000000
+dump-mem: mem[0x900040A0 +: 4] = 0x0000000C
+dump-mem: mem[0x900040A4 +: 4] = 0x00000000
+dump-mem: mem[0x900040A8 +: 4] = 0x00000010
+dump-mem: mem[0x900040AC +: 4] = 0x00000000
+dump-mem: mem[0x900040B0 +: 4] = 0xFFFFFFEF
+dump-mem: mem[0x900040B4 +: 4] = 0xFFFFFFFF
+dump-mem: mem[0x900040B8 +: 4] = 0xFFFFFFF6
+dump-mem: mem[0x900040BC +: 4] = 0x00000000
+dump-mem: mem[0x900040C0 +: 4] = 0xFFFFFFD3
+dump-mem: mem[0x900040C4 +: 4] = 0x00000000
+dump-mem: mem[0x900040C8 +: 4] = 0xFFFFFFFC
+dump-mem: mem[0x900040CC +: 4] = 0x00000000
+dump-mem: mem[0x900040D0 +: 4] = 0x00000009
+dump-mem: mem[0x900040D4 +: 4] = 0xFFFFFFFE
+dump-mem: mem[0x900040D8 +: 4] = 0x00000010
+dump-mem: mem[0x900040DC +: 4] = 0x00000000
+dump-mem: mem[0x900040E0 +: 4] = 0x00000014
+dump-mem: mem[0x900040E4 +: 4] = 0x00000000
+dump-mem: mem[0x900040E8 +: 4] = 0xFFFFFFED
+dump-mem: mem[0x900040EC +: 4] = 0x00000000
+dump-mem: mem[0x900040F0 +: 4] = 0xFFFFFFF5
+dump-mem: mem[0x900040F4 +: 4] = 0x00000000
+dump-mem: mem[0x900040F8 +: 4] = 0xFFFFFFFB
+dump-mem: mem[0x900040FC +: 4] = 0x00000000
+dump-mem: mem[0x90004100 +: 4] = 0xFFFFFFFB
+dump-mem: mem[0x90004104 +: 4] = 0x00000000
+dump-mem: mem[0x90004108 +: 4] = 0x00000010
+dump-mem: mem[0x9000410C +: 4] = 0x00000000
+dump-mem: mem[0x90004110 +: 4] = 0x00000017
+dump-mem: mem[0x90004114 +: 4] = 0x00000002
+dump-mem: mem[0x90004118 +: 4] = 0x0000001A
+dump-mem: mem[0x9000411C +: 4] = 0x00000000
+dump-mem: mem[0x90004120 +: 4] = 0xFFFFFFEA
+dump-mem: mem[0x90004124 +: 4] = 0x00000000
+dump-mem: mem[0x90004128 +: 4] = 0xFFFFFFF4
+dump-mem: mem[0x9000412C +: 4] = 0x00000000
+dump-mem: mem[0x90004130 +: 4] = 0xFFFFFFFB
+dump-mem: mem[0x90004134 +: 4] = 0x00000001
+dump-mem: mem[0x90004138 +: 4] = 0x00000000
+dump-mem: mem[0x9000413C +: 4] = 0x00000000
+dump-mem: mem[0x90004140 +: 4] = 0x00000023
+dump-mem: mem[0x90004144 +: 4] = 0x00000000
+dump-mem: mem[0x90004148 +: 4] = 0x00000024
+dump-mem: mem[0x9000414C +: 4] = 0x00000000
+dump-mem: mem[0x90004150 +: 4] = 0x00000024
+dump-mem: mem[0x90004154 +: 4] = 0x00000000
+dump-mem: mem[0x90004158 +: 4] = 0xFFFFFFE5
+dump-mem: mem[0x9000415C +: 4] = 0x00000000
+dump-mem: mem[0x90004160 +: 4] = 0xFFFFFFF2
+dump-mem: mem[0x90004164 +: 4] = 0x00000000
+dump-mem: mem[0x90004168 +: 4] = 0xFFFFFFFA
+dump-mem: mem[0x9000416C +: 4] = 0x00000000
+dump-mem: mem[0x90004170 +: 4] = 0x00000000
+dump-mem: mem[0x90004174 +: 4] = 0x00000002
+dump-mem: mem[0x90004178 +: 4] = 0x00000004
+dump-mem: mem[0x9000417C +: 4] = 0x00000000
+dump-mem: mem[0x90004180 +: 4] = 0x0000004B
+dump-mem: mem[0x90004184 +: 4] = 0x00000000
+dump-mem: mem[0x90004188 +: 4] = 0x00000038
+dump-mem: mem[0x9000418C +: 4] = 0x00000000
+dump-mem: mem[0x90004190 +: 4] = 0xFFFFFFDD
+dump-mem: mem[0x90004194 +: 4] = 0x00000001
+dump-mem: mem[0x90004198 +: 4] = 0xFFFFFFEF
+dump-mem: mem[0x9000419C +: 4] = 0x00000000
+dump-mem: mem[0x900041A0 +: 4] = 0xFFFFFFFA
+dump-mem: mem[0x900041A4 +: 4] = 0x00000000
+dump-mem: mem[0x900041A8 +: 4] = 0x00000000
+dump-mem: mem[0x900041AC +: 4] = 0x00000000
+dump-mem: mem[0x900041B0 +: 4] = 0x00000005
+dump-mem: mem[0x900041B4 +: 4] = 0x00000000
+dump-mem: mem[0x900041B8 +: 4] = 0x00000009
+dump-mem: mem[0x900041BC +: 4] = 0x00000000
+dump-mem: mem[0x900041C0 +: 4] = 0x00000073
+dump-mem: mem[0x900041C4 +: 4] = 0x00000000
+dump-mem: mem[0x900041C8 +: 4] = 0xFFFFFFCC
+dump-mem: mem[0x900041CC +: 4] = 0x00000000
+dump-mem: mem[0x900041D0 +: 4] = 0xFFFFFFEA
+dump-mem: mem[0x900041D4 +: 4] = 0x00000002
+dump-mem: mem[0x900041D8 +: 4] = 0xFFFFFFF9
+dump-mem: mem[0x900041DC +: 4] = 0x00000000
+dump-mem: mem[0x900041E0 +: 4] = 0x00000001
+dump-mem: mem[0x900041E4 +: 4] = 0x00000000
+dump-mem: mem[0x900041E8 +: 4] = 0x00000007
+dump-mem: mem[0x900041EC +: 4] = 0x00000000
+dump-mem: mem[0x900041F0 +: 4] = 0x0000000B
+dump-mem: mem[0x900041F4 +: 4] = 0x00000001
+dump-mem: mem[0x900041F8 +: 4] = 0x0000000E
+dump-mem: mem[0x900041FC +: 4] = 0x00000000
+dump-mem: mem[0x90004200 +: 4] = 0xFFFFFF9B
+dump-mem: mem[0x90004204 +: 4] = 0x00000000
+dump-mem: mem[0x90004208 +: 4] = 0xFFFFFFE0
+dump-mem: mem[0x9000420C +: 4] = 0x00000000
+dump-mem: mem[0x90004210 +: 4] = 0xFFFFFFF7
+dump-mem: mem[0x90004214 +: 4] = 0x00000000
+[RTL     info]@63175 Simulation finished in 63175 unit time
+- S i m u l a t i o n   R e p o r t: Verilator 5.049 devel
+- Verilator: end at 63ns; walltime 19.697 s; speed 3.207 ns/s
+- Verilator: cpu 78.533 s on 4 threads; allocated 583 MB
+[RTL    debug]@63175 All snapshot process are cleared, OK

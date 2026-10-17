@@ -1,0 +1,140 @@
+{
+  "scope": "Model regression fixtures only; full historical export is not bundled",
+  "source_commit": "c4d138e5cd800b1b081ce06693eff3e39a8aa5bb",
+  "upstream_manifest": "UPSTREAM-export-manifest.json",
+  "files": [
+    {
+      "path": "archive/analysis/ventus_flow_20261006/layernorm_rtl_20261006/generate.py",
+      "original_sha256": "226f5f565bfc5712c5ad95268222e8a31597da75be322fd73eac18f8acb50fc8",
+      "export_sha256": "226f5f565bfc5712c5ad95268222e8a31597da75be322fd73eac18f8acb50fc8",
+      "changed": false,
+      "bytes": 12237
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/layernorm_rtl_20261006/isa_reference.py",
+      "original_sha256": "d3f9c53bbc067f69d7bdb20314fda619e1e27a037edfe0fb194571128f1bb494",
+      "export_sha256": "d3f9c53bbc067f69d7bdb20314fda619e1e27a037edfe0fb194571128f1bb494",
+      "changed": false,
+      "bytes": 3993
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/isa_check.py",
+      "original_sha256": "2ded18826ca633be1c1b261867e2b290ea82591e39ed848d01cccc0c8bf57542",
+      "export_sha256": "2ded18826ca633be1c1b261867e2b290ea82591e39ed848d01cccc0c8bf57542",
+      "changed": false,
+      "bytes": 6514
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/cases.json",
+      "original_sha256": "f53c54ea9f948376ef1d1bc6f63d3faf502d570be65882bd7539324768551930",
+      "export_sha256": "f53c54ea9f948376ef1d1bc6f63d3faf502d570be65882bd7539324768551930",
+      "changed": false,
+      "bytes": 2600736
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/chain-w1/input.data",
+      "original_sha256": "732fe2f9ccf7a79f9149e2119e6731039e7b46594f5f6c1974ce694434385322",
+      "export_sha256": "732fe2f9ccf7a79f9149e2119e6731039e7b46594f5f6c1974ce694434385322",
+      "changed": false,
+      "bytes": 25857
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/chain-w1/input.metadata",
+      "original_sha256": "138a963c1ffe81a491dd2ec73cdc04d64619b49434b363adb8b96492b0504c2c",
+      "export_sha256": "138a963c1ffe81a491dd2ec73cdc04d64619b49434b363adb8b96492b0504c2c",
+      "changed": false,
+      "bytes": 630
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/conflict-return-w2/input.data",
+      "original_sha256": "a51add45af9ee7cffb0af48d3056856415b20a988bb76d36b037b2d3b5db8614",
+      "export_sha256": "a51add45af9ee7cffb0af48d3056856415b20a988bb76d36b037b2d3b5db8614",
+      "changed": false,
+      "bytes": 1036773
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/conflict-return-w2/input.metadata",
+      "original_sha256": "09501fea9de761b6631c467d253b3314f54af973cc10d1004f500e2c68afcf16",
+      "export_sha256": "09501fea9de761b6631c467d253b3314f54af973cc10d1004f500e2c68afcf16",
+      "changed": false,
+      "bytes": 630
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/conflict-return-w4/input.data",
+      "original_sha256": "038a887d5dd916e5262e02fcac177c3a2af011aa0865afe554d83a5c8110060f",
+      "export_sha256": "038a887d5dd916e5262e02fcac177c3a2af011aa0865afe554d83a5c8110060f",
+      "changed": false,
+      "bytes": 1037349
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/conflict-return-w4/input.metadata",
+      "original_sha256": "cba07026585dbc350799737667b6864a4f83d6477410105b57d52a683c1a68cb",
+      "export_sha256": "cba07026585dbc350799737667b6864a4f83d6477410105b57d52a683c1a68cb",
+      "changed": false,
+      "bytes": 630
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/pre_run_predictions.json",
+      "original_sha256": "e1d1a51919d7bcfb9e0f00080711164bf683d3f1b5e1d83518cda519eb727236",
+      "export_sha256": "aad89c65656950914061b9974637423eb5bfeee72b3f73bfc508dee9bc414593",
+      "changed": true,
+      "bytes": 2824931
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/softmax-w1/input.data",
+      "original_sha256": "75354e983542b540d3897e2e750c9998adf838f6765afa449707b6f4600bd77c",
+      "export_sha256": "75354e983542b540d3897e2e750c9998adf838f6765afa449707b6f4600bd77c",
+      "changed": false,
+      "bytes": 21627
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/softmax-w1/input.metadata",
+      "original_sha256": "053e9f4d25c0ec310b4d8b42c78639d0693b06dde9623aea29407b434ea6afdb",
+      "export_sha256": "053e9f4d25c0ec310b4d8b42c78639d0693b06dde9623aea29407b434ea6afdb",
+      "changed": false,
+      "bytes": 630
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/stream-w2/input.data",
+      "original_sha256": "9474ef37890a553123de1cf5f42a7a3c648326907cff9eba361b29b277ca6258",
+      "export_sha256": "9474ef37890a553123de1cf5f42a7a3c648326907cff9eba361b29b277ca6258",
+      "changed": false,
+      "bytes": 22995
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/stream-w2/input.metadata",
+      "original_sha256": "5d3a0574214594b2765ee91a9e410695dbb0faafbaf96f194cf3b466e216da71",
+      "export_sha256": "5d3a0574214594b2765ee91a9e410695dbb0faafbaf96f194cf3b466e216da71",
+      "changed": false,
+      "bytes": 630
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/stream-w4/input.data",
+      "original_sha256": "78d91c24448acdfc8f59745fb30b11010301df4f178c9c6480c90cc7a27a7774",
+      "export_sha256": "78d91c24448acdfc8f59745fb30b11010301df4f178c9c6480c90cc7a27a7774",
+      "changed": false,
+      "bytes": 23571
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/quick_complete_20261006/probes/stream-w4/input.metadata",
+      "original_sha256": "f98a5ed1b16a555c1a822fb59b373f0211c62c9656af304332b460fb2dfd90df",
+      "export_sha256": "f98a5ed1b16a555c1a822fb59b373f0211c62c9656af304332b460fb2dfd90df",
+      "changed": false,
+      "bytes": 630
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/search_model/kernel-probes-v3/stream-4-rf0-lds1/input.data",
+      "original_sha256": "4977a623d93811ce1d9c6283c3bed6df92610f0093244f6adfb61b88bc693428",
+      "export_sha256": "4977a623d93811ce1d9c6283c3bed6df92610f0093244f6adfb61b88bc693428",
+      "changed": false,
+      "bytes": 30393
+    },
+    {
+      "path": "archive/analysis/ventus_flow_20261006/search_model/kernel-probes-v3/stream-4-rf0-lds1/input.metadata",
+      "original_sha256": "cdfd48b96072c026f086f4548a15910855cf8ac05c1f3afa4339e3983ca83a9f",
+      "export_sha256": "cdfd48b96072c026f086f4548a15910855cf8ac05c1f3afa4339e3983ca83a9f",
+      "changed": false,
+      "bytes": 630
+    }
+  ]
+}

@@ -1,0 +1,356 @@
+{
+  "scope": "Seven distinct existing cases on corrected driver across two separate runs. First batch remains incomplete; only unstarted case ran separately. No timing-accuracy claim.",
+  "cases": [
+    {
+      "run": "first-six",
+      "case": "vecadd-single-w1-b2",
+      "reference": {
+        "functional_ok": true,
+        "driver_profile": "workgroup-private-v1",
+        "driver_adapter": {
+          "profile": "workgroup-private-v1",
+          "process": {
+            "returncode": 0,
+            "timed_out": false,
+            "output_exhausted": false,
+            "wall_seconds": 3.319526780862361
+          },
+          "source_sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+          "target_header_sha256": "ce18925342bc0514f34b0f3f8e846271f8f00aac1dd1de7dfcae57f5fa5d303a",
+          "target_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+          "compiler_sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769",
+          "verilator_header_sha256": "1ab9fbe3fb6ef389443f6c31314d8a76479f082c0d37a6484a3d216aeaf5e154",
+          "completed": true,
+          "binary_sha256": "fed9d9feadb91a26ae57cce4cbc40a085e8ba57670c0d2ed5d8662877c364cd3"
+        },
+        "completion": {
+          "kernel_completed": true,
+          "kernel_completion_markers": [
+            {
+              "stream": "stdout",
+              "line": 10,
+              "text": "[RTL     info]@11715 kernel0  vecadd-single-w1-b2 finished",
+              "simulation_time": 11715
+            }
+          ],
+          "error_diagnostics": [],
+          "limit_diagnostics": [],
+          "completion_reasons": [],
+          "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+        },
+        "numerical": {
+          "outputs_match": true,
+          "expected_words": 64,
+          "observed_words": 64,
+          "duplicate_addresses": [],
+          "mismatches": []
+        },
+        "reference_sha256": "a772b47431465864ea0a6a5685ed5c69ffa54ec3286092c3df9aaddca2f187e9",
+        "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+        "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+        "scope": "Finite outputs and named completion for this frozen program/input/launch on the recorded RTL."
+      }
+    },
+    {
+      "run": "first-six",
+      "case": "vecadd-single-w2-b3",
+      "reference": {
+        "functional_ok": true,
+        "driver_profile": "workgroup-private-v1",
+        "driver_adapter": {
+          "profile": "workgroup-private-v1",
+          "process": {
+            "returncode": 0,
+            "timed_out": false,
+            "output_exhausted": false,
+            "wall_seconds": 3.319526780862361
+          },
+          "source_sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+          "target_header_sha256": "ce18925342bc0514f34b0f3f8e846271f8f00aac1dd1de7dfcae57f5fa5d303a",
+          "target_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+          "compiler_sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769",
+          "verilator_header_sha256": "1ab9fbe3fb6ef389443f6c31314d8a76479f082c0d37a6484a3d216aeaf5e154",
+          "completed": true,
+          "binary_sha256": "fed9d9feadb91a26ae57cce4cbc40a085e8ba57670c0d2ed5d8662877c364cd3"
+        },
+        "completion": {
+          "kernel_completed": true,
+          "kernel_completion_markers": [
+            {
+              "stream": "stdout",
+              "line": 19,
+              "text": "[RTL     info]@84775 kernel0  vecadd-single-w2-b3 finished",
+              "simulation_time": 84775
+            }
+          ],
+          "error_diagnostics": [],
+          "limit_diagnostics": [],
+          "completion_reasons": [],
+          "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+        },
+        "numerical": {
+          "outputs_match": true,
+          "expected_words": 192,
+          "observed_words": 192,
+          "duplicate_addresses": [],
+          "mismatches": []
+        },
+        "reference_sha256": "c9b67020748ee67f440e21c8c7524f56b106b3ce1be419a44496ebbcfe33bf9e",
+        "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+        "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+        "scope": "Finite outputs and named completion for this frozen program/input/launch on the recorded RTL."
+      }
+    },
+    {
+      "run": "first-six",
+      "case": "vecadd-pairs-w4-b3",
+      "reference": {
+        "functional_ok": true,
+        "driver_profile": "workgroup-private-v1",
+        "driver_adapter": {
+          "profile": "workgroup-private-v1",
+          "process": {
+            "returncode": 0,
+            "timed_out": false,
+            "output_exhausted": false,
+            "wall_seconds": 3.319526780862361
+          },
+          "source_sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+          "target_header_sha256": "ce18925342bc0514f34b0f3f8e846271f8f00aac1dd1de7dfcae57f5fa5d303a",
+          "target_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+          "compiler_sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769",
+          "verilator_header_sha256": "1ab9fbe3fb6ef389443f6c31314d8a76479f082c0d37a6484a3d216aeaf5e154",
+          "completed": true,
+          "binary_sha256": "fed9d9feadb91a26ae57cce4cbc40a085e8ba57670c0d2ed5d8662877c364cd3"
+        },
+        "completion": {
+          "kernel_completed": true,
+          "kernel_completion_markers": [
+            {
+              "stream": "stdout",
+              "line": 20,
+              "text": "[RTL     info]@93035 kernel0  vecadd-pairs-w4-b3 finished",
+              "simulation_time": 93035
+            }
+          ],
+          "error_diagnostics": [],
+          "limit_diagnostics": [],
+          "completion_reasons": [],
+          "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+        },
+        "numerical": {
+          "outputs_match": true,
+          "expected_words": 768,
+          "observed_words": 768,
+          "duplicate_addresses": [],
+          "mismatches": []
+        },
+        "reference_sha256": "2ce1a5f4b2be7934220c3d0f63b73e03e38b1126d00218f7e9da99235a4173aa",
+        "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+        "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+        "scope": "Finite outputs and named completion for this frozen program/input/launch on the recorded RTL."
+      }
+    },
+    {
+      "run": "first-six",
+      "case": "exchange-w2-tail-r2",
+      "reference": {
+        "functional_ok": true,
+        "driver_profile": "workgroup-private-v1",
+        "driver_adapter": {
+          "profile": "workgroup-private-v1",
+          "process": {
+            "returncode": 0,
+            "timed_out": false,
+            "output_exhausted": false,
+            "wall_seconds": 3.319526780862361
+          },
+          "source_sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+          "target_header_sha256": "ce18925342bc0514f34b0f3f8e846271f8f00aac1dd1de7dfcae57f5fa5d303a",
+          "target_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+          "compiler_sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769",
+          "verilator_header_sha256": "1ab9fbe3fb6ef389443f6c31314d8a76479f082c0d37a6484a3d216aeaf5e154",
+          "completed": true,
+          "binary_sha256": "fed9d9feadb91a26ae57cce4cbc40a085e8ba57670c0d2ed5d8662877c364cd3"
+        },
+        "completion": {
+          "kernel_completed": true,
+          "kernel_completion_markers": [
+            {
+              "stream": "stdout",
+              "line": 20,
+              "text": "[RTL     info]@99365 kernel0  exchange-w2-tail-r2 finished",
+              "simulation_time": 99365
+            }
+          ],
+          "error_diagnostics": [],
+          "limit_diagnostics": [],
+          "completion_reasons": [],
+          "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+        },
+        "numerical": {
+          "outputs_match": true,
+          "expected_words": 346,
+          "observed_words": 346,
+          "duplicate_addresses": [],
+          "mismatches": []
+        },
+        "reference_sha256": "42ac63f38b62012b9ef6c7abfe511b45a67580465221ebde79dda209a941563d",
+        "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+        "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+        "scope": "Finite outputs and named completion for this frozen program/input/launch on the recorded RTL."
+      }
+    },
+    {
+      "run": "first-six",
+      "case": "exchange-w4-tail-r3",
+      "reference": {
+        "functional_ok": true,
+        "driver_profile": "workgroup-private-v1",
+        "driver_adapter": {
+          "profile": "workgroup-private-v1",
+          "process": {
+            "returncode": 0,
+            "timed_out": false,
+            "output_exhausted": false,
+            "wall_seconds": 3.319526780862361
+          },
+          "source_sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+          "target_header_sha256": "ce18925342bc0514f34b0f3f8e846271f8f00aac1dd1de7dfcae57f5fa5d303a",
+          "target_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+          "compiler_sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769",
+          "verilator_header_sha256": "1ab9fbe3fb6ef389443f6c31314d8a76479f082c0d37a6484a3d216aeaf5e154",
+          "completed": true,
+          "binary_sha256": "fed9d9feadb91a26ae57cce4cbc40a085e8ba57670c0d2ed5d8662877c364cd3"
+        },
+        "completion": {
+          "kernel_completed": true,
+          "kernel_completion_markers": [
+            {
+              "stream": "stdout",
+              "line": 24,
+              "text": "[RTL     info]@121885 kernel0  exchange-w4-tail-r3 finished",
+              "simulation_time": 121885
+            }
+          ],
+          "error_diagnostics": [],
+          "limit_diagnostics": [],
+          "completion_reasons": [],
+          "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+        },
+        "numerical": {
+          "outputs_match": true,
+          "expected_words": 1053,
+          "observed_words": 1053,
+          "duplicate_addresses": [],
+          "mismatches": []
+        },
+        "reference_sha256": "18701fbe3fde607c0da29a54b9e201e2c7fa2b8615d4c710d53c37498181b40e",
+        "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+        "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+        "scope": "Finite outputs and named completion for this frozen program/input/launch on the recorded RTL."
+      }
+    },
+    {
+      "run": "first-six",
+      "case": "gemm-w2-m7-n9-k11",
+      "reference": {
+        "functional_ok": true,
+        "driver_profile": "workgroup-private-v1",
+        "driver_adapter": {
+          "profile": "workgroup-private-v1",
+          "process": {
+            "returncode": 0,
+            "timed_out": false,
+            "output_exhausted": false,
+            "wall_seconds": 3.319526780862361
+          },
+          "source_sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+          "target_header_sha256": "ce18925342bc0514f34b0f3f8e846271f8f00aac1dd1de7dfcae57f5fa5d303a",
+          "target_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+          "compiler_sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769",
+          "verilator_header_sha256": "1ab9fbe3fb6ef389443f6c31314d8a76479f082c0d37a6484a3d216aeaf5e154",
+          "completed": true,
+          "binary_sha256": "fed9d9feadb91a26ae57cce4cbc40a085e8ba57670c0d2ed5d8662877c364cd3"
+        },
+        "completion": {
+          "kernel_completed": true,
+          "kernel_completion_markers": [
+            {
+              "stream": "stdout",
+              "line": 12,
+              "text": "[RTL     info]@37125 kernel0  gemm-w2-m7-n9-k11 finished",
+              "simulation_time": 37125
+            }
+          ],
+          "error_diagnostics": [],
+          "limit_diagnostics": [],
+          "completion_reasons": [],
+          "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+        },
+        "numerical": {
+          "outputs_match": true,
+          "expected_words": 63,
+          "observed_words": 63,
+          "duplicate_addresses": [],
+          "mismatches": []
+        },
+        "reference_sha256": "b0a6c21fc188ae81932a9a015eb3260b1f15e56f4acbfaeadb1bb74f89a207a7",
+        "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+        "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+        "scope": "Finite outputs and named completion for this frozen program/input/launch on the recorded RTL."
+      }
+    },
+    {
+      "run": "remaining-selected",
+      "case": "gemm-m11-n13-k9",
+      "reference": {
+        "functional_ok": true,
+        "driver_profile": "workgroup-private-v1",
+        "driver_adapter": {
+          "profile": "workgroup-private-v1",
+          "process": {
+            "returncode": 0,
+            "timed_out": false,
+            "output_exhausted": false,
+            "wall_seconds": 3.3187504338566214
+          },
+          "source_sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+          "target_header_sha256": "ce18925342bc0514f34b0f3f8e846271f8f00aac1dd1de7dfcae57f5fa5d303a",
+          "target_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+          "compiler_sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769",
+          "verilator_header_sha256": "1ab9fbe3fb6ef389443f6c31314d8a76479f082c0d37a6484a3d216aeaf5e154",
+          "completed": true,
+          "binary_sha256": "fed9d9feadb91a26ae57cce4cbc40a085e8ba57670c0d2ed5d8662877c364cd3"
+        },
+        "completion": {
+          "kernel_completed": true,
+          "kernel_completion_markers": [
+            {
+              "stream": "stdout",
+              "line": 22,
+              "text": "[RTL     info]@115385 kernel0  gemm-m11-n13-k9 finished",
+              "simulation_time": 115385
+            }
+          ],
+          "error_diagnostics": [],
+          "limit_diagnostics": [],
+          "completion_reasons": [],
+          "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+        },
+        "numerical": {
+          "outputs_match": true,
+          "expected_words": 143,
+          "observed_words": 143,
+          "duplicate_addresses": [],
+          "mismatches": []
+        },
+        "reference_sha256": "060eceaf05f91fa5310af24ed87ff4d74ce9c41ee0ce0468e5f92727f5784b20",
+        "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+        "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+        "scope": "Finite outputs and named completion for this frozen program/input/launch on the recorded RTL."
+      }
+    }
+  ],
+  "words": 2629
+}

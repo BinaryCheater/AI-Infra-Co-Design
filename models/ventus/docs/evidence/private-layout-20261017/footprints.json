@@ -1,0 +1,41 @@
+{
+  "case": "gemm-m11-n13-k9",
+  "elf_sha256": "0069414083961ef161d19c39565005bbfff21b7d3230e1576f90b818ed644978",
+  "legacy_model": [
+    0,
+    128,
+    768,
+    896,
+    1536,
+    1664
+  ],
+  "upstream_external_lines": [
+    0,
+    512,
+    768,
+    1280,
+    1536,
+    2048
+  ],
+  "corrected_native": [
+    0,
+    128,
+    768,
+    896,
+    1536,
+    1664
+  ],
+  "corrected_external_lines": [
+    0,
+    128,
+    768,
+    896,
+    1536,
+    1664
+  ],
+  "trace_sha256": {
+    "upstream": "ebdf4e3494886e5bc95373dad0cf638664998025bdff5fe63908272ba6519589",
+    "corrected": "cfd3366857be3daaf7b000f471470d634000829429c9a36b80125bf141035130"
+  },
+  "scope": "Normalized private 128-byte line sets for one frozen workload. A set match is not lane-by-lane sequence, request timing or cache-accuracy certification."
+}

@@ -1,0 +1,28 @@
+[RTL     info]@0 SNAPSHOT created, pid=2527321
+[RTL    trace]@20 Hardware reset ok
+[RTL    trace]@30 kernel 0 gemm-m11-n13-k9 activate
+[RTL    debug]@5125 block0  dispatched to GPU (kernel0  gemm-m11-n13-k9 block0 )
+[RTL    debug]@5135 block1  dispatched to GPU (kernel0  gemm-m11-n13-k9 block1 )
+[RTL    debug]@5145 block2  dispatched to GPU (kernel0  gemm-m11-n13-k9 block2 )
+[RTL    debug]@10000 
+[RTL    debug]@20000 
+[RTL    debug]@30000 
+[RTL    debug]@36415 block1  finished (kernel0  gemm-m11-n13-k9 block1 )
+[RTL    debug]@37995 block0  finished (kernel0  gemm-m11-n13-k9 block0 )
+[RTL    debug]@40000 
+[RTL    debug]@50000 
+[RTL    debug]@60000 
+[RTL    debug]@70000 
+[RTL    debug]@80000 
+[RTL    debug]@90000 
+[RTL    debug]@100000 
+[RTL    debug]@110000 
+[RTL    debug]@115385 block2  finished (kernel0  gemm-m11-n13-k9 block2 )
+[RTL     info]@115385 kernel0  gemm-m11-n13-k9 finished
+[RTL    debug]@120000 
+[RTL    debug]@130000 
+[RTL    debug]@140000 
+[RTL    debug]@150000 
+[RTL    debug]@160000 
+[RTL     info]@165385 Simulation finished in 165385 unit time
+[RTL    debug]@165385 All snapshot process are cleared, OK

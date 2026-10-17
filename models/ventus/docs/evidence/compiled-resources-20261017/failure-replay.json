@@ -1,0 +1,20 @@
+{
+  "scope": "Synthetic oversized launch-resource failure fixture using a real unchanged ELF. No RTL execution or numerical correctness claim.",
+  "injection": {
+    "vgpr_allocated_per_warp": 1028,
+    "baseline_pool_per_sm": 1024
+  },
+  "results": [
+    {
+      "version": "frozen-before",
+      "admitted": true,
+      "rtl_input_emitted": true
+    },
+    {
+      "version": "current",
+      "admitted": false,
+      "error": "compiled workgroup vgpr allocation 1028 exceeds per-SM capacity 1024",
+      "rtl_input_emitted": false
+    }
+  ]
+}

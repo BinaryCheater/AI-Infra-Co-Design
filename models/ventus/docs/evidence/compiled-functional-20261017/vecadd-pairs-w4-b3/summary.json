@@ -1,0 +1,46 @@
+{
+  "name": "vecadd-pairs-w4-b3",
+  "elf_sha256": "6abeacc67231d45f3759c8a54dfe6a174b4264d2735ca8f2ba58d08de8b9fc11",
+  "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+  "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+  "observer_sha256": "c6144a2848cdc285fea0a3939661cd13c231c3dfc51958c7c0a8d1b7bdf13dcd",
+  "inputs_sha256": "3269ca3c532b785b63ff5c17c887c651b55e7c1f11ac675dfe003d786c4a19f4",
+  "case_input_sha256": {
+    "input.metadata": "7c597f6947538716789b021395d1dbbcf9918010c352eb2ae8ef9805629c654d",
+    "input.data": "ac6543bc479e5db4a9da2b37cfe87517d0a3a3cd24c16e8a25fb5e94a78cf967"
+  },
+  "completed": true,
+  "functional_ok": true,
+  "status": "passed",
+  "unsupported_instruction_diagnostics": [],
+  "completion": {
+    "kernel_completed": true,
+    "kernel_completion_markers": [
+      {
+        "stream": "stdout",
+        "line": 21,
+        "text": "[RTL     info]@93035 kernel0  vecadd-pairs-w4-b3 finished",
+        "simulation_time": 93035
+      }
+    ],
+    "error_diagnostics": [],
+    "limit_diagnostics": [],
+    "completion_reasons": [],
+    "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+  },
+  "numerical": {
+    "outputs_match": true,
+    "expected_words": 768,
+    "observed_words": 768,
+    "duplicate_addresses": [],
+    "mismatches": []
+  },
+  "returncode": 0,
+  "timed_out": false,
+  "wall_seconds": 45.500767504097894,
+  "logs_sha256": {
+    "stdout.log": "22c7d937786090f29de4f7f72a53106fc8e02be90844e071954186fa97f5bb72",
+    "stderr.log": "8cbdd6d21bc5f53f399d84ad03167396e9079032c7d79395fcf38ca28012293e"
+  },
+  "scope": "Concrete finite input/output check on RTL; no universal proof or timing accuracy claim."
+}

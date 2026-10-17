@@ -1,0 +1,1298 @@
+[
+  {
+    "id": "invalid-pairing-rf8-resident-w2-k40-conflict0",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 154,
+    "reference_cycles": 152,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "eaa53caca714b76c179f6c6bedd68bbfec1d18b4eac0a2a8ead36a69b38f2335",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w2-k40",
+    "workload_sha256": "0ca167969b8c942f1226b2225f1bb20899bed631d548a84376646786fbe555df",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.003952458035200834,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "resident",
+    "rf_conflict": false,
+    "trace_sha256": "226f2bacd0f2eb72d9bc312a4abfba492c41325cbaf0af40291d3028e13e5b3f",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 7,
+          "text": "[RTL     info]@7245 kernel0  resident-w2-k40-conflict0 finished",
+          "simulation_time": 7245
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "cb7509ce9ead56bc7afdb5357164186267461e0de09e392bf0ac16b7483d0ea9",
+      "input.data": "ec95698b488e74caf40ba7bf8770cff4713c82e62e97dcbdd1eb852f8f73825c"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-resident-w2-k40-conflict1",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 164,
+    "reference_cycles": 157,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "9c0ed2fc6f05846e5a3d8ab4a410ef654c731ad6e2bec2015c5fc0bc9a6a389c",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w2-k40",
+    "workload_sha256": "0ca167969b8c942f1226b2225f1bb20899bed631d548a84376646786fbe555df",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.005476250080391765,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "resident",
+    "rf_conflict": true,
+    "trace_sha256": "6f21fb026f96a9fdf9e3948dc12741bfb437f0975f65715c22730f1149f6e101",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 7,
+          "text": "[RTL     info]@7295 kernel0  resident-w2-k40-conflict1 finished",
+          "simulation_time": 7295
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "cb7509ce9ead56bc7afdb5357164186267461e0de09e392bf0ac16b7483d0ea9",
+      "input.data": "15e018b3e21787f3fc754e5c74e1cf146afe71c8cdd9f556b203ae93d76ee65b"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-reload-w2-k40-conflict0",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 186,
+    "reference_cycles": 180,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "24bca571dea53907a049d124b65ea8fdc080de9227a08efb317e978428789fc3",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w2-k40",
+    "workload_sha256": "0ca167969b8c942f1226b2225f1bb20899bed631d548a84376646786fbe555df",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.0043932918924838305,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "reload",
+    "rf_conflict": false,
+    "trace_sha256": "e270c5829dbf7e3a648618e7b621bfdac6b469507e333e69dc4070f1b6d058c6",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 7,
+          "text": "[RTL     info]@7525 kernel0  reload-w2-k40-conflict0 finished",
+          "simulation_time": 7525
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "cb7509ce9ead56bc7afdb5357164186267461e0de09e392bf0ac16b7483d0ea9",
+      "input.data": "0ce99a5d8f24a691b54262429d9632394edc6e5a780768996948feaa73409a09"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-reload-w2-k40-conflict1",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 196,
+    "reference_cycles": 185,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "39378469a7589e9cd49a63735c20823a66dffc2fb3c8244980c350aaccb44181",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w2-k40",
+    "workload_sha256": "0ca167969b8c942f1226b2225f1bb20899bed631d548a84376646786fbe555df",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.004502916941419244,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "reload",
+    "rf_conflict": true,
+    "trace_sha256": "7c2bbe7cbf70fbefce13d4b157b67bc4ebd8e257f7fbc3cb0b0135f6d610ef17",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 7,
+          "text": "[RTL     info]@7575 kernel0  reload-w2-k40-conflict1 finished",
+          "simulation_time": 7575
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "cb7509ce9ead56bc7afdb5357164186267461e0de09e392bf0ac16b7483d0ea9",
+      "input.data": "c52639638da01e5a8ccac7667a9cef1b89356b3a2f2dadfffc7e79be140da1dc"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-stream-w2-k40-conflict0",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 254,
+    "reference_cycles": 244,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "a1555361cb00f8b8e0c60f8e5af2e3cbbbc39ca21a6394c2be6f4e3e16c26076",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w2-k40",
+    "workload_sha256": "0ca167969b8c942f1226b2225f1bb20899bed631d548a84376646786fbe555df",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.00553187495097518,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "stream",
+    "rf_conflict": false,
+    "trace_sha256": "14be50de89fe1f366ec00644794354bae23aeb77314bb2b8cfe4f3b5f2c199e9",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 7,
+          "text": "[RTL     info]@8155 kernel0  stream-w2-k40-conflict0 finished",
+          "simulation_time": 8155
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "cb7509ce9ead56bc7afdb5357164186267461e0de09e392bf0ac16b7483d0ea9",
+      "input.data": "09f58a9c8ca5a8bdc9f939adf13a2dbcabf86164a3b3f745844b80a263d41461"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-stream-w2-k40-conflict1",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 264,
+    "reference_cycles": 249,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "35fe1dfb8ade0adde52432d68c5c912a7caf4581cd29141549ba1d6612a65b38",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w2-k40",
+    "workload_sha256": "0ca167969b8c942f1226b2225f1bb20899bed631d548a84376646786fbe555df",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.005861332872882485,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "stream",
+    "rf_conflict": true,
+    "trace_sha256": "64826601604ed64a9a959e0f4e219705c1e1bd5365aa48fe53b7b2f5d9717250",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 7,
+          "text": "[RTL     info]@8205 kernel0  stream-w2-k40-conflict1 finished",
+          "simulation_time": 8205
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "cb7509ce9ead56bc7afdb5357164186267461e0de09e392bf0ac16b7483d0ea9",
+      "input.data": "ebde3a480521215a0ab11e4e7ed8c9c8a95def0c39a1ecd1c7355c1c16cac266"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-shared-w2-k40-conflict0",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 443,
+    "reference_cycles": 438,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "ec1a19c669772efdd62c9b46b7970557e8dde7db4007cba1f1ff3de84f37fd5b",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w2-k40",
+    "workload_sha256": "0ca167969b8c942f1226b2225f1bb20899bed631d548a84376646786fbe555df",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.010664082830771804,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "shared",
+    "rf_conflict": false,
+    "trace_sha256": "a29f6d744e3bd4586e8cf29f93a2fa16377f9a298236af9ca0cfe08da1b27991",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 8,
+          "text": "[RTL     info]@10105 kernel0  shared-w2-k40-conflict0 finished",
+          "simulation_time": 10105
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "cb7509ce9ead56bc7afdb5357164186267461e0de09e392bf0ac16b7483d0ea9",
+      "input.data": "b954a9499e8e5da69551ff9a512d54f79df7502e8676ee0c0613e5230d96f529"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-shared-w2-k40-conflict1",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 453,
+    "reference_cycles": 443,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "2a5b8040ab61844108a971d669162e8484671ebfc22d7f56c319ac61b7ae11f4",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w2-k40",
+    "workload_sha256": "0ca167969b8c942f1226b2225f1bb20899bed631d548a84376646786fbe555df",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.010041333036497235,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "shared",
+    "rf_conflict": true,
+    "trace_sha256": "48da41e9ebcb0a6bf492939da88de458482162e433c34522773341975e1df7e5",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 8,
+          "text": "[RTL     info]@10155 kernel0  shared-w2-k40-conflict1 finished",
+          "simulation_time": 10155
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "cb7509ce9ead56bc7afdb5357164186267461e0de09e392bf0ac16b7483d0ea9",
+      "input.data": "e8000af4fca92e1ab676fed8a1e18e1eeed203af22010284770723c688b94eb4"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-resident-w5-k128-conflict0",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 360,
+    "reference_cycles": 360,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "e44787364ab0470b1305be9aa265473876a74271cc8848c3af049daa84a47751",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w5-k128",
+    "workload_sha256": "9f85d29c5493a34428b5f231d35abe21597c59d69edeae5e9e9626c666a9ae9d",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.011543249944224954,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "resident",
+    "rf_conflict": false,
+    "trace_sha256": "8c2f5a3e1310336cf45ac01872ca86d11c19c711647283e19e9482bfd104dbc3",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 8,
+          "text": "[RTL     info]@9365 kernel0  resident-w5-k128-conflict0 finished",
+          "simulation_time": 9365
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "2905c655fd15c1e2864caa8d79de485d5fddf65986f67989df6debf0ca4c2376",
+      "input.data": "30bfb54e442616a1245df37f2ef29e8372c1b85ca41a12a48e1321f2c470bc3c"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-resident-w5-k128-conflict1",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 396,
+    "reference_cycles": 378,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "baee785661ea5d8f6c3c44669620c00f4028d1b23b34f88e1937794c33395da0",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w5-k128",
+    "workload_sha256": "9f85d29c5493a34428b5f231d35abe21597c59d69edeae5e9e9626c666a9ae9d",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.011910917004570365,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "resident",
+    "rf_conflict": true,
+    "trace_sha256": "9e066d4b36189f567b7cee31f15e7b91422529d0ee2e6cbfc3139a2cd3877d8a",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 7,
+          "text": "[RTL     info]@9515 kernel0  resident-w5-k128-conflict1 finished",
+          "simulation_time": 9515
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "2905c655fd15c1e2864caa8d79de485d5fddf65986f67989df6debf0ca4c2376",
+      "input.data": "6d65061a890e0f8c7c4d1075de84c303496f77ab884e09b72cc00d77b8b6384a"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-reload-w5-k128-conflict0",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 729,
+    "reference_cycles": 719,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "8032165e169d6f1cb43eb9d890b8906c29274b6194229d20c086e1e1d5195ca2",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w5-k128",
+    "workload_sha256": "9f85d29c5493a34428b5f231d35abe21597c59d69edeae5e9e9626c666a9ae9d",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.0244803330861032,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "reload",
+    "rf_conflict": false,
+    "trace_sha256": "7838bb91ef6f62dfecb1b71cbf1b698c0576bb7bccb5fa8b6c7cb2b6fbacb01a",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 8,
+          "text": "[RTL     info]@12925 kernel0  reload-w5-k128-conflict0 finished",
+          "simulation_time": 12925
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "2905c655fd15c1e2864caa8d79de485d5fddf65986f67989df6debf0ca4c2376",
+      "input.data": "ef60c98d83ebc8e5d57045923f7edd286753b1574e58ebccf446249f7c90f142"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-reload-w5-k128-conflict1",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 732,
+    "reference_cycles": 723,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "8ffa1786ba61bd3f595fc1eea03a8e46564f95299b182d1d276a72564989686a",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w5-k128",
+    "workload_sha256": "9f85d29c5493a34428b5f231d35abe21597c59d69edeae5e9e9626c666a9ae9d",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.030140125192701817,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "reload",
+    "rf_conflict": true,
+    "trace_sha256": "369394c63b2c39481afe0f95c4c87aa99610ee017323906dad7cdc1394434695",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 8,
+          "text": "[RTL     info]@12945 kernel0  reload-w5-k128-conflict1 finished",
+          "simulation_time": 12945
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "2905c655fd15c1e2864caa8d79de485d5fddf65986f67989df6debf0ca4c2376",
+      "input.data": "670f0ad6eb1ee6d507c84f935d6cf53a2f23d0ba330784f05e4188659285d5f8"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-stream-w5-k128-conflict0",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 912,
+    "reference_cycles": 877,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "d27a82750f823134849311dad748cf106702d3719d79a8915b05637f7d8c20c5",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w5-k128",
+    "workload_sha256": "9f85d29c5493a34428b5f231d35abe21597c59d69edeae5e9e9626c666a9ae9d",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.032466458855196834,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "stream",
+    "rf_conflict": false,
+    "trace_sha256": "f150fcd96e58fcd1378f62ea9aa91ed0795cca4c3f9354954c0a532b8be9aac8",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 8,
+          "text": "[RTL     info]@14505 kernel0  stream-w5-k128-conflict0 finished",
+          "simulation_time": 14505
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "2905c655fd15c1e2864caa8d79de485d5fddf65986f67989df6debf0ca4c2376",
+      "input.data": "abd630765bfe6780d2b54d02b78af197bedcce182bb0a3224d5b22d5e8b8bf98"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-stream-w5-k128-conflict1",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 939,
+    "reference_cycles": 920,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "2680d3cdb29f8f8613a7b22539604e2026c2aef9ea485bbbeacc40098f1227a4",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w5-k128",
+    "workload_sha256": "9f85d29c5493a34428b5f231d35abe21597c59d69edeae5e9e9626c666a9ae9d",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.03287433390505612,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "stream",
+    "rf_conflict": true,
+    "trace_sha256": "3753cdd248efdbbe58016ac88823276a50f0db4d69bc289aaa54e4314d50a8f3",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 8,
+          "text": "[RTL     info]@14915 kernel0  stream-w5-k128-conflict1 finished",
+          "simulation_time": 14915
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "2905c655fd15c1e2864caa8d79de485d5fddf65986f67989df6debf0ca4c2376",
+      "input.data": "d1a2a9413ad7f40712c4b1a696f0a5a31c3d67258e305691749e1569db7e7a91"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-shared-w5-k128-conflict0",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 2211,
+    "reference_cycles": 2372,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "9f3c1777d68ea2dcec5831d7468b93b3c34020c17e117bf4b39c987ac92817cd",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w5-k128",
+    "workload_sha256": "9f85d29c5493a34428b5f231d35abe21597c59d69edeae5e9e9626c666a9ae9d",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.07515020808205009,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "shared",
+    "rf_conflict": false,
+    "trace_sha256": "ed760d2b4ca0282598826bad17757031dbc3f22de189a27d96bdc36d5f131604",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 9,
+          "text": "[RTL     info]@29435 kernel0  shared-w5-k128-conflict0 finished",
+          "simulation_time": 29435
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "2905c655fd15c1e2864caa8d79de485d5fddf65986f67989df6debf0ca4c2376",
+      "input.data": "36ba3cbc39fb6a79efecd2c9c58e89e327b7ad810115681903a23d5a1dfa4abf"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-shared-w5-k128-conflict1",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 2352,
+    "reference_cycles": 2379,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "15e748fe1940efb7639927bc88b47d293945133e4d1c664be6348f77d8348539",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w5-k128",
+    "workload_sha256": "9f85d29c5493a34428b5f231d35abe21597c59d69edeae5e9e9626c666a9ae9d",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.07062633289024234,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "shared",
+    "rf_conflict": true,
+    "trace_sha256": "7deba19f49b6df0b22abf821adcc7a5feee14bc7d3980ba1af5205cf394a6acd",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 9,
+          "text": "[RTL     info]@29505 kernel0  shared-w5-k128-conflict1 finished",
+          "simulation_time": 29505
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "2905c655fd15c1e2864caa8d79de485d5fddf65986f67989df6debf0ca4c2376",
+      "input.data": "8e88b8e6bd6e8db8dd714139ac32a39806069b7a51b94157cf39e0d83e73ac29"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-resident-w7-k160-conflict0",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 457,
+    "reference_cycles": 476,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "2189a757aaa13a73579771072d5513b750e207c7b863c5577677ac72830c4250",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w7-k160",
+    "workload_sha256": "46e01b8cc7a65d8fb2ebc614a75efb5ed1b1c70dd28399988a315a0630ec451e",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.01776120811700821,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "resident",
+    "rf_conflict": false,
+    "trace_sha256": "c033068280157cd72af46ddbd3ce06c5a6c854b51a2d4e5d3b4be3de8becf2cc",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 8,
+          "text": "[RTL     info]@10475 kernel0  resident-w7-k160-conflict0 finished",
+          "simulation_time": 10475
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "d34f0a938f600869c7254af3695a973c212b8375cc5063e301f99aba1b6d3ea7",
+      "input.data": "dfae2bdfb962f638fb2f15a844832801bb8b140c694491d8f53e8a911afae53d"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-resident-w7-k160-conflict1",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 496,
+    "reference_cycles": 497,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "8579bdca9205343d0aee24a34b19234900025da543d6af62f95f55a86558c72c",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w7-k160",
+    "workload_sha256": "46e01b8cc7a65d8fb2ebc614a75efb5ed1b1c70dd28399988a315a0630ec451e",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.017909415997564793,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "resident",
+    "rf_conflict": true,
+    "trace_sha256": "b61ff8af4f453f8b7126d2d560128d940e21c0adff0ec48649e8d0d3a2c30f15",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 8,
+          "text": "[RTL     info]@10685 kernel0  resident-w7-k160-conflict1 finished",
+          "simulation_time": 10685
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "d34f0a938f600869c7254af3695a973c212b8375cc5063e301f99aba1b6d3ea7",
+      "input.data": "e2338ba70647cb40928a3cbf6ceb9512ffac60f0539137c8038f0ca6d92ba2cb"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-reload-w7-k160-conflict0",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 1214,
+    "reference_cycles": 1226,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "ea17f2dccd8650851b90f684c6776e83e6f6bfe8f3871f1febb829fcabae79c7",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w7-k160",
+    "workload_sha256": "46e01b8cc7a65d8fb2ebc614a75efb5ed1b1c70dd28399988a315a0630ec451e",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.048417832935228944,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "reload",
+    "rf_conflict": false,
+    "trace_sha256": "fc606fbe76a19b4f67629f1d979c5ef8f761800e5c149914d08701c18d639918",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 8,
+          "text": "[RTL     info]@17975 kernel0  reload-w7-k160-conflict0 finished",
+          "simulation_time": 17975
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "d34f0a938f600869c7254af3695a973c212b8375cc5063e301f99aba1b6d3ea7",
+      "input.data": "e5e94ee7e8814869125dd1ad7ae35ecdae8c93afbe5a4dcd21b98f86dd239035"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-reload-w7-k160-conflict1",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 1231,
+    "reference_cycles": 1222,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "7c3f2f464f6dc2917e65c0d00b3a84e154e28baec14db18537273f29c252dd45",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w7-k160",
+    "workload_sha256": "46e01b8cc7a65d8fb2ebc614a75efb5ed1b1c70dd28399988a315a0630ec451e",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.04393029096536338,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "reload",
+    "rf_conflict": true,
+    "trace_sha256": "54e1c521ce5b031a7dc8a2bd254892e8edadcef3d1fc0f668a63c1e8bab6bfdf",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 9,
+          "text": "[RTL     info]@17945 kernel0  reload-w7-k160-conflict1 finished",
+          "simulation_time": 17945
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "d34f0a938f600869c7254af3695a973c212b8375cc5063e301f99aba1b6d3ea7",
+      "input.data": "6d2ddba5e7677c6b0c7b1a76e09d4d4e411b09b07dfdd44b36f8617f99005948"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-stream-w7-k160-conflict0",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 1437,
+    "reference_cycles": 1607,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "6ac2b421fcc61f444cbeee58af046a5c9304f9fabf92c06958c07f5d0b069b78",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w7-k160",
+    "workload_sha256": "46e01b8cc7a65d8fb2ebc614a75efb5ed1b1c70dd28399988a315a0630ec451e",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.0648102080449462,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "stream",
+    "rf_conflict": false,
+    "trace_sha256": "1c5c01b693b4aaca354dcc16ebab34fbf0a7441efbc97849b332df632b252b2b",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 9,
+          "text": "[RTL     info]@21795 kernel0  stream-w7-k160-conflict0 finished",
+          "simulation_time": 21795
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "d34f0a938f600869c7254af3695a973c212b8375cc5063e301f99aba1b6d3ea7",
+      "input.data": "af68c5228f617c0d8f6f8c9854fd1ed9fbaf5bba6bb88bd44e62193fcbeb96e5"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-stream-w7-k160-conflict1",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 1446,
+    "reference_cycles": 1395,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "db6731754a2093b58f05cc516821fd41f107ed2b9cac73e226171b5503359249",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w7-k160",
+    "workload_sha256": "46e01b8cc7a65d8fb2ebc614a75efb5ed1b1c70dd28399988a315a0630ec451e",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.058373000007122755,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "stream",
+    "rf_conflict": true,
+    "trace_sha256": "f7cc55b3fd87ae2eaa3e7f2b83d3d413cae1ee57f47ae17d0212abd0e0230bdb",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 8,
+          "text": "[RTL     info]@19665 kernel0  stream-w7-k160-conflict1 finished",
+          "simulation_time": 19665
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "d34f0a938f600869c7254af3695a973c212b8375cc5063e301f99aba1b6d3ea7",
+      "input.data": "28a10ddbb62a32a3cedd8c0f7ba2f9eb0c956e034ed710f957821d3a93463a5a"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-shared-w7-k160-conflict0",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 3818,
+    "reference_cycles": 3783,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "92feb24ee78556b580f9847c5288bdb84962ced9ffb58680bfc43d10bb753171",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w7-k160",
+    "workload_sha256": "46e01b8cc7a65d8fb2ebc614a75efb5ed1b1c70dd28399988a315a0630ec451e",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.14138970780186355,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "shared",
+    "rf_conflict": false,
+    "trace_sha256": "a0fcd497c52b16bd245a2bcc6830851e87e4ee6d3bcb23d7733125c3e5f0e99e",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 11,
+          "text": "[RTL     info]@43535 kernel0  shared-w7-k160-conflict0 finished",
+          "simulation_time": 43535
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "d34f0a938f600869c7254af3695a973c212b8375cc5063e301f99aba1b6d3ea7",
+      "input.data": "dab83208279090b79c44fa19581561bee0ae93da71cdc9e277f935d204b87e01"
+    }
+  },
+  {
+    "id": "invalid-pairing-rf8-shared-w7-k160-conflict1",
+    "family": "gemm",
+    "split": "holdout",
+    "provenance": "fresh-rtl",
+    "prediction_order": "invalid-filename-pairing",
+    "prediction_cycles": 3733,
+    "reference_cycles": 3784,
+    "completed": true,
+    "functional_ok": true,
+    "reference_sha256": "e985ed87b10179e973d2d7cfa443f710214fa650464ce0d4dfc5a695a141f593",
+    "model_version": "ventus-source-frontend-v3",
+    "endpoint": "first operand collect to last Tensor writeback, complete overlapping programs",
+    "ranking_group": "invalid-pairing-w7-k160",
+    "workload_sha256": "46e01b8cc7a65d8fb2ebc614a75efb5ed1b1c70dd28399988a315a0630ec451e",
+    "target_sha256": "f7c52fb4a0af65eea19af6fcf73811c4e5606cdddd4d90363c2b138dc1da64c2",
+    "initial_state_sha256": "23d1e2c11a2b4c8df074f6deca783b7a22c1ecbe98c73599d8ced5e92453ab66",
+    "host_seconds": 0.1500096668023616,
+    "banks": 8,
+    "prediction_hardware": {
+      "rf_banks": 4
+    },
+    "reference_hardware": {
+      "rf_banks": 8
+    },
+    "strategy": "shared",
+    "rf_conflict": true,
+    "trace_sha256": "b26325bd075d44a8750947e500c53576b4769334bdb13afb016fc1e5d1cb741d",
+    "completion_diagnostics": {
+      "kernel_completed": true,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 11,
+          "text": "[RTL     info]@43555 kernel0  shared-w7-k160-conflict1 finished",
+          "simulation_time": 43555
+        }
+      ],
+      "error_diagnostics": [],
+      "limit_diagnostics": [],
+      "completion_reasons": [],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "realization_id": "rf8",
+    "prediction_receipt": "validation-predictions-rf8.json",
+    "prediction_receipt_sha256": "8cd2b098e7519a011a9bbf7cf1130749557fbebd6662b7003be1819fb3dd672d",
+    "rtl_binary_sha256": "c93b1eff0a950d52d1c04af588f941c2b37a79aac8f94f32397764402949cd29",
+    "rtl_library_sha256": "d15270b0f78ad30c0cb3b03c049c977834a532b46b22779c15f5ddc44a9319db",
+    "trace_tool_sha256": "a3dc87499ab3bac6f78a2f82db370b868f51ff1912664e4718d232faabd07595",
+    "input_sha256": {
+      "input.metadata": "d34f0a938f600869c7254af3695a973c212b8375cc5063e301f99aba1b6d3ea7",
+      "input.data": "db3d43db64cf3bef6599e43c8c669a3ebc5019113a9b0aa280bc718351441ffa"
+    }
+  }
+]

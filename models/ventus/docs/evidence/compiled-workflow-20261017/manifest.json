@@ -1,0 +1,16 @@
+{
+  "schema": "ventus.compiled-workflow.evidence.v1",
+  "purpose": "integration_check",
+  "model_version": "ventus-instruction-rust-v9-2",
+  "fresh_compilation": false,
+  "numerical_checked": false,
+  "rtl_run": false,
+  "manifest": "examples/compiled-workflow-check.json",
+  "manifest_sha256": "0579649429abf6939a4feaa9d043532d8edff6eb30cdfbbdae66c368923ca18f",
+  "compiler_source_receipt": "tests/fixtures/compiled-vecadd/source.json",
+  "compiler_source_receipt_sha256": "af5452bd5e24c65fd70bfcf1072d4016f6e8054473b43c5f11c8e028784ef5b9",
+  "files": {
+    "stages.jsonl": "16e584fbc47861496e31cc8d495b58e6d85fdb9ecdc7b5af6518282178b0a406",
+    "experiment.json": "24f02547d2a061e614cff5c200a186f626f5add5656b5f4e38d5d585ccf934d3"
+  }
+}

@@ -1,0 +1,90 @@
+[
+  {
+    "name": "exchange-w2-tail-r2",
+    "elf_sha256": "b2ca3287a40bdc4aa578f2981241d83fd01a5805627922dc0bdccf0456150a87",
+    "status": "execution_failed",
+    "completion": {
+      "kernel_completed": false,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 21,
+          "text": "[RTL     info]@99365 kernel0  exchange-w2-tail-r2 finished",
+          "simulation_time": 99365
+        }
+      ],
+      "error_diagnostics": [
+        {
+          "stream": "stdout",
+          "line": 9,
+          "text": "[RTL    error]@10310 PMEM page at 0xa0000400 not allocated, read as all zero"
+        }
+      ],
+      "limit_diagnostics": [],
+      "completion_reasons": [
+        "error/critical/fatal diagnostics present"
+      ],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "numerical": {
+      "outputs_match": true,
+      "expected_words": 346,
+      "observed_words": 346,
+      "duplicate_addresses": [],
+      "mismatches": []
+    },
+    "logs_sha256": {
+      "stdout.log": "b8221a924892ecb35f397c149ed37833ee50c6a3eb99cba14603a9e129f331c3",
+      "stderr.log": "9bcbf2b8b56211ec45d812a648fc878e49e7fa89cc2a1529fa4582710d1d6664"
+    }
+  },
+  {
+    "name": "exchange-w4-tail-r3",
+    "elf_sha256": "b2ca3287a40bdc4aa578f2981241d83fd01a5805627922dc0bdccf0456150a87",
+    "status": "execution_failed",
+    "completion": {
+      "kernel_completed": false,
+      "kernel_completion_markers": [
+        {
+          "stream": "stdout",
+          "line": 26,
+          "text": "[RTL     info]@121985 kernel0  exchange-w4-tail-r3 finished",
+          "simulation_time": 121985
+        }
+      ],
+      "error_diagnostics": [
+        {
+          "stream": "stdout",
+          "line": 9,
+          "text": "[RTL    error]@10690 PMEM page at 0xa0000000 not allocated, read as all zero"
+        },
+        {
+          "stream": "stdout",
+          "line": 10,
+          "text": "[RTL    error]@10750 PMEM page at 0xa0000800 not allocated, read as all zero"
+        },
+        {
+          "stream": "stdout",
+          "line": 11,
+          "text": "[RTL    error]@20000 PMEM page at 0xa0001180 not allocated, read as all zero"
+        }
+      ],
+      "limit_diagnostics": [],
+      "completion_reasons": [
+        "error/critical/fatal diagnostics present"
+      ],
+      "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+    },
+    "numerical": {
+      "outputs_match": true,
+      "expected_words": 1053,
+      "observed_words": 1053,
+      "duplicate_addresses": [],
+      "mismatches": []
+    },
+    "logs_sha256": {
+      "stdout.log": "2f5f1bb4ee6f89605e00a6852fa5f1496e1bb9b92523376e1f7b0552ffc7614f",
+      "stderr.log": "e5c684594ce17db24300fb106b3a783714bf73f501249fef3625c1021ff42213"
+    }
+  }
+]

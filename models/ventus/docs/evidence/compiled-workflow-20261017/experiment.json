@@ -1,0 +1,329 @@
+{
+  "version": "ventus-instruction-rust-v9-2",
+  "source_sha256": "77ed8138ffdb70d364ef6fdd424e5fed2bc66bad99e01bcea10c19b8a213af41",
+  "runtime_sha256": "e1fd425d812100b7bc549fc794f7e17edd761c39f97c980cbc29fa1273ade3bb",
+  "input_sha256": "6785f13cba6231e45fad1d458654445a9857071302549568432cb012557fc7c1",
+  "manifest_sha256": "0579649429abf6939a4feaa9d043532d8edff6eb30cdfbbdae66c368923ca18f",
+  "program_sha256": [
+    "0ec11ca684e1407255ec85892134fb03f90cf29f4bac352479af9353284b9e28",
+    "edec4c3253df3861fe42dede576a8dee0e7b72c5bbbc03dd5743badc2ab6f419",
+    "e83392e9bc41616f4feb97b36de84c557da578b8b370a948e873064f10fb7157",
+    "35bb4128532093cfd793b516644ffdec9db949e0969f870f179b334d1c2ee83e"
+  ],
+  "hardware": {
+    "sms": 1,
+    "warps_per_sm": 4,
+    "blocks_per_sm": 4,
+    "threads": 32,
+    "rf_banks": 4,
+    "rf_read_ports": 1,
+    "rf_write_ports": 1,
+    "writeback_ports": 1,
+    "collectors": 4,
+    "vgpr_slots": 1024,
+    "sgpr_slots": 2048,
+    "tensor_m": 4,
+    "tensor_n": 8,
+    "tensor_k": 4,
+    "tensor_units": 1,
+    "lds_bytes": 131072,
+    "lds_banks": 32,
+    "lds_ports": 1,
+    "line_bytes": 128,
+    "l1_sets": 256,
+    "l1_ways": 2,
+    "l1_mshrs": 4,
+    "l1_subentries": 2,
+    "l1_write_entries": 4,
+    "l2_sets": 64,
+    "l2_ways": 16,
+    "l2_mshrs": 32,
+    "lsu_entries": 4,
+    "lsu_per_warp": 4,
+    "memory_channels": 1,
+    "memory_bytes_per_cycle": 128,
+    "memory_latency": 2
+  },
+  "instruction_target": null,
+  "low_precision_measured_cost": "unsupported; structural-v2 estimates are a separate declared approximation",
+  "scenario": null,
+  "completed": true,
+  "completion_scope": "control/address execution and modeled timing dispatches",
+  "functional_validation": {
+    "status": "not_run",
+    "reason": "The timing provider does not evaluate general numerical tensor outputs."
+  },
+  "rtl_validation": {
+    "status": "not_run",
+    "reason": "This instruction run does not execute RTL."
+  },
+  "cycles": 8749,
+  "partial_cycles": 8749,
+  "instructions": 4914,
+  "requested_bytes": 52752,
+  "counters": {
+    "scalar": 1848,
+    "vector": 1470,
+    "fadd": 126,
+    "load": 924,
+    "store": 546,
+    "memory_read_bytes": 38272,
+    "memory_write_bytes": 26880,
+    "l2_miss": 299,
+    "l1_merge": 2,
+    "l1_hit": 581,
+    "l1_write_miss": 210,
+    "l1_read_miss": 89,
+    "lds_rounds": 840,
+    "writeback_stall_cycles": 128
+  },
+  "host_ticks": 8274,
+  "idle_cycles_skipped": 443,
+  "host_seconds": 0.0037010000087320805,
+  "accumulated_dispatch_host_seconds": 0.002568791853263974,
+  "build_or_load_seconds": 0.0018092920072376728,
+  "process_peak_rss_mib": 36.03125,
+  "stages": [
+    {
+      "name": "single-local64-blocks7",
+      "start": 0,
+      "end": 1459,
+      "cycles": 1459,
+      "instructions": 742,
+      "requested_bytes": 6104,
+      "host_ticks": 1324,
+      "idle_skipped": 130,
+      "counters": {
+        "scalar": 308,
+        "vector": 196,
+        "fadd": 14,
+        "load": 140,
+        "store": 84,
+        "memory_read_bytes": 5504,
+        "memory_write_bytes": 1792,
+        "l2_miss": 43,
+        "l1_merge": 2,
+        "l1_hit": 39,
+        "l1_write_miss": 14,
+        "l1_read_miss": 29,
+        "lds_rounds": 140,
+        "writeback_stall_cycles": 17
+      },
+      "host_seconds": 0.0004657499957829714,
+      "program_sha256": "0ec11ca684e1407255ec85892134fb03f90cf29f4bac352479af9353284b9e28",
+      "program": {
+        "elf_sha256": "b061043c4348616c3ec4887c10480163ea7893f8ebf7fa4ef56a7d19c83ad33c",
+        "compiler_resources": {
+          "vecadd_f32": {
+            "version": 3,
+            "flags": 0,
+            "vgpr": 3,
+            "sgpr": 11,
+            "lds_static": 0,
+            "pds_static": 0,
+            "lds_stack": 20,
+            "pds_stack": 0
+          }
+        },
+        "launch_resources": {
+          "vgpr": 3,
+          "sgpr": 11,
+          "lds": 128
+        },
+        "blocks": 7,
+        "warps_per_block": 2,
+        "threads": 32,
+        "stack_policy": "warp-private scalar spill stack; work-group LDS allocation"
+      }
+    },
+    {
+      "name": "single-local128-blocks7",
+      "start": 1459,
+      "end": 4063,
+      "cycles": 2604,
+      "instructions": 1484,
+      "requested_bytes": 12208,
+      "host_ticks": 2472,
+      "idle_skipped": 123,
+      "counters": {
+        "scalar": 616,
+        "vector": 392,
+        "fadd": 28,
+        "load": 280,
+        "store": 168,
+        "memory_read_bytes": 7168,
+        "memory_write_bytes": 3584,
+        "l2_miss": 56,
+        "l1_hit": 112,
+        "l1_write_miss": 28,
+        "l1_read_miss": 28,
+        "lds_rounds": 280,
+        "writeback_stall_cycles": 19
+      },
+      "host_seconds": 0.0006985000800341368,
+      "program_sha256": "edec4c3253df3861fe42dede576a8dee0e7b72c5bbbc03dd5743badc2ab6f419",
+      "program": {
+        "elf_sha256": "b061043c4348616c3ec4887c10480163ea7893f8ebf7fa4ef56a7d19c83ad33c",
+        "compiler_resources": {
+          "vecadd_f32": {
+            "version": 3,
+            "flags": 0,
+            "vgpr": 3,
+            "sgpr": 11,
+            "lds_static": 0,
+            "pds_static": 0,
+            "lds_stack": 20,
+            "pds_stack": 0
+          }
+        },
+        "launch_resources": {
+          "vgpr": 3,
+          "sgpr": 11,
+          "lds": 128
+        },
+        "blocks": 7,
+        "warps_per_block": 4,
+        "threads": 32,
+        "stack_policy": "warp-private scalar spill stack; work-group LDS allocation"
+      }
+    },
+    {
+      "name": "pairs-local64-blocks7",
+      "start": 4063,
+      "end": 5665,
+      "cycles": 1602,
+      "instructions": 896,
+      "requested_bytes": 11480,
+      "host_ticks": 1516,
+      "idle_skipped": 81,
+      "counters": {
+        "scalar": 308,
+        "vector": 294,
+        "fadd": 28,
+        "load": 168,
+        "store": 98,
+        "memory_read_bytes": 7168,
+        "memory_write_bytes": 7168,
+        "l2_miss": 56,
+        "l1_hit": 154,
+        "l1_write_miss": 56,
+        "lds_rounds": 140,
+        "writeback_stall_cycles": 40
+      },
+      "host_seconds": 0.0005193748511373997,
+      "program_sha256": "e83392e9bc41616f4feb97b36de84c557da578b8b370a948e873064f10fb7157",
+      "program": {
+        "elf_sha256": "beab3687a47382dab7977f94449570b151f236d9ec3ceea2f4f24d78aec911f8",
+        "compiler_resources": {
+          "vecadd_f32_pairs": {
+            "version": 3,
+            "flags": 0,
+            "vgpr": 5,
+            "sgpr": 11,
+            "lds_static": 0,
+            "pds_static": 0,
+            "lds_stack": 20,
+            "pds_stack": 0
+          }
+        },
+        "launch_resources": {
+          "vgpr": 5,
+          "sgpr": 11,
+          "lds": 128
+        },
+        "blocks": 7,
+        "warps_per_block": 2,
+        "threads": 32,
+        "stack_policy": "warp-private scalar spill stack; work-group LDS allocation"
+      }
+    },
+    {
+      "name": "pairs-local128-blocks7",
+      "start": 5665,
+      "end": 8749,
+      "cycles": 3084,
+      "instructions": 1792,
+      "requested_bytes": 22960,
+      "host_ticks": 2962,
+      "idle_skipped": 109,
+      "counters": {
+        "scalar": 616,
+        "vector": 588,
+        "fadd": 56,
+        "load": 336,
+        "store": 196,
+        "memory_read_bytes": 18432,
+        "memory_write_bytes": 14336,
+        "l2_miss": 144,
+        "l1_hit": 276,
+        "l1_write_miss": 112,
+        "l1_read_miss": 32,
+        "lds_rounds": 280,
+        "writeback_stall_cycles": 52
+      },
+      "host_seconds": 0.0008851669263094664,
+      "program_sha256": "35bb4128532093cfd793b516644ffdec9db949e0969f870f179b334d1c2ee83e",
+      "program": {
+        "elf_sha256": "beab3687a47382dab7977f94449570b151f236d9ec3ceea2f4f24d78aec911f8",
+        "compiler_resources": {
+          "vecadd_f32_pairs": {
+            "version": 3,
+            "flags": 0,
+            "vgpr": 5,
+            "sgpr": 11,
+            "lds_static": 0,
+            "pds_static": 0,
+            "lds_stack": 20,
+            "pds_stack": 0
+          }
+        },
+        "launch_resources": {
+          "vgpr": 5,
+          "sgpr": 11,
+          "lds": 128
+        },
+        "blocks": 7,
+        "warps_per_block": 4,
+        "threads": 32,
+        "stack_policy": "warp-private scalar spill stack; work-group LDS allocation"
+      }
+    }
+  ],
+  "phase_totals": {
+    "single-local64-blocks7": {
+      "cycles": 1459,
+      "instructions": 742,
+      "requested_bytes": 6104,
+      "host_seconds": 0.0004657499957829714
+    },
+    "single-local128-blocks7": {
+      "cycles": 2604,
+      "instructions": 1484,
+      "requested_bytes": 12208,
+      "host_seconds": 0.0006985000800341368
+    },
+    "pairs-local64-blocks7": {
+      "cycles": 1602,
+      "instructions": 896,
+      "requested_bytes": 11480,
+      "host_seconds": 0.0005193748511373997
+    },
+    "pairs-local128-blocks7": {
+      "cycles": 3084,
+      "instructions": 1792,
+      "requested_bytes": 22960,
+      "host_seconds": 0.0008851669263094664
+    }
+  },
+  "error": null,
+  "initial_state": "cold cache",
+  "recovery": "fenced checkpoint + hashed stage journal; cache tags, replacement state, counters and cycle offset preserved",
+  "limitations": [
+    "ELF provider supports multiple complete 32-lane warps per block; collective barrier is explicitly unsupported",
+    "unknown numerical control/address requires functional input",
+    "extended instruction timing is an explicit uncalibrated target",
+    "dispatch boundaries drain writes and invalidate written cache lines",
+    "budget checked between complete dispatches; no in-flight checkpoint",
+    "checkpoints every 30 host seconds and normal completion; journal may extend beyond recovery point"
+  ]
+}

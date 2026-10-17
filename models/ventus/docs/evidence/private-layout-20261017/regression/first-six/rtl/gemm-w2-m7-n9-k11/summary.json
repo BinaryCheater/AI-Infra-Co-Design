@@ -1,0 +1,65 @@
+{
+  "name": "gemm-w2-m7-n9-k11",
+  "elf_sha256": "9652f1897ab90b0b7a16532f9456ac5e1a06ce7c1ca42a613a2bfaa97ded2c91",
+  "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+  "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+  "observer_sha256": "c6144a2848cdc285fea0a3939661cd13c231c3dfc51958c7c0a8d1b7bdf13dcd",
+  "driver_profile": "workgroup-private-v1",
+  "driver_adapter": {
+    "profile": "workgroup-private-v1",
+    "process": {
+      "returncode": 0,
+      "timed_out": false,
+      "output_exhausted": false,
+      "wall_seconds": 3.319526780862361
+    },
+    "source_sha256": "075c932898192d4d696999a4729045dfc983fb0bbca99e5645c7cae59353c5af",
+    "target_header_sha256": "ce18925342bc0514f34b0f3f8e846271f8f00aac1dd1de7dfcae57f5fa5d303a",
+    "target_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+    "compiler_sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769",
+    "verilator_header_sha256": "1ab9fbe3fb6ef389443f6c31314d8a76479f082c0d37a6484a3d216aeaf5e154",
+    "completed": true,
+    "binary_sha256": "fed9d9feadb91a26ae57cce4cbc40a085e8ba57670c0d2ed5d8662877c364cd3"
+  },
+  "requires_private_adjustment": true,
+  "inputs_sha256": "e8585cd29848dc04a6d97c5e79142d63999bfc2ec1a805d47d6a9d37a2291f0b",
+  "case_input_sha256": {
+    "input.metadata": "f498ede5c1f4b8e7c54b79c099acc8d58b5c31bd0b3f8329f0518594623b5947",
+    "input.data": "de08758938fef4c22d3e0fd1b81ecbd00dacc0a003413a700e2124b95a270812"
+  },
+  "completed": true,
+  "functional_ok": true,
+  "status": "passed",
+  "unsupported_instruction_diagnostics": [],
+  "completion": {
+    "kernel_completed": true,
+    "kernel_completion_markers": [
+      {
+        "stream": "stdout",
+        "line": 12,
+        "text": "[RTL     info]@37125 kernel0  gemm-w2-m7-n9-k11 finished",
+        "simulation_time": 37125
+      }
+    ],
+    "error_diagnostics": [],
+    "limit_diagnostics": [],
+    "completion_reasons": [],
+    "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+  },
+  "numerical": {
+    "outputs_match": true,
+    "expected_words": 63,
+    "observed_words": 63,
+    "duplicate_addresses": [],
+    "mismatches": []
+  },
+  "returncode": 0,
+  "timed_out": false,
+  "output_exhausted": false,
+  "wall_seconds": 28.934526917990297,
+  "logs_sha256": {
+    "stdout.log": "d102a327e13655b5615eda4d5ce733bc781c6abbbceb6af1a25b226577075207",
+    "stderr.log": "ea06b7b61272ed91279bbb1dc49c421b44326c70c6fb5361c0e770568a452b7f"
+  },
+  "scope": "Concrete finite input/output check on RTL; no universal proof or timing accuracy claim."
+}

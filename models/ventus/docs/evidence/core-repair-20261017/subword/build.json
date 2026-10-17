@@ -1,0 +1,78 @@
+{
+  "completed": true,
+  "exit_code": 0,
+  "kernel": "subword_u32",
+  "target": "riscv32/ventus-gpgpu",
+  "optimization": "O1",
+  "command_timeout_seconds": 120,
+  "host_budget_seconds": null,
+  "processes": [
+    {
+      "returncode": 0,
+      "timed_out": false,
+      "output_exhausted": false,
+      "wall_seconds": 0.05341704096645117
+    },
+    {
+      "returncode": 0,
+      "timed_out": false,
+      "output_exhausted": false,
+      "wall_seconds": 1.2585245829541236
+    },
+    {
+      "returncode": 0,
+      "timed_out": false,
+      "output_exhausted": false,
+      "wall_seconds": 0.05408762511797249
+    }
+  ],
+  "support_sha256": {
+    "linker_script": "152e48c1847207336b1c37c0dff1ab7884bef4b67e3dd466ddee587deefb4925",
+    "generic_headers": "3cea58ade5b97670ee5871e948ff9dca7108bf5caa0407d7c77dfe26f28c3469"
+  },
+  "workitem_library": {
+    "profile": "rtl-r1",
+    "source_url": "https://github.com/THU-DSP-LAB/llvm-project/blob/bdfa4ec6afee7703b03c75a9c3f9d4b63096c913/libclc/riscv32/lib/workitem/workitem.S",
+    "source_commit": "bdfa4ec6afee7703b03c75a9c3f9d4b63096c913",
+    "original_sha256": "e9e39aa38aa56713a3bd17df80fba0996fd3adaf64d8176d8cd4af190fddc6e6",
+    "assembly_sha256": "850885c539a9d93202c4bbfa224aee17bf75b5781282212dc9d81f2d4b2d0e07",
+    "rtl_reference": "681172541a8a34ffb43c483a19c075acbc11a4eb",
+    "change": "Append version-3 assembler resource summaries; original instructions are unchanged.",
+    "resource_policy": "Every helper conservatively reserves v0..v6 and x0..x31. Its own fixed LDS stack is 4 bytes if it pushes sp, otherwise 0. The six source call edges are retained for link-time stack aggregation. No private or static local storage is used.",
+    "scope": "Compatibility of work-item builtins only; arbitrary kernel instructions still need validation on the chosen RTL.",
+    "license": "Apache-2.0 WITH LLVM-exception"
+  },
+  "host_seconds": 1.3835435421206057,
+  "source_sha256": {
+    "kernel.cl": "ee4e74eb23e155aebe61c9ad6e1b3a619579308917fbb35e98fbf26aac6a69f2",
+    "get_enqueued_local_size.cl": "0ef17ae32dce8a08dbbcf0fcd0d6e973ba2ad9c7e57ce769f102a5c864cab525",
+    "get_global_id.cl": "958f23b6f27ab0c4a21bbb59fae11f40d0db37ba5539639b50ef2005a043c74d",
+    "get_global_linear_id.cl": "eeac84ae1d071b343729e2e243780470a1f61f37f84347a6b73ec1445aa0c406",
+    "get_global_offset.cl": "2fd07a267d9183773b8c2a7da19d6711cc6a4c313205385c0ee47feb8c903d1e",
+    "get_global_size.cl": "24e18231eb02523cdf063feca307e07b1021e2c159c8ebc1784f859c7b94d913",
+    "get_group_id.cl": "58e32d1435423adabf628cbfc28c527cff474059007c991c23736734160b44bc",
+    "get_local_id.cl": "667901481c6cdfe8e8bae7bdb2be2956af158343e4b28a571e7972432f1c2db3",
+    "get_local_linear_id.cl": "3d3c207fbfd11045f742376ea20dacd8e2f6548d801f498e6b9120a5cefbb3de",
+    "get_local_size.cl": "1981ae7fe1d410d04becbefc82399f67eb7b3ef2e630f014369b8a5cf15ad292",
+    "get_num_groups.cl": "6096a7180744059ed2e3d1cb42c28fca76b9381f3cb75349b4f47f485994d0b1",
+    "get_work_dim.cl": "26ef477330270daabcfe908d03fd8eb3c6fa6f74c3e15565f26705c040d3461a",
+    "rtl-r1-workitem.S": "850885c539a9d93202c4bbfa224aee17bf75b5781282212dc9d81f2d4b2d0e07",
+    "ventus.h": "22e943a8cc5659b3de12fce67e5aca48c739e2e389079a8500bd95428d755b57"
+  },
+  "compiler_sha256": "1fe6e9e135f9ffca089080036c0246cb7a1aedcf0e9d83a222c0b72ce83ac5ec",
+  "linker_sha256": "0e6b3bbfe85d45e41a2677335a1cf3503127e4821d9755b979782affa09639f4",
+  "objdump_sha256": "9e9cbd56ef377dc64b620d9b819c2389aa396c5782e77eadf00ae70d7397041b",
+  "elf_sha256": "9ecc468d6972d5f165ba8f8fc913cdaf598bffe28326424a48930be39912be0c",
+  "resources": {
+    "subword_u32": {
+      "version": 3,
+      "flags": 0,
+      "vgpr": 33,
+      "sgpr": 32,
+      "lds_static": 0,
+      "pds_static": 0,
+      "lds_stack": 40,
+      "pds_stack": 24
+    }
+  }
+}

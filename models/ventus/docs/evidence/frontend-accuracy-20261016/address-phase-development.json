@@ -1,0 +1,146 @@
+[
+  {
+    "name": "resident-w1-k24-conflict0",
+    "prediction": 112,
+    "reference": 112,
+    "error": 0.0
+  },
+  {
+    "name": "resident-w1-k24-conflict1",
+    "prediction": 118,
+    "reference": 118,
+    "error": 0.0
+  },
+  {
+    "name": "reload-w1-k24-conflict0",
+    "prediction": 118,
+    "reference": 118,
+    "error": 0.0
+  },
+  {
+    "name": "reload-w1-k24-conflict1",
+    "prediction": 124,
+    "reference": 124,
+    "error": 0.0
+  },
+  {
+    "name": "stream-w1-k24-conflict0",
+    "prediction": 156,
+    "reference": 156,
+    "error": 0.0
+  },
+  {
+    "name": "stream-w1-k24-conflict1",
+    "prediction": 162,
+    "reference": 162,
+    "error": 0.0
+  },
+  {
+    "name": "resident-w3-k96-conflict0",
+    "prediction": 273,
+    "reference": 273,
+    "error": 0.0
+  },
+  {
+    "name": "resident-w3-k96-conflict1",
+    "prediction": 297,
+    "reference": 297,
+    "error": 0.0
+  },
+  {
+    "name": "reload-w3-k96-conflict0",
+    "prediction": 385,
+    "reference": 385,
+    "error": 0.0
+  },
+  {
+    "name": "reload-w3-k96-conflict1",
+    "prediction": 375,
+    "reference": 375,
+    "error": 0.0
+  },
+  {
+    "name": "stream-w3-k96-conflict0",
+    "prediction": 550,
+    "reference": 550,
+    "error": 0.0
+  },
+  {
+    "name": "stream-w3-k96-conflict1",
+    "prediction": 576,
+    "reference": 576,
+    "error": 0.0
+  },
+  {
+    "name": "resident-w6-k192-conflict0",
+    "prediction": 502,
+    "reference": 504,
+    "error": -0.397
+  },
+  {
+    "name": "resident-w6-k192-conflict1",
+    "prediction": 556,
+    "reference": 555,
+    "error": 0.18
+  },
+  {
+    "name": "reload-w6-k192-conflict0",
+    "prediction": 1238,
+    "reference": 1242,
+    "error": -0.322
+  },
+  {
+    "name": "reload-w6-k192-conflict1",
+    "prediction": 1236,
+    "reference": 1279,
+    "error": -3.362
+  },
+  {
+    "name": "stream-w6-k192-conflict0",
+    "prediction": 1479,
+    "reference": 1645,
+    "error": -10.091
+  },
+  {
+    "name": "stream-w6-k192-conflict1",
+    "prediction": 1749,
+    "reference": 1752,
+    "error": -0.171
+  },
+  {
+    "name": "resident-w8-k96-conflict0",
+    "prediction": 358,
+    "reference": 368,
+    "error": -2.717
+  },
+  {
+    "name": "resident-w8-k96-conflict1",
+    "prediction": 393,
+    "reference": 394,
+    "error": -0.254
+  },
+  {
+    "name": "reload-w8-k96-conflict0",
+    "prediction": 874,
+    "reference": 876,
+    "error": -0.228
+  },
+  {
+    "name": "reload-w8-k96-conflict1",
+    "prediction": 878,
+    "reference": 872,
+    "error": 0.688
+  },
+  {
+    "name": "stream-w8-k96-conflict0",
+    "prediction": 1010,
+    "reference": 1012,
+    "error": -0.198
+  },
+  {
+    "name": "stream-w8-k96-conflict1",
+    "prediction": 1186,
+    "reference": 1034,
+    "error": 14.7
+  }
+]

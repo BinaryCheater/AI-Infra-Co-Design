@@ -1,0 +1,35 @@
+{
+  "scope": "Static resource admission, explicit failure fixture and read-only numerical recheck; no new RTL run or timing claim",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "90023d7410ec89d7f9a416ebae8dffb0ec7fef8804e12d334aa41b99ba55d604",
+      "bytes": 3663
+    },
+    {
+      "path": "code-hashes.json",
+      "sha256": "4a5b00b17eb2bb3f463acf5799497c1fb7cca6ff1c2da0c7b8cb0152cd88cb2a",
+      "bytes": 533
+    },
+    {
+      "path": "failure-replay.json",
+      "sha256": "6db7c90162923bbd189b1501a2ead5e5aa1062fed41534d2cc1bd994894039ae",
+      "bytes": 546
+    },
+    {
+      "path": "recheck.json",
+      "sha256": "21df58fe3f5a6d16a5e56e9f1cde6ef74286b582e23383fd360912706dd5abd1",
+      "bytes": 21091
+    },
+    {
+      "path": "source-audit.json",
+      "sha256": "8255e7b0b66dfe755fefd69ec061ae971871536d6ab0e88e1ea10e35ca574dbf",
+      "bytes": 3639
+    },
+    {
+      "path": "workbench-runtime.json",
+      "sha256": "09c48e4016b864ea1f2b495abae9782181e84da7d9e60b13d5cda70f341e6ede",
+      "bytes": 11127
+    }
+  ]
+}

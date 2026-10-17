@@ -1,0 +1,154 @@
+{
+  "version": "ventus-compiled-launch-contract-v1",
+  "rtl_commit": "681172541a8a34ffb43c483a19c075acbc11a4eb",
+  "files": [
+    {
+      "path": "ventus/src/top/parameters.scala",
+      "sha256": "71dbd95411c7c28c63345cdb5de61394353aec479e05db513744af2d9edbbee0",
+      "rules": [
+        {
+          "anchor": "def num_sm = 2",
+          "lines": [
+            7
+          ]
+        },
+        {
+          "anchor": "var num_warp = 8",
+          "lines": [
+            8
+          ]
+        },
+        {
+          "anchor": "var num_thread = 32",
+          "lines": [
+            9
+          ]
+        },
+        {
+          "anchor": "def num_block = 8",
+          "lines": [
+            53
+          ]
+        },
+        {
+          "anchor": "def num_bank = 4",
+          "lines": [
+            18
+          ]
+        },
+        {
+          "anchor": "def num_vgpr:Int = 128*num_warp",
+          "lines": [
+            20
+          ]
+        },
+        {
+          "anchor": "def num_sgpr:Int = 256*num_warp",
+          "lines": [
+            21
+          ]
+        },
+        {
+          "anchor": "def sharedmem_depth = 1024",
+          "lines": [
+            93
+          ]
+        },
+        {
+          "anchor": "def dcache_BlockWords: Int = 32",
+          "lines": [
+            75
+          ]
+        },
+        {
+          "anchor": "def sharedmem_BlockWords = dcache_BlockWords",
+          "lines": [
+            95
+          ]
+        },
+        {
+          "anchor": "def sharemem_size = sharedmem_depth * sharedmem_BlockWords * 4",
+          "lines": [
+            97
+          ]
+        },
+        {
+          "anchor": "def NUM_WG_DIM = 1024",
+          "lines": [
+            154
+          ]
+        },
+        {
+          "anchor": "val NUM_PDS_MAX = 4096*num_thread",
+          "lines": [
+            183
+          ]
+        }
+      ]
+    },
+    {
+      "path": "ventus/src/cta/cta_scheduler.scala",
+      "sha256": "3fb1565469e1b21517c20ed0d4bc526e41602f10320652b77ae1d1d4472bfac5",
+      "rules": [
+        {
+          "anchor": "val num_wf = UInt(log2Ceil(CONFIG.WG.NUM_WF_MAX+1).W)",
+          "lines": [
+            16,
+            43,
+            89
+          ]
+        },
+        {
+          "anchor": "val num_pds_per_wf = UInt(log2Ceil(CONFIG.WG.NUM_PDS_MAX+1).W)",
+          "lines": [
+            31
+          ]
+        }
+      ]
+    },
+    {
+      "path": "sim-verilator/cta_sche_wrapper.cpp",
+      "sha256": "cacd3cfe77b06f8cbd2d984595de11de3c4b4fc95f7aed3391b213ab6c377239",
+      "rules": [
+        {
+          "anchor": "kernel->get_num_sgpr_per_wf() * kernel->get_num_wf()",
+          "lines": [
+            82
+          ]
+        },
+        {
+          "anchor": "kernel->get_num_vgpr_per_wf() * kernel->get_num_wf()",
+          "lines": [
+            83
+          ]
+        },
+        {
+          "anchor": "kernel->get_num_pds_per_thread() * kernel->get_num_thread()",
+          "lines": [
+            86
+          ]
+        }
+      ]
+    },
+    {
+      "path": "ventus/src/pipeline/operandCollector.scala",
+      "sha256": "813e93aace5298ddd47013e07b95b90daca04909c0b8be1dba3d3b6eb78f9b44",
+      "rules": [
+        {
+          "anchor": "io.vgpr_base(io.writeVecCtrl.bits.warp_id) >> log2Ceil(num_bank).U",
+          "lines": [
+            604
+          ]
+        },
+        {
+          "anchor": "io.sgpr_base(io.writeScalarCtrl.bits.warp_id) >> log2Ceil(num_bank).U",
+          "lines": [
+            599,
+            606
+          ]
+        }
+      ]
+    }
+  ],
+  "scope": "Reviewed launch capacity/representation declarations; not a general Scala elaborator or complete hardware audit."
+}

@@ -1,0 +1,10 @@
+{
+  "constructor": "ventus-cooperative-gemm-lowering-v1",
+  "assignment": {
+    "tile_m": 4,
+    "tile_n": 16,
+    "tile_k": 8
+  },
+  "source_sha256": "8c5b6d4fae053ad771f225a38c09ccb13f7bafb95637d6283d47399f91ee4330",
+  "scope": "Registered source/launch/reference correspondence; not universal correctness, optimality or hardware timing proof"
+}

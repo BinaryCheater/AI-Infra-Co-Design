@@ -1,0 +1,78 @@
+{
+  "schema": "ventus-compiled-workflow-result-v1",
+  "job_id": "8861f61ea0684562b84b148c352704ff",
+  "native": [
+    {
+      "name": "gemm-m11-n13-k9",
+      "completed": true,
+      "process": {
+        "returncode": 0,
+        "timed_out": false,
+        "output_exhausted": false,
+        "wall_seconds": 20.365159885026515
+      },
+      "cycles": 2864,
+      "instructions": 3259,
+      "receipt_sha256": "e0334f63cea74c5bf26cbeceb4bc8754db1dd702816d338e6ecb20b9615a865b"
+    }
+  ],
+  "rtl": {
+    "schema": "ventus-compiled-rtl-check-v1",
+    "cases": [
+      {
+        "name": "gemm-m11-n13-k9",
+        "elf_sha256": "0069414083961ef161d19c39565005bbfff21b7d3230e1576f90b818ed644978",
+        "rtl_binary_sha256": "8cf5b29a0bf9e225ccb821d3801c7067df438e24a70d2c7c7aaec02a67106f33",
+        "rtl_library_sha256": "1a21bb8a9c3c6715492c4c53fddd92bf6e10d5af661c34c78a204beb29e7feb7",
+        "observer_sha256": "c6144a2848cdc285fea0a3939661cd13c231c3dfc51958c7c0a8d1b7bdf13dcd",
+        "inputs_sha256": "dc28f612bfef92dfeb927e13a693d1f87e350186a8be9b06778245684b215d34",
+        "case_input_sha256": {
+          "input.metadata": "24b3315ecbce033d70929366fa454cf27e5bfa523b7624169d151111e9904d57",
+          "input.data": "8a8800b1601d0b0f35e3102da3b168221d1897f5f9f6e5e88dce18abb584faf4"
+        },
+        "completed": true,
+        "functional_ok": true,
+        "status": "passed",
+        "unsupported_instruction_diagnostics": [],
+        "completion": {
+          "kernel_completed": true,
+          "kernel_completion_markers": [
+            {
+              "stream": "stdout",
+              "line": 22,
+              "text": "[RTL     info]@115385 kernel0  gemm-m11-n13-k9 finished",
+              "simulation_time": 115385
+            }
+          ],
+          "error_diagnostics": [],
+          "limit_diagnostics": [],
+          "completion_reasons": [],
+          "scope": "Named CTA/kernel completion from logs; numerical and trace checks remain separate."
+        },
+        "numerical": {
+          "outputs_match": true,
+          "expected_words": 143,
+          "observed_words": 143,
+          "duplicate_addresses": [],
+          "mismatches": []
+        },
+        "returncode": 0,
+        "timed_out": false,
+        "output_exhausted": false,
+        "wall_seconds": 55.259504448855296,
+        "logs_sha256": {
+          "stdout.log": "966d9e36db5f675de5d4194615badf28fa0b275e9303d49dc037d1b00582ecf6",
+          "stderr.log": "6ca31467f3ce7b9bb9bd536561436793df8d424cb9f1c84bbc867022de5f9352"
+        },
+        "scope": "Concrete finite input/output check on RTL; no universal proof or timing accuracy claim."
+      }
+    ],
+    "all_functional_ok": true
+  },
+  "completed": true,
+  "code_manifest_sha256": "cd54d32731b5a23a17943cd6760a32855681bacf311875e2b9710b651edd15bb",
+  "case_manifest_sha256": "1e2549e138a15e0b0128cdddf35db217923c60f0f15acc851d1661f7a8306e5c",
+  "python": "3.12.3",
+  "architecture": "x86_64",
+  "scope": "Concrete compilation/control-address timing/numerical RTL integration; no accuracy, optimality or acceptance claim"
+}

@@ -16,6 +16,13 @@ web console in which a computer architect can observe, step, edit, inject, overr
 It runs end to end on the paper's shared-memory tiling template; see [`agentic/README.md`](agentic/README.md)
 for the stage status and how to run it.
 
+## Hardware models
+
+- **[Ventus](models/ventus/):** standalone Python/Rust performance model,
+  compiled FP32 GEMM example, independent RTL checking tools and versioned model
+  evidence. It runs independently of `agentic/`; this addition does not install
+  a Ventus adapter into the agent loop.
+
 ## Current paper
 
 [Agentic Progressive Verification for Hardware-Software Co-Design of AI Infrastructure](design-verification/papers/agentic_progressive_verification/paper.tex)

@@ -1,0 +1,129 @@
+{
+  "schema": "ventus-dispatches-v1",
+  "purpose": "integration_check",
+  "hardware": {
+    "sms": 1,
+    "warps_per_sm": 4,
+    "blocks_per_sm": 4,
+    "threads": 32,
+    "rf_banks": 4,
+    "rf_read_ports": 1,
+    "rf_write_ports": 1,
+    "writeback_ports": 1,
+    "collectors": 4,
+    "vgpr_slots": 1024,
+    "sgpr_slots": 2048,
+    "tensor_m": 4,
+    "tensor_n": 8,
+    "tensor_k": 4,
+    "tensor_units": 1,
+    "lds_bytes": 131072,
+    "lds_banks": 32,
+    "lds_ports": 1,
+    "line_bytes": 128,
+    "l1_sets": 256,
+    "l1_ways": 2,
+    "l1_mshrs": 4,
+    "l1_subentries": 2,
+    "l1_write_entries": 4,
+    "l2_sets": 64,
+    "l2_ways": 16,
+    "l2_mshrs": 32,
+    "lsu_entries": 4,
+    "lsu_per_warp": 4,
+    "memory_channels": 1,
+    "memory_bytes_per_cycle": 128,
+    "memory_latency": 2
+  },
+  "dispatches": [
+    {
+      "name": "single-local64-blocks7",
+      "elf": "../tests/fixtures/compiled-vecadd/single.elf",
+      "elf_sha256": "b061043c4348616c3ec4887c10480163ea7893f8ebf7fa4ef56a7d19c83ad33c",
+      "kernel": "vecadd_f32",
+      "arguments": [
+        2415919104,
+        2415923200,
+        2415984640
+      ],
+      "global_size": [
+        448,
+        1,
+        1
+      ],
+      "local_size": [
+        64,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "single-local128-blocks7",
+      "elf": "../tests/fixtures/compiled-vecadd/single.elf",
+      "elf_sha256": "b061043c4348616c3ec4887c10480163ea7893f8ebf7fa4ef56a7d19c83ad33c",
+      "kernel": "vecadd_f32",
+      "arguments": [
+        2415919104,
+        2415923200,
+        2415984640
+      ],
+      "global_size": [
+        896,
+        1,
+        1
+      ],
+      "local_size": [
+        128,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "pairs-local64-blocks7",
+      "elf": "../tests/fixtures/compiled-vecadd/pairs.elf",
+      "elf_sha256": "beab3687a47382dab7977f94449570b151f236d9ec3ceea2f4f24d78aec911f8",
+      "kernel": "vecadd_f32_pairs",
+      "arguments": [
+        2415919104,
+        2415923200,
+        2415984640
+      ],
+      "global_size": [
+        448,
+        1,
+        1
+      ],
+      "local_size": [
+        64,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "pairs-local128-blocks7",
+      "elf": "../tests/fixtures/compiled-vecadd/pairs.elf",
+      "elf_sha256": "beab3687a47382dab7977f94449570b151f236d9ec3ceea2f4f24d78aec911f8",
+      "kernel": "vecadd_f32_pairs",
+      "arguments": [
+        2415919104,
+        2415923200,
+        2415984640
+      ],
+      "global_size": [
+        896,
+        1,
+        1
+      ],
+      "local_size": [
+        128,
+        1,
+        1
+      ]
+    }
+  ],
+  "limitations": [
+    "Existing official-compiler ELF artifacts; no fresh compilation in this check.",
+    "Control/address execution and timing only; numerical correctness unverified.",
+    "No collective barrier support; explicit unsupported result."
+  ]
+}
